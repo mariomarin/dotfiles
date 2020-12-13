@@ -1,0 +1,65 @@
+export NPM_CONFIG_PREFIX="${HOME}/.local/npm"
+export XENVIRONMENT="$HOME/.Xresources"
+
+# go
+export GOPATH=~/go
+export GOBIN=$GOPATH/bin
+
+# home and local bin
+LOCALBIN=$HOME/.local/bin
+HOMEBIN=$HOME/bin
+
+# php composer
+COMPOSERBIN=$HOME/.config/composer/vendor/bin
+
+# snap
+SNAPBIN=/var/lib/snapd/snap/bin
+
+# PATH
+export PATH=export MANPATH="$NPM_CONFIG_PREFIX/share/man:$(manpath)"
+typeset -U PATH path
+path=("$GOPATH/bin" "$NPM_CONFIG_PREFIX/bin" "$HOMEBIN" "$LOCALBIN" "$COMPOSERBIN" "$SNAPBIN" "/usr/bin/core_perl/" "$path[@]")
+export PATH
+
+# APPS
+export EDITOR=vim
+
+# Editors
+export VISUAL=vim
+export PAGER=less
+
+# Language
+if [[ -z "$LANG" ]]; then
+  export LANG='en_US.UTF-8'
+fi
+
+# Gnome needs a location to save screenshots
+export PICTURES=~/Pictures
+
+# Less
+# Set the default Less options.
+# Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+# Remove -X and -F (exit if the content fits on one screen) to enable it.
+export LESS='-F -g -i -M -R -S -w -X -z-4'
+
+# Emacs
+export EMACS_SERVER_FILE=/tmp/emacs1000/server
+
+# Ansible
+export ANSIBLE_CONFIG=ansible-mitogen.cfg
+
+# Gnome keyring
+if [ -n "$DESKTOP_SESSION" ];then
+  eval $(gnome-keyring-daemon --start)
+  export SSH_AUTH_SOCK
+fi
+
+# neovim
+export PYTHON_HOST_PROG=/usr/bin/python2
+export PYTHON3_HOST_PROG=/usr/bin/python3
+export NVIM_PYTHON_LOG_FILE=/tmp/nvim_python.log
+
+export FZF_DEFAULT_COMMAND='rg --files'
+
+# zim
+: ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}
