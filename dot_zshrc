@@ -47,7 +47,7 @@ export GPG_TTY=$(tty)
 gpg-connect-agent updatestartuptty /bye >/dev/null
 
 # asdf
-. $HOME/.asdf/asdf.sh
+. $ASDF_DATA_DIR/asdf.sh
 
 # direnv
 eval "$(direnv hook zsh)"
