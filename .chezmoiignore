@@ -3,3 +3,5 @@ adsf/shims
 adsf/installs
 adsf/test
 adsf/docs
+dot_git
+*.zwc*
