@@ -5,3 +5,6 @@ adsf/test
 adsf/docs
 dot_git
 *.zwc*
+tmux/plugins
+tmux/plugins/tpm/tests
+!tmux/plugins/tpm
