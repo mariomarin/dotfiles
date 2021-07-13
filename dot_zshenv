@@ -1,9 +1,16 @@
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+
+export TERM=xterm-256color
 export NPM_CONFIG_PREFIX="${HOME}/.local/npm"
 export XENVIRONMENT="$HOME/.Xresources"
 
 # go
 export GOPATH=~/go
 export GOBIN=$GOPATH/bin
+
+# rust
+export CARGOBIN=$HOME/.cargo/bin
 
 # home and local bin
 LOCALBIN=$HOME/.local/bin
@@ -16,9 +23,10 @@ COMPOSERBIN=$HOME/.config/composer/vendor/bin
 SNAPBIN=/var/lib/snapd/snap/bin
 
 # PATH
-export PATH=export MANPATH="$NPM_CONFIG_PREFIX/share/man:$(manpath)"
 typeset -U PATH path
-path=("$GOPATH/bin" "$NPM_CONFIG_PREFIX/bin" "$HOMEBIN" "$LOCALBIN" "$COMPOSERBIN" "$SNAPBIN" "/usr/bin/core_perl/" "$path[@]")
+path=("$GOPATH/bin" "$NPM_CONFIG_PREFIX/bin" "$HOMEBIN" "$LOCALBIN" \
+  "$COMPOSERBIN" "$CARGOBIN" "$SNAPBIN" "/usr/bin/core_perl/" \
+  "/usr/local/sbin" "/usr/bin" "$path[@]")
 export PATH
 
 # APPS
@@ -60,7 +68,13 @@ export PYTHON3_HOST_PROG=/usr/bin/python3
 export NVIM_PYTHON_LOG_FILE=/tmp/nvim_python.log
 
 export FZF_DEFAULT_COMMAND='rg --files'
+export KEYTIMEOUT=1
+
+# SpaceVim configuration file
+export SPACEVIMDIR="$HOME/.config/SpaceVim.d/"
+
 # asdf version manager
+
 export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
 export ASDF_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/asdf"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"

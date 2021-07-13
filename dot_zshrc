@@ -13,6 +13,25 @@ alias v='f -e vim' # quick opening files with vim
 alias nv='f -e nvim' # quick opening files with vim
 alias m='f -e mplayer' # quick opening files with mplayer
 alias o='a -e xdg-open' # quick opening files with xdg-open
+# git
+alias pr="git push-track && gh pr create --fill"
+alias checks="gh pr checks"
+alias merge="gh pr merge --delete-branch --merge && git pull"
+alias approve="gh pr review --approve"
+
+# coreutils rust replacement
+alias ls=exa
+alias x=exa
+alias find=exa
+alias grep=rg
+alias du=dust
+alias cat=bat
+alias time=hyperfine
+alias cloc=tokei
+alias ps=procs
+alias sed=sd
+alias top=btm
+alias htop=btm
 
 # Set the Less input preprocessor.
 # Try both `lesspipe` and `lesspipe.sh` as either might exist on a system.
@@ -162,6 +181,11 @@ bindkey '^y' autosuggest-accept
 bindkey '^n' history-substring-search-up
 bindkey '^p' history-substring-search-down
 
+# GCP CLI autocompletion
+if [[ -f /opt/google-cloud-sdk/completion.zsh.inc ]]; then
+  source /opt/google-cloud-sdk/completion.zsh.inc
+fi
+
 # kubernetes
 alias k='kubectl' # quick opening files with xdg-open
 source <(kubectl completion zsh)
@@ -185,6 +209,5 @@ _kube_ps1_to_rprompt() {
 autoload -U add-zsh-hook
 add-zsh-hook precmd _kube_ps1_to_rprompt
 
-if [[ -f /opt/google-cloud-sdk/completion.zsh.inc ]]; then
-  source /opt/google-cloud-sdk/completion.zsh.inc
-fi
+# starship prompt
+eval $(starship init ion)
