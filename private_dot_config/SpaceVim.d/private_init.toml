@@ -1,0 +1,149 @@
+# All SpaceVim option below [option] section
+[options]
+  # set spacevim theme. by default colorscheme layer is not loaded,
+  # if you want to use more colorscheme, please load the colorscheme
+  # layer
+  colorscheme = "ayu"
+  colorscheme_bg = "light"
+  ayucolor="light"
+
+  # Disable guicolors in basic mode, many terminal do not support 24bit
+  # true colors
+  enable_guicolors = true
+
+  # disable statusline separator, if you want to use other value, please
+  # install nerd fonts
+  statusline_separator = "arrow"
+  statusline_inactive_separator = "arrow"
+  buffer_index_type = 4
+  enable_tabline_filetype_icon = true
+  enable_statusline_mode = false
+  spacevim_autocomplete_method = "coc"
+
+  # change things before SpaceVim takes over
+  bootstrap_before = "myspacevim#before"
+  botstrap_after = 'myspacevim#after'
+
+  # session management
+  startify_session_persistence = true
+  startify_session_autoload = true
+
+[[layers]]
+  name = 'autocomplete'
+  auto-completion-return-key-behavior = "complete"
+  auto-completion-tab-key-behavior = "smart"
+
+[[layers]]
+  name = 'shell'
+  default_position = 'top'
+  default_height = 10
+
+[[layers]]
+  name = "VersionControl"
+
+[[layers]]
+  name = "checkers"
+
+[[layers]]
+  name = "colorscheme"
+
+[[layers]]
+  name = "core#statusline"
+
+[[layers]]
+  name = "core#tabline"
+
+[[layers]]
+  name = "core"
+
+[[layers]]
+  name = "debug"
+
+[[layers]]
+  name = "default"
+
+[[layers]]
+  name = "edit"
+
+[[layers]]
+  name = "format"
+
+[[layers]]
+  name = "fzf"
+
+[[layers]]
+  name = "git"
+  git-plugin = "fugitive"
+
+[[layers]]
+  name = "github"
+
+[[layers]]
+  name = "lang#dockerfile"
+
+[[layers]]
+  name = "lang#go"
+
+[[layers]]
+  name = "lang#html"
+
+[[layers]]
+  name = "lang#javascript"
+
+[[layers]]
+  name = "lang#typescript"
+
+[[layers]]
+  name = "lang#python"
+
+[[layers]]
+  name = "lang#sh"
+
+[[layers]]
+  name = "lang#vim"
+
+[[layers]]
+  name = "lsp"
+  filetypes = [
+    "go",
+    "python",
+    "terraform",
+    "yaml"
+  ]
+
+[[layers]]
+  name = "sudo"
+
+[[layers]]
+  name = "tags"
+
+[[layers]]
+  name = "tools"
+
+[[layers]]
+  name = "ui"
+
+# ayu color scheme https://github.com/ayu-theme/ayu-vim
+[[custom_plugins]]
+  repo = "ayu-theme/ayu-vim"
+  merged = 0
+
+[[custom_plugins]]
+  name = "spacewander/openresty-vim"
+  merged = false
+
+[[custom_plugins]]
+  name = "andrewstuart/vim-kubernetes"
+  merged = false
+
+[[custom_plugins]]
+  name = "benjie/local-npm-bin.vim"
+  merged = false
+
+[[custom_plugins]]
+  name = "vigoux/LanguageTool.nvim"
+  merged = false
+
+[[custom_plugins]]
+  name = "tpope/vim-obsession"
+  merged = false
