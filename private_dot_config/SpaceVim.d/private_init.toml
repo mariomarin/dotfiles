@@ -19,6 +19,7 @@
   enable_tabline_filetype_icon = true
   enable_statusline_mode = false
   spacevim_autocomplete_method = "coc"
+  autocomplete_method = "coc"
 
   # change things before SpaceVim takes over
   bootstrap_before = "myspacevim#before"
@@ -28,6 +29,19 @@
   startify_session_persistence = true
   startify_session_autoload = true
 
+  # floatterm
+  floaterm_keymap_toggle = 'F8'
+  floaterm_keymap_next = 'F9'
+  floaterm_keymap_prev = 'F10'
+  floaterm_keymap_new = 'F12'
+
+  floaterm_gitcommit='floaterm'
+  floaterm_autoinsert=1
+  floaterm_width=0.8
+  floaterm_height=0.8
+  floaterm_wintitle=0
+  floaterm_autoclose=1
+
 [[layers]]
   name = 'autocomplete'
   auto-completion-return-key-behavior = "complete"
@@ -35,8 +49,8 @@
 
 [[layers]]
   name = 'shell'
-  default_position = 'top'
-  default_height = 10
+  default_position = 'float'
+  default_height = 40
 
 [[layers]]
   name = "VersionControl"
@@ -67,6 +81,7 @@
 
 [[layers]]
   name = "format"
+  format_on_save = true
 
 [[layers]]
   name = "fzf"
@@ -97,6 +112,9 @@
   name = "lang#python"
 
 [[layers]]
+  name = "lang#toml"
+
+[[layers]]
   name = "lang#sh"
 
 [[layers]]
@@ -107,9 +125,15 @@
   filetypes = [
     "go",
     "python",
+    "javascript",
     "terraform",
     "yaml"
   ]
+
+[layers.override_cmd]
+    terraform = ["terraform-ls", "serve"]
+#    yaml = ["yaml-language-server"]
+    javascript = ["typescript-language-server", "--stdio"]
 
 [[layers]]
   name = "sudo"
@@ -126,14 +150,10 @@
 # ayu color scheme https://github.com/ayu-theme/ayu-vim
 [[custom_plugins]]
   repo = "ayu-theme/ayu-vim"
-  merged = 0
-
-[[custom_plugins]]
-  name = "spacewander/openresty-vim"
   merged = false
 
 [[custom_plugins]]
-  name = "andrewstuart/vim-kubernetes"
+  name = "spacewander/openresty-vim"
   merged = false
 
 [[custom_plugins]]
@@ -146,4 +166,37 @@
 
 [[custom_plugins]]
   name = "tpope/vim-obsession"
+  merged = false
+
+[[custom_plugins]]
+  name = "neoclide/coc-neco"
+  merged = false
+
+[[custom_plugins]]
+  name = "yuki-yano/fzf-preview.vim"
+  rev = "release/rpc"
+  merged = false
+
+[[custom_plugins]]
+  name = "sunaku/tmux-navigate"
+  merged = false
+
+[[custom_plugins]]
+  name = "jceb/vim-orgmode"
+  merged = false
+
+[[custom_plugins]]
+  name = "liuchengxu/vista.vim"
+  merged = false
+
+[[custom_plugins]]
+  name = "hashivim/vim-terraform"
+  merged = false
+
+[[custom_plugins]]
+  name = "voldikss/vim-floaterm"
+  merged = false
+
+[[custom_plugins]]
+  name = "will133/vim-dirdiff"
   merged = false
