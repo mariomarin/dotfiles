@@ -1,9 +1,12 @@
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-
 export TERM=xterm-256color
 export NPM_CONFIG_PREFIX="${HOME}/.local/npm"
 export XENVIRONMENT="$HOME/.Xresources"
+
+# Make sure XDG directories exist.
+export XDG_CONFIG_HOME=$HOME/.config
+mkdir -p $XDG_CONFIG_HOME $XDG_CACHE_HOME $XDG_DATA_HOME
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 # go
 export GOPATH=~/go
@@ -19,21 +22,23 @@ HOMEBIN=$HOME/bin
 # php composer
 COMPOSERBIN=$HOME/.config/composer/vendor/bin
 
-# snap
-SNAPBIN=/var/lib/snapd/snap/bin
+# Krew - kubectl plugin manager
+export KREW_ROOT="${XDG_DATA_HOME:-$HOME/.local/share}/krew"
+# kubectl plugins configuration
+export KUBE_FUZZY_PREVIEW_ENABLED=true 
 
 # PATH
 typeset -U PATH path
 path=("$GOPATH/bin" "$NPM_CONFIG_PREFIX/bin" "$HOMEBIN" "$LOCALBIN" \
   "$COMPOSERBIN" "$CARGOBIN" "$SNAPBIN" "/usr/bin/core_perl/" \
-  "/usr/local/sbin" "/usr/bin" "$path[@]")
+  "$KREW_ROOT/bin" "/usr/local/sbin" "/usr/bin" "$path[@]")
 export PATH
 
 # APPS
-export EDITOR=vim
+export EDITOR=nvim
 
 # Editors
-export VISUAL=vim
+export VISUAL=nvim
 export PAGER=less
 
 # Language
@@ -56,25 +61,20 @@ export EMACS_SERVER_FILE=/tmp/emacs1000/server
 # Ansible
 export ANSIBLE_CONFIG=ansible-mitogen.cfg
 
-# Gnome keyring
-if [ -n "$DESKTOP_SESSION" ];then
-  eval $(gnome-keyring-daemon --start)
-  export SSH_AUTH_SOCK
-fi
+# Wayland
+export MOZ_ENABLE_WAYLAND=1
+export MOZ_DBUS_REMOTE=1
+export SDL_VIDEODRIVER=wayland
 
 # neovim
 export PYTHON_HOST_PROG=/usr/bin/python2
 export PYTHON3_HOST_PROG=/usr/bin/python3
 export NVIM_PYTHON_LOG_FILE=/tmp/nvim_python.log
 
-export FZF_DEFAULT_COMMAND='rg --files'
-export KEYTIMEOUT=1
-
 # SpaceVim configuration file
 export SPACEVIMDIR="$HOME/.config/SpaceVim.d/"
 
 # asdf version manager
-
 export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
 export ASDF_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/asdf"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"
