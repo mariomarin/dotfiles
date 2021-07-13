@@ -12,13 +12,18 @@ zmodule input
 zmodule termtitle
 # Utility aliases and functions. Adds colour to ls, grep and less.
 zmodule utility
+zmodule exa
+zmodule fzf
+zmodule pacman
 
 #
 # Prompt
 #
 # Exposes git repository status information to prompts.
 zmodule git-info
-# A customizable version of steeef's prompt theme.
+# kubernetes prompt
+zmodule jonmosco/kube-ps1
+# Theme - A customizable version of steeef's prompt theme.
 zmodule gitster
 
 # Additional completion definitions for Zsh.
@@ -34,7 +39,9 @@ zmodule zsh-users/zsh-syntax-highlighting
 # Fish-like history search (up arrow) for Zsh.
 # zsh-users/zsh-history-substring-search must be sourced after zsh-users/zsh-syntax-highlighting
 zmodule zsh-users/zsh-history-substring-search
-# kubernetes prompt
-zmodule jonmosco/kube-ps1
+
+#
+# FZF
+#
 # git+fzf
 zmodule wfxr/forgit
