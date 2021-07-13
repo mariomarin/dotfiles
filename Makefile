@@ -30,7 +30,7 @@ update-dein:
 	rm /tmp/dein.tar.gz
 
 update-spacevim:
-	curl -s -L -o /tmp/SpaceVim.tar.gz https://github.com/SpaceVim/SPaceVim/archive/v1.6.0.tar.gz
+	curl -s -L -o /tmp/SpaceVim.tar.gz https://github.com/SpaceVim/SPaceVim/archive/v1.7.0.tar.gz
 	chezmoi import --strip-components 1 --destination ${HOME}/.local/share/SpaceVim /tmp/SpaceVim.tar.gz
 	#	tar --gzip --extract --directory ${HOME}/.local/share/SpaceVim --verbose --strip-components=1 --file=/tmp/SpaceVim.tar.gz
 	#	chezmoi add ${HOME}/.local/share/SpaceVim
