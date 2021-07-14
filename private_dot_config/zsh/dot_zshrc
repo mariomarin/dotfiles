@@ -1,6 +1,6 @@
 # User configuration sourced by interactive shells
 
-# ALIASES
+# aliases {{{
 
 # vim
 alias vi=nvim
@@ -8,11 +8,6 @@ alias vi=nvim
 export EMACS_SERVER_SOCKET=/tmp/emacs$(id -u)/server
 alias e="/usr/bin/emacsclient -t --socket-name=$EMACS_SERVER_SOCKET"
 alias eg="/usr/bin/emacsclient --create-frame --socket-name=$EMACS_SERVER_SOCKET"
-# fasd
-alias v='f -e vim' # quick opening files with vim
-alias nv='f -e nvim' # quick opening files with vim
-alias m='f -e mplayer' # quick opening files with mplayer
-alias o='a -e xdg-open' # quick opening files with xdg-open
 
 # git
 alias pr="git push-track && gh pr create --fill"
@@ -20,11 +15,9 @@ alias checks="gh pr checks"
 alias merge="gh pr merge --delete-branch --merge && git pull"
 alias approve="gh pr review --approve"
 
-# Set the Less input preprocessor.
-# Try both `lesspipe` and `lesspipe.sh` as either might exist on a system.
-if (( $#commands[(i)lesspipe(|.sh)] )); then
-  export LESSOPEN="| /usr/bin/env $commands[(i)lesspipe(|.sh)] %s 2>&-"
-fi
+# chezmoi
+alias ce="chezmoi edit"
+# }}} End aliases
 
 # Temporary Files
 if [[ ! -d "$TMPDIR" ]]; then
@@ -66,9 +59,6 @@ eval "$(direnv hook zsh)"
 # User configuration sourced by interactive shells
 # History
 
-# Remove older command from the history if a duplicate is to be added.
-setopt HIST_IGNORE_ALL_DUPS
-
 # Input/output
 # Set editor default keymap to emacs (`-e`) or vi (`-v`)
 bindkey -v
@@ -82,18 +72,9 @@ SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 # Remove path separator from WORDCHARS.
 WORDCHARS=${WORDCHARS//[\/]}
 
-# Module configuration
-
-# completion
-
-# Set a custom path for the completion dump file.
-# If none is provided, the default ${ZDOTDIR:-${HOME}}/.zcompdump is used.
-#zstyle ':zim:completion' dumpfile "${ZDOTDIR:-${HOME}}/.zcompdump-${ZSH_VERSION}"
-
 #
 # git
 #
-
 # Set a custom prefix for the generated aliases. The default prefix is 'G'.
 zstyle ':zim:git' aliases-prefix 'g'
 
@@ -103,30 +84,6 @@ zstyle ':zim:git' aliases-prefix 'g'
 
 # Append `../` to your input for each `.` you type after an initial `..`
 zstyle ':zim:input' double-dot-expand yes
-
-# termtitle
-#
-# Set a custom terminal title format using prompt expansion escape sequences.
-# See http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html#Simple-Prompt-Escapes
-# If none is provided, the default '%n@%m: %~' is used.
-#zstyle ':zim:termtitle' format '%1~'
-
-# zsh-autosuggestions
-#
-# Customize the style that the suggestions are shown with.
-# See https://github.com/zsh-users/zsh-autosuggestions/blob/master/README.md#suggestion-highlight-style
-#ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=60'
-
-# zsh-syntax-highlighting
-#
-# Set what highlighters will be used.
-# See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md
-#ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
-
-# Customize the main highlighter styles.
-# See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/main.md#how-to-tweak-it
-#typeset -A ZSH_HIGHLIGHT_STYLES
-#ZSH_HIGHLIGHT_STYLES[comment]='fg=10'
 
 # Initialize modules
 if [[ ${ZIM_HOME}/init.zsh -ot ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
@@ -163,7 +120,6 @@ bindkey -M vicmd "//" history-beginning-search-backward
 bindkey -M vicmd "??" history-beginning-search-forward
 # }}} End configuration added by Zim install
 
-
 bindkey '^y' autosuggest-accept
 bindkey '^n' history-substring-search-up
 bindkey '^p' history-substring-search-down
@@ -178,6 +134,7 @@ alias k='kubectl' # quick opening files with xdg-open
 source <(kubectl completion zsh)
 complete -F __start_kubectl k
 
+# KUBE_PS1 prompt
 KUBE_PS1_SEPARATOR=''
 KUBE_PS1_PREFIX=''
 KUBE_PS1_SUFFIX=''

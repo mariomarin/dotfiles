@@ -1,0 +1,82 @@
+#!/usr/bin/env zsh
+
+# Xorg
+export XENVIRONMENT="$HOME/.Xresources"
+
+# node
+export NPM_CONFIG_PREFIX="${HOME}/.local/npm"
+
+# go
+export GOPATH=~/go
+export GOBIN=$GOPATH/bin
+
+# rust
+export CARGOBIN=$HOME/.cargo/bin
+
+# home and local bin
+LOCALBIN=$HOME/.local/bin
+HOMEBIN=$HOME/bin
+
+# php composer
+COMPOSERBIN=$HOME/.config/composer/vendor/bin
+
+# Krew - kubectl plugin manager
+export KREW_ROOT="${XDG_DATA_HOME:-$HOME/.local/share}/krew"
+# kubectl plugins configuration
+export KUBE_FUZZY_PREVIEW_ENABLED=true 
+
+# PATH
+typeset -U PATH path
+path=("$GOPATH/bin" "$NPM_CONFIG_PREFIX/bin" "$HOMEBIN" "$LOCALBIN" \
+  "$COMPOSERBIN" "$CARGOBIN" "$SNAPBIN" "/usr/bin/core_perl/" \
+  "$KREW_ROOT/bin" "/usr/local/sbin" "/usr/bin" "$path[@]")
+export PATH
+
+# APPS
+export EDITOR=vim
+export TERM=xterm-256color
+
+# Editors
+export VISUAL=vim
+export PAGER=less
+
+# Language
+if [[ -z "$LANG" ]]; then
+  export LANG='en_US.UTF-8'
+fi
+
+# Gnome needs a location to save screenshots
+export PICTURES=~/Pictures
+
+# Emacs
+export EMACS_SERVER_FILE=/tmp/emacs1000/server
+
+# Emacs Doom
+export DOOMDIR="${XDG_CONFIG_HOME:-$HOME/.config}/doom"
+
+# Ansible
+export ANSIBLE_CONFIG=ansible-mitogen.cfg
+
+# SpaceVim configuration file
+export SPACEVIMDIR="$HOME/.config/SpaceVim.d/"
+
+# Zim
+export ZIM_HOME="$HOME/.zim"
+
+# asdf version manager
+export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
+export ASDF_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/asdf"
+export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"
+
+# Wayland
+export MOZ_ENABLE_WAYLAND=1
+export MOZ_DBUS_REMOTE=1
+export SDL_VIDEODRIVER=wayland
+
+# neovim
+export PYTHON_HOST_PROG=/usr/bin/python2
+export PYTHON3_HOST_PROG=/usr/bin/python3
+export NVIM_PYTHON_LOG_FILE=/tmp/nvim_python.log
+
+# zim
+: ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}
