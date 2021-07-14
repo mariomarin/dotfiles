@@ -28,7 +28,7 @@ function! myspacevim#before() abort
   "nnoremap <silent> [fzf-p]q     :<C-u>FzfPreviewQuickFixRpc<CR>
   "nnoremap <silent> [fzf-p]l     :<C-u>FzfPreviewLocationListRpc<CR>
 
-      let profile = SpaceVim#mapping#search#getprofile('rg')
+    let profile = SpaceVim#mapping#search#getprofile('rg')
     let default_opt = profile.default_opts + ['--no-ignore-vcs']
     call SpaceVim#mapping#search#profile({'rg' : {'default_opts' : default_opt}})
 
