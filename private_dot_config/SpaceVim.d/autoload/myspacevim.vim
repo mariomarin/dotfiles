@@ -12,7 +12,6 @@ function! myspacevim#before() abort
   let g:mapleader = ','
 
   " https://github.com/yuki-yano/fzf-preview.vim#vim-script-rpc-1
-
   "nnoremap <silent> [fzf-p]p     :<C-u>FzfPreviewFromResourcesRpc project_mru git<CR>
   "nnoremap <silent> [fzf-p]gs    :<C-u>FzfPreviewGitStatusRpc<CR>
   "nnoremap <silent> [fzf-p]b     :<C-u>FzfPreviewBuffersRpc<CR>
@@ -28,42 +27,41 @@ function! myspacevim#before() abort
   "nnoremap <silent> [fzf-p]q     :<C-u>FzfPreviewQuickFixRpc<CR>
   "nnoremap <silent> [fzf-p]l     :<C-u>FzfPreviewLocationListRpc<CR>
 
-    let profile = SpaceVim#mapping#search#getprofile('rg')
-    let default_opt = profile.default_opts + ['--no-ignore-vcs']
-    call SpaceVim#mapping#search#profile({'rg' : {'default_opts' : default_opt}})
+  let profile = SpaceVim#mapping#search#getprofile('rg')
+  let default_opt = profile.default_opts + ['--no-ignore-vcs']
+  call SpaceVim#mapping#search#profile({'rg' : {'default_opts' : default_opt}})
 
 
-    " fzf colorschemes
-    call SpaceVim#custom#SPC('nmap', [';'], ':CocList commands', 'coc-commands', 1)
-    " fzf.vim
-    " f
-    call SpaceVim#custom#SPC('nmap', ['f', 'a'], ':FzfPreviewGitActionsRpc', 'git-actions', 1)
-    call SpaceVim#custom#SPC('nmap', ['f', 'f'], ':FzfFiles', 'project-files', 1)
-    call SpaceVim#custom#SPC('nmap', ['f', 'g'], ':FzfPreviewGitFilesRpc', 'project-files', 1)
-    call SpaceVim#custom#SPC('nmap', ['f', 'l'], ':FzfPreviewLinesRpc', 'buffer-lines', 1)
-    call SpaceVim#custom#SPC('nmap', ['f', 'm'], ':FzfMessages', 'editor-logs', 1)
-    call SpaceVim#custom#SPC('nmap', ['p', 'b'], ':FzfBuffers', 'list-buffers', 1)
+  " fzf colorschemes
+  call SpaceVim#custom#SPC('nmap', [';'], ':CocList commands', 'coc-commands', 1)
+  " fzf.vim
+  call SpaceVim#custom#SPC('nmap', ['f', 'a'], ':FzfPreviewGitActionsRpc', 'git-actions', 1)
+  call SpaceVim#custom#SPC('nmap', ['f', 'f'], ':FzfFiles', 'project-files', 1)
+  call SpaceVim#custom#SPC('nmap', ['f', 'g'], ':FzfPreviewGitFilesRpc', 'project-files', 1)
+  call SpaceVim#custom#SPC('nmap', ['f', 'l'], ':FzfPreviewLinesRpc', 'buffer-lines', 1)
+  call SpaceVim#custom#SPC('nmap', ['f', 'm'], ':FzfMessages', 'editor-logs', 1)
+  call SpaceVim#custom#SPC('nmap', ['p', 'b'], ':FzfBuffers', 'list-buffers', 1)
 
-    " coc diagnostics
-    call SpaceVim#custom#SPC('nmap', ['e', 'l'], ':CocDiagnostics', 'list-errors', 1)
-    call SpaceVim#custom#SPC('nmap', ['e', 'n'], '<Plug>(coc-diagnostic-next)', 'next-error', 0)
-    call SpaceVim#custom#SPC('nmap', ['e', 'p'], '<Plug>(coc-diagnostic-prev)', 'prev-error', 0)
+  " coc diagnostics
+  call SpaceVim#custom#SPC('nmap', ['e', 'l'], ':CocDiagnostics', 'list-errors', 1)
+  call SpaceVim#custom#SPC('nmap', ['e', 'n'], '<Plug>(coc-diagnostic-next)', 'next-error', 0)
+  call SpaceVim#custom#SPC('nmap', ['e', 'p'], '<Plug>(coc-diagnostic-prev)', 'prev-error', 0)
 
-    " coc key bindings
-    call SpaceVim#custom#SPC('nmap', ['m', 'r'], '<Plug>(coc-rename)', 'coc-rename', 0)
-    call SpaceVim#custom#SPC('nmap', ['m', 'a'], '<Plug>(coc-codeaction-selected)', 'coc-action', 0)
-    call SpaceVim#custom#SPC('xmap', ['m', 'a'], '<Plug>(coc-codeaction-selected)', 'coc-action', 0)
-    call SpaceVim#custom#SPC('nmap', ['m', 'c'], '<Plug>(code-codeaction)', 'coc-actions', 0)
-    call SpaceVim#custom#SPC('nmap', ['m', 'f'], '<Plug>(code-fix-current)', 'coc-fix-current', 0)
+  " coc key bindings
+  call SpaceVim#custom#SPC('nmap', ['m', 'r'], '<Plug>(coc-rename)', 'coc-rename', 0)
+  call SpaceVim#custom#SPC('nmap', ['m', 'a'], '<Plug>(coc-codeaction-selected)', 'coc-action', 0)
+  call SpaceVim#custom#SPC('xmap', ['m', 'a'], '<Plug>(coc-codeaction-selected)', 'coc-action', 0)
+  call SpaceVim#custom#SPC('nmap', ['m', 'c'], '<Plug>(code-codeaction)', 'coc-actions', 0)
+  call SpaceVim#custom#SPC('nmap', ['m', 'f'], '<Plug>(code-fix-current)', 'coc-fix-current', 0)
 
-    " spacevim keybindings for config
-    call SpaceVim#custom#SPCGroupName('u', '+Spacevim/Terms')
-    call SpaceVim#custom#SPC('nnoremap', ['u', 'd'], ':call coc#util#install()', 'call-coc-util-install', 1)
-    call SpaceVim#custom#SPC('nnoremap', ['u', 'u'], ':SPUpdate', 'update-spacevim', 1)
-    call SpaceVim#custom#SPC('nnoremap', ['u', 'e'], ':e ~/.config/SpaceVim.d/autoload/myspacevim.vim', 'edit-spacevim-config', 1)
-    call SpaceVim#custom#SPC('nnoremap', ['u', 'i'], ':SPConfig -l', 'edit-init.toml', 1)
-    call SpaceVim#custom#SPC('nnoremap', ['u', 'r'], ':source ~/.config/SpaceVim.d/init.toml', 'source', 1)
-    call SpaceVim#custom#SPC('nnoremap', ['u', 'l'], ':SPRuntimeLog ', 'log', 1)
+  " spacevim keybindings for config
+  call SpaceVim#custom#SPCGroupName('u', '+Spacevim/Terms')
+  call SpaceVim#custom#SPC('nnoremap', ['u', 'd'], ':call coc#util#install()', 'call-coc-util-install', 1)
+  call SpaceVim#custom#SPC('nnoremap', ['u', 'u'], ':SPUpdate', 'update-spacevim', 1)
+  call SpaceVim#custom#SPC('nnoremap', ['u', 'e'], ':e ~/.config/SpaceVim.d/autoload/myspacevim.vim', 'edit-spacevim-config', 1)
+  call SpaceVim#custom#SPC('nnoremap', ['u', 'i'], ':SPConfig -l', 'edit-init.toml', 1)
+  call SpaceVim#custom#SPC('nnoremap', ['u', 'r'], ':source ~/.config/SpaceVim.d/init.toml', 'source', 1)
+  call SpaceVim#custom#SPC('nnoremap', ['u', 'l'], ':SPRuntimeLog ', 'log', 1)
 
   " FZF
   " This is the default extra key bindings
@@ -91,7 +89,6 @@ function! myspacevim#before() abort
   let $FZF_DEFAULT_OPTS = '--layout=reverse --info=inline'
   let $FZF_DEFAULT_COMMAND="rg --files --hidden"
   
-  
   " Customize fzf colors to match your color scheme
   let g:fzf_colors =
   \ { 'fg':      ['fg', 'Normal'],
@@ -117,11 +114,11 @@ function! myspacevim#before() abort
 
   set statusline+=%{NearestMethodOrFunction()}
 
-  " By default vista.vim never run if you don't call it explicitly.
-  "
-  " If you want to show the nearest function in your statusline automatically,
-  " you can add the following line to your vimrc
+  " show the nearest function in your statusline automatically,
   autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+
+  " https://www.chezmoi.io/docs/how-to/#integrate-chezmoi-with-your-editor
+  autocmd BufWritePost ~/.local/share/chezmoi/* ! chezmoi apply --source-path %
 endfunction
 
 function! myspacevim#after() abort
