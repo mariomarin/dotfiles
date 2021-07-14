@@ -1,8 +1,11 @@
 dot_git
 *.zwc*
+*.old
 adsf/plugins
 adsf/shims
 adsf/installs
 adsf/docs
 tmux/plugins
 !tmux/plugins/tpm
+private_dot_config/zim/modules
+!zim/modules/kube-gitster

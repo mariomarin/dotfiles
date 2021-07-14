@@ -1,5 +1,6 @@
 .git
 *.zwc*
+*.old*
 adsf/plugins
 adsf/shims
 adsf/installs
@@ -8,3 +9,5 @@ adsf/docs
 tmux/plugins
 tmux/plugins/tpm/tests
 !tmux/plugins/tpm
+zim/modules
+!zim/modules/kube-gitster

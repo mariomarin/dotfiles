@@ -61,7 +61,7 @@ export ANSIBLE_CONFIG=ansible-mitogen.cfg
 export SPACEVIMDIR="$HOME/.config/SpaceVim.d/"
 
 # Zim
-export ZIM_HOME="$HOME/.zim"
+export ZIM_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/zim"
 
 # asdf version manager
 export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
