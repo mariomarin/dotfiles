@@ -1,10 +1,8 @@
+dot_git
+*.zwc*
 adsf/plugins
 adsf/shims
 adsf/installs
-adsf/test
 adsf/docs
-docs
-dot_git
-*.zwc*
 tmux/plugins
 !tmux/plugins/tpm
