@@ -42,6 +42,8 @@
   floaterm_wintitle=0
   floaterm_autoclose=1
 
+  lint_engine = 'ale'
+
 [[layers]]
   name = 'autocomplete'
   auto-completion-return-key-behavior = "complete"
@@ -132,7 +134,7 @@
 
 [layers.override_cmd]
     terraform = ["terraform-ls", "serve"]
-#    yaml = ["yaml-language-server"]
+    yaml = ["yaml-language-server"]
     javascript = ["typescript-language-server", "--stdio"]
 
 [[layers]]
