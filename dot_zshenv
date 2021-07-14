@@ -79,5 +79,12 @@ export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
 export ASDF_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/asdf"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"
 
+# Emacs Doom
+export DOOMDIR="${XDG_CONFIG_HOME:-$HOME/.config}/doom"
+
+# Neovim
+export PYTHON_HOST_PROG='/usr/bin/python2'
+export PYTHON3_HOST_PROG='/usr/bin/python'
+
 # zim
 : ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}
