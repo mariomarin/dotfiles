@@ -9,3 +9,5 @@ tmux/plugins
 !tmux/plugins/tpm
 private_dot_config/zim/modules
 !zim/modules/kube-gitster
+private_init.zsh
+private_login_init.zsh

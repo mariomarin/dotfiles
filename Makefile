@@ -24,9 +24,7 @@ sync-doom:
 	"${DOOMDIR}/bin/doom" sync
 
 sync-zimfw:
-	source "${ZIM_HOME}/zimfw.zsh install"
-	chezmoi add "${ZIM_HOME}/init.zsh"
-	chezmoi add "${ZIM_HOME}/login_init.zsh"
+	zsh "${ZIM_HOME}/zimfw.zsh" install
 
 diff:
 	chezmoi source pull -- --rebase && chezmoi diff
