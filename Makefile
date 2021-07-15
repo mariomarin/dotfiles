@@ -36,7 +36,6 @@ update: update-asdf-vm update-zimfw update-spacevim update-tpm update-dein updat
 
 update-doom:
 	curl -s -L -o /tmp/doom.tar.gz https://github.com/hlissner/doom-emacs/archive/$(DOOM_VER).tar.gz
-	#	tar --gzip --extract --directory ${HOME}/.config/emacs --strip-components 1 --verbose --file=/tmp/doom.tar.gz
 	chezmoi import --strip-components 1 --destination ${HOME}/.config/emacs /tmp/doom.tar.gz
 	rm /tmp/doom.tar.gz
 
