@@ -58,8 +58,8 @@ update-spacevim:
 	rm /tmp/SpaceVim.tar.gz
 
 update-zimfw:
-	curl -s -L https://github.com/zimfw/zimfw/releases/download/v$(ZIM_VER)/zimfw.zsh.gz | gunzip -c > ${HOME}/.zim/zimfw.zsh
-	chezmoi add ${HOME}/.zim/zimfw.zsh
+	curl -s -L https://github.com/zimfw/zimfw/releases/download/v$(ZIM_VER)/zimfw.zsh.gz | gunzip -c > ${ZIM_HOME}/zimfw.zsh
+	chezmoi add ${ZIM_HOME}/zimfw.zsh
 
 update-tpm:
 	curl -s -L -o /tmp/tpm.tar.gz https://github.com/asdf-vm/asdf/archive/$(TPM_VER).tar.gz
