@@ -18,8 +18,7 @@
   buffer_index_type = 4
   enable_tabline_filetype_icon = true
   enable_statusline_mode = false
-  spacevim_autocomplete_method = "coc"
-  autocomplete_method = "coc"
+  autocomplete_method = "deoplete"
 
   # change things before SpaceVim takes over
   bootstrap_before = "myspacevim#before"
