@@ -202,3 +202,18 @@
 [[custom_plugins]]
   name = "will133/vim-dirdiff"
   merged = false
+
+# syntax hl for puml
+[[custom_plugins]]
+   name = "aklt/plantuml-syntax"
+  merged = false
+
+# hooks for opeing browser
+[[custom_plugins]]
+  name = "tyru/open-browser.vim"
+  merged = false
+
+# previewer
+[[custom_plugins]]
+  name = "weirongxu/plantuml-previewer.vim"
+  merged = false

@@ -17,6 +17,10 @@ alias approve="gh pr review --approve"
 
 # chezmoi
 alias ce="chezmoi edit"
+
+# kubernetes
+alias k='kubectl'
+
 # }}} End aliases
 
 # Temporary Files
@@ -30,6 +34,7 @@ if [[ ! -d "$TMPPREFIX" ]]; then
   mkdir -p "$TMPPREFIX"
 fi
 
+# node
 npm config set prefix "$NPM_CONFIG_PREFIX"
 
 # ssh-agent
@@ -129,7 +134,6 @@ if [[ -f /opt/google-cloud-sdk/completion.zsh.inc ]]; then
 fi
 
 # kubernetes
-alias k='kubectl' # quick opening files with xdg-open
 source <(kubectl completion zsh)
 complete -F __start_kubectl k
 
