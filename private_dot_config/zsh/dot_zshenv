@@ -34,7 +34,7 @@ export PATH
 
 # APPS
 export EDITOR=vim
-export TERM=xterm-256color
+export TERM=screen-256color
 
 # Editors
 export VISUAL=vim
@@ -69,13 +69,14 @@ export ASDF_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/asdf"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"
 
 # Wayland
-export MOZ_ENABLE_WAYLAND=1
-export MOZ_DBUS_REMOTE=1
-export SDL_VIDEODRIVER=wayland
+#export MOZ_ENABLE_WAYLAND=1
+#export MOZ_DBUS_REMOTE=1
+#export SDL_VIDEODRIVER=wayland
+#export XDG_SESSION_TYPE=wayland
 
 # neovim
-export PYTHON_HOST_PROG=/usr/bin/python2
-export PYTHON3_HOST_PROG=/usr/bin/python3
+export PYTHON_HOST_PROG=/usr/bin/python2.7
+export PYTHON3_HOST_PROG=/usr/bin/python3.9
 export NVIM_PYTHON_LOG_FILE=/tmp/nvim_python.log
 
 # zim
