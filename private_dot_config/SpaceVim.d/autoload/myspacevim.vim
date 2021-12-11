@@ -119,6 +119,9 @@ function! myspacevim#before() abort
 
   " https://www.chezmoi.io/docs/how-to/#integrate-chezmoi-with-your-editor
   autocmd BufWritePost ~/.local/share/chezmoi/* ! chezmoi apply --source-path %
+
+  " Neoformat settings
+  let g:neoformat_enabled_yaml = [ 'prettier' ]
 endfunction
 
 function! myspacevim#after() abort
