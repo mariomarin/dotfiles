@@ -20,6 +20,11 @@ HOMEBIN=$HOME/bin
 # php composer
 COMPOSERBIN=$HOME/.config/composer/vendor/bin
 
+# ruby
+# https://wiki.archlinux.org/title/Ruby#Setup
+# export GEM_HOME="$(ruby -e 'puts Gem.user_dir')"
+GEM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/gem/ruby/3.0.0"
+
 # Krew - kubectl plugin manager
 export KREW_ROOT="${XDG_DATA_HOME:-$HOME/.local/share}/krew"
 # kubectl plugins configuration
