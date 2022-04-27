@@ -28,13 +28,22 @@ GEM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/gem/ruby/3.0.0"
 # Krew - kubectl plugin manager
 export KREW_ROOT="${XDG_DATA_HOME:-$HOME/.local/share}/krew"
 # kubectl plugins configuration
-export KUBE_FUZZY_PREVIEW_ENABLED=true 
+export KUBE_FUZZY_PREVIEW_ENABLED=true
 
 # PATH
 typeset -U PATH path
-path=("$GOPATH/bin" "$NPM_CONFIG_PREFIX/bin" "$HOMEBIN" "$LOCALBIN" \
-  "$COMPOSERBIN" "$CARGOBIN" "$SNAPBIN" "/usr/bin/core_perl/" \
-  "$KREW_ROOT/bin" "/usr/local/sbin" "/usr/bin" "$path[@]")
+path=(
+  "$CARGOBIN" \
+  "$COMPOSERBIN" \
+  "$GOPATH/bin" \
+  "$HOMEBIN" \
+  "$KREW_ROOT/bin" \
+  "$LOCALBIN" \
+  "$NPM_CONFIG_PREFIX/bin" \
+  "/usr/bin" \
+  "/usr/bin/core_perl/" \
+  "/usr/local/sbin" \
+  "$path[@]")
 export PATH
 
 # APPS
