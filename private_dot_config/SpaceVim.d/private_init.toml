@@ -170,10 +170,6 @@
   merged = false
 
 [[custom_plugins]]
-  name = "neoclide/coc-neco"
-  merged = false
-
-[[custom_plugins]]
   name = "yuki-yano/fzf-preview.vim"
   rev = "release/rpc"
   merged = false
