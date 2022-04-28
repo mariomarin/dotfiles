@@ -203,11 +203,6 @@
    name = "aklt/plantuml-syntax"
   merged = false
 
-# hooks for opeing browser
-[[custom_plugins]]
-  name = "tyru/open-browser.vim"
-  merged = false
-
 # previewer
 [[custom_plugins]]
   name = "weirongxu/plantuml-previewer.vim"
