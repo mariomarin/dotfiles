@@ -5,12 +5,11 @@ ASDF_VER ?= 0.8.1
 DOOM_VER ?= develop
 SPACEVIM_VER ?= 1.9.0
 ZIM_VER ?= 1.4.3
-DEIN_VER ?= 2.1
 # use the HEAD revision since the last tag was on 2015-08-03
-TPM_VER ?= master
+TMUX_TPM_VER ?= master
 
 all: init sync sync-tpm sync-doom sync-zimfw diff install \
-	update update-doom update-asdf-vm update-dein update-zimfw update-tpm
+	update update-doom update-asdf-vm update-zimfw update-tpm
 
 init:
 	chezmoi init "${CHEZMOI_REPO:-git@github.com:mariomarin/dotfiles.git}" --apply
@@ -32,7 +31,7 @@ diff:
 install: update-all
 	curl -sfL https://git.io/chezmoi | sh
 
-update: update-asdf-vm update-zimfw update-spacevim update-tpm update-dein update-doom
+update: update-asdf-vm update-zimfw update-spacevim update-tpm update-doom
 
 update-doom:
 	curl -s -L -o /tmp/doom.tar.gz https://github.com/hlissner/doom-emacs/archive/$(DOOM_VER).tar.gz
@@ -43,11 +42,6 @@ update-asdf-vm:
 	curl -s -L -o /tmp/asdf.tar.gz https://github.com/asdf-vm/asdf/archive/v$(ASDF_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${HOME}/.local/share/asdf /tmp/asdf.tar.gz
 	rm /tmp/asdf.tar.gz
-
-update-dein:
-	curl -s -L -o /tmp/dein.tar.gz https://github.com/Shougo/dein.vim/archive/refs/tags/$(DEIN_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${HOME}/.cache/vimfiles/repos/github.com/Shougo/dein.vim /tmp/dein.tar.gz
-	rm /tmp/dein.tar.gz
 
 update-spacevim:
 	curl -s -L -o /tmp/SpaceVim.tar.gz https://github.com/SpaceVim/SPaceVim/archive/v$(SPACEVIM_VER).tar.gz
