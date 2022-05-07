@@ -53,7 +53,7 @@ update-zimfw:
 	chezmoi add ${ZIM_HOME}/zimfw.zsh
 
 update-tpm:
-	curl -s -L -o /tmp/tpm.tar.gz https://github.com/asdf-vm/asdf/archive/$(TPM_VER).tar.gz
+	curl -s -L -o /tmp/tpm.tar.gz https://github.com/tmux-plugins/tpm/archive/$(TMUX_TPM_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${HOME}/.tmux/plugins/tpm /tmp/tpm.tar.gz
 	rm /tmp/tpm.tar.gz
 
