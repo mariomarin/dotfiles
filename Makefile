@@ -27,7 +27,7 @@ sync-zimfw:
 	zsh "${ZIM_HOME}/zimfw.zsh" install
 
 diff:
-	chezmoi source pull -- --rebase && chezmoi diff
+	chezmoi git pull -- --rebase && chezmoi diff
 
 install: update-all
 	curl -sfL https://git.io/chezmoi | sh
