@@ -26,6 +26,9 @@ sync-doom:
 sync-zimfw:
 	zsh "${ZIM_HOME}/zimfw.zsh" install
 
+apply:
+	chezmoi apply -v
+
 diff:
 	chezmoi git pull -- --rebase && chezmoi diff
 
