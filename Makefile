@@ -3,7 +3,7 @@ all: install diff sync upgrade
 # Versions
 ASDF_VER ?= 0.8.1
 DOOM_VER ?= develop
-SPACEVIM_VER ?= 1.9.0
+SPACEVIM_VER ?= 2.0.0
 ZIM_VER ?= 1.4.3
 # use the HEAD revision since the last tag was on 2015-08-03
 TMUX_TPM_VER ?= master
