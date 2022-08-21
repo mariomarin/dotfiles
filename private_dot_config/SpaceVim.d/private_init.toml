@@ -18,7 +18,6 @@
   buffer_index_type = 4
   enable_tabline_filetype_icon = true
   enable_statusline_mode = false
-  autocomplete_method = "deoplete"
 
   # change things before SpaceVim takes over
   bootstrap_before = "myspacevim#before"
@@ -82,7 +81,7 @@
 
 [[layers]]
   name = "format"
-  format_on_save = true
+  format_on_save = false
 
 [[layers]]
   name = "fzf"
@@ -107,34 +106,44 @@
   name = "lang#javascript"
 
 [[layers]]
-  name = "lang#typescript"
+  name = "lang#python"
 
 [[layers]]
-  name = "lang#python"
+  name = "lang#rust"
 
 [[layers]]
   name = "lang#toml"
 
 [[layers]]
-  name = "lang#sh"
+  name = "lang#typescript"
 
 [[layers]]
   name = "lang#vim"
 
 [[layers]]
   name = "lsp"
-  filetypes = [
-    "go",
-    "python",
-    "javascript",
-    "terraform",
-    "yaml"
+
+  enabled_clients = [
+    'gopls',
+    'intelephense',
+    'rust_analyzer',
+    'tsserver'
   ]
 
-[layers.override_cmd]
-    terraform = ["terraform-ls", "serve"]
-    yaml = ["yaml-language-server"]
-    javascript = ["typescript-language-server", "--stdio"]
+  filetypes = [
+    "javascript",
+    "go",
+    "python",
+    "rust",
+    "yaml",
+  ]
+
+  [layers.override_client_cmds]
+    gopls = ["gopls", "serve"]
+    rust_analyzer = ["rust-analyzer"]
+#    terraform = ["terraform-ls", "serve"]
+    tsserver = ['typescript-language-server', '--stdio']
+#    yaml = ["yaml-language-server"]
 
 [[layers]]
   name = "sudo"
@@ -200,7 +209,7 @@
 
 # syntax hl for puml
 [[custom_plugins]]
-   name = "aklt/plantuml-syntax"
+  name = "aklt/plantuml-syntax"
   merged = false
 
 # previewer

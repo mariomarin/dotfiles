@@ -84,7 +84,16 @@ function! myspacevim#before() abort
   
   let g:fzf_tags_vcommand = 'ctags -R'
   " Border color
-  let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffset':0.5,'xoffset': 0.5, 'highlight': 'Todo', 'border': 'sharp' } }
+  let g:fzf_layout = {
+        \  'up':'~90%',
+        \  'window': {
+        \    'width': 0.8,
+        \    'height': 0.8,
+        \    'yoffset':0.5,
+        \    'xoffset': 0.5,
+        \    'highlight': 'Todo',
+        \    'border': 'sharp'
+        \  } }
   
   let $FZF_DEFAULT_OPTS = '--layout=reverse --info=inline'
   let $FZF_DEFAULT_COMMAND="rg --files --hidden"
@@ -122,6 +131,28 @@ function! myspacevim#before() abort
 
   " Neoformat settings
   let g:neoformat_enabled_yaml = [ 'prettier' ]
+
+  " Detect Cargo tasks
+  function! s:cargo_task() abort
+      if filereadable('Cargo.toml')
+          let commands = ['build', 'run', 'test']
+          let conf = {}
+          for cmd in commands
+              call extend(conf, {
+                          \ cmd : {
+                          \ 'command': 'cargo',
+                          \ 'args' : [cmd],
+                          \ 'isDetected' : 1,
+                          \ 'detectedName' : 'cargo:'
+                          \ }
+                          \ })
+          endfor
+          return conf
+      else
+          return {}
+      endif
+  endfunction
+  call SpaceVim#plugins#tasks#reg_provider(funcref('s:cargo_task'))
 endfunction
 
 function! myspacevim#after() abort
