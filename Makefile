@@ -8,6 +8,9 @@ ZIM_VER ?= 1.4.3
 # use the HEAD revision since the last tag was on 2015-08-03
 TMUX_TPM_VER ?= master
 
+# Repositories
+XMONAD_CFG_REPO := gitlab.com/dwt1/dotfiles
+
 all: init diff install sync sync-tpm sync-doom sync-zimfw \
 	update update-doom update-asdf-vm update-zimfw update-tpm
 
@@ -60,5 +63,13 @@ update-tpm:
 	curl -s -L -o /tmp/tpm.tar.gz https://github.com/tmux-plugins/tpm/archive/$(TMUX_TPM_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/tmux/plugins/tpm /tmp/tpm.tar.gz
 	rm /tmp/tpm.tar.gz
+
+update-xmonad-config:
+	go-getter -progress ${XMONAD_CFG_REPO}//.config/xmobar ${XDG_CONFIG_HOME}/xmobar
+	chezmoi add ${XDG_CONFIG_HOME}/xmobar
+	go-getter -progress ${XMONAD_CFG_REPO}//.config/xmonad ${XDG_CONFIG_HOME}/xmonad
+	chezmoi add ${XDG_CONFIG_HOME}/xmonad
+	go-getter -progress ${XMONAD_CFG_REPO}//.local/bin ${HOME}/.local/bin
+	chezmoi add ${HOME}/.local/bin
 
 .PHONY: all $(MAKECMDGOALS)
