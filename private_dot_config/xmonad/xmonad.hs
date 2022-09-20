@@ -7,7 +7,7 @@ import qualified XMonad.StackSet as W
 
     -- Actions
 import XMonad.Actions.CopyWindow (kill1)
-import XMonad.Actions.CycleWS (Direction1D(..), moveTo, shiftTo, WSType(..), nextScreen, prevScreen)
+import XMonad.Actions.CycleWS (Direction1D(..), moveTo, shiftTo, WSType(..), nextScreen, prevScreen, shiftNextScreen, shiftPrevScreen, nextWS, prevWS, shiftToNext, shiftToPrev, toggleWS)
 import XMonad.Actions.GridSelect
 import XMonad.Actions.MouseResize
 import XMonad.Actions.Promote
@@ -81,7 +81,7 @@ import XMonad.Util.SpawnOnce
       -- SolarizedDark
       -- SolarizedLight
       -- TomorrowNight
-import Colors.DoomOne
+import Colors.Nord
 
 myFont :: String
 myFont = "xft:SauceCodePro Nerd Font Mono:regular:size=9:antialias=true:hinting=true"
@@ -566,12 +566,21 @@ myKeys c =
   , ("M-M1-h", addName "Launch htop"           $ spawn (myTerminal ++ " -e htop"))]
 
   ^++^ subKeys "Monitors"
-  [ ("M-.", addName "Switch focus to next monitor" $ nextScreen)
-  , ("M-,", addName "Switch focus to prev monitor" $ prevScreen)]
+  [ ("M-.", addName "Switch focus to next monitor"        $ nextScreen)
+  , ("M-,", addName "Switch focus to prev monitor"        $ prevScreen)
+  , ("M-S-<Right>", addName "Send window to next monitor" $ shiftNextScreen)
+  , ("M-S-<Left>", addName "end window to prev monitor"   $ shiftPrevScreen)]
+
+  ^++^ subKeys "Switch and Toggle Workspaces"
+  [ ("M-<Down>", addName "Switch focus to next workspace"    $ nextWS)
+  , ("M-<Up>", addName "Switch focus to previous workspace"  $ prevWS)
+  , ("M-S-<Down>", addName "Send window to next workspace"   $ shiftToNext)
+  , ("M-S-<Up>", addName "Send window to previous workspace" $ shiftToPrev)
+  , ("M-<Tab>", addName "Toggle workspace"                   $ toggleWS)]
 
   -- Switch layouts
   ^++^ subKeys "Switch layouts"
-  [ ("M-<Tab>", addName "Switch to next layout"   $ sendMessage NextLayout)
+  [ ("M-z", addName "Switch to next layout"       $ sendMessage NextLayout)
   , ("M-<Space>", addName "Toggle noborders/full" $ sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)]
 
   -- Window resizing
