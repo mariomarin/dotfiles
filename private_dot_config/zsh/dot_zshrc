@@ -43,14 +43,6 @@ eval $(keychain --eval --quiet)
 # zoxide (fasd replacement)
 eval "$(zoxide init zsh)"
 
-# fuzzy finder
-source /usr/share/fzf/key-bindings.zsh
-source /usr/share/fzf/completion.zsh
-
-# gpg
-export GPG_TTY=$(tty)
-gpg-connect-agent updatestartuptty /bye >/dev/null
-
 # asdf
 . $ASDF_DATA_DIR/asdf.sh
 
@@ -105,6 +97,7 @@ bindkey '^[[B' history-substring-search-down
 
 # Bind up and down keys
 zmodload -F zsh/terminfo +p:terminfo
+
 if [[ -n ${terminfo[kcuu1]} && -n ${terminfo[kcud1]} ]]; then
   bindkey ${terminfo[kcuu1]} history-substring-search-up
   bindkey ${terminfo[kcud1]} history-substring-search-down
@@ -135,7 +128,6 @@ fi
 
 # kubernetes
 source <(kubectl completion zsh)
-complete -F __start_kubectl k
 
 # KUBE_PS1 prompt
 KUBE_PS1_SEPARATOR=''

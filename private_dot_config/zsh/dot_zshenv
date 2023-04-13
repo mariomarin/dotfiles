@@ -30,11 +30,15 @@ export KREW_ROOT="${XDG_DATA_HOME:-$HOME/.local/share}/krew"
 # kubectl plugins configuration
 export KUBE_FUZZY_PREVIEW_ENABLED=true
 
+# fly
+export FLYCTL_INSTALL="$HOME/.fly"
+
 # PATH
 typeset -U PATH path
 path=(
   "$CARGOBIN" \
   "$COMPOSERBIN" \
+  "$FLYCTL_INSTALL/bin:$PATH" \
   "$GOPATH/bin" \
   "$HOMEBIN" \
   "$KREW_ROOT/bin" \
