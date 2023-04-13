@@ -120,6 +120,7 @@ bindkey -M vicmd "??" history-beginning-search-forward
 bindkey '^y' autosuggest-accept
 bindkey '^n' history-substring-search-up
 bindkey '^p' history-substring-search-down
+bindkey "''${key[Up]}" up-line-or-search
 
 # GCP CLI autocompletion
 if [[ -f /opt/google-cloud-sdk/completion.zsh.inc ]]; then

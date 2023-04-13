@@ -51,11 +51,11 @@ path=(
 export PATH
 
 # APPS
-export EDITOR=vim
+export EDITOR=nvim
 export TERM=screen-256color
 
 # Editors
-export VISUAL=vim
+export VISUAL=nvim
 export PAGER=less
 
 # Language
