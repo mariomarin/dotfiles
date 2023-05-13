@@ -201,7 +201,7 @@
   merged = false
 
 [[custom_plugins]]
-  name = "jceb/vim-orgmode"
+  name = "nvim-orgmode/orgmode"
   merged = false
 
 [[custom_plugins]]
