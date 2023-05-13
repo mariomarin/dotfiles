@@ -116,6 +116,7 @@
 
 [[layers]]
   name = "lang#typescript"
+  typescript_server_path = "/nix/store/4yzj5v1r3fkix9a6gc5jb49fhzyrmznk-typescript-4.8.4/lib/node_modules/typescript/bin/tsserver"
 
 [[layers]]
   name = "lang#vim"
@@ -123,34 +124,39 @@
 [[layers]]
   name = "lsp"
 
-  # https://github.com/SpaceVim/SpaceVim/blob/v2.0.0/autoload/SpaceVim/lsp.vim
+  # https://github.com/SpaceVim/SpaceVim/blob/v2.1.0/autoload/SpaceVim/lsp.vim
   # https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-  # https://github.com/SpaceVim/SpaceVim/blob/v2.0.0/bundle/nvim-lspconfig/doc/server_configurations.md
-  # https://github.com/SpaceVim/SpaceVim/tree/v2.0.0/bundle/nvim-lspconfig/lua/lspconfig/server_configurations
+  # https://github.com/SpaceVim/SpaceVim/blob/v2.1.0/bundle/nvim-lspconfig/doc/server_configurations.md
+  # https://github.com/SpaceVim/SpaceVim/tree/v2.1.0/bundle/nvim-lspconfig/lua/lspconfig/server_configurations
   enabled_clients = [
-    'gopls',
+#    'gopls',
     'pyright',
-    'rust_analyzer',
+#    'rust_analyzer',
     'terraformls',
     'tsserver',
     'yamlls'
   ]
 
-#  filetypes = [
-#    "go",
-#    "python",
-#    "rust",
-#    "javascript",
-#    "yaml",
-#  ]
+  filetypes = [
+    # "go",
+    # "rust",
+    # "javascript",
+    "typescript",
+  ]
 
   [layers.override_client_cmds]
-    gopls = ['gopls', 'serve']
-#    python = ['pyright-langserver', '--stdio']
-#    rust_analyzer = ['rust-analyzer']
-#    terraform = ["terraform-ls", "serve"]
-#    tsserver = ['typescript-language-server', '--stdio']
-#    yaml = ['yaml-language-server', '--stdio']
+#    gopls = ['gopls', 'serve']
+    pyright = ['pyright-langserver', '--stdio']
+#    rust_analyzer = ["rust-analyzer"]
+    terraformls = ["terraform-ls", "serve"]
+    tsserver = [
+      # https://github.com/NixOS/nixpkgs/issues/210051#issuecomment-1378040732
+      'typescript-language-server',
+      '--stdio',
+      '--tsserver-path',
+      '/nix/store/4yzj5v1r3fkix9a6gc5jb49fhzyrmznk-typescript-4.8.4/lib/node_modules/typescript/lib/'
+    ]
+    yamlls = ['yaml-language-server', '--stdio']
 
 [[layers]]
   name = "sudo"
