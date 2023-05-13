@@ -51,3 +51,11 @@ set -g @plugin 'laktak/extrakto'
 set -g @extrakto_popup_size '50%,60%'
 # Whether the tmux split will be a:auto, p:popup, v:vertical or h:horizontal
 set -g @extrakto_split_direction 'a'
+
+# don't exit from tmux when closing a session
+set -g detach-on-destroy off
+# skip "kill-pane 1? (y/n)" prompt
+bind-key x kill-pane 
+# customize your prompt.
+set -g @t-fzf-prompt '  '
+set -g @plugin 'joshmedeski/t-smart-tmux-session-manager'
