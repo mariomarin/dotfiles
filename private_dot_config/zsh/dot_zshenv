@@ -44,7 +44,7 @@ path=(
   "$KREW_ROOT/bin" \
   "$LOCALBIN" \
   "$NPM_CONFIG_PREFIX/bin" \
-  "$XDG_CONFIG_HOME/tmux/plugins/t-smart-tmux-session-manager/bin" \
+  "$XDG_DATA_HOME/tmux/plugins/t-smart-tmux-session-manager/bin" \
   "/usr/bin" \
   "/usr/bin/core_perl/" \
   "/usr/local/sbin" \
