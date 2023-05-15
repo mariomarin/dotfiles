@@ -209,6 +209,14 @@
   merged = false
 
 [[custom_plugins]]
+  name = "Lilja/vim-chezmoi"
+  merged = false
+
+[[custom_plugins]]
+  name = "alker0/chezmoi.vim"
+  merged = false
+
+[[custom_plugins]]
   name = "hashivim/vim-terraform"
   merged = false
 
