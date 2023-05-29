@@ -13,8 +13,8 @@ function! myspacevim#before() abort
   call SpaceVim#custom#SPC('nnoremap', ['u', 'r'], ':source ~/.config/SpaceVim.d/init.toml', 'source', 1)
   call SpaceVim#custom#SPC('nnoremap', ['u', 'l'], ':SPRuntimeLog ', 'log', 1)
 
-  " https://www.chezmoi.io/docs/how-to/#integrate-chezmoi-with-your-editor
-  autocmd BufWritePost ~/.local/share/chezmoi/* ! chezmoi apply --source-path %
+  " https://www.chezmoi.io/user-guide/tools/editor/#configure-vim-to-run-chezmoi-apply-whenever-you-save-a-dotfile
+  autocmd BufWritePost /tmp/*chezmoi-edit* ! chezmoi apply --force
 
   " Neoformat settings
   let g:neoformat_enabled_yaml = [ 'prettier' ]
