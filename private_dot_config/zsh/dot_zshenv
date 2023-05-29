@@ -87,11 +87,6 @@ export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
 export ASDF_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/asdf"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"
 
-# neovim
-export PYTHON_HOST_PROG=/usr/bin/python2
-export PYTHON3_HOST_PROG=/usr/bin/python3
-export NVIM_PYTHON_LOG_FILE=/tmp/nvim_python.log
-
 # podman rootless
 # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
 # Docker rootless
