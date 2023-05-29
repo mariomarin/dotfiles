@@ -207,8 +207,3 @@
 [[custom_plugins]]
   name = "hashivim/vim-terraform"
   merged = false
-
-[[custom_plugins]]
-  name = "will133/vim-dirdiff"
-  merged = false
-
