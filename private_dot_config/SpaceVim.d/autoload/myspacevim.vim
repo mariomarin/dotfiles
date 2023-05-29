@@ -13,16 +13,6 @@ function! myspacevim#before() abort
   call SpaceVim#custom#SPC('nnoremap', ['u', 'r'], ':source ~/.config/SpaceVim.d/init.toml', 'source', 1)
   call SpaceVim#custom#SPC('nnoremap', ['u', 'l'], ':SPRuntimeLog ', 'log', 1)
 
-  "'liuchengxu/vista.vim'
-  function! NearestMethodOrFunction() abort
-    return get(b:, 'vista_nearest_method_or_function', '')
-  endfunction
-
-  set statusline+=%{NearestMethodOrFunction()}
-
-  " show the nearest function in your statusline automatically,
-  autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
-
   " https://www.chezmoi.io/docs/how-to/#integrate-chezmoi-with-your-editor
   autocmd BufWritePost ~/.local/share/chezmoi/* ! chezmoi apply --source-path %
 
