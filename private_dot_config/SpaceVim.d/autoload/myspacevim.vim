@@ -43,7 +43,10 @@ function! myspacevim#before() abort
 endfunction
 
 function! myspacevim#after() abort
-  iunmap jk
+
+  " sessions directory
+  let g:startify_session_dir = $HOME .  '/.data/' . ( has('nvim') ? 'nvim' : 'vim' ) . '/session'
+
   " org-mode plugin configuration
   lua << EOF
   -- Load custom treesitter grammar for org filetype
@@ -67,4 +70,5 @@ function! myspacevim#after() abort
     org_default_notes_file = '~/org/tasks.org',
   })
 EOF
+
 endfunction
