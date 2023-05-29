@@ -11,12 +11,15 @@ set -g @plugin 'arcticicestudio/nord-tmux'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 # for vim
 set -g @resurrect-strategy-vim 'session'
+set -g @resurrect-processes '"vim->vim +SLoad"'
 # for neovim
 set -g @resurrect-strategy-nvim 'session'
+set -g @resurrect-processes '"nvim->nvim +SLoad"'
+
 set -g @resurrect-capture-pane-contents 'on'
 
-set -g @plugin 'tmux-plugins/tmux-continuum'
 # Automatic restore
+set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @continuum-restore 'on'
 
 # copy/pasting tmux like vimium/vimperator 
