@@ -154,6 +154,10 @@
 [[layers]]
   name = "ui"
 
+[[layers]]
+  name = "tmux"
+  tmux_navigator_modifier = "alt"
+
 # ayu color scheme https://github.com/ayu-theme/ayu-vim
 [[custom_plugins]]
   repo = "ayu-theme/ayu-vim"
