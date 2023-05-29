@@ -109,6 +109,9 @@
   name = "lang#python"
 
 [[layers]]
+  name = "lang#plantuml"
+
+[[layers]]
   name = "lang#rust"
 
 [[layers]]
@@ -231,12 +234,3 @@
   name = "will133/vim-dirdiff"
   merged = false
 
-# syntax hl for puml
-[[custom_plugins]]
-  name = "aklt/plantuml-syntax"
-  merged = false
-
-# previewer
-[[custom_plugins]]
-  name = "weirongxu/plantuml-previewer.vim"
-  merged = false
