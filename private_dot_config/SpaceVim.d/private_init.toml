@@ -100,13 +100,6 @@
   name = "lang#toml"
 
 [[layers]]
-  name = "lang#typescript"
-  typescript_server_path = "/nix/store/4yzj5v1r3fkix9a6gc5jb49fhzyrmznk-typescript-4.8.4/lib/node_modules/typescript/bin/tsserver"
-
-[[layers]]
-  name = "lang#vim"
-
-[[layers]]
   name = "lsp"
 
   # https://github.com/SpaceVim/SpaceVim/blob/v2.1.0/autoload/SpaceVim/lsp.vim
