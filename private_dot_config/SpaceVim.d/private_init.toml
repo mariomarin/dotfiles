@@ -27,30 +27,12 @@
   startify_session_persistence = true
   startify_session_autoload = true
 
-  # floatterm
-  floaterm_keymap_toggle = 'F8'
-  floaterm_keymap_next = 'F9'
-  floaterm_keymap_prev = 'F10'
-  floaterm_keymap_new = 'F12'
-
-  floaterm_gitcommit='floaterm'
-  floaterm_autoinsert=1
-  floaterm_width=0.8
-  floaterm_height=0.8
-  floaterm_wintitle=0
-  floaterm_autoclose=1
-
   lint_engine = 'ale'
 
 [[layers]]
   name = 'autocomplete'
   auto-completion-return-key-behavior = "complete"
   auto-completion-tab-key-behavior = "smart"
-
-[[layers]]
-  name = 'shell'
-  default_position = 'float'
-  default_height = 40
 
 [[layers]]
   name = "VersionControl"
@@ -224,10 +206,6 @@
 
 [[custom_plugins]]
   name = "hashivim/vim-terraform"
-  merged = false
-
-[[custom_plugins]]
-  name = "voldikss/vim-floaterm"
   merged = false
 
 [[custom_plugins]]
