@@ -168,6 +168,9 @@
   name = "tools"
 
 [[layers]]
+  name = "treesitter"
+
+[[layers]]
   name = "ui"
 
 # ayu color scheme https://github.com/ayu-theme/ayu-vim
