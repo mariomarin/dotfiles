@@ -53,7 +53,7 @@ export PATH
 
 # APPS
 export EDITOR=nvim
-export TERM=screen-256color
+export TERM=alacritty
 
 # Editors
 export VISUAL=nvim

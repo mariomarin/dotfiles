@@ -9,7 +9,7 @@ set -g prefix C-a
 set-option -g default-command "$SHELL"
 
 # Enable true colours
-set-option -g -a terminal-overrides ",xterm-256color:Tc"
+set-option -g -a terminal-overrides ",alcritty:RGB"
 
 # Enable vi style key bindings in command mode.
 set-option -g mode-keys vi
