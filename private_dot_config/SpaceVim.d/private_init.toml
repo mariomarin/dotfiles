@@ -163,10 +163,6 @@
   merged = false
 
 [[custom_plugins]]
-  name = "spacewander/openresty-vim"
-  merged = false
-
-[[custom_plugins]]
   name = "benjie/local-npm-bin.vim"
   merged = false
 
@@ -175,26 +171,14 @@
   merged = false
 
 [[custom_plugins]]
-  name = "tpope/vim-obsession"
-  merged = false
-
-[[custom_plugins]]
-  name = "yuki-yano/fzf-preview.vim"
-  rev = "release/rpc"
-  merged = false
-
-[[custom_plugins]]
-  name = "sunaku/tmux-navigate"
-  merged = false
-
-[[custom_plugins]]
   name = "nvim-orgmode/orgmode"
+  # avoid hook_source https://github.com/nvim-orgmode/orgmode#installation
+  # Global mappings are not set because plugin is not initialized on startup
+  # setup. Besides, it has a startup time of somewhere between 1 and 3 ms, so
+  # there are not many benefits in lazy loading
   merged = false
 
-[[custom_plugins]]
-  name = "liuchengxu/vista.vim"
-  merged = false
-
+# Chezmoi
 [[custom_plugins]]
   name = "Lilja/vim-chezmoi"
   merged = false
@@ -205,4 +189,6 @@
 
 [[custom_plugins]]
   name = "hashivim/vim-terraform"
+  hook_source = "let g:terraform_fmt_on_save = 1"
   merged = false
+
