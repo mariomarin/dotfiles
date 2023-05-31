@@ -192,3 +192,31 @@
   hook_source = "let g:terraform_fmt_on_save = 1"
   merged = false
 
+# ChatGPT
+[[custom_plugins]]
+  name = "jackMort/ChatGPT.nvim"
+  hook_source = '''
+lua <<EOF
+require('chatgpt').setup({
+  openai_params = { model = 'gpt-4', },
+  popup_input = { submit = '<C-e>', },
+})
+EOF
+'''
+  merged = false
+
+[[custom_plugins]]
+  name = "nvim-tree/nvim-web-devicons"
+  merged = false
+
+[[custom_plugins]]
+  name =  "folke/trouble.nvim"
+  merged = false
+
+[[custom_plugins]]
+  name = "MunifTanjim/nui.nvim"
+  merged = false
+
+[[custom_plugins]]
+  name = "nvim-lua/plenary.nvim"
+  merged = false
