@@ -2,13 +2,14 @@ all: install diff sync upgrade
 
 # Versions
 ASDF_VER ?= v0.8.1
+DEIN_VER ?= 115a782
 DOOM_VER ?= develop
 # SPACEVIM_VER ?= v2.1.0
 SPACEVIM_VER ?= 1061082
 ZIM_VER ?= 1.11.3
 # use the HEAD revision since the last tag was on 2015-08-03
 TMUX_TPM_VER ?= master
-
+ 
 # Repositories
 XMONAD_CFG_REPO := gitlab.com/dwt1/dotfiles
 
@@ -39,7 +40,12 @@ diff:
 install: update-all
 	curl -sfL https://git.io/chezmoi | sh
 
-update: update-asdf-vm update-zimfw update-spacevim update-tpm update-doom
+update: update-asdf-vm update-zimfw update-dein update-spacevim update-tpm update-doom
+
+update-dein:
+	curl -s -L -o /tmp/dein.tar.gz https://github.com/Shougo/dein.vim/archive/$(DEIN_VER).tar.gz
+	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim/bundle/dein.vim /tmp/dein.tar.gz
+	rm /tmp/dein.tar.gz
 
 update-doom:
 	curl -s -L -o /tmp/doom.tar.gz https://github.com/hlissner/doom-emacs/archive/$(DOOM_VER).tar.gz

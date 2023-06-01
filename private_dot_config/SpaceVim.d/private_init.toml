@@ -198,13 +198,11 @@
 # ChatGPT
 [[custom_plugins]]
   name = "jackMort/ChatGPT.nvim"
-  hook_source = '''
-lua <<EOF
+lua_source = '''
 require('chatgpt').setup({
   openai_params = { model = 'gpt-4', },
   popup_input = { submit = '<C-e>', },
 })
-EOF
 '''
   merged = false
 
