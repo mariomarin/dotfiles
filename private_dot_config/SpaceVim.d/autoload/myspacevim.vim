@@ -3,14 +3,13 @@ function! myspacevim#before() abort
   call SpaceVim#logger#info("bootstrap_after called")     " log bootstrap_after call
 
   " allow jk to exit into normal mode in terminal buffer
-  tnoremap jk <Esc>
+  tnoremap kj <Esc>
 
   " spacevim keybindings for config
   call SpaceVim#custom#SPCGroupName('u', '+Spacevim/Terms')
   call SpaceVim#custom#SPC('nnoremap', ['u', 'u'], ':SPUpdate', 'update-spacevim', 1)
   call SpaceVim#custom#SPC('nnoremap', ['u', 'e'], ':e ~/.config/SpaceVim.d/autoload/myspacevim.vim', 'edit-spacevim-config', 1)
   call SpaceVim#custom#SPC('nnoremap', ['u', 'i'], ':SPConfig -l', 'edit-init.toml', 1)
-  call SpaceVim#custom#SPC('nnoremap', ['u', 'r'], ':source ~/.config/SpaceVim.d/init.toml', 'source', 1)
   call SpaceVim#custom#SPC('nnoremap', ['u', 'l'], ':SPRuntimeLog ', 'log', 1)
 
   " https://www.chezmoi.io/user-guide/tools/editor/#configure-vim-to-run-chezmoi-apply-whenever-you-save-a-dotfile
@@ -43,9 +42,6 @@ function! myspacevim#before() abort
 endfunction
 
 function! myspacevim#after() abort
-
-  " sessions directory
-  let g:startify_session_dir = $HOME .  '/.data/' . ( has('nvim') ? 'nvim' : 'vim' ) . '/session'
 
   " nvim-orgmode configuration
   lua require('init')

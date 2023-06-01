@@ -27,7 +27,10 @@
   startify_session_persistence = true
   startify_session_autoload = true
 
-  lint_engine = 'ale'
+  lint_engine = "ale"
+  snippet_engine = "ultisnips"
+  filemanager = "neo-tree"
+
 
 [[layers]]
   name = 'autocomplete'
@@ -206,17 +209,5 @@ EOF
   merged = false
 
 [[custom_plugins]]
-  name = "nvim-tree/nvim-web-devicons"
-  merged = false
-
-[[custom_plugins]]
   name =  "folke/trouble.nvim"
-  merged = false
-
-[[custom_plugins]]
-  name = "MunifTanjim/nui.nvim"
-  merged = false
-
-[[custom_plugins]]
-  name = "nvim-lua/plenary.nvim"
   merged = false

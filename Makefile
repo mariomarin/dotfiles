@@ -1,9 +1,10 @@
 all: install diff sync upgrade
 
 # Versions
-ASDF_VER ?= 0.8.1
+ASDF_VER ?= v0.8.1
 DOOM_VER ?= develop
-SPACEVIM_VER ?= 2.1.0
+# SPACEVIM_VER ?= v2.1.0
+SPACEVIM_VER ?= 1061082
 ZIM_VER ?= 1.11.3
 # use the HEAD revision since the last tag was on 2015-08-03
 TMUX_TPM_VER ?= master
@@ -46,12 +47,12 @@ update-doom:
 	rm /tmp/doom.tar.gz
 
 update-asdf-vm:
-	curl -s -L -o /tmp/asdf.tar.gz https://github.com/asdf-vm/asdf/archive/v$(ASDF_VER).tar.gz
+	curl -s -L -o /tmp/asdf.tar.gz https://github.com/asdf-vm/asdf/archive/$(ASDF_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/asdf /tmp/asdf.tar.gz
 	rm /tmp/asdf.tar.gz
 
 update-spacevim:
-	curl -s -L -o /tmp/SpaceVim.tar.gz https://github.com/SpaceVim/SPaceVim/archive/v$(SPACEVIM_VER).tar.gz
+	curl -s -L -o /tmp/SpaceVim.tar.gz https://github.com/SpaceVim/SPaceVim/archive/$(SPACEVIM_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim /tmp/SpaceVim.tar.gz
 	rm /tmp/SpaceVim.tar.gz
 
