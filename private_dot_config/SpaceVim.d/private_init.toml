@@ -31,6 +31,7 @@
   snippet_engine = "ultisnips"
   filemanager = "neo-tree"
 
+  autocomplete_method = "nvim-cmp"
 
 [[layers]]
   name = 'autocomplete'
