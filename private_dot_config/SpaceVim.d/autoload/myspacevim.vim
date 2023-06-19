@@ -5,6 +5,9 @@ function! myspacevim#before() abort
   " allow jk to exit into normal mode in terminal buffer
   tnoremap kj <Esc>
 
+  " \ is too far
+  let mapleader = ","
+
   " spacevim keybindings for config
   call SpaceVim#custom#SPCGroupName('u', '+Spacevim/Terms')
   call SpaceVim#custom#SPC('nnoremap', ['u', 'u'], ':SPUpdate', 'update-spacevim', 1)
