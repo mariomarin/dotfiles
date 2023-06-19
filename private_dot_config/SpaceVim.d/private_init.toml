@@ -64,6 +64,7 @@
 
 [[layers]]
   name = "edit"
+  autosave_events = ['InsertLeave', 'TextChanged']
 
 [[layers]]
   name = "format"
