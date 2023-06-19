@@ -2,6 +2,7 @@ all: install diff sync upgrade
 
 # Versions
 ASDF_VER ?= v0.8.1
+AQUA_VER ?= v2.8.0
 DEIN_VER ?= 115a782
 DOOM_VER ?= develop
 # SPACEVIM_VER ?= v2.1.0
@@ -39,8 +40,10 @@ diff:
 
 install: update-all
 	curl -sfL https://git.io/chezmoi | sh
+	curl -sSfL https://raw.githubusercontent.com/aquaproj/aqua-installer/v2.1.1/aqua-installer | bash -s -- -v $(AQUA_VER)
+	aqua i
 
-update: update-asdf-vm update-zimfw update-dein update-spacevim update-tpm update-doom
+update: update-zimfw update-dein update-spacevim update-tpm update-doom
 
 update-dein:
 	curl -s -L -o /tmp/dein.tar.gz https://github.com/Shougo/dein.vim/archive/$(DEIN_VER).tar.gz

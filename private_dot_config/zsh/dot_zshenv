@@ -40,6 +40,7 @@ path=(
   "$COMPOSERBIN" \
   "$FLYCTL_INSTALL/bin:$PATH" \
   "$GOPATH/bin" \
+  "$AQUA_ROOT_DIR/bin" \
   "$HOMEBIN" \
   "$KREW_ROOT/bin" \
   "$LOCALBIN" \
@@ -86,6 +87,9 @@ export ZIM_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/zim"
 export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
 export ASDF_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/asdf"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"
+
+# aqua version manager
+export AQUA_ROOT_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua"
 
 # podman rootless
 # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
