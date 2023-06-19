@@ -13,9 +13,10 @@ TMUX_TPM_VER ?= master
  
 # Repositories
 XMONAD_CFG_REPO := gitlab.com/dwt1/dotfiles
+POLYBAR_PULSE_MOD_REPO := github.com/marioortizmanero/polybar-pulseaudio-control
 
 all: init diff install sync sync-tpm sync-doom sync-zimfw \
-	update update-doom update-asdf-vm update-zimfw update-tpm
+	update update-doom update-asdf-vm update-zimfw update-tpm vendor-polybar-scripts
 
 init:
 	chezmoi init "${CHEZMOI_REPO:-git@github.com:mariomarin/dotfiles.git}" --apply
@@ -81,5 +82,11 @@ update-xmonad-config:
 	chezmoi add ${XDG_CONFIG_HOME}/xmonad
 	go-getter -progress ${XMONAD_CFG_REPO}//.local/bin ${HOME}/.local/bin
 	chezmoi add ${HOME}/.local/bin
+
+vendor-polybar-scripts:
+	rm -rf /tmp/pulseaudio-control
+	go-getter ${POLYBAR_PULSE_MOD_REPO} /tmp/pulseaudio-control
+	mv /tmp/pulseaudio-control/pulseaudio-control.bash ${HOME}/.local/bin/pulseaudio-control
+	chezmoi add ${HOME}/.local/bin/pulseaudio-control
 
 .PHONY: all $(MAKECMDGOALS)
