@@ -43,9 +43,6 @@ eval $(keychain --eval --quiet)
 # zoxide (fasd replacement)
 eval "$(zoxide init zsh)"
 
-# asdf
-. $ASDF_DATA_DIR/asdf.sh
-
 # direnv
 eval "$(direnv hook zsh)"
 

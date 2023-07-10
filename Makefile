@@ -1,7 +1,6 @@
 all: install diff sync upgrade
 
 # Versions
-ASDF_VER ?= v0.8.1
 AQUA_VER ?= v2.8.0
 DEIN_VER ?= 115a782
 DOOM_VER ?= develop
@@ -55,11 +54,6 @@ update-doom:
 	curl -s -L -o /tmp/doom.tar.gz https://github.com/hlissner/doom-emacs/archive/$(DOOM_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${XDG_CONFIG_HOME}/emacs /tmp/doom.tar.gz
 	rm /tmp/doom.tar.gz
-
-update-asdf-vm:
-	curl -s -L -o /tmp/asdf.tar.gz https://github.com/asdf-vm/asdf/archive/$(ASDF_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/asdf /tmp/asdf.tar.gz
-	rm /tmp/asdf.tar.gz
 
 update-spacevim:
 	curl -s -L -o /tmp/SpaceVim.tar.gz https://github.com/SpaceVim/SPaceVim/archive/$(SPACEVIM_VER).tar.gz
