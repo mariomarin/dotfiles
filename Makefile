@@ -5,7 +5,7 @@ AQUA_VER ?= v2.8.0
 DEIN_VER ?= 115a782
 DOOM_VER ?= develop
 # SPACEVIM_VER ?= v2.1.0
-SPACEVIM_VER ?= d3727ce
+SPACEVIM_VER ?= b3906e4
 ZIM_VER ?= 1.11.3
 # use the HEAD revision since the last tag was on 2015-08-03
 TMUX_TPM_VER ?= master
