@@ -138,8 +138,6 @@
       # https://github.com/NixOS/nixpkgs/issues/210051#issuecomment-1378040732
       'typescript-language-server',
       '--stdio',
-      '--tsserver-path',
-      '/nix/store/4yzj5v1r3fkix9a6gc5jb49fhzyrmznk-typescript-4.8.4/lib/node_modules/typescript/lib/'
     ]
     yamlls = ['yaml-language-server', '--stdio']
 
