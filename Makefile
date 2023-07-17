@@ -2,7 +2,7 @@ all: install diff sync upgrade
 
 # Versions
 AQUA_VER ?= v2.8.0
-DEIN_VER ?= 115a782
+DEIN_VER ?= 49c24cd
 DOOM_VER ?= develop
 # SPACEVIM_VER ?= v2.1.0
 SPACEVIM_VER ?= 3e96e13
