@@ -32,14 +32,12 @@
 
   autocomplete_method = "nvim-cmp"
   format_on_save = true
+  automatic_update = false
 
 [[layers]]
   name = 'autocomplete'
   auto-completion-return-key-behavior = "complete"
-  auto-completion-tab-key-behavior = "smart"
-
-[[layers]]
-  name = "VersionControl"
+  auto-completion-tab-key-behavior = "complete"
 
 [[layers]]
   name = "checkers"
@@ -68,6 +66,8 @@
 
 [[layers]]
   name = "format"
+  format_on_save = true
+  silent_format = true 
 
 [[layers]]
   name = "telescope"
@@ -96,6 +96,7 @@
 
 [[layers]]
   name = "lang#python"
+  format_on_save = true
 
 [[layers]]
   name = "lang#plantuml"
@@ -105,6 +106,7 @@
 
 [[layers]]
   name = "lang#toml"
+
 
 [[layers]]
   name = "lsp"
@@ -210,3 +212,19 @@ require('chatgpt').setup({
 [[custom_plugins]]
   name =  "folke/trouble.nvim"
   merged = false
+
+[[custom_plugins]]
+  name =  "github/copilot.vim"
+  merged = false
+
+[[custom_plugins]]
+  name = "zbirenbaum/copilot.lua",
+  on_cmd = "Copilot",
+  event = "InsertEnter",
+lua_source = '''
+require("copilot").setup({})
+'''
+  merged = false
+
+[[custom_plugins]]
+  name = "zbirenbaum/copilot-cmp"

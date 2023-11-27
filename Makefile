@@ -3,9 +3,11 @@ all: install diff sync upgrade
 # Versions
 AQUA_VER ?= v2.8.0
 DEIN_VER ?= 49c24cd
+NEOSNIPPET_VER ?= efb2a61
+NVIM_CMP_VER ?= 0b751f6
 DOOM_VER ?= develop
 # SPACEVIM_VER ?= v2.1.0
-SPACEVIM_VER ?= 3e96e13
+SPACEVIM_VER ?= 9169a2d
 ZIM_VER ?= 1.11.3
 # use the HEAD revision since the last tag was on 2015-08-03
 TMUX_TPM_VER ?= master
@@ -43,12 +45,23 @@ install: update-all
 	curl -sSfL https://raw.githubusercontent.com/aquaproj/aqua-installer/v2.1.1/aqua-installer | bash -s -- -v $(AQUA_VER)
 	aqua i
 
-update: update-zimfw update-dein update-spacevim update-tpm update-doom
+update: update-zimfw update-dein update-spacevim update-neosnippets update-tpm update-doom
 
 update-dein:
 	curl -s -L -o /tmp/dein.tar.gz https://github.com/Shougo/dein.vim/archive/$(DEIN_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim/bundle/dein.vim /tmp/dein.tar.gz
 	rm /tmp/dein.tar.gz
+
+update-neosnippets:
+	curl -s -L -o /tmp/neosnippet.tar.gz https://github.com/Shougo/neosnippet.vim/archive/$(NEOSNIPPET_VER).tar.gz
+	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim/bundle/neosnippet.vim /tmp/neosnippet.tar.gz
+	rm /tmp/neosnippet.tar.gz
+
+update-nvim-cmp:
+	curl -s -L -o /tmp/nvim-cmp.tar.gz https://github.com/hrsh7th/nvim-cmp/archive/$(NVIM_CMP_VER).tar.gz
+	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim/bundle/nvim-cmp /tmp/nvim-cmp.tar.gz
+	rm /tmp/nvim-cmp.tar.gz
+
 
 update-doom:
 	curl -s -L -o /tmp/doom.tar.gz https://github.com/hlissner/doom-emacs/archive/$(DOOM_VER).tar.gz
@@ -56,7 +69,7 @@ update-doom:
 	rm /tmp/doom.tar.gz
 
 update-spacevim:
-	curl -s -L -o /tmp/SpaceVim.tar.gz https://github.com/SpaceVim/SPaceVim/archive/$(SPACEVIM_VER).tar.gz
+	curl -s -L -o /tmp/SpaceVim.tar.gz https://gitlab.com/SpaceVim/SpaceVim/-/archive/$(SPACEVIM_VER)/SpaceVim-$(SPACEVIM_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim /tmp/SpaceVim.tar.gz
 	rm /tmp/SpaceVim.tar.gz
 

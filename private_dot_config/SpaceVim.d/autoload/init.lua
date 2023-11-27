@@ -18,3 +18,10 @@ require('orgmode').setup({
   org_agenda_files = {'~/org/*'},
   org_default_notes_file = '~/org/tasks.org',
 })
+
+require('chatgpt').setup({
+  openai_params = { model = 'gpt-4', },
+  popup_input = { submit = '<C-e>', },
+})
+
+require('copilot').setup()
