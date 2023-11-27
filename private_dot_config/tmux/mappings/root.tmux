@@ -18,9 +18,6 @@ bind < swap-pane -U       # swap current pane with the previous one
 bind M-p select-window -t :- # Previous window.
 bind M-n select-window -t :+ # Next window.
 
-# Toggle zoom.
-bind M-z resize-pane -Z
-
 # Resize panes.
 bind M-H resize-pane -L 2
 bind M-J resize-pane -D 1
@@ -31,3 +28,6 @@ bind -r H resize-pane -L 2
 bind -r J resize-pane -D 2
 bind -r K resize-pane -U 2
 bind -r L resize-pane -R 2
+
+bind-key -T prefix C-g split-window \
+  "$SHELL --login -i -c 'navi --print | head -n 1 | tmux load-buffer -b tmp - ; tmux paste-buffer -p -t {last} -b tmp -d'"
