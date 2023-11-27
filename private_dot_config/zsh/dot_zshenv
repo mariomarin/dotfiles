@@ -94,3 +94,5 @@ export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 
 # zim
 : ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}
+# devbox
+eval "$(devbox global shellenv --init-hook)"
