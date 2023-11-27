@@ -36,20 +36,20 @@ export FLYCTL_INSTALL="$HOME/.fly"
 # PATH
 typeset -U PATH path
 path=(
-  "$CARGOBIN" \
-  "$COMPOSERBIN" \
-  "$FLYCTL_INSTALL/bin:$PATH" \
-  "$GOPATH/bin" \
-  "$AQUA_ROOT_DIR/bin" \
-  "$HOMEBIN" \
-  "$KREW_ROOT/bin" \
-  "$LOCALBIN" \
-  "$HOME/.local/share/rtx/bin" \
-  "$NPM_CONFIG_PREFIX/bin" \
-  "$XDG_DATA_HOME/tmux/plugins/t-smart-tmux-session-manager/bin" \
-  "/usr/bin" \
-  "/usr/bin/core_perl/" \
-  "/usr/local/sbin" \
+  "$CARGOBIN"
+  "$COMPOSERBIN"
+  "$FLYCTL_INSTALL/bin:$PATH"
+  "$GOPATH/bin"
+  "$AQUA_ROOT_DIR/bin"
+  "$HOMEBIN"
+  "$KREW_ROOT/bin"
+  "$LOCALBIN"
+  "$HOME/.local/share/rtx/bin"
+  "$NPM_CONFIG_PREFIX/bin"
+  "$XDG_DATA_HOME/tmux/plugins/t-smart-tmux-session-manager/bin"
+  "/usr/bin"
+  "/usr/bin/core_perl/"
+  "/usr/local/sbin"
   "$path[@]")
 export PATH
 
