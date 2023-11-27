@@ -125,3 +125,6 @@ source <(kubectl completion zsh)
 KUBE_PS1_SEPARATOR=''
 KUBE_PS1_PREFIX=''
 KUBE_PS1_SUFFIX=''
+
+# the fuck
+eval $(thefuck --alias)
