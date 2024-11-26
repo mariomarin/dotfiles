@@ -1,4 +1,3 @@
-:key_bindings:
 # Instead of using: `alacritty --print-events`
 # https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping
 # Open a terminal without Tmux, and get the key you want with the command:
@@ -10,8 +9,19 @@
 
 # https://github.com/jackMort/ChatGPT.nvim/issues/99#issuecomment-1492668722
 # https://stackoverflow.com/a/42461580/609025
-- { chars: "\x1b[13;2u", key: Return, mods: Shift,   }
-- { chars: "\x1b[13;5u", key: Return, mods: Control, }
 
-- { chars: "\x01\x54",   key: T, mods: Control, }
-  
+[[keyboard.bindings]]
+chars = "\u001B[13;2u"
+key = "Return"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[13;5u"
+key = "Return"
+mods = "Control"
+
+# https://github.com/joshmedeski/t-smart-tmux-session-manager/blob/v2.11.1/README.md#bonus-macos-keyboard-shortcut
+[[keyboard.bindings]]
+chars = "\u0001T"
+key = "T"
+mods = "Control"
