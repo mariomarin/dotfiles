@@ -20,27 +20,10 @@ zmodule wfxr/forgit
 # wakatime
 zmodule sobolevn/wakatime-zsh-plugin
 
-#
-# Prompt
-#
-# Exposes git repository status information to prompts.
+# Prompt theme
+zmodule prompt-pwd
 zmodule git-info
-setopt nopromptbang prompt{cr,percent,sp,subst}
-
-zstyle ':zim:git-info:branch' format 'branch:%b'
-zstyle ':zim:git-info:commit' format 'commit:%c'
-zstyle ':zim:git-info:remote' format 'remote:%R'
-
-zstyle ':zim:git-info:keys' format \
-    'prompt'  'git(%b%c)' \
-    'rprompt' '[%R]'
-
-PS1='${(e)git_info[prompt]}%# '
-RPS1='${(e)git_info[rprompt]}'
-# kubernetes prompt
-zmodule jonmosco/kube-ps1
-# Theme - A customizable version of steeef's prompt theme.
-zmodule kube-gitster --name gitster --root kube-gitster
+zmodule gitster
 
 # Additional completion definitions for Zsh.
 zmodule zsh-users/zsh-completions --fpath src
@@ -62,4 +45,3 @@ zmodule zsh-users/zsh-history-substring-search
 # Fish-like autosuggestions for Zsh.
 zmodule zsh-users/zsh-autosuggestions
 
-autoload -Uz add-zsh-hook && add-zsh-hook precmd git-info
