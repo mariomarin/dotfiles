@@ -9,7 +9,7 @@ DOOM_VER ?= develop
 #SPACEVIM_VER ?= v2.2.0
 SPACEVIM_VER ?= 9169a2d
 NVCHAD_VER ?= 9d37797
-ZIM_VER ?= 1.12.1
+ZIM_VER ?= 1.16.0
 # use the HEAD revision since the last tag was on 2015-08-03
 TMUX_TPM_VER ?= master
  
