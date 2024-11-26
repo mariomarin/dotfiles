@@ -17,6 +17,8 @@ zmodule fzf
 zmodule pacman
 # git+fzf
 zmodule wfxr/forgit
+# wakatime
+zmodule sobolevn/wakatime-zsh-plugin
 
 #
 # Prompt
@@ -45,6 +47,12 @@ zmodule zsh-users/zsh-completions --fpath src
 # Enables and configures smart and extensive tab completion.
 # completion must be sourced after zsh-users/zsh-completions
 zmodule completion
+# atuin
+zmodule atuinsh/atuin
+
+#
+# Modules that must be initialized last
+#
 # Fish-like syntax highlighting for Zsh.
 # zsh-users/zsh-syntax-highlighting must be sourced after completion
 zmodule zsh-users/zsh-syntax-highlighting
@@ -53,9 +61,5 @@ zmodule zsh-users/zsh-syntax-highlighting
 zmodule zsh-users/zsh-history-substring-search
 # Fish-like autosuggestions for Zsh.
 zmodule zsh-users/zsh-autosuggestions
-# Runtime Executor (asdf rust clone) 
-zmodule joke/zim-rtx/tree/main
-# atuin
-zmodule atuinsh/atuin
 
 autoload -Uz add-zsh-hook && add-zsh-hook precmd git-info
