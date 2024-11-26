@@ -1,10 +1,13 @@
-#!/usr/bin/env zsh
-
 # Xorg
 export XENVIRONMENT="$HOME/.Xresources"
 
 # node
 export NPM_CONFIG_PREFIX="${HOME}/.local/npm"
+# global pnpm mutable directory
+export PNPM_HOME="/home/mario/.local/share/pnpm"
+
+# workaround for: https://github.com/npm/cli/issues/4163
+export NODE_OPTIONS=--dns-result-order=ipv4first
 
 # go
 export GOPATH=~/go
@@ -46,6 +49,8 @@ path=(
   "$LOCALBIN"
   "$HOME/.local/share/rtx/bin"
   "$NPM_CONFIG_PREFIX/bin"
+  "$PNPM_HOME"
+  "$XDG_DATA_HOME/nvim/mason/bin"
   "$XDG_DATA_HOME/tmux/plugins/t-smart-tmux-session-manager/bin"
   "/usr/bin"
   "/usr/bin/core_perl/"
