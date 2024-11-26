@@ -29,10 +29,12 @@ set -g @plugin 'fcsonline/tmux-thumbs'
 set -g @thumbs-reverse 'on'
 set -g @thumbs-command 'echo -n {} | xclip -in -selection clipboard && tmux display-message \"Copied {}\"'
 set -g @thumbs-upcase-command 'xdg-open {} && tmux display-message "Opened {}"'
+set -g @thumbs-regexp-1 '[a-z0-9]+-[^ ]+'
 
 # i3wm like navigation with TAB key
-set -g @plugin 'jabirali/tmux-tilish'
+set -g @plugin 'farzadmf/tmux-tilish'
 set -g @tilish-dmenu 'on'
+set -g @tilish-new_pane '"'
 
 # Seamless tmux/vim navigation (over SSH too!) 
 set -g @plugin 'sunaku/tmux-navigate'
