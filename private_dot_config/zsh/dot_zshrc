@@ -123,6 +123,7 @@ fi
 
 # kubernetes
 source <(kubectl completion zsh)
+eval $(aws-sso completions --shell zsh --source)
 
 # KUBE_PS1 prompt
 KUBE_PS1_SEPARATOR=''
