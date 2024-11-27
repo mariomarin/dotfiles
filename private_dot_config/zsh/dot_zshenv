@@ -97,6 +97,7 @@ export AQUA_ROOT_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua"
 # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
 # Docker rootless
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+export DOCKER_BUILDKIT=1
 
 # zim
 : ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}
