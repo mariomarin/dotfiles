@@ -37,6 +37,9 @@ export KUBECONFIG=~/.kube/config
 # fly
 export FLYCTL_INSTALL="$HOME/.fly"
 
+# devbox
+eval "$(devbox global shellenv --init-hook)"
+
 # PATH
 typeset -U PATH path
 path=(
@@ -101,5 +104,3 @@ export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 
 # zim
 : ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}
-# devbox
-eval "$(devbox global shellenv --init-hook)"
