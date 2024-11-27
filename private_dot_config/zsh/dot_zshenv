@@ -32,6 +32,7 @@ GEM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/gem/ruby/3.0.0"
 export KREW_ROOT="${XDG_DATA_HOME:-$HOME/.local/share}/krew"
 # kubectl plugins configuration
 export KUBE_FUZZY_PREVIEW_ENABLED=true
+export KUBECONFIG=~/.kube/config
 
 # fly
 export FLYCTL_INSTALL="$HOME/.fly"
