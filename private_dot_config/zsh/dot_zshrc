@@ -4,10 +4,7 @@
 
 # vim
 alias vi=nvim
-# emacs
-export EMACS_SERVER_SOCKET=/tmp/emacs$(id -u)/server
-alias e="/usr/bin/emacsclient -t --socket-name=$EMACS_SERVER_SOCKET"
-alias eg="/usr/bin/emacsclient --create-frame --socket-name=$EMACS_SERVER_SOCKET"
+alias vim=nvim
 
 # git
 alias pr="git push-track && gh pr create --fill"
@@ -16,7 +13,7 @@ alias merge="gh pr merge --delete-branch --merge && git pull"
 alias approve="gh pr review --approve"
 
 # chezmoi
-alias ce="chezmoi edit"
+alias ce="chezmoi edit --apply"
 
 # kubernetes
 alias k='kubectl'

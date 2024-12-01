@@ -32,6 +32,8 @@ zmodule zsh-users/zsh-completions --fpath src
 zmodule completion
 # atuin
 zmodule atuinsh/atuin
+# emacs aliases
+zmodule flinner/zsh-emacs
 
 #
 # Modules that must be initialized last
