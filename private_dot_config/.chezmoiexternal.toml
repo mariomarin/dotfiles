@@ -1,0 +1,10 @@
+# emacs
+{{ $DOOM_VER := "master" -}}
+
+["emacs"]
+    type = "archive"
+    url = "https://github.com/doomemacs/doomemacs/archive/{{ $DOOM_VER }}.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+

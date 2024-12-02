@@ -4,7 +4,6 @@
 
 # vim
 alias vi=nvim
-alias vim=nvim
 
 # git
 alias pr="git push-track && gh pr create --fill"

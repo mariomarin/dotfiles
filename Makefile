@@ -1,20 +1,8 @@
 all: install diff sync upgrade
 
-# Versions
-AQUA_VER ?= v2.8.0
-DEIN_VER ?= 49c24cd
-NEOSNIPPET_VER ?= efb2a61
-NVIM_CMP_VER ?= 0b751f6
-DOOM_VER ?= master
-#SPACEVIM_VER ?= v2.2.0
-SPACEVIM_VER ?= 9169a2d
-NVCHAD_VER ?= 9d37797
-ZIM_VER ?= 1.16.0
-# use the HEAD revision since the last tag was on 2015-08-03
 TMUX_TPM_VER ?= master
  
 # Repositories
-XMONAD_CFG_REPO := gitlab.com/dwt1/dotfiles
 POLYBAR_PULSE_MOD_REPO := github.com/marioortizmanero/polybar-pulseaudio-control
 
 all: init diff install sync sync-tpm sync-doom sync-zimfw \
@@ -43,57 +31,6 @@ diff:
 
 install: update-all
 	curl -sfL https://git.io/chezmoi | sh
-	curl -sSfL https://raw.githubusercontent.com/aquaproj/aqua-installer/v2.1.1/aqua-installer | bash -s -- -v $(AQUA_VER)
-	aqua i
-
-update: update-zimfw update-dein update-spacevim update-neosnippets update-nvim-cmp update-tpm update-doom
-
-update-dein:
-	curl -s -L -o /tmp/dein.tar.gz https://github.com/Shougo/dein.vim/archive/$(DEIN_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim/bundle/dein.vim /tmp/dein.tar.gz
-	rm /tmp/dein.tar.gz
-
-update-nvchad:
-	curl -s -L -o /tmp/nvchad.tar.gz https://github.com/NvChad/NvChad/archive/$(NVCHAD_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/NvChad /tmp/nvchad.tar.gz
-	rm /tmp/nvchad.tar.gz
-
-update-neosnippets:
-	curl -s -L -o /tmp/neosnippet.tar.gz https://github.com/Shougo/neosnippet.vim/archive/$(NEOSNIPPET_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim/bundle/neosnippet.vim /tmp/neosnippet.tar.gz
-	rm /tmp/neosnippet.tar.gz
-
-update-nvim-cmp:
-	curl -s -L -o /tmp/nvim-cmp.tar.gz https://github.com/hrsh7th/nvim-cmp/archive/$(NVIM_CMP_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim/bundle/nvim-cmp /tmp/nvim-cmp.tar.gz
-	rm /tmp/nvim-cmp.tar.gz
-
-update-doom:
-	curl -s -L -o /tmp/doom.tar.gz https://github.com/doomemacs/doomemacs/archive/$(DOOM_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${XDG_CONFIG_HOME}/emacs /tmp/doom.tar.gz
-	rm /tmp/doom.tar.gz
-
-update-spacevim:
-	curl -s -L -o /tmp/SpaceVim.tar.gz https://gitlab.com/SpaceVim/SpaceVim/-/archive/$(SPACEVIM_VER)/SpaceVim-$(SPACEVIM_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/SpaceVim /tmp/SpaceVim.tar.gz
-	rm /tmp/SpaceVim.tar.gz
-
-update-zimfw:
-	curl -s -L https://github.com/zimfw/zimfw/releases/download/v$(ZIM_VER)/zimfw.zsh.gz | gunzip -c > ${ZIM_HOME}/zimfw.zsh
-	chezmoi add ${ZIM_HOME}/zimfw.zsh
-
-update-tpm:
-	curl -s -L -o /tmp/tpm.tar.gz https://github.com/tmux-plugins/tpm/archive/$(TMUX_TPM_VER).tar.gz
-	chezmoi import --strip-components 1 --destination ${XDG_DATA_HOME}/tmux/plugins/tpm /tmp/tpm.tar.gz
-	rm /tmp/tpm.tar.gz
-
-update-xmonad-config:
-	go-getter -progress ${XMONAD_CFG_REPO}//.config/xmobar ${XDG_CONFIG_HOME}/xmobar
-	chezmoi add ${XDG_CONFIG_HOME}/xmobar
-	go-getter -progress ${XMONAD_CFG_REPO}//.config/xmonad ${XDG_CONFIG_HOME}/xmonad
-	chezmoi add ${XDG_CONFIG_HOME}/xmonad
-	go-getter -progress ${XMONAD_CFG_REPO}//.local/bin ${HOME}/.local/bin
-	chezmoi add ${HOME}/.local/bin
 
 vendor-polybar-scripts:
 	rm -rf /tmp/pulseaudio-control

@@ -1,0 +1,9 @@
+# zsh
+{{ $ZIM_VER := "1.16.0" -}}
+
+["zimfw.zsh"]
+    type = "file"
+    url = "https://github.com/zimfw/zimfw/releases/download/v{{ $ZIM_VER }}/zimfw.zsh.gz"
+    filter.command = "gunzip"
+    filter.args = ["-c"]
+    refreshPeriod = "168h"

@@ -1,0 +1,9 @@
+# vim
+{{ $SPACEVIM_VER := "08719cca" -}}
+
+["SpaceVim"]
+    type = "archive"
+    url = "https://gitlab.com/SpaceVim/SpaceVim/-/archive/{{ $SPACEVIM_VER }}/SpaceVim-{{ $SPACEVIM_VER }}.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
