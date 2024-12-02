@@ -5,6 +5,10 @@
 # vim
 alias vi=nvim
 
+# emacs
+alias e="emac -nw"
+alias eg="emacs --create-frame"
+
 # git
 alias pr="git push-track && gh pr create --fill"
 alias checks="gh pr checks"

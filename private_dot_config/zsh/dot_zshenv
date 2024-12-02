@@ -74,9 +74,6 @@ fi
 # Gnome needs a location to save screenshots
 export PICTURES=~/Pictures
 
-# Emacs
-export EMACS_SERVER_FILE=/tmp/emacs1000/server
-
 # Emacs Doom
 export DOOMDIR="${XDG_CONFIG_HOME:-$HOME/.config}/doom"
 
