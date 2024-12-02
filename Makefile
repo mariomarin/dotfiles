@@ -5,7 +5,7 @@ AQUA_VER ?= v2.8.0
 DEIN_VER ?= 49c24cd
 NEOSNIPPET_VER ?= efb2a61
 NVIM_CMP_VER ?= 0b751f6
-DOOM_VER ?= develop
+DOOM_VER ?= master
 #SPACEVIM_VER ?= v2.2.0
 SPACEVIM_VER ?= 9169a2d
 NVCHAD_VER ?= 9d37797
@@ -30,7 +30,7 @@ sync-tpm:
 	${XDG_DATA_HOME}/tmux/plugins/tpm/bin/update_plugins all
 
 sync-doom:
-	"${DOOMDIR}/bin/doom" sync
+	"${XDG_CONFIG_HOME}/emacs/bin/doom" sync
 
 sync-zimfw:
 	zsh "${ZIM_HOME}/zimfw.zsh" install
@@ -69,7 +69,7 @@ update-nvim-cmp:
 	rm /tmp/nvim-cmp.tar.gz
 
 update-doom:
-	curl -s -L -o /tmp/doom.tar.gz https://github.com/hlissner/doom-emacs/archive/$(DOOM_VER).tar.gz
+	curl -s -L -o /tmp/doom.tar.gz https://github.com/doomemacs/doomemacs/archive/$(DOOM_VER).tar.gz
 	chezmoi import --strip-components 1 --destination ${XDG_CONFIG_HOME}/emacs /tmp/doom.tar.gz
 	rm /tmp/doom.tar.gz
 

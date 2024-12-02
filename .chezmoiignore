@@ -11,3 +11,5 @@ tmux/plugins/tpm/tests
 !tmux/plugins/tpm
 zim/modules
 !zim/modules/kube-gitster
+vimfiles
+.config/emacs/.local
