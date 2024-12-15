@@ -21,6 +21,7 @@ set -g @resurrect-capture-pane-contents 'on'
 # Automatic restore
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @continuum-restore 'on'
+set -g @continuum-boot 'on'
 
 # copy/pasting tmux like vimium/vimperator 
 set -g @plugin 'fcsonline/tmux-thumbs'
