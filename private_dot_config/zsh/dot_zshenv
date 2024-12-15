@@ -49,8 +49,6 @@ path=(
   "$NPM_CONFIG_PREFIX/bin"
   "$PNPM_HOME"
   "$XDG_DATA_HOME/nvim/mason/bin"
-  "$XDG_DATA_HOME/tmux/plugins/t-smart-tmux-session-manager/bin"
-  "$XDG_DATA_HOME/tmux/plugins/tmux-thumbs/target/release"
   "$path[@]")
 export PATH
 

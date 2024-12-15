@@ -19,9 +19,3 @@ mods = "Shift"
 chars = "\u001B[13;5u"
 key = "Return"
 mods = "Control"
-
-# https://github.com/joshmedeski/t-smart-tmux-session-manager/blob/v2.11.1/README.md#bonus-macos-keyboard-shortcut
-[[keyboard.bindings]]
-chars = "\u0001T"
-key = "T"
-mods = "Control"

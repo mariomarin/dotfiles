@@ -61,6 +61,3 @@ set -g @extrakto_split_direction 'a'
 set -g detach-on-destroy off
 # skip "kill-pane 1? (y/n)" prompt
 bind-key x kill-pane 
-# customize your prompt.
-set -g @t-fzf-prompt '  '
-set -g @plugin 'joshmedeski/t-smart-tmux-session-manager'
