@@ -20,9 +20,6 @@ export CARGOBIN=$HOME/.cargo/bin
 LOCALBIN=$HOME/.local/bin
 HOMEBIN=$HOME/bin
 
-# php composer
-COMPOSERBIN=$HOME/.config/composer/vendor/bin
-
 # ruby
 # https://wiki.archlinux.org/title/Ruby#Setup
 # export GEM_HOME="$(ruby -e 'puts Gem.user_dir')"
@@ -44,7 +41,6 @@ eval "$(devbox global shellenv --init-hook)"
 typeset -U PATH path
 path=(
   "$CARGOBIN"
-  "$COMPOSERBIN"
   "$FLYCTL_INSTALL/bin:$PATH"
   "$GOPATH/bin"
   "$HOMEBIN"
@@ -76,9 +72,6 @@ export PICTURES=~/Pictures
 
 # Emacs Doom
 export DOOMDIR="${XDG_CONFIG_HOME:-$HOME/.config}/doom"
-
-# Ansible
-export ANSIBLE_CONFIG=ansible-mitogen.cfg
 
 # SpaceVim configuration file
 export SPACEVIMDIR="$HOME/.config/SpaceVim.d/"

@@ -83,11 +83,6 @@ bindkey "''${key[Up]}" up-line-or-search
 source <(kubectl completion zsh)
 eval $(aws-sso completions --shell zsh --source)
 
-# KUBE_PS1 prompt
-KUBE_PS1_SEPARATOR=''
-KUBE_PS1_PREFIX=''
-KUBE_PS1_SUFFIX=''
-
 # the fuck
 eval $(thefuck --alias)
 
