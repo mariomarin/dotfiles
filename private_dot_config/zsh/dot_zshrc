@@ -24,6 +24,8 @@ alias k='kubectl'
 # thumbs
 alias pick='thumbs -u -r | xsel --clipboard -i'
 
+# xsel
+alias xc='xsel --clipboard'
 # }}} End aliases
 
 # Temporary Files
