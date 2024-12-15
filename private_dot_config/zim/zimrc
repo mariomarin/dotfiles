@@ -39,6 +39,9 @@ zmodule atuinsh/atuin
 # Fish-like syntax highlighting for Zsh.
 # zsh-users/zsh-syntax-highlighting must be sourced after completion
 zmodule zsh-users/zsh-syntax-highlighting
+# A better and friendly vi(vim) mode.
+# NOTE: must be sourced after highlighting
+zmodule jeffreytse/zsh-vi-mode
 # Fish-like history search (up arrow) for Zsh.
 # zsh-users/zsh-history-substring-search must be sourced after zsh-users/zsh-syntax-highlighting
 zmodule zsh-users/zsh-history-substring-search
