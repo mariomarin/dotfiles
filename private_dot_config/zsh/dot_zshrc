@@ -55,6 +55,9 @@ eval "$(direnv hook zsh)"
 # Start configuration added by Zim install {{{
 # User configuration sourced by interactive shells
 
+# Remove path separator from WORDCHARS.
+WORDCHARS=${WORDCHARS//[\/]/}
+
 # Install missing modules and update ${ZIM_HOME}/init.zsh if missing or outdated.
 if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE:-${ZDOTDIR:-${HOME}}/.zimrc} ]]; then
   # Update static initialization script if it's outdated, before sourcing it
