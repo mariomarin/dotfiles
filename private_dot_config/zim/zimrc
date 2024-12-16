@@ -14,9 +14,6 @@ zmodule termtitle
 zmodule utility
 zmodule exa
 zmodule fzf
-zmodule pacman
-# git+fzf
-zmodule wfxr/forgit
 # wakatime
 zmodule sobolevn/wakatime-zsh-plugin
 

@@ -58,12 +58,20 @@ eval "$(direnv hook zsh)"
 # Remove path separator from WORDCHARS.
 WORDCHARS=${WORDCHARS//[\/]/}
 
+# prefix for git zimfw module
+zstyle ':zim:git' aliases-prefix 'g'
+
 # Install missing modules and update ${ZIM_HOME}/init.zsh if missing or outdated.
 if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE:-${ZDOTDIR:-${HOME}}/.zimrc} ]]; then
   # Update static initialization script if it's outdated, before sourcing it
   source ${ZIM_HOME}/zimfw.zsh init -q
 fi
 source ${ZIM_HOME}/init.zsh
+
+# End configuration added by Zim install }}}
+
+# unalias gh since it conflicts with the GitHub CLI
+unalias gh 2>/dev/null
 
 # Post-init module configuration
 
