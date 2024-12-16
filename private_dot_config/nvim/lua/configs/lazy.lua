@@ -8,8 +8,6 @@ return {
     { import = "plugins.extras.lang.cpp" },
     -- go
     { import = "plugins.extras.lang.go" },
-    -- jenkins
-    { import = "plugins.extras.lang.jenkins" },
     -- lua
     { import = "plugins.extras.lang.lua" },
     -- python
@@ -18,6 +16,10 @@ return {
     { import = "plugins.extras.lang.typescript" },
     -- yaml
     { import = "plugins.extras.lang.yaml" },
+    -- treesitter
+    { import = "plugins.extras.treesitter" },
+    -- chezmoi
+    { import = "plugins.extras.chezmoi" },
   },
   defaults = { lazy = true },
   install = { colorscheme = { "nvchad" } },
