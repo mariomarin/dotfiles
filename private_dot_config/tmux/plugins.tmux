@@ -3,6 +3,8 @@ set-environment -g TMUX_PLUGIN_MANAGER_PATH "${XDG_DATA_HOME}/tmux/plugins"
 
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
+# Enable true colours to override tmux-sensible
+set-option -g -a terminal-overrides ",alcritty:RGB"
 
 # artic theme
 set -g @plugin 'arcticicestudio/nord-tmux'
@@ -53,10 +55,6 @@ set -g @plugin 'roosta/tmux-fuzzback'
 
 # quickly select, copy/insert text without a mouse
 set -g @plugin 'laktak/extrakto'
-# press tmux prefix + tab to start extrakto
-set -g @extrakto_popup_size '50%,60%'
-# Whether the tmux split will be a:auto, p:popup, v:vertical or h:horizontal
-set -g @extrakto_split_direction 'a'
 
 # don't exit from tmux when closing a session
 set -g detach-on-destroy off

@@ -3,6 +3,6 @@
 *.old*
 tmux/plugins
 zim/modules
-!zim/modules/kube-gitster
 vimfiles
+Session.vim
 .config/emacs/.local
