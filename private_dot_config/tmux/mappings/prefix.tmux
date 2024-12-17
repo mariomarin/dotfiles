@@ -23,3 +23,6 @@ bind C-c new-session
 
 # find session
 bind C-f command-prompt -p find-session 'switch-client -t %%'
+
+# window navigation
+bind -n M-Tab last-window   # move to last active window
