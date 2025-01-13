@@ -2,24 +2,21 @@ return {
   spec = {
     -- add LazyVim and import its plugins
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-    -- bash
-    { import = "plugins.extras.lang.bash" },
-    -- c/cpp
-    { import = "plugins.extras.lang.cpp" },
-    -- go
-    { import = "plugins.extras.lang.go" },
-    -- lua
-    { import = "plugins.extras.lang.lua" },
-    -- python
-    { import = "plugins.extras.lang.python" },
-    -- typescript
-    { import = "plugins.extras.lang.typescript" },
-    -- yaml
-    { import = "plugins.extras.lang.yaml" },
-    -- treesitter
-    { import = "plugins.extras.treesitter" },
-    -- chezmoi
-    { import = "plugins.extras.chezmoi" },
+    { import = "lazyvim.plugins.extras.coding.mini-surround" },
+    { import = "lazyvim.plugins.extras.coding.yanky" },
+    { import = "lazyvim.plugins.extras.editor.harpoon2" },
+    { import = "lazyvim.plugins.extras.editor.leap" },
+    { import = "lazyvim.plugins.extras.lang.bash" },
+    { import = "lazyvim.plugins.extras.lang.cpp" },
+    { import = "lazyvim.plugins.extras.lang.go" },
+    { import = "lazyvim.plugins.extras.lang.lua" },
+    { import = "lazyvim.plugins.extras.lang.python" },
+    { import = "lazyvim.plugins.extras.lang.terraform" },
+    { import = "lazyvim.plugins.extras.lang.typescript" },
+    { import = "lazyvim.plugins.extras.lang.yaml" },
+    { import = "lazyvim.plugins.extras.linting.eslint" },
+    { import = "lazyvim.plugins.extras.treesitter" },
+    { import = "lazyvim.plugins.extras.utils.chezmoi" },
   },
   defaults = { lazy = true },
   install = { colorscheme = { "nvchad" } },
