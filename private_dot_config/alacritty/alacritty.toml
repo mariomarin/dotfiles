@@ -1,3 +1,12 @@
+[window]
+opacity = 0.92
+blur = true
+
+[general]
+import = [
+    "~/.config/alacritty/themes/themes/ayu_light.toml"
+]
+
 # Instead of using: `alacritty --print-events`
 # https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping
 # Open a terminal without Tmux, and get the key you want with the command:
@@ -9,7 +18,6 @@
 
 # https://github.com/jackMort/ChatGPT.nvim/issues/99#issuecomment-1492668722
 # https://stackoverflow.com/a/42461580/609025
-
 [[keyboard.bindings]]
 chars = "\u001B[13;2u"
 key = "Return"
@@ -19,3 +27,5 @@ mods = "Shift"
 chars = "\u001B[13;5u"
 key = "Return"
 mods = "Control"
+
+

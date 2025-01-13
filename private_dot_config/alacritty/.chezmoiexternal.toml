@@ -1,0 +1,9 @@
+# themes
+{{ $THEMES_VER := "master" -}}
+
+["themes"]
+    type = "archive"
+    url = "https://github.com/alacritty/alacritty-theme/archive/{{ $THEMES_VER }}.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
