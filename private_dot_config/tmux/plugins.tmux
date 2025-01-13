@@ -1,13 +1,19 @@
 # list of plugins and settings
-set-environment -g TMUX_PLUGIN_MANAGER_PATH "${XDG_DATA_HOME}/tmux/plugins"
+set-environment -g TMUX_PLUGIN_MANAGER_PATH "~/.local/share/tmux/plugins"
 
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
 # Enable true colours to override tmux-sensible
 set-option -g -a terminal-overrides ",alcritty:RGB"
 
-# artic theme
-set -g @plugin 'arcticicestudio/nord-tmux'
+# minimal theme
+set -g @plugin 'niksingh710/minimal-tmux-status'
+# Make the status line pretty and add some modules
+set -g status-right-length 100
+set -g status-left-length 100
+set -g status-left ""
+#set -g @minimal-tmux-bg "#DF8E1D" # catpuccine orange
+set -g @minimal-tmux-bg "#E65050" # ayu dark red
 
 # restore vim and nvim sessions as well
 set -g @plugin 'tmux-plugins/tmux-resurrect'

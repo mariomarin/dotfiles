@@ -26,3 +26,6 @@ bind C-f command-prompt -p find-session 'switch-client -t %%'
 
 # window navigation
 bind -n M-Tab last-window   # move to last active window
+
+# toggle status bar
+bind-key b set-option status
