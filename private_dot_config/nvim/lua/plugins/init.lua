@@ -482,5 +482,12 @@ return {
       { "<leader>sd", function() require("wtf").ai() end, desc = "Search Diagnostic with AI", mode = "n", },
       { "<leader>sD", function() require("wtf").search() end, desc = "Search Diagnostic with Google", mode = "n", },
     },
+  },
+  {
+    'chipsenkbeil/distant.nvim',
+    branch = 'v0.3',
+    config = function()
+        require('distant'):setup()
+    end
   }
 }
