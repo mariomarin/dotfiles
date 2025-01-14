@@ -6,3 +6,5 @@ zim/modules
 vimfiles
 Session.vim
 .config/emacs/.local
+.config/emacs/.local
+.config/systemd/user/syncthing.service

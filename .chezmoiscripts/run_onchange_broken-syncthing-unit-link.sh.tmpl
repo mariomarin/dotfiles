@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# From: https://nixos.org/manual/nixos/stable/index.html#sect-nixos-systemd-nixos
+# User systemd services on the other hand, should be treated differently.
+# Given a package that has a systemd unit file at #pkg-out#/lib/systemd/user/,
+# using systemd.packages will make you able to start the service via
+# systemctl --user start, but it won’t start automatically on login.
+
+{{ $serviceName := "syncthing.service" -}}
+{{ $runDir := "/run/current-system/sw/lib/systemd/user" -}}
+{{ $runFile := joinPath $runDir $serviceName -}}
+{{ $serviceDir := joinPath .chezmoi.homeDir ".config/systemd/user" -}}
+{{ $serviceFile := joinPath $serviceDir $serviceName -}}
+{{ $targetDir := joinPath .chezmoi.homeDir ".config/systemd/user/default.target.wants" -}}
+{{ $targetFile := joinPath $targetDir $serviceName -}}
+
+{{ if (or (not (stat $serviceFile)) (ne (lstat $serviceFile).type "symlink")) }}
+# imperatively enable the systemd unit for the user
+mkdir -p {{ $serviceDir }}
+ln -sf {{ $runFile }} {{ $targetDir }}
+systemctl --user daemon-reload
+# $serviceFile > #pkg-out#/lib/systemd/user/
+rm {{ $serviceFile }}
+systemctl --user enable {{ $serviceName }}
+{{ end }}
