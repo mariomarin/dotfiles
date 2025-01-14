@@ -6,7 +6,7 @@
 local M = {}
 
 M.base46 = {
-	theme = "onedark",
+	theme = "ayu_light",
 
 	-- hl_override = {
 	-- 	Comment = { italic = true },
@@ -16,7 +16,7 @@ M.base46 = {
 
 M.ui = {
   theme = "catppuccin",
-  theme_toggle = { "catppuccin", "one_light" },
+  theme_toggle = { "catppuccin", "ayu_light" },
 
   statusline = {
     theme = "vscode_colored", -- default/vscode/vscode_colored/minimal
