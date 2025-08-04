@@ -42,8 +42,16 @@ fi
 # node
 npm config set prefix "$NPM_CONFIG_PREFIX"
 
-# ssh-agent
-eval $(keychain --eval --quiet)
+# Use GNOME Keyring SSH agent
+if [[ -n "$DISPLAY" ]] || [[ -n "$WAYLAND_DISPLAY" ]]; then
+  if [[ -S "/run/user/$(id -u)/gcr/ssh" ]]; then
+    export SSH_AUTH_SOCK="/run/user/$(id -u)/gcr/ssh"
+  fi
+
+  if [[ -n "$SSH_AUTH_SOCK" ]] && command -v ssh-add >/dev/null 2>&1; then
+    ssh-add -l >/dev/null 2>&1 || true
+  fi
+fi
 
 # zoxide (fasd replacement)
 eval "$(zoxide init zsh)"
