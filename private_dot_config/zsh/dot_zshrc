@@ -95,10 +95,10 @@ bindkey "''${key[Up]}" up-line-or-search
 source <(kubectl completion zsh)
 eval $(aws-sso completions --shell zsh --source)
 
-# the fuck
-eval $(thefuck --alias)
+# help me to fix wrong typed commands
+eval "$(pay-respects zsh --alias)"
 
-# sesh
+# sesh - Tmux session manager
 function sesh-sessions() {
   {
     exec </dev/tty
