@@ -74,8 +74,15 @@ source ${ZIM_HOME}/init.zsh
 
 # End configuration added by Zim install }}}
 
-# unalias gh since it conflicts with the GitHub CLI
+# Unalias zimfw git module aliases that conflict with CLI tools
+# The git module uses prefix 'G' by default, but lowercase versions may exist
+# See ~/.config/zim/modules/git/init.zsh for full alias list
+#
+# Conflicts:
+# - gh: git help (conflicts with GitHub CLI)
+# - gt: git tag (conflicts with Graphite CLI)
 unalias gh 2>/dev/null
+unalias gt 2>/dev/null
 
 # Post-init module configuration
 
