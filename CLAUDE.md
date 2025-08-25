@@ -47,7 +47,6 @@ Benefits:
 - `private_dot_config/` - Maps to `~/.config/` containing application configurations
   - `nvim/` - Neovim configuration using lazy.nvim
   - `alacritty/` - Alacritty terminal configuration
-  - `SpaceVim.d/` - SpaceVim configuration
 - `private_dot_local/` - Maps to `~/.local/` containing local data
   - `share/tmux/plugins/` - Tmux plugins managed by TPM
   - `share/zim/` - Zim framework modules

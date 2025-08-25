@@ -68,9 +68,6 @@ fi
 # Gnome needs a location to save screenshots
 export PICTURES=~/Pictures
 
-# SpaceVim configuration file
-export SPACEVIMDIR="$HOME/.config/SpaceVim.d/"
-
 # Zim
 export ZIM_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/zim"
 export ZIM_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/zim/zimrc"

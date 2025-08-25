@@ -1,9 +1,0 @@
-# vim
-{{ $SPACEVIM_VER := "f49958d" -}}
-
-["SpaceVim"]
-    type = "archive"
-    url = "https://github.com/SpaceVim/SpaceVim/archive/{{ $SPACEVIM_VER }}.zip"
-    exact = true
-    stripComponents = 1
-    refreshPeriod = "168h"
