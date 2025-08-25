@@ -21,13 +21,21 @@ echo "Make sure syncthing is installed in your NixOS system configuration"
 exit 0
 {{ end }}
 
+# Resolve the symlink to get the actual Nix store path
+resolved_path=$(readlink -f {{ $runFile }})
+if [ -z "$resolved_path" ] || [ ! -f "$resolved_path" ]; then
+    echo "Error: Could not resolve {{ $runFile }} to a valid file"
+    exit 1
+fi
+
 # Function to setup the symlink and enable service
 setup_syncthing_service() {
     echo "$1"
+    echo "Linking to: $resolved_path"
     mkdir -p {{ $serviceDir }}
     mkdir -p {{ $targetDir }}
     rm -f {{ $serviceFile }}
-    ln -sf {{ $runFile }} {{ $serviceFile }}
+    ln -sf "$resolved_path" {{ $serviceFile }}
     systemctl --user daemon-reload
     systemctl --user enable {{ $serviceName }}
 }
@@ -40,6 +48,6 @@ exit 0
 
 # Check if the symlink target has changed (e.g., Nix store path updated)
 current_target=$(readlink {{ $serviceFile }} || echo "")
-if [ "$current_target" != "{{ $runFile }}" ]; then
+if [ "$current_target" != "$resolved_path" ]; then
     setup_syncthing_service "Updating syncthing systemd user service symlink (Nix store path changed)..."
 fi

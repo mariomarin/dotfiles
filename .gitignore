@@ -3,6 +3,7 @@
 *.old
 *.zwc*
 .claude
+.env
 dot_git
 private_dot_config/zim/modules
 private_init.zsh
