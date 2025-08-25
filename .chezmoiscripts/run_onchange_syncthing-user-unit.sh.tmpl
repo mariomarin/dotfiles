@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# From: https://nixos.org/manual/nixos/stable/index.html#sect-nixos-systemd-nixos
+# User systemd services on the other hand, should be treated differently.
+# Given a package that has a systemd unit file at #pkg-out#/lib/systemd/user/,
+# using systemd.packages will make you able to start the service via
+# systemctl --user start, but it won't start automatically on login.
+
+{{ $serviceName := "syncthing.service" -}}
+{{ $runDir := "/run/current-system/sw/lib/systemd/user" -}}
+{{ $runFile := joinPath $runDir $serviceName -}}
+{{ $serviceDir := joinPath .chezmoi.homeDir ".config/systemd/user" -}}
+{{ $serviceFile := joinPath $serviceDir $serviceName -}}
+{{ $targetDir := joinPath .chezmoi.homeDir ".config/systemd/user/default.target.wants" -}}
+{{ $targetFile := joinPath $targetDir $serviceName -}}
+
+# Check if the service file exists in the system
+{{ if not (stat $runFile) }}
+echo "Warning: Syncthing systemd unit not found at {{ $runFile }}"
+echo "Make sure syncthing is installed in your NixOS system configuration"
+exit 0
+{{ end }}
+
+# Function to setup the symlink and enable service
+setup_syncthing_service() {
+    echo "$1"
+    mkdir -p {{ $serviceDir }}
+    mkdir -p {{ $targetDir }}
+    rm -f {{ $serviceFile }}
+    ln -sf {{ $runFile }} {{ $serviceFile }}
+    systemctl --user daemon-reload
+    systemctl --user enable {{ $serviceName }}
+}
+
+# Check if we need to create the symlink
+{{ if or (not (stat $serviceFile)) (ne (lstat $serviceFile).type "symlink") }}
+setup_syncthing_service "Creating/fixing syncthing systemd user service symlink..."
+exit 0
+{{ end }}
+
+# Check if the symlink target has changed (e.g., Nix store path updated)
+current_target=$(readlink {{ $serviceFile }} || echo "")
+if [ "$current_target" != "{{ $runFile }}" ]; then
+    setup_syncthing_service "Updating syncthing systemd user service symlink (Nix store path changed)..."
+fi
