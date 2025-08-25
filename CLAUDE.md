@@ -28,15 +28,21 @@ make sync
 
 ### Tool-Specific Sync Commands
 ```bash
-# Update tmux plugin manager plugins
-make sync-tpm
-
 # Sync Doom Emacs packages
 make sync-doom
 
 # Sync Zim framework modules
 make sync-zimfw
 ```
+
+### Tmux Plugin Management
+Tmux plugins are now managed declaratively through chezmoi's external dependency system. All plugins are defined in `private_dot_local/share/tmux/plugins/.chezmoiexternal.toml` and are automatically downloaded/updated when running `chezmoi apply`.
+
+Benefits:
+- No more git conflicts in plugin directories
+- Reproducible plugin versions
+- Atomic updates with chezmoi
+- No need to run TPM update commands
 
 ## Architecture & Key Components
 

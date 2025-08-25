@@ -5,17 +5,13 @@ TMUX_TPM_VER ?= master
 # Repositories
 POLYBAR_PULSE_MOD_REPO := github.com/marioortizmanero/polybar-pulseaudio-control
 
-all: init diff install sync sync-tpm sync-doom sync-zimfw \
-	update update-doom update-asdf-vm update-zimfw update-tpm vendor-polybar-scripts
+all: init diff install sync sync-doom sync-zimfw \
+	update update-doom update-asdf-vm update-zimfw vendor-polybar-scripts
 
 init:
 	chezmoi init "${CHEZMOI_REPO:-git@github.com:mariomarin/dotfiles.git}" --apply
 
-sync: sync-tpm sync-doom sync-zimfw sync-tpm
-
-sync-tpm:
-	${XDG_DATA_HOME}/tmux/plugins/tpm/bin/install_plugins
-	${XDG_DATA_HOME}/tmux/plugins/tpm/bin/update_plugins all
+sync: sync-doom sync-zimfw
 
 sync-doom:
 	"${XDG_CONFIG_HOME}/emacs/bin/doom" sync

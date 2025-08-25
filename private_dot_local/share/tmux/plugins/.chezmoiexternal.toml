@@ -1,8 +1,89 @@
 {{ $TMUX_TPM_VER := "master" -}}
 
-[".local/share/tmux/plugins/tpm"]
+# TPM - Tmux Plugin Manager
+["tpm"]
     type = "archive"
     url = "https://github.com/tmux-plugins/tpm/archive/{{ $TMUX_TPM_VER }}.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# tmux-sensible - Basic tmux settings everyone can agree on
+["tmux-sensible"]
+    type = "archive"
+    url = "https://github.com/tmux-plugins/tmux-sensible/archive/master.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# minimal-tmux-status - A clean, minimal tmux theme
+["minimal-tmux-status"]
+    type = "archive"
+    url = "https://github.com/niksingh710/minimal-tmux-status/archive/main.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# tmux-resurrect - Persists tmux environment across system restarts
+["tmux-resurrect"]
+    type = "archive"
+    url = "https://github.com/tmux-plugins/tmux-resurrect/archive/master.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# tmux-continuum - Automatic tmux session save/restore
+["tmux-continuum"]
+    type = "archive"
+    url = "https://github.com/tmux-plugins/tmux-continuum/archive/master.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# tmux-thumbs - Like vimium/vimperator for tmux
+["tmux-thumbs"]
+    type = "archive"
+    url = "https://github.com/fcsonline/tmux-thumbs/archive/main.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# tmux-tilish - I3wm like keybindings for tmux
+["tmux-tilish"]
+    type = "archive"
+    url = "https://github.com/farzadmf/tmux-tilish/archive/master.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# tmux-navigate - Seamless navigation between tmux panes and vim splits
+["tmux-navigate"]
+    type = "archive"
+    url = "https://github.com/sunaku/tmux-navigate/archive/master.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# tmux-fzf - Use fzf to manage tmux work environment
+["tmux-fzf"]
+    type = "archive"
+    url = "https://github.com/sainnhe/tmux-fzf/archive/master.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# tmux-fuzzback - Search tmux scrollback buffer using fzf
+["tmux-fuzzback"]
+    type = "archive"
+    url = "https://github.com/roosta/tmux-fuzzback/archive/main.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
+# extrakto - Quickly select, copy/insert text
+["extrakto"]
+    type = "archive"
+    url = "https://github.com/laktak/extrakto/archive/master.tar.gz"
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"
