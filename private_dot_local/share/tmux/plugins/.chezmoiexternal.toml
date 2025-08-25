@@ -43,7 +43,7 @@
 # tmux-thumbs - Like vimium/vimperator for tmux
 ["tmux-thumbs"]
     type = "archive"
-    url = "https://github.com/fcsonline/tmux-thumbs/archive/main.tar.gz"
+    url = "https://github.com/fcsonline/tmux-thumbs/archive/master.tar.gz"
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"
