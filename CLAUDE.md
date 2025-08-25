@@ -77,9 +77,14 @@ Chezmoi is configured with:
 
 This repository includes a chezmoi script to manage the syncthing systemd user service on NixOS systems. The script:
 
-1. Creates a symlink from `~/.config/systemd/user/syncthing.service` to `/run/current-system/sw/lib/systemd/user/syncthing.service`
-2. Enables the service for automatic startup
-3. Automatically updates the symlink when the Nix store path changes (e.g., after syncthing updates)
+1. Resolves the system's syncthing service symlink to find the actual Nix store path
+2. Creates a direct symlink from `~/.config/systemd/user/syncthing.service` to the resolved Nix store path (e.g., `/nix/store/.../syncthing.service`)
+3. Enables the service for automatic startup
+4. Automatically updates the symlink when the Nix store path changes (e.g., after syncthing updates)
+
+### How it Works
+- The script avoids fragile intermediate symlinks by resolving `/run/current-system/sw/lib/systemd/user/syncthing.service` to its actual target
+- This makes the user service symlink point directly to the Nix store, making it more robust
 
 ### Fix Broken Syncthing Symlink
 If the syncthing service symlink is broken, run:
