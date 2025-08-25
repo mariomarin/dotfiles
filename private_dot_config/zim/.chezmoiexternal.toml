@@ -1,5 +1,5 @@
 # zsh
-{{ $ZIM_VER := "1.16.0" -}}
+{{ $ZIM_VER := "1.18.0" -}}
 
 ["zimfw.zsh"]
     type = "file"

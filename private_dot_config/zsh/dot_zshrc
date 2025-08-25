@@ -5,10 +5,6 @@
 # vim
 alias vi=nvim
 
-# emacs
-alias e="emac -nw"
-alias eg="emacs --create-frame"
-
 # git
 alias pr="git push-track && gh pr create --fill"
 alias checks="gh pr checks"
@@ -111,6 +107,6 @@ function sesh-sessions() {
 }
 
 zle     -N             sesh-sessions
-bindkey -M emacs '\ee' sesh-sessions
+bindkey -M emacs '\es' sesh-sessions
 bindkey -M vicmd '\ee' sesh-sessions
 bindkey -M viins '\ee' sesh-sessions

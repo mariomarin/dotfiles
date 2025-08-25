@@ -68,9 +68,6 @@ fi
 # Gnome needs a location to save screenshots
 export PICTURES=~/Pictures
 
-# Emacs Doom
-export DOOMDIR="${XDG_CONFIG_HOME:-$HOME/.config}/doom"
-
 # SpaceVim configuration file
 export SPACEVIMDIR="$HOME/.config/SpaceVim.d/"
 

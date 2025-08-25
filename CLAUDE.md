@@ -22,15 +22,12 @@ make init
 # Pull latest changes and show diff
 make diff
 
-# Full sync (includes updating tmux plugins, doom emacs, zimfw)
+# Full sync (includes updating tmux plugins, zimfw)
 make sync
 ```
 
 ### Tool-Specific Sync Commands
 ```bash
-# Sync Doom Emacs packages
-make sync-doom
-
 # Sync Zim framework modules
 make sync-zimfw
 ```
@@ -50,7 +47,6 @@ Benefits:
 - `private_dot_config/` - Maps to `~/.config/` containing application configurations
   - `nvim/` - Neovim configuration using lazy.nvim
   - `alacritty/` - Alacritty terminal configuration
-  - `emacs/` - Doom Emacs configuration
   - `SpaceVim.d/` - SpaceVim configuration
 - `private_dot_local/` - Maps to `~/.local/` containing local data
   - `share/tmux/plugins/` - Tmux plugins managed by TPM
@@ -104,5 +100,5 @@ The script will automatically detect and fix the broken symlink, updating it to 
 
 - This repository manages system configurations - be careful when applying changes
 - The Makefile provides convenient targets for common operations
-- External tools (tmux plugins, emacs packages, etc.) are synced separately from chezmoi apply
+- External tools (tmux plugins, etc.) are synced separately from chezmoi apply
 - Chezmoi scripts in `.chezmoiscripts/` run automatically during `chezmoi apply`
