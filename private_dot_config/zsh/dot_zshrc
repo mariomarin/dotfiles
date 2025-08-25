@@ -75,7 +75,7 @@ source ${ZIM_HOME}/init.zsh
 # End configuration added by Zim install }}}
 
 # Unalias zimfw git module aliases that conflict with CLI tools
-# The git module uses prefix 'G' by default, but lowercase versions may exist
+# The git module is configured to use prefix 'g' (set above)
 # See ~/.config/zim/modules/git/init.zsh for full alias list
 #
 # Conflicts:
