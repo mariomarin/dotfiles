@@ -14,5 +14,4 @@ make init
 
 | Tool                | Notes                                                                                                                |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| asdf                | [ZSH & Git](https://asdf-vm.com/guide/getting-started.html#_3-install-asdf)                                          |
 | Tmux Plugin Manager | [Changing Plugins Install Dir](https://github.com/tmux-plugins/tpm/blob/master/docs/changing_plugins_install_dir.md) |

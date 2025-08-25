@@ -6,7 +6,7 @@ TMUX_TPM_VER ?= master
 POLYBAR_PULSE_MOD_REPO := github.com/marioortizmanero/polybar-pulseaudio-control
 
 all: init diff install sync \
-	update update-asdf-vm vendor-polybar-scripts
+	update vendor-polybar-scripts
 
 init:
 	chezmoi init "${CHEZMOI_REPO:-git@github.com:mariomarin/dotfiles.git}" --apply
