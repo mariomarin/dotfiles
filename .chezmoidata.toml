@@ -1,0 +1,7 @@
+# External tool version management
+# 
+# By default, tools will use the latest GitHub release.
+# To pin a specific version, uncomment and modify the relevant line.
+#
+# [versions]
+# containerUse = "v0.4.2"  # Pin container-use to specific version
