@@ -1,0 +1,11 @@
+# This is an example configuration file for Topgrade.
+# All of these settings are optional.
+# See https://github.com/topgrade-rs/topgrade/blob/main/config.example.toml for the full example
+
+# Download the full example for reference:
+# curl -sL https://raw.githubusercontent.com/topgrade-rs/topgrade/main/config.example.toml
+
+# To validate your configuration, run:
+# topgrade --dry-run
+
+# Note: This is a reference file. Your actual configuration is in topgrade.toml

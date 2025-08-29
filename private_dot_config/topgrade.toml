@@ -53,18 +53,14 @@ dnf_arguments = "--refresh"
 force_plug_update = false
 
 [npm]
-# Use pnpm if available
-use_pnpm = true
+# NPM configuration
+# Note: use_pnpm was removed in newer versions, pnpm is auto-detected
 
 [python]
 # Enable pip updates
 enable_pip_review = true
 enable_pip_review_local = false
 enable_pipupgrade = false
-
-[rust]
-# Update rust toolchain
-update_toolchain = true
 
 [distrobox]
 # Update distrobox containers
