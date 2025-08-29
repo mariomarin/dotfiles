@@ -28,16 +28,17 @@ make sync
 
 ### NixOS Operations (Flakes)
 ```bash
-# From repository root:
-make nixos          # Rebuild NixOS configuration
-make nixos-test     # Test configuration without switching
-make nixos-boot     # Update boot configuration
-make nixos-update   # Update flake inputs
+# From repository root (using pattern rule):
+make nixos              # Rebuild NixOS configuration (alias for nixos/switch)
+make nixos/test         # Test configuration without switching
+make nixos/boot         # Update boot configuration
+make nixos/update       # Update flake inputs
+make nixos/check        # Check flake configuration
+make nixos/show         # Show flake metadata
 
 # Or directly from nixos directory:
-cd nixos && make    # Rebuild (switch is default)
-cd nixos && make test
-cd nixos && make update
+cd nixos && make        # Rebuild (switch is default)
+cd nixos && make test   # Test configuration
 ```
 
 ### Tool-Specific Sync Commands
