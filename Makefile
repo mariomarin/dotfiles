@@ -17,10 +17,6 @@ update-system:
 	@topgrade --only system nix --no-retry
 	@echo "✅ System updates complete"
 
-# Quick apply without updates
-quick-apply:
-	CHEZMOI_SKIP_UPDATES=1 chezmoi apply -v
-
 # Linting and formatting targets
 lint: lint-lua lint-nix lint-shell
 	@echo "✅ All linting checks passed"
@@ -137,9 +133,10 @@ zim/%:
 # Convenience aliases
 nixos: nixos/switch
 apply: chezmoi/apply
+quick-apply: chezmoi/quick-apply
 diff: chezmoi/diff
 nvim: nvim/sync
 tmux: tmux/reload
 zim: zim/update
 
-.PHONY: all update update-plugins update-flakes quick-apply lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check health health-summary health-all nixos apply diff nvim tmux zim
+.PHONY: all update update-plugins update-system lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check health health-summary health-all nixos apply quick-apply diff nvim tmux zim

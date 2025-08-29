@@ -1,13 +1,17 @@
 # Chezmoi operations
-.PHONY: apply diff init install status add edit update health
+.PHONY: apply quick-apply diff init install status add edit update health
 
 # Apply dotfiles changes
 apply:
-	chezmoi apply -v
+	chezmoi apply
 
 # Show what would change
 diff:
 	chezmoi diff
+
+# Quick apply without updates
+quick-apply:
+	CHEZMOI_SKIP_UPDATES=1 chezmoi apply
 
 # Initialize chezmoi with repository
 init:
