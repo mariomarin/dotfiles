@@ -1,5 +1,6 @@
 # NixOS rebuild commands
-.PHONY: switch test boot build health
+# All targets are phony
+.PHONY: $(shell sed -n -e '/^[^[:space:]#.*][^:=]*:/{s/:.*//;p}' $(MAKEFILE_LIST))
 
 switch:
 	sudo nixos-rebuild switch --flake .#nixos

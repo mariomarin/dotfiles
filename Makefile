@@ -139,4 +139,5 @@ nvim: nvim/sync
 tmux: tmux/reload
 zim: zim/update
 
-.PHONY: all update update-plugins update-system lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check health health-summary health-all nixos apply quick-apply diff nvim tmux zim
+# All targets are phony (no actual files created)
+.PHONY: $(shell sed -n -e '/^[^[:space:]#.*][^:=]*:/{s/:.*//;p}' $(MAKEFILE_LIST))

@@ -1,5 +1,6 @@
 # Chezmoi operations
-.PHONY: apply quick-apply diff init install status add edit update health
+# All targets are phony
+.PHONY: $(shell sed -n -e '/^[^[:space:]#.*][^:=]*:/{s/:.*//;p}' $(MAKEFILE_LIST))
 
 # Apply dotfiles changes
 apply:

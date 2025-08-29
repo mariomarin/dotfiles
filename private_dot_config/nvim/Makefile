@@ -1,5 +1,6 @@
 # Neovim configuration management
-.PHONY: sync update clean health plugins lint format
+# All targets are phony
+.PHONY: $(shell sed -n -e '/^[^[:space:]#.*][^:=]*:/{s/:.*//;p}' $(MAKEFILE_LIST))
 
 # Sync/install plugins
 sync:

@@ -1,5 +1,6 @@
 # Tmux configuration management
-.PHONY: reload plugins-install plugins-update plugins-clean status kill-server health
+# All targets are phony
+.PHONY: $(shell sed -n -e '/^[^[:space:]#.*][^:=]*:/{s/:.*//;p}' $(MAKEFILE_LIST))
 
 # Reload tmux configuration
 reload:

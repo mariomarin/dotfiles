@@ -1,5 +1,6 @@
 # Zim framework management
-.PHONY: install update uninstall upgrade clean compile list version health
+# All targets are phony
+.PHONY: $(shell sed -n -e '/^[^[:space:]#.*][^:=]*:/{s/:.*//;p}' $(MAKEFILE_LIST))
 
 # Install Zim
 install:
