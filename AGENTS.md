@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI agents and assistants when working with code in this repository.
 
 ## Repository Overview
 
@@ -40,6 +40,15 @@ Benefits:
 - Reproducible plugin versions
 - Atomic updates with chezmoi
 - No need to run TPM update commands
+
+## Component-Specific Documentation
+
+Detailed documentation for each major component is available in subdirectory AGENTS.md files:
+
+- [Neovim Configuration](private_dot_config/nvim/AGENTS.md) - LazyVim setup, plugins, keymaps
+- [NixOS Configuration](nixos/AGENTS.md) - System configuration, modules, services
+- [Zsh/Zim Configuration](private_dot_config/zim/AGENTS.md) - Shell setup, completions, modules
+- [Tmux Configuration](private_dot_config/tmux/AGENTS.md) - Terminal multiplexer, plugins, bindings
 
 ## Architecture & Key Components
 
@@ -135,14 +144,12 @@ The script will automatically detect and fix the broken symlink, updating it to 
 ## Neovim Configuration (LazyVim)
 
 The repository uses LazyVim as the Neovim configuration framework:
-- **Base Distribution**: LazyVim with pre-configured IDE features
-- **Language Extras**: Go, TypeScript, Python, Rust, YAML, Docker, Markdown
-- **Custom Plugins**: Located in `private_dot_config/nvim/lua/plugins/`
+See [Neovim AGENTS.md](private_dot_config/nvim/AGENTS.md) for detailed configuration.
 
-### Claude Integration
-- **Toggle**: `<leader>cc` opens Claude Code in a floating terminal
+### AI Assistant Integration
+- **Toggle**: `<leader>cc` opens AI assistant in a floating terminal
 - **Continue**: `<leader>c.` continues the conversation
-- **Reload**: `<leader>cr` reloads files modified by Claude
+- **Reload**: `<leader>cr` reloads files modified by assistant
 - Configuration in `private_dot_config/nvim/lua/plugins/claude.lua`
 
 ### Key Customizations
@@ -152,7 +159,4 @@ The repository uses LazyVim as the Neovim configuration framework:
 - Chezmoi integration for dotfile management
 
 ### NixOS Compatibility
-- Mason is configured to work with NixOS's filesystem restrictions
-- Python debugging uses system debugpy instead of Mason-installed version
-- LSP servers prefer system packages over Mason auto-installation
-- See `lua/plugins/mason.lua` and `lua/plugins/dap.lua` for details
+The configuration includes special handling for NixOS systems. See [NixOS AGENTS.md](nixos/AGENTS.md) for system configuration details.
