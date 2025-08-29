@@ -248,3 +248,10 @@ The Neovim setup uses LazyVim, a modern Neovim configuration framework:
 - `<leader>ca` - Code actions
 - `<leader>cf` - Format code
 - And many more (press `<leader>sk` to see all keymaps)
+
+### NixOS Compatibility
+Special configurations are included for NixOS users:
+- Mason package manager is configured to use system-installed tools first
+- Python debugging automatically detects and uses system debugpy
+- LSP servers should be installed via Nix rather than Mason
+- Disabled plugins that may conflict with NixOS restrictions

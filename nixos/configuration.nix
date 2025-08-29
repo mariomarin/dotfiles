@@ -206,9 +206,7 @@
     gimp
     gnome-disk-utility
     libnotify
-    obsidian
     playerctl
-    qbittorrent
     speechd
     transmission_3
     tridactyl-native
