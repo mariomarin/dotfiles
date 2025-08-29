@@ -9,6 +9,7 @@ disable = [
     "restarts",       # Don't auto-restart services
     "emacs",          # Emacs packages (not using Doom)
     "vscode",         # VSCode extensions (using Neovim instead)
+    "poetry",         # Poetry packages (not using)
 ]
 
 # Don't retry failed steps automatically
