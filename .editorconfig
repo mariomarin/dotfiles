@@ -1,0 +1,57 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+# Shell scripts (matching zimfw style)
+[*.{sh,zsh,bash}]
+indent_style = space
+indent_size = 2
+# Keep function opening braces on same line
+# Use [[ ]] for conditionals
+# Space before 'then' in if statements
+
+# Lua files (LazyVim/Neovim)
+[*.lua]
+indent_style = space
+indent_size = 2
+
+# Nix files
+[*.nix]
+indent_style = space
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# TOML files
+[*.toml]
+indent_style = space
+indent_size = 2
+
+# JSON files
+[*.{json,jsonc}]
+indent_style = space
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 100
+
+# Makefile
+[Makefile]
+indent_style = tab
+
+# Git config files
+[.git*]
+indent_style = tab
