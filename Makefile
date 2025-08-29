@@ -74,9 +74,21 @@ nixos/%:
 chezmoi/%:
 	@$(MAKE) -C chezmoi $*
 
+nvim/%:
+	@$(MAKE) -C private_dot_config/nvim $*
+
+tmux/%:
+	@$(MAKE) -C private_dot_config/tmux $*
+
+zim/%:
+	@$(MAKE) -C private_dot_config/zim $*
+
 # Convenience aliases
 nixos: nixos/switch
 apply: chezmoi/apply
 diff: chezmoi/diff
+nvim: nvim/sync
+tmux: tmux/reload
+zim: zim/update
 
-.PHONY: all lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check nixos apply diff
+.PHONY: all lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check nixos apply diff nvim tmux zim

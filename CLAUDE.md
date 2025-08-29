@@ -37,10 +37,25 @@ cd nixos && make        # Rebuild (switch is default)
 cd nixos && make test   # Test configuration
 ```
 
-### Tool-Specific Sync Commands
+### Configuration Management
 ```bash
-# Sync Zim framework modules
-make sync-zimfw
+# Neovim operations:
+make nvim               # Sync plugins (alias for nvim/sync)
+make nvim/update        # Update plugins
+make nvim/clean         # Clean unused plugins
+make nvim/health        # Check health
+
+# Tmux operations:
+make tmux               # Reload config (alias for tmux/reload)
+make tmux/plugins-install   # Install TPM plugins
+make tmux/plugins-update    # Update TPM plugins
+make tmux/status        # Show tmux status
+
+# Zim operations:
+make zim                # Update modules (alias for zim/update)
+make zim/compile        # Compile for faster loading
+make zim/clean          # Clean cache
+make zim/upgrade        # Upgrade Zim itself
 ```
 
 ### Tmux Plugin Management
