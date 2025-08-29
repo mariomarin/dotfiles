@@ -30,7 +30,7 @@ cleanup = true
 
 [post_commands]
 # Add updated lock files to chezmoi after updates
-"Add lock files to chezmoi" = "chezmoi add ~/.config/nvim/lazy-lock.json ~/.config/zim/.latest_version 2>/dev/null || true"
+"Add lock files to chezmoi" = "chezmoi add ~/.config/nvim/lazy-lock.json 2>/dev/null || true"
 
 [git]
 # Pull git repositories

@@ -113,6 +113,7 @@
     gnumake
     go
     gopls
+    luarocks
     meilisearch
     openjdk
     pkg-config
