@@ -1,0 +1,19 @@
+{{- /* Zimfw version management */ -}}
+{{- $zimfwLatest := "" -}}
+{{- if and (hasKey . "versions") (hasKey .versions "zimfw") -}}
+  {{- /* Use pinned version if specified in .chezmoidata.toml */ -}}
+  {{- $zimfwLatest = .versions.zimfw -}}
+{{- else -}}
+  {{- /* Use chezmoi's gitHubLatestRelease to get latest version */ -}}
+  {{- $zimfwRelease := gitHubLatestRelease "zimfw/zimfw" -}}
+  {{- $zimfwLatest = $zimfwRelease.TagName -}}
+{{- end -}}
+
+# Zimfw - Zim framework
+# Current version: {{ $zimfwLatest }}
+["zimfw.zsh"]
+    type = "file"
+    url = "https://github.com/zimfw/zimfw/releases/download/{{ $zimfwLatest }}/zimfw.zsh.gz"
+    filter.command = "gunzip"
+    filter.args = ["-c"]
+    refreshPeriod = "168h"

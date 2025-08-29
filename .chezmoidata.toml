@@ -4,4 +4,5 @@
 # To pin a specific version, uncomment and modify the relevant line.
 #
 # [versions]
-# containerUse = "v0.4.2"  # Pin container-use to specific version
+# containerUse = "v0.4.2"  # Container-based development environments
+# zimfw = "v1.18.0"       # Zim framework for Zsh
