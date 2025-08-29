@@ -181,8 +181,8 @@
     npm
     pnpm
     yarn
-  ]) ++ [
+  ]) ++ (with pkgs; [
     # Packages from unstable channel
-    # pkgs.unstable.devenv  # Temporarily disabled due to build issues
-  ];
+    unstable.devenv
+  ]);
 }
