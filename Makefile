@@ -1,4 +1,4 @@
-all: chezmoi/apply
+all: chezmoi/quick-apply
 
 # Update all system packages and plugins
 update:
