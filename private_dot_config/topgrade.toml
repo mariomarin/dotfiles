@@ -24,12 +24,11 @@ assume_yes = false
 # Cleanup after updates
 cleanup = true
 
-[commands]
 # Custom commands to run at specific times
-[commands.pre_commands]
+[pre_commands]
 # Commands to run before updates
 
-[commands.post_commands]
+[post_commands]
 # Add updated lock files to chezmoi after updates
 "Add lock files to chezmoi" = "chezmoi add ~/.config/nvim/lazy-lock.json ~/.config/zim/.latest_version 2>/dev/null || true"
 
