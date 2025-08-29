@@ -1,20 +1,11 @@
 return {
-  -- Leap for better navigation
-  {
-    "ggandor/leap.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("leap").add_default_mappings()
-    end,
-  },
-
-  -- Tmux navigation
+  -- Tmux navigation (not in LazyVim extras)
   {
     "christoomey/vim-tmux-navigator",
     event = "VeryLazy",
   },
 
-  -- Session management
+  -- Session management (not in LazyVim extras)
   {
     "tpope/vim-obsession",
     event = "VeryLazy",

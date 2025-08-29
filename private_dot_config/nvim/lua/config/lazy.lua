@@ -31,6 +31,13 @@ require("lazy").setup({
     -- DAP (Debug Adapter Protocol) support
     { import = "lazyvim.plugins.extras.dap.core" },
     { import = "lazyvim.plugins.extras.dap.nlua" },
+
+    -- Editor extras
+    { import = "lazyvim.plugins.extras.editor.leap" }, -- Better navigation with leap
+    { import = "lazyvim.plugins.extras.util.chezmoi" }, -- Chezmoi integration
+    { import = "lazyvim.plugins.extras.lang.nix" }, -- Nix language support
+    { import = "lazyvim.plugins.extras.test.core" }, -- Test support with neotest
+
     -- import/override with your plugins
     { import = "plugins" },
   },
