@@ -1,16 +1,4 @@
-all: init diff install update
-
-init:
-	chezmoi init "${CHEZMOI_REPO:-git@github.com:mariomarin/dotfiles.git}" --apply
-
-apply:
-	chezmoi apply -v
-
-diff:
-	chezmoi git pull -- --rebase && chezmoi diff
-
-install: update-all
-	curl -sfL https://git.io/chezmoi | sh
+all: chezmoi/apply
 
 # Linting and formatting targets
 lint: lint-lua lint-nix lint-shell
@@ -83,7 +71,12 @@ check: lint
 nixos/%:
 	@$(MAKE) -C nixos $*
 
-# Convenience alias
-nixos: nixos/switch
+chezmoi/%:
+	@$(MAKE) -C chezmoi $*
 
-.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check nixos
+# Convenience aliases
+nixos: nixos/switch
+apply: chezmoi/apply
+diff: chezmoi/diff
+
+.PHONY: all lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check nixos apply diff

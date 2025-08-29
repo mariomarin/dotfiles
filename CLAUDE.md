@@ -10,20 +10,16 @@ This is a chezmoi-managed dotfiles repository that uses templating and external 
 
 ### Chezmoi Operations
 ```bash
-# Apply changes to the system
-chezmoi apply -v
+# From repository root (using pattern rule):
+make apply              # Apply dotfiles changes (alias for chezmoi/apply)
+make diff               # Show diff after pull (alias for chezmoi/diff)
+make chezmoi/status     # Show status of managed files
+make chezmoi/update     # Pull latest and show diff
+make chezmoi/init       # Initialize with repository
 
-# See what changes will be made
-chezmoi diff
-
-# Initialize chezmoi with this repository
-make init
-
-# Pull latest changes and show diff
-make diff
-
-# Full sync (includes updating tmux plugins, zimfw)
-make sync
+# Or directly:
+cd chezmoi && make      # Apply changes (default)
+cd chezmoi && make diff # Show what would change
 ```
 
 ### NixOS Operations (Flakes)
