@@ -136,6 +136,7 @@
     (python312.withPackages (p: with p; [
       boto3
       coverage
+      debugpy # Python debugger for Neovim DAP
       pip
       pygments
       pytest

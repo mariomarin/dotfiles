@@ -13,18 +13,18 @@ return {
       local is_nixos = vim.fn.executable("nix") == 1
 
       if is_nixos then
-        -- Try to find system debugpy
-        local debugpy_path = vim.fn.exepath("debugpy-adapter")
-        if debugpy_path == "" then
-          debugpy_path = vim.fn.exepath("debugpy")
-        end
-
-        if debugpy_path ~= "" then
-          require("dap-python").setup(debugpy_path)
+        -- Try to find system Python with debugpy module
+        local python_path = vim.fn.exepath("python3")
+        if python_path ~= "" then
+          -- Check if debugpy module is available
+          local has_debugpy = vim.fn.system("python3 -c 'import debugpy' 2>/dev/null; echo $?"):gsub("\n", "") == "0"
+          if has_debugpy then
+            require("dap-python").setup(python_path)
+          else
+            vim.notify("debugpy not found. Run: sudo nixos-rebuild switch", vim.log.levels.WARN)
+          end
         else
-          -- Use Python module fallback
-          require("dap-python").setup()
-          vim.notify("debugpy not found in PATH. Install it with your package manager.", vim.log.levels.WARN)
+          vim.notify("Python not found in PATH", vim.log.levels.WARN)
         end
       else
         -- Use default Mason installation path
