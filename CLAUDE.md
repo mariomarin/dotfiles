@@ -26,6 +26,18 @@ make diff
 make sync
 ```
 
+### NixOS Operations (Flakes)
+```bash
+# Rebuild NixOS configuration
+make nixos
+
+# Test configuration without switching
+make nixos-test
+
+# Update boot configuration
+make nixos-boot
+```
+
 ### Tool-Specific Sync Commands
 ```bash
 # Sync Zim framework modules

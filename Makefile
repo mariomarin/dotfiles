@@ -79,4 +79,14 @@ dev:
 check: lint
 	@echo "✅ All checks passed"
 
-.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check
+# NixOS rebuild targets
+nixos:
+	sudo nixos-rebuild switch --flake ./nixos#nixos
+
+nixos-test:
+	sudo nixos-rebuild test --flake ./nixos#nixos
+
+nixos-boot:
+	sudo nixos-rebuild boot --flake ./nixos#nixos
+
+.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check nixos nixos-test nixos-boot

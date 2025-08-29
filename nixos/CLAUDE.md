@@ -10,7 +10,6 @@ nixos/
 ├── flake.lock                # Locked flake dependencies
 ├── configuration.nix         # Main NixOS configuration
 ├── hardware-configuration.nix # Hardware-specific settings
-├── rebuild-flake.sh          # Helper script for rebuilding with flakes
 └── modules/                  # Modular configuration
     ├── boot.nix             # Boot loader configuration
     ├── desktop.nix          # Desktop environment setup
@@ -89,17 +88,14 @@ nixos/
 ## NixOS Commands (Flakes)
 
 ```bash
-# Rebuild system configuration with flakes
-sudo nixos-rebuild switch --flake /home/mario/.local/share/chezmoi/nixos#nixos
-
-# Or use the helper script
-./nixos/rebuild-flake.sh switch
+# Rebuild system configuration with flakes (from repo root)
+make nixos
 
 # Test configuration without switching
-./nixos/rebuild-flake.sh test
+make nixos-test
 
-# Build configuration without activating
-./nixos/rebuild-flake.sh build
+# Update boot configuration (apply on next boot)
+make nixos-boot
 
 # Update flake inputs
 nix flake update
