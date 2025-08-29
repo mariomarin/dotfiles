@@ -132,10 +132,21 @@ The script will automatically detect and fix the broken symlink, updating it to 
 - External tools (tmux plugins, etc.) are synced separately from chezmoi apply
 - Chezmoi scripts in `.chezmoiscripts/` run automatically during `chezmoi apply`
 
-## Neovim Claude Integration
+## Neovim Configuration (LazyVim)
 
-The Neovim configuration includes claude-code.nvim for seamless Claude Code integration:
+The repository uses LazyVim as the Neovim configuration framework:
+- **Base Distribution**: LazyVim with pre-configured IDE features
+- **Language Extras**: Go, TypeScript, Python, Rust, YAML, Docker, Markdown
+- **Custom Plugins**: Located in `private_dot_config/nvim/lua/plugins/`
+
+### Claude Integration
 - **Toggle**: `<leader>cc` opens Claude Code in a floating terminal
 - **Continue**: `<leader>c.` continues the conversation
 - **Reload**: `<leader>cr` reloads files modified by Claude
-- Configuration in `private_dot_config/nvim/lua/plugins/ai.lua`
+- Configuration in `private_dot_config/nvim/lua/plugins/claude.lua`
+
+### Key Customizations
+- Catppuccin colorscheme (mocha flavor)
+- nvim-tree instead of neo-tree for file exploration
+- Leap.nvim for navigation
+- Chezmoi integration for dotfile management

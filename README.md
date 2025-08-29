@@ -214,25 +214,37 @@ The repository includes a comprehensive Zsh configuration:
 - Kubernetes completions
 - AWS SSO completions
 
-## Neovim Configuration
+## Neovim Configuration (LazyVim)
 
-The Neovim setup uses a modular configuration with lazy.nvim:
+The Neovim setup uses LazyVim, a modern Neovim configuration framework:
 
 ### Structure
 - `private_dot_config/nvim/init.lua` - Entry point
 - `private_dot_config/nvim/lua/` - Lua configuration modules
-  - `configs/` - Plugin configurations
-  - `plugins/` - Plugin definitions
-  - `mappings.lua` - Key mappings
-  - `options.lua` - Editor options
+  - `config/` - Core configuration (options, keymaps, lazy.nvim)
+  - `plugins/` - Custom plugin configurations
+- `.neoconf.json` - Neovim LSP configuration
+- `stylua.toml` - Lua code formatting rules
 
 ### Key Features
-- **Plugin Manager**: lazy.nvim for fast startup
-- **Language Support**: Configurations for multiple languages (Go, Rust, Python, TypeScript, etc.)
-- **AI Integration**: Claude Code integration for AI-powered coding assistance
+- **Base**: LazyVim distribution with sensible defaults
+- **Language Support**: Pre-configured extras for Go, TypeScript, Python, Rust, YAML, Docker, Markdown
+- **AI Integration**: Claude Code integration
   - Toggle Claude Code with `<leader>cc`
   - Continue conversations with `<leader>c.`
   - Auto-reload files modified by Claude
-- **Tmux Integration**: Seamless navigation between Neovim and tmux panes
+- **File Explorer**: nvim-tree (accessible with `<leader>e`)
+- **Colorscheme**: Catppuccin (mocha flavor)
+- **Navigation**: Leap.nvim for quick cursor movement
+- **Tmux Integration**: Seamless pane navigation
 - **Session Management**: vim-obsession for persistent sessions
 - **Chezmoi Integration**: Auto-apply on save for chezmoi-managed files
+
+### Default LazyVim Keymaps
+- `<leader><space>` - Find files
+- `<leader>ff` - Find files
+- `<leader>sg` - Search grep
+- `<leader>bb` - Switch buffers
+- `<leader>ca` - Code actions
+- `<leader>cf` - Format code
+- And many more (press `<leader>sk` to see all keymaps)
