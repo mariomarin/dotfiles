@@ -6,7 +6,8 @@
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
-    <nixos-hardware/lenovo/thinkpad/t470s>
+    # Hardware profile will be added in flake later
+    # <nixos-hardware/lenovo/thinkpad/t470s>
   ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "thunderbolt" ];
