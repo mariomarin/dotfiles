@@ -1,5 +1,25 @@
 all: chezmoi/apply
 
+# Update all plugins and packages
+update: update-plugins update-flakes
+	@echo "✅ All updates complete"
+
+update-plugins:
+	@echo "🔄 Updating all plugins..."
+	@$(MAKE) -s nvim/update || true
+	@$(MAKE) -s tmux/plugins-update || true
+	@$(MAKE) -s zim/update || true
+	@echo "✅ Plugin updates complete"
+
+update-flakes:
+	@echo "🔄 Updating Nix flakes..."
+	@$(MAKE) -s nixos/update || true
+	@echo "✅ Flake updates complete"
+
+# Quick apply without plugin updates
+quick-apply:
+	CHEZMOI_SKIP_PLUGIN_UPDATES=1 chezmoi apply -v
+
 # Linting and formatting targets
 lint: lint-lua lint-nix lint-shell
 	@echo "✅ All linting checks passed"
@@ -121,4 +141,4 @@ nvim: nvim/sync
 tmux: tmux/reload
 zim: zim/update
 
-.PHONY: all lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check health health-summary health-all nixos apply diff nvim tmux zim
+.PHONY: all update update-plugins update-flakes quick-apply lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check health health-summary health-all nixos apply diff nvim tmux zim

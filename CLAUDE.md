@@ -6,6 +6,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system configurations across different machines.
 
+## Plugin and Package Management
+
+### Update Strategy
+The repository uses a hybrid approach for keeping plugins updated:
+
+1. **Tmux plugins**: Managed via `.chezmoiexternal.toml` for reproducibility
+2. **Neovim plugins**: LazyVim's built-in package manager with `lazy-lock.json` for pinning
+3. **Zim modules**: Zimfw's module manager with version tracking
+4. **NixOS packages**: Flake inputs with `flake.lock` for reproducibility
+
+### Automatic Updates
+- Plugins update automatically after `chezmoi apply` (once per week by default)
+- Configure in `.chezmoidata/plugin-updates.toml`
+- Skip with: `CHEZMOI_SKIP_PLUGIN_UPDATES=1 chezmoi apply`
+
+### Manual Updates
+```bash
+# Update everything (plugins + flakes)
+make update
+
+# Update only plugins
+make update-plugins
+
+# Update only Nix flakes  
+make update-flakes
+
+# Quick apply without updates
+make quick-apply
+
+# Individual updates
+make nvim/update        # Neovim plugins
+make tmux/plugins-update # Tmux plugins
+make zim/update         # Zim modules
+make nixos/update       # Nix flakes
+```
+
 ## Common Commands
 
 ### Chezmoi Operations

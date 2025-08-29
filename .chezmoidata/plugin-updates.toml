@@ -1,0 +1,27 @@
+# Plugin update configuration
+# Controls how plugins are updated for various tools
+
+[updates]
+# Enable automatic updates after chezmoi apply
+auto_update = true
+
+# Update frequency (in days) - only update if last update was older than this
+update_frequency = 7
+
+[neovim]
+# LazyVim plugin management
+enabled = true
+# Update command: nvim --headless "+Lazy! sync" +qa
+# Lock specific plugins by adding to lazy-lock.json
+
+[tmux]
+# TPM (Tmux Plugin Manager)
+enabled = true
+# Plugins defined in .chezmoiexternal.toml for reproducibility
+# TPM updates are handled by the external system
+
+[zim]
+# Zim framework modules
+enabled = true
+# Update command: zimfw update
+# Modules defined in zimrc
