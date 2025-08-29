@@ -58,7 +58,7 @@ format-nix:
 format-shell:
 	@echo "📝 Formatting shell scripts with shfmt..."
 	@if command -v shfmt >/dev/null 2>&1; then \
-		find . \( -name "*.sh" -o -name "*.zsh" \) -type f -not -path "./private_dot_config/zim/modules/*" -exec shfmt -i 2 -ci -sr -kp -w {} \; && echo "✅ Shell scripts formatted"; \
+		shfmt -w -i 2 -ci -sr -kp . && echo "✅ Shell scripts formatted"; \
 	else \
 		echo "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
 	fi
