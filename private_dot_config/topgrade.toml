@@ -73,6 +73,3 @@ update_toolchain = true
 # Update distrobox containers
 use_root = false
 
-# Skip these steps when running with --yes flag
-[misc.skip_with_yes]
-steps = ["restarts"]
