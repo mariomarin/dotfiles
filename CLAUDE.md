@@ -150,3 +150,9 @@ The repository uses LazyVim as the Neovim configuration framework:
 - nvim-tree instead of neo-tree for file exploration
 - Leap.nvim for navigation
 - Chezmoi integration for dotfile management
+
+### NixOS Compatibility
+- Mason is configured to work with NixOS's filesystem restrictions
+- Python debugging uses system debugpy instead of Mason-installed version
+- LSP servers prefer system packages over Mason auto-installation
+- See `lua/plugins/mason.lua` and `lua/plugins/dap.lua` for details
