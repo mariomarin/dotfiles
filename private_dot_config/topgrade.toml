@@ -52,10 +52,6 @@ dnf_arguments = "--refresh"
 # Force update vim plugins
 force_plug_update = false
 
-[tmux]
-# Update tmux plugins automatically
-update_plugins = true
-
 [npm]
 # Use pnpm if available
 use_pnpm = true
