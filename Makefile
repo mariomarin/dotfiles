@@ -36,7 +36,7 @@ lint-shell:
 		echo "⚠️  shellcheck not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
 	fi
 
-format: format-lua format-nix format-shell
+format: format-lua format-nix format-shell format-others
 	@echo "✨ All formatting complete"
 
 format-lua:
@@ -63,6 +63,14 @@ format-shell:
 		echo "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
 	fi
 
+format-others:
+	@echo "📝 Formatting Markdown, JSON, TOML, YAML files with dprint..."
+	@if command -v dprint >/dev/null 2>&1; then \
+		dprint fmt && echo "✅ Other files formatted"; \
+	else \
+		echo "⚠️  dprint not found. Run 'direnv allow' to load development environment"; \
+	fi
+
 # Development environment
 dev:
 	@echo "🚀 Starting development shell..."
@@ -71,4 +79,4 @@ dev:
 check: lint
 	@echo "✅ All checks passed"
 
-.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell dev check
+.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check
