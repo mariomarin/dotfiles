@@ -1,6 +1,6 @@
-# AGENTS.md
+# CLAUDE.md
 
-This file provides guidance to AI agents and assistants when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Repository Overview
 
@@ -43,12 +43,12 @@ Benefits:
 
 ## Component-Specific Documentation
 
-Detailed documentation for each major component is available in subdirectory AGENTS.md files:
+Detailed documentation for each major component is available in subdirectory CLAUDE.md files:
 
-- [Neovim Configuration](private_dot_config/nvim/AGENTS.md) - LazyVim setup, plugins, keymaps
-- [NixOS Configuration](nixos/AGENTS.md) - System configuration, modules, services
-- [Zsh/Zim Configuration](private_dot_config/zim/AGENTS.md) - Shell setup, completions, modules
-- [Tmux Configuration](private_dot_config/tmux/AGENTS.md) - Terminal multiplexer, plugins, bindings
+- [Neovim Configuration](private_dot_config/nvim/CLAUDE.md) - LazyVim setup, plugins, keymaps
+- [NixOS Configuration](nixos/CLAUDE.md) - System configuration, modules, services
+- [Zsh/Zim Configuration](private_dot_config/zim/CLAUDE.md) - Shell setup, completions, modules
+- [Tmux Configuration](private_dot_config/tmux/CLAUDE.md) - Terminal multiplexer, plugins, bindings
 
 ## Architecture & Key Components
 
@@ -86,7 +86,7 @@ External tools support dynamic version management:
 #### Custom Zimfw Modules
 To add completions for new tools:
 1. Create a module directory: `private_dot_config/zim/modules/<tool-name>/`
-2. Create `init.zsh` that generates completions dynamically
+2. Create `init.zsh` that generates completions dynamically using Bash-compatible syntax
 3. Add to `zimrc` BEFORE the completion module:
    ```zsh
    zmodule ${ZIM_CONFIG_FILE:h}/modules/<tool-name>
@@ -99,6 +99,7 @@ Example: The `container-use` module auto-generates completions for both `contain
 - Completions are generated dynamically when the tool binary changes
 - Store completion files in the module's `functions/` subdirectory
 - Add to `fpath` in the module's init.zsh
+- Use Bash-compatible code for Zimfw modules to ensure shfmt compatibility
 
 ### Git Configuration
 Chezmoi is configured with:
@@ -144,12 +145,12 @@ The script will automatically detect and fix the broken symlink, updating it to 
 ## Neovim Configuration (LazyVim)
 
 The repository uses LazyVim as the Neovim configuration framework:
-See [Neovim AGENTS.md](private_dot_config/nvim/AGENTS.md) for detailed configuration.
+See [Neovim CLAUDE.md](private_dot_config/nvim/CLAUDE.md) for detailed configuration.
 
-### AI Assistant Integration
-- **Toggle**: `<leader>cc` opens AI assistant in a floating terminal
+### Claude Integration
+- **Toggle**: `<leader>cc` opens Claude Code in a floating terminal
 - **Continue**: `<leader>c.` continues the conversation
-- **Reload**: `<leader>cr` reloads files modified by assistant
+- **Reload**: `<leader>cr` reloads files modified by Claude
 - Configuration in `private_dot_config/nvim/lua/plugins/claude.lua`
 
 ### Key Customizations
@@ -159,4 +160,4 @@ See [Neovim AGENTS.md](private_dot_config/nvim/AGENTS.md) for detailed configura
 - Chezmoi integration for dotfile management
 
 ### NixOS Compatibility
-The configuration includes special handling for NixOS systems. See [NixOS AGENTS.md](nixos/AGENTS.md) for system configuration details.
+The configuration includes special handling for NixOS systems. See [NixOS CLAUDE.md](nixos/CLAUDE.md) for system configuration details.
