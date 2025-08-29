@@ -67,6 +67,36 @@ dev:
 check: lint
 	@echo "✅ All checks passed"
 
+# Health checks
+health: health-summary
+	@echo ""
+	@echo "Run 'make health-all' for detailed checks of all subsystems"
+
+health-summary:
+	@echo "🏥 System Health Summary"
+	@echo "========================"
+	@echo ""
+	@echo "🔍 Quick Status:"
+	@echo -n "  NixOS:   "; nixos-version 2>/dev/null | cut -d' ' -f1,2 || echo "❌ not available"
+	@echo -n "  Chezmoi: "; chezmoi --version 2>/dev/null | head -1 | cut -d, -f1 || echo "❌ not installed"
+	@echo -n "  Neovim:  "; nvim --version 2>/dev/null | head -1 || echo "❌ not installed"
+	@echo -n "  Tmux:    "; tmux -V 2>/dev/null || echo "❌ not installed"
+	@echo -n "  Zsh:     "; zsh --version 2>/dev/null | head -1 || echo "❌ not installed"
+
+health-all:
+	@echo "🏥 Full System Health Check"
+	@echo "==========================="
+	@echo ""
+	@$(MAKE) -s nixos/health || true
+	@echo ""
+	@$(MAKE) -s chezmoi/health || true
+	@echo ""
+	@$(MAKE) -s nvim/health || true
+	@echo ""
+	@$(MAKE) -s tmux/health || true
+	@echo ""
+	@$(MAKE) -s zim/health || true
+
 # Pass-through targets to subdirectories
 nixos/%:
 	@$(MAKE) -C nixos $*
@@ -91,4 +121,4 @@ nvim: nvim/sync
 tmux: tmux/reload
 zim: zim/update
 
-.PHONY: all lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check nixos apply diff nvim tmux zim
+.PHONY: all lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check health health-summary health-all nixos apply diff nvim tmux zim
