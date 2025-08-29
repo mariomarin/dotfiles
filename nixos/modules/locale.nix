@@ -3,10 +3,10 @@
 {
   # Timezone
   time.timeZone = "America/Bogota";
-  
+
   # Locale settings
   i18n.defaultLocale = "en_US.UTF-8";
-  
+
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "es_CO.UTF-8";
     LC_IDENTIFICATION = "es_CO.UTF-8";

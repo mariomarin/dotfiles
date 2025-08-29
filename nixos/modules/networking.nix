@@ -2,12 +2,12 @@
 
 {
   networking.hostName = "nixos";
-  
+
   networking = {
     nameservers = [ "127.0.0.1" "::1" ];
     networkmanager.enable = true;
     networkmanager.dns = "none";
-    
+
     firewall = {
       checkReversePath = false;
       allowedTCPPorts = [
@@ -19,7 +19,7 @@
       ];
     };
   };
-  
+
   # DNS over HTTPS
   services.dnscrypt-proxy2 = {
     enable = true;
@@ -41,7 +41,7 @@
   systemd.services.dnscrypt-proxy2.serviceConfig = {
     StateDirectory = "dnscrypt-proxy";
   };
-  
+
   # Captive portal browser
   programs.captive-browser.enable = true;
   programs.captive-browser.interface = "wlp4s0";

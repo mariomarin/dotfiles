@@ -17,15 +17,15 @@
 
   # Core system settings
   system.stateVersion = "24.11";
-  
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  
+
   # Allow specific insecure packages
   # nixpkgs.config.permittedInsecurePackages = [
   #   "qtwebengine-5.15.19"
   # ];
-  
+
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.extraOptions = ''
@@ -33,20 +33,20 @@
     extra-substituters = https://devenv.cachix.org
     extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
   '';
-  
+
   # Garbage collection
   nix.gc = {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 15d";
   };
-  
+
   # Keep derivations for direnv
   nix.settings = {
     keep-outputs = true;
     keep-derivations = true;
   };
-  
+
   environment.pathsToLink = [
     "/share/nix-direnv"
   ];

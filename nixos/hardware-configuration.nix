@@ -21,14 +21,16 @@
   '';
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/158347a4-3e52-434f-abca-f68b82916e35";
+    {
+      device = "/dev/disk/by-uuid/158347a4-3e52-434f-abca-f68b82916e35";
       fsType = "ext4";
     };
 
   boot.initrd.luks.devices."luks-92dccac8-f229-4ad9-a255-3cf2551984b4".device = "/dev/disk/by-uuid/92dccac8-f229-4ad9-a255-3cf2551984b4";
 
   fileSystems."/boot/efi" =
-    { device = "/dev/disk/by-uuid/386D-CBB9";
+    {
+      device = "/dev/disk/by-uuid/386D-CBB9";
       fsType = "vfat";
     };
 
@@ -72,5 +74,5 @@
         #ControllerMode = "dual";
       };
     };
-  };  
+  };
 }

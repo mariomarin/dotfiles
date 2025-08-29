@@ -6,22 +6,22 @@
     enable = true;
     package = pkgs.usbmuxd2;
   };
-  
+
   # Fingerprint sensor
   services.fprintd.enable = true;
   security.pam.services.login.fprintAuth = true;
   security.pam.services.xscreensaver.fprintAuth = true;
-  
+
   # File manager support
   services.gvfs.enable = true;
   services.tumbler.enable = true;
-  
+
   # Power management
   services.upower.enable = true;
-  
+
   # Emacs daemon
   services.emacs.enable = true;
-  
+
   # Keyboard remapping
   services.interception-tools = {
     enable = true;
@@ -32,7 +32,7 @@
             EV_KEY: [KEY_CAPSLOCK, KEY_ESC]
     '';
   };
-  
+
   # Polkit authentication agent
   systemd = {
     user.services = {
@@ -51,18 +51,18 @@
       };
     };
   };
-  
+
   # Rclone mount service
   programs.fuse.userAllowOther = true;
   systemd.user.services."rclone@" = {
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
     enable = true;
-    description="rclone: Remote FUSE filesystem for cloud storage config %i";
+    description = "rclone: Remote FUSE filesystem for cloud storage config %i";
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      Type="notify";
-      ExecStartPre="/run/current-system/sw/bin/mkdir -p -p %h/mnt/%i";
+      Type = "notify";
+      ExecStartPre = "/run/current-system/sw/bin/mkdir -p -p %h/mnt/%i";
       ExecStart = ''
         ${pkgs.rclone}/bin/rclone mount \
           --config=%h/.config/rclone/rclone.conf \
@@ -74,13 +74,13 @@
           --allow-other \
           %i: %h/mnt/%i
       '';
-      ExecStop="${pkgs.fuse}/bin/fusermount -u %h/mnt/%i";
+      ExecStop = "${pkgs.fuse}/bin/fusermount -u %h/mnt/%i";
     };
   };
-  
+
   # Light control
   programs.light.enable = true;
-  
+
   # OBS Studio - commented out due to insecure qtwebengine dependency
   # To enable, add to nixpkgs.config.permittedInsecurePackages
   # programs.obs-studio = {

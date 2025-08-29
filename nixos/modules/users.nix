@@ -16,10 +16,10 @@
       "wheel"
     ];
     shell = pkgs.zsh;
-    subUidRanges = [ { count = 100000; startUid = 65536; } ];
-    subGidRanges = [ { count = 100000; startGid = 65536; } ];
+    subUidRanges = [{ count = 100000; startUid = 65536; }];
+    subGidRanges = [{ count = 100000; startGid = 65536; }];
   };
-  
+
   # Zsh configuration
   programs.zsh = {
     enable = true;

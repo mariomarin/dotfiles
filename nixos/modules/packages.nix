@@ -5,13 +5,15 @@
   # Keeping NUR for now, but unstable channel will be replaced by flake input
   nixpkgs.config.packageOverrides = pkgs: {
     # unstable = import <nixos-unstable> { config = config.nixpkgs.config; };
-    nur = import (builtins.fetchTarball
-      "https://github.com/nix-community/NUR/archive/master.tar.gz"
-    ) {
-      inherit pkgs;
-    };
+    nur = import
+      (builtins.fetchTarball
+        "https://github.com/nix-community/NUR/archive/master.tar.gz"
+      )
+      {
+        inherit pkgs;
+      };
   };
-  
+
   # System packages
   environment.systemPackages = with pkgs; [
     # Desktop applications
@@ -28,7 +30,7 @@
     transmission_3
     tridactyl-native
     zathura
-    
+
     # Terminal tools
     atuin
     bash
@@ -54,38 +56,38 @@
     topgrade
     unzip
     yq-go
-    
+
     # iOS support
     libimobiledevice
     ifuse
-    
+
     # Nix tools
     devenv
     niv
     nix-direnv
-    
+
     # Modern CLI replacements
-    bat        # cat
-    bottom     # htop
-    delta      # diff
+    bat # cat
+    bottom # htop
+    delta # diff
     difftastic # diff
-    dua        # disk usage analyzer
-    eza        # ls
-    fd         # find
-    lfs        # lsfd
-    lsd        # ls with colors
-    pipr       # interactive pipe evaluation
-    procs      # ps
-    ripgrep    # grep
-    sd         # sed
-    xcp        # cp
-    zoxide     # cd+fzf
-    
+    dua # disk usage analyzer
+    eza # ls
+    fd # find
+    lfs # lsfd
+    lsd # ls with colors
+    pipr # interactive pipe evaluation
+    procs # ps
+    ripgrep # grep
+    sd # sed
+    xcp # cp
+    zoxide # cd+fzf
+
     # Documentation and help
     cheat
     navi
     tealdeer
-    
+
     # Security
     bitwarden
     credstash
@@ -94,7 +96,7 @@
     libsecret
     openssl
     openssl.dev
-    
+
     # Networking
     nss
     nssTools
@@ -103,7 +105,7 @@
     syncthing
     sysdig
     trippy
-    
+
     # Development
     bear
     clang
@@ -119,38 +121,29 @@
     rustup
     sqlite
     zeal
-    
+
     # Editors and language servers
     neovim
     pandoc
     pyright
-    ruff
-    shellcheck
-    shfmt
     terraform-ls
     tree-sitter
     vim
     vscode
     yarn
-    
+
     # Python environment
     (python312.withPackages (p: with p; [
-      autoflake
-      black
       boto3
       coverage
-      flake8
-      isort
       pip
-      pycodestyle
-      pyflakes
       pygments
       pytest
       pytest-mock
       pyyaml
       requests
     ]))
-    
+
     # Multimedia
     alsa-lib-with-plugins
     alsa-lib-with-plugins.dev
@@ -161,7 +154,7 @@
     poppler_utils
     portaudio
     pulseaudio
-    
+
     # Window manager and desktop
     conky
     dmenu
@@ -178,10 +171,9 @@
     xclip
     xdg-user-dirs
     xsel
-    
+
   ] ++ (with nodePackages; [
     bash-language-server
-    prettier
     typescript
     typescript-language-server
     yaml-language-server

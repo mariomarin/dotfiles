@@ -7,10 +7,10 @@
     enable = true;
     setSocketVariable = true;
   };
-  
+
   # Libvirt/QEMU
   virtualisation.libvirtd.enable = true;
-  
+
   # Alternative: Podman (commented out)
   # virtualisation.podman.enable = true;
   # virtualisation.podman.dockerCompat = true;
