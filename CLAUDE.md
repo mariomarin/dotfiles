@@ -61,6 +61,36 @@ Benefits:
 ### Dependency Management
 The repository uses `.chezmoiexternal.toml` files to manage external dependencies. These are automatically fetched and updated by chezmoi.
 
+#### Dynamic Version Management
+External tools support dynamic version management:
+- By default, tools use the latest GitHub release via `gitHubLatestRelease`
+- Versions can be pinned in `.chezmoidata.toml`:
+  ```toml
+  [versions]
+  containerUse = "v0.4.1"  # Pin specific version
+  zimfw = "v1.17.0"        # Pin specific version
+  ```
+- Template files (`.chezmoiexternal.toml.tmpl`) check for pinned versions first
+
+### Zsh Completions
+
+#### Custom Zimfw Modules
+To add completions for new tools:
+1. Create a module directory: `private_dot_config/zim/modules/<tool-name>/`
+2. Create `init.zsh` that generates completions dynamically
+3. Add to `zimrc` BEFORE the completion module:
+   ```zsh
+   zmodule ${ZIM_CONFIG_FILE:h}/modules/<tool-name>
+   ```
+
+Example: The `container-use` module auto-generates completions for both `container-use` and `cu` commands.
+
+#### Key Points for Zsh Completions
+- Custom completion modules must load BEFORE zimfw's completion module
+- Completions are generated dynamically when the tool binary changes
+- Store completion files in the module's `functions/` subdirectory
+- Add to `fpath` in the module's init.zsh
+
 ### Git Configuration
 Chezmoi is configured with:
 - Auto-commit enabled
