@@ -85,10 +85,7 @@
   # Fonts
   fonts.packages = with pkgs; [
     corefonts
-    nerd-fonts.iosevka
-    nerd-fonts.noto
-    nerd-fonts.roboto-mono
-    nerd-fonts.symbols-only
+    (nerdfonts.override { fonts = [ "Iosevka" "Noto" "RobotoMono" "NerdFontsSymbolsOnly" ]; })
   ];
 
   fonts.fontDir.enable = true;

@@ -109,7 +109,7 @@
     # Development
     bear
     clang
-    claude-code
+    # claude-code  # Not available in nixpkgs, installed separately
     gnumake
     go
     gopls

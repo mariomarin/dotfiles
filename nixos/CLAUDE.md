@@ -1,14 +1,16 @@
-# AGENTS.md - NixOS Configuration
+# CLAUDE.md - NixOS Configuration
 
-This file provides guidance to AI agents and assistants when working with the NixOS configuration.
+This file provides guidance to Claude Code when working with the NixOS configuration.
 
 ## Directory Structure
 
 ```
 nixos/
+├── flake.nix                 # Nix flakes configuration
+├── flake.lock                # Locked flake dependencies
 ├── configuration.nix         # Main NixOS configuration
 ├── hardware-configuration.nix # Hardware-specific settings
-├── flake.nix.template        # Template for Nix flakes
+├── rebuild-flake.sh          # Helper script for rebuilding with flakes
 └── modules/                  # Modular configuration
     ├── boot.nix             # Boot loader configuration
     ├── desktop.nix          # Desktop environment setup
@@ -84,17 +86,26 @@ nixos/
 2. Update `modules/users.nix` for system-wide user settings
 3. Rebuild to apply changes
 
-## NixOS Commands
+## NixOS Commands (Flakes)
 
 ```bash
-# Rebuild system configuration
-sudo nixos-rebuild switch
+# Rebuild system configuration with flakes
+sudo nixos-rebuild switch --flake /home/mario/.local/share/chezmoi/nixos#nixos
+
+# Or use the helper script
+./nixos/rebuild-flake.sh switch
 
 # Test configuration without switching
-sudo nixos-rebuild test
+./nixos/rebuild-flake.sh test
 
-# Update channel
-sudo nix-channel --update
+# Build configuration without activating
+./nixos/rebuild-flake.sh build
+
+# Update flake inputs
+nix flake update
+
+# Show flake metadata
+nix flake show
 
 # Garbage collection
 sudo nix-collect-garbage -d
@@ -102,6 +113,14 @@ sudo nix-collect-garbage -d
 # Search for packages
 nix search nixpkgs <package-name>
 ```
+
+## Flake Configuration
+
+The system now uses Nix Flakes for:
+- **Reproducible builds**: All dependencies are locked in `flake.lock`
+- **Better dependency management**: Explicit input declarations
+- **Hardware optimizations**: Using nixos-hardware for ThinkPad T470
+- **Mixed stable/unstable**: Stable base with unstable packages available
 
 ## Integration with Chezmoi
 
@@ -143,7 +162,7 @@ sudo nix-env --list-generations --profile /nix/var/nix/profiles/system
 
 ## Related Documentation
 
-- [Root AGENTS.md](../AGENTS.md)
+- [Root CLAUDE.md](../CLAUDE.md)
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
 - [Nix Pills](https://nixos.org/guides/nix-pills/)
 - [NixOS Wiki](https://nixos.wiki/)
