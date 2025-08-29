@@ -47,7 +47,6 @@ nix_env_arguments = "--prebuilt-only"
 # Update package managers
 apt_arguments = "--only-upgrade"
 dnf_arguments = "--refresh"
-yum_arguments = "--only-upgrade"
 
 [vim]
 # Force update vim plugins
