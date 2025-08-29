@@ -1,0 +1,78 @@
+# Topgrade configuration
+# Updates all system packages and plugins in one command
+
+[misc]
+# Don't update these - handled separately or not needed
+disable = [
+    "containers",     # Docker/Podman containers
+    "firmware",       # Firmware updates (handle manually)
+    "restarts",       # Don't auto-restart services
+]
+
+# Don't retry failed steps automatically
+no_retry = false
+
+# Run inside tmux if available
+run_in_tmux = false
+
+# Assume yes for all prompts
+assume_yes = false
+
+# Cleanup after updates
+cleanup = true
+
+[commands]
+# Custom commands to run at specific times
+[commands.pre_commands]
+# Commands to run before updates
+
+[commands.post_commands]
+# Add updated lock files to chezmoi after updates
+"Add lock files to chezmoi" = "chezmoi add ~/.config/nvim/lazy-lock.json ~/.config/zim/.latest_version 2>/dev/null || true"
+
+[git]
+# Pull git repositories
+pull_predefined = false
+
+# Arguments for git pull
+arguments = "--rebase --autostash"
+
+[linux]
+# NixOS configuration
+nix_arguments = "--flake"
+nix_env_arguments = "--prebuilt-only"
+
+# Update package managers
+apt_arguments = "--only-upgrade"
+dnf_arguments = "--refresh"
+yum_arguments = "--only-upgrade"
+
+[vim]
+# Force update vim plugins
+force_plug_update = false
+
+[tmux]
+# Update tmux plugins automatically
+update_plugins = true
+
+[npm]
+# Use pnpm if available
+use_pnpm = true
+
+[python]
+# Enable pip updates
+enable_pip_review = true
+enable_pip_review_local = false
+enable_pipupgrade = false
+
+[rust]
+# Update rust toolchain
+update_toolchain = true
+
+[distrobox]
+# Update distrobox containers
+use_root = false
+
+# Skip these steps when running with --yes flag
+[misc.skip_with_yes]
+steps = ["restarts"]

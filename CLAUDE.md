@@ -9,53 +9,48 @@ This is a chezmoi-managed dotfiles repository that uses templating and external 
 ## Plugin and Package Management
 
 ### Update Strategy
-The repository uses a hybrid approach for keeping plugins updated:
+The repository uses [topgrade](https://github.com/topgrade-rs/topgrade) for unified system updates. Topgrade automatically detects and updates:
 
-1. **Tmux plugins**: Managed via `.chezmoiexternal.toml` for reproducibility
-2. **Neovim plugins**: LazyVim's built-in package manager with `lazy-lock.json` for pinning
-3. **Zim modules**: Zimfw's module manager with version tracking
-4. **NixOS packages**: Flake inputs with `flake.lock` for reproducibility
+1. **System packages**: NixOS packages, Nix flakes
+2. **Plugin managers**: Neovim (LazyVim), Tmux (TPM), Zim modules
+3. **Programming tools**: npm/pnpm packages, Rust toolchain, Python packages
+4. **Other tools**: Git repos, firmware (disabled by default)
 
 ### Automatic Updates
-- Plugins update automatically after `chezmoi apply` (once per week by default)
-- Configure in `.chezmoidata/plugin-updates.toml`
-- Skip with: `CHEZMOI_SKIP_PLUGIN_UPDATES=1 chezmoi apply`
+- Topgrade runs automatically after `chezmoi apply` to keep everything in sync
+- Skip with: `CHEZMOI_SKIP_UPDATES=1 chezmoi apply` or `make quick-apply`
+- Configuration in `private_dot_config/topgrade.toml`
 
 ### Manual Updates
 ```bash
-# Update everything (plugins + flakes)
+# Update everything (system packages, plugins, tools)
 make update
 
-# Update only plugins
+# Update only plugins (vim, tmux)
 make update-plugins
 
-# Update only Nix flakes  
-make update-flakes
+# Update only system packages (nixos, nix)
+make update-system
 
-# Quick apply without updates
+# Quick apply without running topgrade
 make quick-apply
-
-# Individual updates
-make nvim/update        # Neovim plugins
-make tmux/plugins-update # Tmux plugins
-make zim/update         # Zim modules
-make nixos/update       # Nix flakes
 ```
 
 ## Common Commands
 
 ### Chezmoi Operations
 ```bash
-# From repository root (using pattern rule):
-make apply              # Apply dotfiles changes (alias for chezmoi/apply)
-make diff               # Show diff after pull (alias for chezmoi/diff)
-make chezmoi/status     # Show status of managed files
-make chezmoi/update     # Pull latest and show diff
-make chezmoi/init       # Initialize with repository
+# Apply changes (includes topgrade updates)
+chezmoi apply -v
 
-# Or directly:
-cd chezmoi && make      # Apply changes (default)
-cd chezmoi && make diff # Show what would change
+# Quick apply without running topgrade
+make quick-apply
+
+# See what changes will be made
+chezmoi diff
+
+# Show status of managed files
+chezmoi status
 ```
 
 ### NixOS Operations (Flakes)
@@ -77,22 +72,22 @@ cd nixos && make test   # Test configuration
 ```bash
 # Neovim operations:
 make nvim               # Sync plugins (alias for nvim/sync)
-make nvim/update        # Update plugins
 make nvim/clean         # Clean unused plugins
 make nvim/health        # Check health
 
 # Tmux operations:
 make tmux               # Reload config (alias for tmux/reload)
-make tmux/plugins-install   # Install TPM plugins
-make tmux/plugins-update    # Update TPM plugins
 make tmux/status        # Show tmux status
+make tmux/health        # Check health
 
 # Zim operations:
 make zim                # Update modules (alias for zim/update)
 make zim/compile        # Compile for faster loading
 make zim/clean          # Clean cache
-make zim/upgrade        # Upgrade Zim itself
+make zim/health         # Check health
 ```
+
+Note: Plugin updates for all tools are handled by topgrade (`make update`)
 
 ### Tmux Plugin Management
 Tmux plugins are now managed declaratively through chezmoi's external dependency system. All plugins are defined in `private_dot_local/share/tmux/plugins/.chezmoiexternal.toml` and are automatically downloaded/updated when running `chezmoi apply`.

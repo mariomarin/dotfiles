@@ -1,0 +1,30 @@
+#!/bin/bash
+# Run topgrade to update all system packages and plugins
+# This runs after chezmoi apply to keep everything in sync
+
+set -euo pipefail
+
+# Skip if requested
+if [[ "${CHEZMOI_SKIP_UPDATES:-}" == "1" ]]; then
+    echo "Skipping topgrade updates (CHEZMOI_SKIP_UPDATES=1)"
+    exit 0
+fi
+
+# Check if topgrade is installed
+if ! command -v topgrade &>/dev/null; then
+    echo "⚠️  Topgrade not installed, skipping updates"
+    exit 0
+fi
+
+echo "🔄 Running topgrade to update system packages and plugins..."
+
+# Run topgrade with appropriate flags
+# --no-retry: Don't ask to retry failed steps
+# --yes: Assume yes for safe prompts
+# --disable chezmoi: Don't run chezmoi again (we're already in chezmoi)
+topgrade --no-retry --yes --disable chezmoi || {
+    echo "⚠️  Some updates failed (non-critical)"
+    exit 0
+}
+
+echo "✅ Updates complete!"

@@ -1,24 +1,25 @@
 all: chezmoi/apply
 
-# Update all plugins and packages
-update: update-plugins update-flakes
+# Update all system packages and plugins
+update:
+	@echo "🔄 Running topgrade to update everything..."
+	@topgrade --no-retry
 	@echo "✅ All updates complete"
 
+# Update only specific components
 update-plugins:
-	@echo "🔄 Updating all plugins..."
-	@$(MAKE) -s nvim/update || true
-	@$(MAKE) -s tmux/plugins-update || true
-	@$(MAKE) -s zim/update || true
+	@echo "🔄 Updating plugins..."
+	@topgrade --only tmux vim --no-retry
 	@echo "✅ Plugin updates complete"
 
-update-flakes:
-	@echo "🔄 Updating Nix flakes..."
-	@$(MAKE) -s nixos/update || true
-	@echo "✅ Flake updates complete"
+update-system:
+	@echo "🔄 Updating system packages..."
+	@topgrade --only system nix --no-retry
+	@echo "✅ System updates complete"
 
-# Quick apply without plugin updates
+# Quick apply without updates
 quick-apply:
-	CHEZMOI_SKIP_PLUGIN_UPDATES=1 chezmoi apply -v
+	CHEZMOI_SKIP_UPDATES=1 chezmoi apply -v
 
 # Linting and formatting targets
 lint: lint-lua lint-nix lint-shell
