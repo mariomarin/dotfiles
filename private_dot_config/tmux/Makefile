@@ -1,4 +1,5 @@
 # Tmux configuration management
+
 # All targets are phony
 .PHONY: $(shell sed -n -e '/^[^[:space:]#.*][^:=]*:/{s/:.*//;p}' $(MAKEFILE_LIST))
 

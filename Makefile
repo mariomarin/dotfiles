@@ -23,11 +23,8 @@ lint: lint-lua lint-nix lint-shell
 
 lint-lua:
 	@echo "🔍 Checking Lua files with stylua..."
-	@if command -v stylua >/dev/null 2>&1; then \
-		cd private_dot_config/nvim && stylua --check . || (echo "❌ Lua files need formatting. Run 'make format-lua' to fix." && exit 1); \
-	else \
-		echo "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
-	fi
+	@command -v stylua >/dev/null 2>&1 || { echo "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"; exit 0; }
+	@cd private_dot_config/nvim && stylua --check . || { echo "❌ Lua files need formatting. Run 'make format-lua' to fix."; exit 1; }
 
 lint-nix:
 	@echo "🔍 Checking Nix files syntax..."
@@ -35,46 +32,36 @@ lint-nix:
 
 lint-shell:
 	@echo "🔍 Checking shell scripts with shellcheck..."
-	@if command -v shellcheck >/dev/null 2>&1; then \
-		find . -name "*.sh" -type f -exec shellcheck {} \; && echo "✅ Shell scripts valid"; \
-	else \
-		echo "⚠️  shellcheck not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
-	fi
+	@command -v shellcheck >/dev/null 2>&1 || { echo "⚠️  shellcheck not found. Run 'devenv shell' or 'direnv allow' to load development environment"; exit 0; }
+	@find . -name "*.sh" -type f -exec shellcheck {} \;
+	@echo "✅ Shell scripts valid"
 
 format: format-lua format-nix format-shell format-others
 	@echo "✨ All formatting complete"
 
 format-lua:
 	@echo "📝 Formatting Lua files with stylua..."
-	@if command -v stylua >/dev/null 2>&1; then \
-		cd private_dot_config/nvim && stylua . && echo "✅ Lua files formatted"; \
-	else \
-		echo "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
-	fi
+	@command -v stylua >/dev/null 2>&1 || { echo "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"; exit 0; }
+	@cd private_dot_config/nvim && stylua .
+	@echo "✅ Lua files formatted"
 
 format-nix:
 	@echo "📝 Formatting Nix files with nixpkgs-fmt..."
-	@if command -v nixpkgs-fmt >/dev/null 2>&1; then \
-		find . -name "*.nix" -exec nixpkgs-fmt {} \; && echo "✅ Nix files formatted"; \
-	else \
-		echo "⚠️  nixpkgs-fmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
-	fi
+	@command -v nixpkgs-fmt >/dev/null 2>&1 || { echo "⚠️  nixpkgs-fmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"; exit 0; }
+	@find . -name "*.nix" -exec nixpkgs-fmt {} \;
+	@echo "✅ Nix files formatted"
 
 format-shell:
 	@echo "📝 Formatting shell scripts with shfmt..."
-	@if command -v shfmt >/dev/null 2>&1; then \
-		shfmt -w -i 2 -ci -sr -kp . && echo "✅ Shell scripts formatted"; \
-	else \
-		echo "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
-	fi
+	@command -v shfmt >/dev/null 2>&1 || { echo "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"; exit 0; }
+	@shfmt -w -i 2 -ci -sr -kp .
+	@echo "✅ Shell scripts formatted"
 
 format-others:
 	@echo "📝 Formatting Markdown, JSON, TOML, YAML files with biome..."
-	@if command -v biome >/dev/null 2>&1; then \
-		biome format --write . && echo "✅ Other files formatted"; \
-	else \
-		echo "⚠️  biome not found. Run 'direnv allow' to load development environment"; \
-	fi
+	@command -v biome >/dev/null 2>&1 || { echo "⚠️  biome not found. Run 'direnv allow' to load development environment"; exit 0; }
+	@biome format --write .
+	@echo "✅ Other files formatted"
 
 # Development environment
 dev:

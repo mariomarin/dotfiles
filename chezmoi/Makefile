@@ -28,13 +28,13 @@ status:
 
 # Add a file to chezmoi
 add:
-	@echo "Usage: make add FILE=<path>"
-	@[ -n "$(FILE)" ] && chezmoi add $(FILE) || echo "Please specify FILE=<path>"
+	@[ -n "$(FILE)" ] || { echo "Usage: make add FILE=<path>"; exit 1; }
+	@chezmoi add $(FILE)
 
 # Edit a managed file
 edit:
-	@echo "Usage: make edit FILE=<path>"
-	@[ -n "$(FILE)" ] && chezmoi edit $(FILE) || echo "Please specify FILE=<path>"
+	@[ -n "$(FILE)" ] || { echo "Usage: make edit FILE=<path>"; exit 1; }
+	@chezmoi edit $(FILE)
 
 # Update from repository
 update:
