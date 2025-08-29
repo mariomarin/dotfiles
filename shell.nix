@@ -15,7 +15,7 @@ pkgs.mkShell {
     shfmt
 
     # Multi-format formatter (Markdown, JSON, TOML, YAML, etc.)
-    dprint
+    biome
 
     # Markdown linting
     markdownlint-cli
@@ -23,7 +23,7 @@ pkgs.mkShell {
 
   shellHook = ''
     echo "🚀 Development environment loaded"
-    echo "Available formatters: nixpkgs-fmt, stylua, shfmt, dprint"
+    echo "Available formatters: nixpkgs-fmt, stylua, shfmt, biome"
     echo "Run 'make format' to format all files"
     echo "Run 'make lint' to check all files"
   '';

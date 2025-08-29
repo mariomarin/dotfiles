@@ -64,11 +64,11 @@ format-shell:
 	fi
 
 format-others:
-	@echo "📝 Formatting Markdown, JSON, TOML, YAML files with dprint..."
-	@if command -v dprint >/dev/null 2>&1; then \
-		dprint fmt && echo "✅ Other files formatted"; \
+	@echo "📝 Formatting Markdown, JSON, TOML, YAML files with biome..."
+	@if command -v biome >/dev/null 2>&1; then \
+		biome format --write . && echo "✅ Other files formatted"; \
 	else \
-		echo "⚠️  dprint not found. Run 'direnv allow' to load development environment"; \
+		echo "⚠️  biome not found. Run 'direnv allow' to load development environment"; \
 	fi
 
 # Development environment
