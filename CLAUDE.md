@@ -131,3 +131,11 @@ The script will automatically detect and fix the broken symlink, updating it to 
 - The Makefile provides convenient targets for common operations
 - External tools (tmux plugins, etc.) are synced separately from chezmoi apply
 - Chezmoi scripts in `.chezmoiscripts/` run automatically during `chezmoi apply`
+
+## Neovim Claude Integration
+
+The Neovim configuration includes claude-code.nvim for seamless Claude Code integration:
+- **Toggle**: `<leader>cc` opens Claude Code in a floating terminal
+- **Continue**: `<leader>c.` continues the conversation
+- **Reload**: `<leader>cr` reloads files modified by Claude
+- Configuration in `private_dot_config/nvim/lua/plugins/ai.lua`

@@ -229,7 +229,10 @@ The Neovim setup uses a modular configuration with lazy.nvim:
 ### Key Features
 - **Plugin Manager**: lazy.nvim for fast startup
 - **Language Support**: Configurations for multiple languages (Go, Rust, Python, TypeScript, etc.)
-- **AI Integration**: AI-powered coding assistance
+- **AI Integration**: Claude Code integration for AI-powered coding assistance
+  - Toggle Claude Code with `<leader>cc`
+  - Continue conversations with `<leader>c.`
+  - Auto-reload files modified by Claude
 - **Tmux Integration**: Seamless navigation between Neovim and tmux panes
 - **Session Management**: vim-obsession for persistent sessions
 - **Chezmoi Integration**: Auto-apply on save for chezmoi-managed files

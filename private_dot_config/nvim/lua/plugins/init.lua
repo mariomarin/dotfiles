@@ -215,8 +215,8 @@ return {
         { "<leader>tr", desc = "Overseer (Task Runner)" },
         { "<leader>tt", desc = "Neotest" },
 
-        -- ChatGPT Group
-        { "<leader>p", group = "ChatGPT" },
+        -- Claude Code Group
+        { "<leader>c", group = "Claude Code" },
 
         -- Harpoon Group
         { "<leader>m", group = "Harpoon" },
@@ -402,70 +402,6 @@ return {
       vim.keymap.set("i", "<C-[>", function() return vim.fn["codeium#CycleCompletions"](1) end, { expr = true, desc = "Codeium Next Suggestion" })
       vim.keymap.set("i", "<C-]>", function() return vim.fn["codeium#CycleCompletions"](-1) end, { expr = true, desc = "Codeium Previous Suggestion" })
       vim.keymap.set("i", "<Esc>", function() return vim.fn["codeium#Clear"]() end, { expr = true, desc = "Codeium Clear Suggestion" })
-    end,
-  },
-  {
-    "jackMort/ChatGPT.nvim",
- --   event = "VeryLazy",
-    config = function()
-      require("chatgpt").setup {
-        popup_input = {
-          submit = "<CR>"
-        },
-        openai_params = {
-          model = "gpt-4-1106-preview",
-        },
-        openai_edit_params = {
-          model = "gpt-4-1106-preview",
-        },
-      }
-    end,
-    cmd = { "ChatGPT", "ChatGPTRun", "ChatGPTActAs", "ChatGPTCompleteCode", "ChatGPTEditWithInstructions" },
-    keys = {
-      { "<leader>pc", "<cmd>ChatGPT<CR>", desc = "ChatGPT" },
-      { "<leader>pe", "<cmd>ChatGPTEditWithInstruction<CR>", mode = { "n", "v" }, desc = "Edit with instruction" },
-      { "<leader>pg", "<cmd>ChatGPTRun grammar_correction<CR>", mode = { "n", "v" }, desc = "Grammar Correction" },
-      { "<leader>pt", "<cmd>ChatGPTRun translate<CR>", mode = { "n", "v" }, desc = "Translate" },
-      { "<leader>pk", "<cmd>ChatGPTRun keywords<CR>", mode = { "n", "v" }, desc = "Keywords" },
-      { "<leader>pd", "<cmd>ChatGPTRun docstring<CR>", mode = { "n", "v" }, desc = "Docstring" },
-      { "<leader>pa", "<cmd>ChatGPTRun add_tests<CR>", mode = { "n", "v" }, desc = "Add Tests" },
-      { "<leader>po", "<cmd>ChatGPTRun optimize_code<CR>", mode = { "n", "v" }, desc = "Optimize Code" },
-      { "<leader>ps", "<cmd>ChatGPTRun summarize<CR>", mode = { "n", "v" }, desc = "Summarize" },
-      { "<leader>pf", "<cmd>ChatGPTRun fix_bugs<CR>", mode = { "n", "v" }, desc = "Fix Bugs" },
-      { "<leader>px", "<cmd>ChatGPTRun explain_code<CR>", mode = { "n", "v" }, desc = "Explain Code" },
-      { "<leader>pr", "<cmd>ChatGPTRun roxygen_edit<CR>", mode = { "n", "v" }, desc = "Roxygen Edit" },
-      { "<leader>pl", "<cmd>ChatGPTRun code_readability_analysis<CR>", mode = { "n", "v" }, desc = "Code Readability Analysis" },
-    },
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-  },
-  {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    enabled = true,
-    event = "BufReadPost",
-    opts = {
-      panel = {
-        enabled = false,
-      },
-      suggestion = {
-        auto_trigger = true,
-        keymap = {
-          accept = "<A-CR>",
-          dismiss = "<Esc>",
-          next = "<C-]>",
-          prev = "<C-[>",
-        },
-      },
-    },
-  },
-  {
-    "zbirenbaum/copilot-cmp",
-    config = function()
-      require("copilot_cmp").setup()
     end,
   },
   {
