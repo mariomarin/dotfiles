@@ -42,7 +42,26 @@ This repository uses [chezmoi's naming conventions](https://www.chezmoi.io/refer
 
 This naming scheme allows chezmoi to recreate the exact file structure and permissions in your home directory.
 
-## Common Commands
+## Makefile Targets
+
+```bash
+# Initialize chezmoi with this repository and apply
+make init
+
+# Pull latest changes and show diff
+make diff
+
+# Apply changes verbosely
+make apply
+
+# Install chezmoi (if not already installed)
+make install
+
+# Sync (currently empty - reserved for future use)
+make sync
+```
+
+## Common Chezmoi Commands
 
 ```bash
 # Apply changes to the system
@@ -51,8 +70,11 @@ chezmoi apply -v
 # Preview changes before applying
 chezmoi diff
 
-# Full sync
-make sync
+# Edit a file and immediately apply changes
+chezmoi edit --apply ~/.zshrc
+
+# Add a new file to chezmoi
+chezmoi add ~/.config/newapp/config.toml
 ```
 
 ## Key Features
@@ -63,6 +85,18 @@ make sync
 - Custom Zsh completion system via zimfw modules
 - NixOS-specific syncthing systemd service management
 - Modular configuration structure under `private_dot_config/` and `private_dot_local/`
+
+## Chezmoi Configuration
+
+The repository is configured via `chezmoi.toml.tmpl`:
+
+- **Source Directory**: `~/.local/share/chezmoi`
+- **Merge Tool**: `nvim -d` (for handling conflicts)
+- **Git Integration**:
+  - Auto-commit: Enabled (changes are automatically committed)
+  - Auto-push: Enabled (commits are automatically pushed)
+  
+This means any changes made via `chezmoi apply` are automatically version controlled.
 
 ## External Dependencies
 
@@ -119,3 +153,83 @@ Custom completions are managed via zimfw modules:
 3. Load before the main completion module for proper initialization
 
 Example: The `container-use` module provides completions for both `container-use` and `cu` commands.
+
+## Chezmoi Scripts
+
+Scripts in `.chezmoiscripts/` run automatically during `chezmoi apply`:
+
+- **`run_onchange_syncthing-user-unit.sh.tmpl`**: NixOS-specific script that manages the syncthing systemd user service
+  - Creates direct symlinks to the Nix store path
+  - Automatically fixes broken symlinks when syncthing updates
+  - Only runs when the script content changes
+
+## Template System
+
+Chezmoi uses Go's text/template system. Files ending in `.tmpl` are processed as templates:
+
+### Available Variables
+- `{{ .chezmoi.os }}` - Operating system (linux, darwin, windows)
+- `{{ .chezmoi.arch }}` - Architecture (amd64, arm64)
+- `{{ .chezmoi.homeDir }}` - User's home directory
+- `{{ .chezmoi.username }}` - Current username
+- Custom data from `.chezmoidata.toml`
+
+### Template Functions
+- `{{ gitHubLatestRelease "owner/repo" }}` - Get latest release info from GitHub
+- `{{ hasKey . "key" }}` - Check if a key exists in data
+- `{{ joinPath "path" "segments" }}` - Join path segments
+
+### Example: Dynamic Versions
+```toml
+# .chezmoiexternal.toml.tmpl
+{{- $version := gitHubLatestRelease "owner/repo" -}}
+url = "https://github.com/owner/repo/releases/download/{{ $version.TagName }}/..."
+```
+
+## Shell Configuration (Zsh)
+
+The repository includes a comprehensive Zsh configuration:
+
+### File Structure
+- `dot_zshenv` - Environment variables (sourced first)
+- `private_dot_config/zsh/dot_zshrc` - Interactive shell configuration
+- `private_dot_config/zim/` - Zim framework configuration and modules
+
+### Key Components
+- **Zim Framework**: Modular Zsh configuration framework
+  - Manages plugins via `zimrc`
+  - Custom modules in `modules/` directory
+  - Auto-updates to latest version
+
+### Notable Aliases
+- `vi` → `nvim`
+- `ce` → `chezmoi edit --apply`
+- `k` → `kubectl`
+- Git workflow aliases (pr, checks, merge, approve)
+
+### Integrations
+- Zoxide (modern `cd` replacement)
+- Direnv (environment variable management)
+- Atuin (shell history sync)
+- Kubernetes completions
+- AWS SSO completions
+
+## Neovim Configuration
+
+The Neovim setup uses a modular configuration with lazy.nvim:
+
+### Structure
+- `private_dot_config/nvim/init.lua` - Entry point
+- `private_dot_config/nvim/lua/` - Lua configuration modules
+  - `configs/` - Plugin configurations
+  - `plugins/` - Plugin definitions
+  - `mappings.lua` - Key mappings
+  - `options.lua` - Editor options
+
+### Key Features
+- **Plugin Manager**: lazy.nvim for fast startup
+- **Language Support**: Configurations for multiple languages (Go, Rust, Python, TypeScript, etc.)
+- **AI Integration**: AI-powered coding assistance
+- **Tmux Integration**: Seamless navigation between Neovim and tmux panes
+- **Session Management**: vim-obsession for persistent sessions
+- **Chezmoi Integration**: Auto-apply on save for chezmoi-managed files
