@@ -6,3 +6,22 @@ zim/modules
 vimfiles
 Session.vim
 .config/systemd/user/syncthing.service
+
+# Development and repository files (not dotfiles)
+nixos
+nixos/**
+shell.nix
+devenv.nix
+biome.json
+chezmoi
+chezmoi/**
+Makefile
+README.md
+CLAUDE.md
+.devenv
+.devenv/**
+.direnv
+.direnv/**
+.editorconfig
+devenv.lock
+devenv.yaml
