@@ -6,6 +6,7 @@ This file provides guidance to Claude Code when working with the NixOS configura
 
 ```
 nixos/
+├── Makefile                  # NixOS rebuild commands
 ├── flake.nix                 # Nix flakes configuration
 ├── flake.lock                # Locked flake dependencies
 ├── configuration.nix         # Main NixOS configuration
@@ -88,20 +89,29 @@ nixos/
 ## NixOS Commands (Flakes)
 
 ```bash
-# Rebuild system configuration with flakes (from repo root)
-make nixos
+# From the nixos directory:
+cd nixos
+
+# Rebuild system configuration
+make switch  # or just 'make'
 
 # Test configuration without switching
-make nixos-test
+make test
 
 # Update boot configuration (apply on next boot)
-make nixos-boot
+make boot
+
+# Build configuration without activating
+make build
 
 # Update flake inputs
-nix flake update
+make update
+
+# Check flake configuration
+make check
 
 # Show flake metadata
-nix flake show
+make show
 
 # Garbage collection
 sudo nix-collect-garbage -d

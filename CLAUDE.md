@@ -29,13 +29,13 @@ make sync
 ### NixOS Operations (Flakes)
 ```bash
 # Rebuild NixOS configuration
-make nixos
+cd nixos && make
 
 # Test configuration without switching
-make nixos-test
+cd nixos && make test
 
-# Update boot configuration
-make nixos-boot
+# Update flake inputs
+cd nixos && make update
 ```
 
 ### Tool-Specific Sync Commands
