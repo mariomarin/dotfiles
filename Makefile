@@ -36,7 +36,7 @@ lint-shell:
 		echo "⚠️  shellcheck not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
 	fi
 
-format: format-lua format-nix format-shell format-python
+format: format-lua format-nix format-shell
 	@echo "✨ All formatting complete"
 
 format-lua:
@@ -63,14 +63,6 @@ format-shell:
 		echo "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
 	fi
 
-format-python:
-	@echo "📝 Formatting Python files with black..."
-	@if command -v black >/dev/null 2>&1; then \
-		find . -name "*.py" -type f -exec black {} \; && echo "✅ Python files formatted"; \
-	else \
-		echo "⚠️  black not found. Run 'devenv shell' or 'direnv allow' to load development environment"; \
-	fi
-
 # Development environment
 dev:
 	@echo "🚀 Starting development shell..."
@@ -79,4 +71,4 @@ dev:
 check: lint
 	@echo "✅ All checks passed"
 
-.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-python dev check
+.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell dev check
