@@ -7,7 +7,6 @@ disable = [
     "containers",     # Docker/Podman containers
     "firmware",       # Firmware updates (handle manually)
     "restarts",       # Don't auto-restart services
-    "emacs",          # Emacs packages (not using Doom)
     "vscode",         # VSCode extensions (using Neovim instead)
     "poetry",         # Poetry packages (not using)
 ]
@@ -61,6 +60,11 @@ force_plug_update = false
 enable_pip_review = true
 enable_pip_review_local = false
 enable_pipupgrade = false
+
+[tmux]
+# Update tmux plugins via TPM
+run_tpm_update = true
+tpm_path = "~/.local/share/tmux/plugins/tpm"
 
 [distrobox]
 # Update distrobox containers

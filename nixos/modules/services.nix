@@ -19,9 +19,6 @@
   # Power management
   services.upower.enable = true;
 
-  # Emacs daemon
-  services.emacs.enable = true;
-
   # Keyboard remapping
   services.interception-tools = {
     enable = true;

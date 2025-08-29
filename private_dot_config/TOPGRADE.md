@@ -27,7 +27,6 @@ Unfortunately, topgrade doesn't provide a formal schema file, but it validates c
 - `containers` - Docker/Podman containers (managed separately)
 - `firmware` - Firmware updates (handle manually for safety)
 - `restarts` - Auto-restart services (avoid unexpected restarts)
-- `emacs` - Emacs packages (not using Doom Emacs)
 - `vscode` - VSCode extensions (using Neovim instead)
 - `poetry` - Poetry packages (not in use)
 
@@ -48,7 +47,7 @@ Unfortunately, topgrade doesn't provide a formal schema file, but it validates c
 - **Vim**: Don't force plugin updates
 - **NPM**: Use pnpm when available
 - **Python**: Enable pip-review for updates
-- **Rust**: Update toolchain automatically
+- **Tmux**: Update plugins via TPM (path: ~/.local/share/tmux/plugins/tpm)
 - **Distrobox**: Run without root
 
 ## Common Issues and Solutions

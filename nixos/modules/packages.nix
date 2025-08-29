@@ -62,7 +62,6 @@
     ifuse
 
     # Nix tools
-    devenv
     niv
     nix-direnv
 
@@ -182,5 +181,8 @@
     npm
     pnpm
     yarn
-  ]);
+  ]) ++ [
+    # Packages from unstable channel
+    # pkgs.unstable.devenv  # Temporarily disabled due to build issues
+  ];
 }
