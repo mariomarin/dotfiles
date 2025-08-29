@@ -7,13 +7,13 @@ return {
       require("leap").add_default_mappings()
     end,
   },
-  
+
   -- Tmux navigation
   {
     "christoomey/vim-tmux-navigator",
     event = "VeryLazy",
   },
-  
+
   -- Session management
   {
     "tpope/vim-obsession",

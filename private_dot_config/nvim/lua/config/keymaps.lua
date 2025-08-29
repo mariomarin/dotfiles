@@ -8,8 +8,7 @@ local map = vim.keymap.set
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>", { desc = "Exit insert mode" })
 
--- Quit
-map("n", "<leader>q", ":q<cr>", { desc = "Quit" })
+-- Remove custom quit mapping as LazyVim already provides <leader>qq for quit all
 
 -- Save with Ctrl+S
 map({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr>", { desc = "Save file" })

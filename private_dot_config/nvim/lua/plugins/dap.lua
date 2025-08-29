@@ -11,14 +11,14 @@ return {
     config = function()
       -- Check if we're on NixOS
       local is_nixos = vim.fn.executable("nix") == 1
-      
+
       if is_nixos then
         -- Try to find system debugpy
         local debugpy_path = vim.fn.exepath("debugpy-adapter")
         if debugpy_path == "" then
           debugpy_path = vim.fn.exepath("debugpy")
         end
-        
+
         if debugpy_path ~= "" then
           require("dap-python").setup(debugpy_path)
         else

@@ -1,7 +1,7 @@
 return {
   -- Disable neo-tree
   { "nvim-neo-tree/neo-tree.nvim", enabled = false },
-  
+
   -- Use nvim-tree instead
   {
     "nvim-tree/nvim-tree.lua",

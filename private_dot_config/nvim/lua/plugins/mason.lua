@@ -11,13 +11,13 @@ return {
       return opts
     end,
   },
-  
+
   -- Disable automatic DAP setup on NixOS
   {
     "jay-babu/mason-nvim-dap.nvim",
     enabled = not (vim.fn.has("unix") == 1 and vim.fn.executable("nix") == 1),
   },
-  
+
   -- Configure mason-lspconfig to handle NixOS
   {
     "williamboman/mason-lspconfig.nvim",

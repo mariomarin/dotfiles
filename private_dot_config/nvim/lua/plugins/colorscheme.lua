@@ -6,7 +6,7 @@ return {
       colorscheme = "catppuccin",
     },
   },
-  
+
   -- Add catppuccin plugin
   {
     "catppuccin/nvim",
