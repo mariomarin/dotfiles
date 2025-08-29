@@ -28,13 +28,15 @@ make sync
 
 ### NixOS Operations (Flakes)
 ```bash
-# Rebuild NixOS configuration
-cd nixos && make
+# From repository root:
+make nixos          # Rebuild NixOS configuration
+make nixos-test     # Test configuration without switching
+make nixos-boot     # Update boot configuration
+make nixos-update   # Update flake inputs
 
-# Test configuration without switching
+# Or directly from nixos directory:
+cd nixos && make    # Rebuild (switch is default)
 cd nixos && make test
-
-# Update flake inputs
 cd nixos && make update
 ```
 

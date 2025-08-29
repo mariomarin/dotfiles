@@ -79,4 +79,17 @@ dev:
 check: lint
 	@echo "✅ All checks passed"
 
-.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check
+# NixOS operations (delegate to nixos/Makefile)
+nixos:
+	@$(MAKE) -C nixos switch
+
+nixos-test:
+	@$(MAKE) -C nixos test
+
+nixos-boot:
+	@$(MAKE) -C nixos boot
+
+nixos-update:
+	@$(MAKE) -C nixos update
+
+.PHONY: all $(MAKECMDGOALS) lint lint-lua lint-nix lint-shell format format-lua format-nix format-shell format-others dev check nixos nixos-test nixos-boot nixos-update
