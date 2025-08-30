@@ -7,6 +7,13 @@ return {
       if vim.fn.executable("nix") == 1 and vim.fn.executable("nil") == 1 then
         opts.servers.nil_ls = {
           mason = false, -- Don't install via Mason
+          settings = {
+            ["nil"] = {
+              formatting = {
+                command = { "nixpkgs-fmt" }, -- Use nixpkgs-fmt as the formatter
+              },
+            },
+          },
         }
       end
       return opts
