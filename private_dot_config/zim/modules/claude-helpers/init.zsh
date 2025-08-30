@@ -98,8 +98,8 @@ copus() {
         "$@"
 }
 
-# Claude with git commit assistance
-claude_chain() {
+# Claude Git Commit Assassin - Slices through your changes like a hot katana through butter
+gitblade() {
     # Early return if no changes
     if git diff --quiet && git diff --cached --quiet; then
         echo "No changes to commit" >&2
@@ -224,7 +224,7 @@ claude_help() {
     echo "  popus      - Run opus model with clipboard content"
     echo "  dopus      - Run opus with dangerous permissions skipped"
     echo "  copus      - Run opus with specific MCP tools"
-    echo "  claude_chain - Analyze changes and create grouped commits automatically"
+    echo "  gitblade    - 🗡️  Slice your changes into perfect atomic commits (AI-powered)"
     echo "  claudepool - Fun Deadpool-style Claude personality"
     echo "  ccusage    - Show Claude usage statistics"
 }
@@ -232,8 +232,14 @@ claude_help() {
 # Alias for help
 alias clhelp='claude_help'
 
+# Epic aliases for the commit assassin
+alias blade='gitblade'
+alias gb='gitblade'
+
 # In zsh, functions are automatically available in subshells
 # No need to export them like in bash
+# But let's make sure our awesome aliases are available
+export -f gitblade 2>/dev/null || true
 
 # Set up completion for claude command if not already done
 # Note: compdef is only available after compinit is called
