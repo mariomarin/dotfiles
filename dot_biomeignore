@@ -1,0 +1,2 @@
+# Ignore chezmoi modify scripts
+**/modify_*.json

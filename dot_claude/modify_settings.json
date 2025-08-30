@@ -4,7 +4,7 @@
 
 # Read the current timestamp from the target file if it exists
 if [ -f "$HOME/.claude/settings.json" ]; then
-    CURRENT_TIME=$(jq -r '.feedbackSurveyState.lastShownTime // empty' "$HOME/.claude/settings.json" 2> /dev/null)
+    CURRENT_TIME=$(jq -r '.feedbackSurveyState.lastShownTime // empty' "$HOME/.claude/settings.json" 2>/dev/null)
 fi
 
 # Read from stdin (the chezmoi-managed content)
