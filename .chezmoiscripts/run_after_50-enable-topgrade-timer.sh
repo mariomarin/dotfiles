@@ -11,6 +11,6 @@ systemctl --user enable topgrade.timer
 systemctl --user start topgrade.timer
 
 echo "✅ Topgrade timer enabled (runs every 3 days)"
-echo "   Status: systemctl --user status topgrade.timer"
-echo "   Manual run: systemctl --user start topgrade.service"
-echo "   Force run: make update-force"
+echo "   Status: make update-status"
+echo "   Manual run: make update"
+echo "   Force run: make topgrade/force"
