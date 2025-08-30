@@ -1,0 +1,12 @@
+[Unit]
+Description=Run topgrade every 3 days
+After=network-online.target
+Wants=network-online.target
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=3d
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=Run topgrade to update all packages and plugins
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/run/current-system/sw/bin/topgrade --no-retry --yes
+StandardOutput=journal
+StandardError=journal
