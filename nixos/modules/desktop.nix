@@ -15,6 +15,12 @@
       };
     };
 
+    # Start GNOME Keyring with SSH support
+    displayManager.sessionCommands = ''
+      eval $(${pkgs.gnome.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+      export SSH_AUTH_SOCK
+    '';
+
     windowManager.leftwm.enable = true;
 
     desktopManager = {
