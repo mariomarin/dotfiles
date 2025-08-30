@@ -9,9 +9,12 @@ if [[ "${CHEZMOI_SMART_COMMIT:-true}" == "false" ]]; then
     exit 0
 fi
 
-# Only run if we have the smart commit script
-if command -v chezmoi-smart-commit > /dev/null 2>&1; then
+# Check if script exists in the expected location
+SMART_COMMIT_SCRIPT="$HOME/.local/bin/chezmoi-smart-commit"
+if [[ -x "$SMART_COMMIT_SCRIPT" ]]; then
+    "$SMART_COMMIT_SCRIPT"
+elif command -v chezmoi-smart-commit > /dev/null 2>&1; then
     chezmoi-smart-commit
 else
-    echo "⚠️  Smart commit not available, using standard chezmoi commit"
+    echo "ℹ️  Smart commit not yet available (will be after this apply)"
 fi
