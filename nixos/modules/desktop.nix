@@ -17,7 +17,7 @@
 
     # Start GNOME Keyring with SSH support and polkit authentication agent
     displayManager.sessionCommands = ''
-      eval $(${pkgs.gnome.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+      eval $(${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
       export SSH_AUTH_SOCK
       
       # Start polkit-gnome authentication agent if not already running
