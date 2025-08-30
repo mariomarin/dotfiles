@@ -51,12 +51,24 @@
       shfmt = {
         enable = true;
         entry = lib.mkForce "shfmt -w -i 2 -ci -sr -kp";
+        excludes = [
+          ".*\\.zsh$" # Exclude zsh files
+          ".*zshrc$"
+          ".*zshenv$"
+          "private_dot_config/zim/.*" # Exclude zim modules
+        ];
       };
 
       # Shell linting
       shellcheck = {
         enable = true;
-        excludes = [ ".envrc" ]; # .envrc uses direnv-specific functions
+        excludes = [
+          ".envrc" # .envrc uses direnv-specific functions
+          ".*\\.zsh$" # Exclude zsh files
+          ".*zshrc$"
+          ".*zshenv$"
+          "private_dot_config/zim/.*" # Exclude zim modules
+        ];
       };
 
       # Multi-format formatting with biome

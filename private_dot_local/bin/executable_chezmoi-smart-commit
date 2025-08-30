@@ -49,13 +49,21 @@ $(git diff; git diff --cached)
             git push
         fi
     else
-        # For larger changes, use claude_chain for suggestions
-        echo "🤔 Multiple files changed. Getting commit suggestions..."
-        claude_chain
+        # For larger changes, use claude_chain which now auto-commits
+        echo "🤔 Multiple files changed. Using claude_chain to create atomic commits..."
         
-        # If no commits were made, create a generic one
-        if ! git diff --quiet || ! git diff --cached --quiet; then
-            echo "⚠️  Auto-committing remaining changes..."
+        # claude_chain now automatically stages and commits files
+        if claude_chain; then
+            echo "✅ Successfully created atomic commits"
+            
+            # Push all the commits if enabled
+            if [[ "${CHEZMOI_AUTOPUSH:-true}" == "true" ]]; then
+                echo "🚀 Pushing commits to remote..."
+                git push
+            fi
+        else
+            # Fallback if claude_chain fails
+            echo "⚠️  claude_chain failed. Creating generic commit..."
             git add -A
             git commit -m "chore: update multiple configuration files
 
