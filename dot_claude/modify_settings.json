@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script manages the claude settings.json file
 # It preserves the dynamic feedbackSurveyState.lastShownTime value
 
