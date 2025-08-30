@@ -1,29 +1,5 @@
 all: chezmoi/quick-apply
 
-# Update all system packages and plugins (manual trigger)
-update:
-	@echo "🔄 Running topgrade manually..."
-	@systemctl --user start topgrade.service || topgrade --no-retry
-	@echo "✅ All updates complete"
-
-# Show update timer status
-update-status:
-	@echo "📊 Topgrade timer status:"
-	@systemctl --user status topgrade.timer --no-pager || echo "Timer not enabled"
-	@echo ""
-	@echo "📅 Next scheduled run:"
-	@systemctl --user list-timers topgrade.timer --no-pager || true
-
-# Update only specific components
-update-plugins:
-	@echo "🔄 Updating plugins..."
-	@topgrade --only tmux vim --no-retry
-	@echo "✅ Plugin updates complete"
-
-update-system:
-	@echo "🔄 Updating system packages..."
-	@topgrade --only system nix --no-retry
-	@echo "✅ System updates complete"
 
 # Linting and formatting targets
 lint: lint-lua lint-nix lint-shell
@@ -125,6 +101,9 @@ tmux/%:
 zim/%:
 	@$(MAKE) -C private_dot_config/zim $*
 
+topgrade/%:
+	@$(MAKE) -C private_dot_config/topgrade $*
+
 # Convenience aliases
 nixos: nixos/switch
 apply: chezmoi/apply
@@ -133,6 +112,10 @@ diff: chezmoi/diff
 nvim: nvim/sync
 tmux: tmux/reload
 zim: zim/update
+update: topgrade/update
+update-status: topgrade/status
+update-plugins: topgrade/plugins
+update-system: topgrade/system
 
 # All targets are phony (no actual files created)
 .PHONY: $(shell sed -n -e '/^[^[:space:]#.*][^:=]*:/{s/:.*//;p}' $(MAKEFILE_LIST))
