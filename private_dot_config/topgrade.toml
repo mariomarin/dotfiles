@@ -4,11 +4,13 @@
 [misc]
 # Don't update these - handled separately or not needed
 disable = [
+    "system",         # System update (NixOS uses flakes, not channels)
     "containers",     # Docker/Podman containers
     "firmware",       # Firmware updates (handle manually)
     "restarts",       # Don't auto-restart services
     "vscode",         # VSCode extensions (using Neovim instead)
     "poetry",         # Poetry packages (not using)
+    "yarn",           # Yarn global packages (using pnpm instead)
 ]
 
 # Don't retry failed steps automatically
@@ -26,6 +28,12 @@ cleanup = true
 # Custom commands to run at specific times
 [pre_commands]
 # Commands to run before updates
+
+[commands]
+# Update tmux plugins via TPM
+"Tmux Plugins" = "~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
+# Update NixOS with flakes
+"NixOS Flake" = "cd $(chezmoi source-path) && make nixos/switch"
 
 [post_commands]
 # Add updated lock files to chezmoi after updates
@@ -61,10 +69,8 @@ enable_pip_review = true
 enable_pip_review_local = false
 enable_pipupgrade = false
 
-[tmux]
-# Update tmux plugins via TPM
-run_tpm_update = true
-tpm_path = "~/.local/share/tmux/plugins/tpm"
+# [tmux] section has been removed as it's not a valid topgrade section
+# Tmux plugin updates are now handled differently in newer topgrade versions
 
 [distrobox]
 # Update distrobox containers
