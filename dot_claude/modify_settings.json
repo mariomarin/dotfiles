@@ -1,18 +1,20 @@
 #!/bin/bash
-# This script preserves the feedbackSurveyState.lastShownTime value
-# while updating other parts of the settings.json file
+# This script manages the claude settings.json file
+# It preserves the dynamic feedbackSurveyState.lastShownTime value
 
 # Read the current timestamp from the target file if it exists
+CURRENT_TIME=0
 if [ -f "$HOME/.claude/settings.json" ]; then
-    CURRENT_TIME=$(jq -r '.feedbackSurveyState.lastShownTime // empty' "$HOME/.claude/settings.json" 2>/dev/null)
+    CURRENT_TIME=$(jq -r '.feedbackSurveyState.lastShownTime // 0' "$HOME/.claude/settings.json" 2>/dev/null || echo 0)
 fi
 
-# Read from stdin (the chezmoi-managed content)
-CONTENT=$(cat)
-
-# If we have a current timestamp, preserve it
-if [ -n "$CURRENT_TIME" ]; then
-    echo "$CONTENT" | jq ".feedbackSurveyState.lastShownTime = $CURRENT_TIME"
-else
-    echo "$CONTENT"
-fi
+# Output the settings with preserved timestamp
+cat <<EOF
+{
+  "\$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "feedbackSurveyState": {
+    "lastShownTime": $CURRENT_TIME
+  },
+  "includeCoAuthoredBy": false
+}
+EOF
