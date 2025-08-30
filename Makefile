@@ -1,10 +1,18 @@
 all: chezmoi/quick-apply
 
-# Update all system packages and plugins
+# Update all system packages and plugins (manual trigger)
 update:
-	@echo "🔄 Running topgrade to update everything..."
-	@topgrade --no-retry
+	@echo "🔄 Running topgrade manually..."
+	@systemctl --user start topgrade.service || topgrade --no-retry
 	@echo "✅ All updates complete"
+
+# Show update timer status
+update-status:
+	@echo "📊 Topgrade timer status:"
+	@systemctl --user status topgrade.timer --no-pager || echo "Timer not enabled"
+	@echo ""
+	@echo "📅 Next scheduled run:"
+	@systemctl --user list-timers topgrade.timer --no-pager || true
 
 # Update only specific components
 update-plugins:
