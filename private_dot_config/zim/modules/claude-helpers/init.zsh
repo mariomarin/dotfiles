@@ -132,13 +132,67 @@ claude_chain() {
         commit_plan=$(claude --model sonnet "$prompt")
 
         if [[ -n "$commit_plan" ]]; then
-            echo "📋 Suggested commit plan:"
+            echo "📋 Commit plan generated:"
             echo "$commit_plan"
             echo ""
-            echo "⚠️  Please review and manually execute commits:"
-            echo "   Example: git add <files> && git commit -m 'message'"
-            echo ""
-            echo "This ensures you commit only related changes together."
+            
+            # Parse and execute commits
+            local in_commit=false
+            local files=""
+            local message=""
+            local body=""
+            local commit_count=0
+            
+            while IFS= read -r line; do
+                if [[ "$line" =~ ^COMMIT[[:space:]]+[0-9]+: ]]; then
+                    in_commit=true
+                    files=""
+                    message=""
+                    body=""
+                elif [[ "$line" =~ ^FILES:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
+                    files="${BASH_REMATCH[1]}"
+                elif [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
+                    message="${BASH_REMATCH[1]}"
+                elif [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
+                    # Execute the commit
+                    if [[ -n "$files" ]] && [[ -n "$message" ]]; then
+                        echo "🔄 Staging files: $files"
+                        # Split files and add them
+                        for file in $files; do
+                            git add "$file" || {
+                                echo "❌ Failed to stage $file" >&2
+                                return 1
+                            }
+                        done
+                        
+                        # Commit with message and body
+                        if [[ -n "$body" ]]; then
+                            git commit -m "$message" -m "$body" || {
+                                echo "❌ Failed to commit" >&2
+                                return 1
+                            }
+                        else
+                            git commit -m "$message" || {
+                                echo "❌ Failed to commit" >&2
+                                return 1
+                            }
+                        fi
+                        ((commit_count++))
+                        echo "✅ Committed: $message"
+                        echo ""
+                    fi
+                    in_commit=false
+                elif [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]]; then
+                    # Build commit body
+                    if [[ -n "$body" ]]; then
+                        body="$body\n$line"
+                    else
+                        body="$line"
+                    fi
+                fi
+            done <<< "$commit_plan"
+            
+            echo "🎉 Created $commit_count commits!"
     else
             echo "Failed to generate commit message" >&2
             return 1
@@ -176,7 +230,7 @@ claude_help() {
     echo "  popus      - Run opus model with clipboard content"
     echo "  dopus      - Run opus with dangerous permissions skipped"
     echo "  copus      - Run opus with specific MCP tools"
-    echo "  claude_chain - Analyze changes and suggest grouped commits"
+    echo "  claude_chain - Analyze changes and create grouped commits automatically"
     echo "  claudepool - Fun Deadpool-style Claude personality"
     echo "  ccusage    - Show Claude usage statistics"
 }
