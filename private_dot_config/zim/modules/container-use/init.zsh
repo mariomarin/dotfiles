@@ -1,3 +1,4 @@
+# shellcheck shell=bash disable=SC2148,SC2168
 #
 # container-use completions module for Zim
 #
