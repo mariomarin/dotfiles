@@ -121,3 +121,4 @@ zle     -N             sesh-sessions
 bindkey -M emacs '\es' sesh-sessions
 bindkey -M vicmd '\ee' sesh-sessions
 bindkey -M viins '\ee' sesh-sessions
+
