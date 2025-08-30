@@ -113,6 +113,7 @@
     gopls
     luarocks
     meilisearch
+    nil # Nix language server
     openjdk
     pkg-config
     plantuml
