@@ -1,0 +1,72 @@
+#!/usr/bin/env zsh
+# Smart commit helper for chezmoi using Claude
+
+set -euo pipefail
+
+# Source necessary files
+source ~/.config/zsh/.zshrc >/dev/null 2>&1
+source ~/.config/zim/modules/claude-helpers/init.zsh >/dev/null 2>&1
+
+# Change to chezmoi directory
+cd "$HOME/.local/share/chezmoi"
+
+# Check for changes
+if ! git diff --quiet || ! git diff --cached --quiet; then
+    echo "📝 Analyzing changes for smart commit..."
+    
+    # Get changed files
+    changed_files=$(git diff --name-only; git diff --cached --name-only | sort -u)
+    
+    # Count changes
+    num_files=$(echo "$changed_files" | wc -l)
+    
+    if [[ $num_files -le 3 ]]; then
+        # For small changes, create a single commit
+        echo "🔄 Creating single commit for $num_files file(s)..."
+        
+        # Generate commit message using Claude
+        commit_msg=$(claude --model haiku "
+Generate a conventional commit message for these git changes.
+Changed files: $changed_files
+
+Analyze the diff and create a message following format:
+type(scope): short description
+
+Where type is: feat|fix|docs|style|refactor|test|chore
+Keep it concise and accurate.
+
+Diff:
+$(git diff; git diff --cached)
+" 2>/dev/null || echo "chore: update configuration files")
+        
+        # Commit all changes
+        git add -A
+        git commit -m "$commit_msg"
+        echo "✅ Committed: $commit_msg"
+        
+        # Push if enabled
+        if [[ "${CHEZMOI_AUTOPUSH:-true}" == "true" ]]; then
+            git push
+        fi
+    else
+        # For larger changes, use claude_chain for suggestions
+        echo "🤔 Multiple files changed. Getting commit suggestions..."
+        claude_chain
+        
+        # If no commits were made, create a generic one
+        if ! git diff --quiet || ! git diff --cached --quiet; then
+            echo "⚠️  Auto-committing remaining changes..."
+            git add -A
+            git commit -m "chore: update multiple configuration files
+
+Updated $num_files files via chezmoi apply.
+See commit details for specific changes."
+            
+            if [[ "${CHEZMOI_AUTOPUSH:-true}" == "true" ]]; then
+                git push
+            fi
+        fi
+    fi
+else
+    echo "✅ No changes to commit"
+fi

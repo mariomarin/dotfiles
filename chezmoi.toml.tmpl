@@ -4,5 +4,6 @@ sourceDir = "~/.local/share/chezmoi"
 command = "nvim -d"
 
 [git]
-autoCommit = true
-autoPush = true
+# Disabled because we use claude_chain in run_before script
+autoCommit = false
+autoPush = false
