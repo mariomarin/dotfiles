@@ -22,6 +22,9 @@
 
     # Markdown linting
     markdownlint-cli
+
+    # agents
+    claude-code
   ];
 
   # Git hooks - format only staged files on commit
