@@ -5,7 +5,6 @@
 .claude
 .env
 dot_git
-private_dot_config/zim/modules
 private_init.zsh
 private_login_init.zsh
 tmux/plugins
