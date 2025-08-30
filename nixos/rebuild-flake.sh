@@ -21,8 +21,7 @@ ACTION="${1:-switch}"
 
 # Validate action
 case "$ACTION" in
-    switch|boot|test|build|dry-build|dry-activate)
-        ;;
+    switch | boot | test | build | dry-build | dry-activate) ;;
     *)
         echo -e "${RED}Invalid action: $ACTION${NC}"
         echo "Valid actions: switch, boot, test, build, dry-build, dry-activate"
