@@ -6,6 +6,7 @@ Wants=network-online.target
 [Timer]
 OnBootSec=15min
 OnUnitActiveSec=3d
+OnCalendar=Mon,Thu *-*-* 02:00:00
 Persistent=true
 
 [Install]

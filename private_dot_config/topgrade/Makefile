@@ -3,11 +3,16 @@
 # Default target
 all: update
 
-# Run topgrade manually
+# Run topgrade manually (interactive)
 update:
-	@echo "🔄 Running topgrade manually..."
-	@systemctl --user start topgrade.service || topgrade --no-retry
-	@echo "✅ All updates complete"
+	@echo "🔄 Running topgrade..."
+	@topgrade --no-retry
+
+# Run topgrade in background via systemd
+background:
+	@echo "🔄 Starting topgrade in background..."
+	@systemctl --user start topgrade.service
+	@echo "✅ Topgrade started - check progress with 'journalctl --user -u topgrade -f'"
 
 # Show timer status
 status:
@@ -16,11 +21,14 @@ status:
 	@echo ""
 	@echo "📅 Next scheduled run:"
 	@systemctl --user list-timers topgrade.timer --no-pager || true
+	@echo ""
+	@echo "📜 Last run logs (if any):"
+	@journalctl --user -u topgrade.service -n 10 --no-pager || true
 
 # Force update (bypasses timer)
 force:
 	@echo "🔄 Force running topgrade..."
-	@topgrade --no-retry
+	@topgrade
 	@echo "✅ All updates complete"
 
 # Update only plugins
