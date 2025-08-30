@@ -11,6 +11,7 @@ disable = [
     "vscode",         # VSCode extensions (using Neovim instead)
     "poetry",         # Poetry packages (not using)
     "yarn",           # Yarn global packages (using pnpm instead)
+    "rustup",         # Rustup (managed by Nix on NixOS)
 ]
 
 # Don't retry failed steps automatically
