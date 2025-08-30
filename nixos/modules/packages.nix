@@ -107,6 +107,7 @@
 
     # Development
     bear
+    bun # Fast JavaScript runtime and package manager
     clang
     gnumake
     go
