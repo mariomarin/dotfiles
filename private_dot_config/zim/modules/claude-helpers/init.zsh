@@ -264,8 +264,6 @@ alias gb='gitblade'
 
 # In zsh, functions are automatically available in subshells
 # No need to export them like in bash
-# But let's make sure our awesome aliases are available
-export -f gitblade 2>/dev/null || true
 
 # Set up completion for claude command if not already done
 # Note: compdef is only available after compinit is called
