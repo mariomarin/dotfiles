@@ -40,8 +40,12 @@ npm config set prefix "$NPM_CONFIG_PREFIX"
 
 # Use GNOME Keyring SSH agent
 if [[ -n "$DISPLAY" ]] || [[ -n "$WAYLAND_DISPLAY" ]]; then
+  # Primary: GNOME Control Center socket
   if [[ -S "/run/user/$(id -u)/gcr/ssh" ]]; then
     export SSH_AUTH_SOCK="/run/user/$(id -u)/gcr/ssh"
+  # Alternative: GNOME Keyring socket location
+  elif [[ -S "/run/user/$(id -u)/keyring/ssh" ]]; then
+    export SSH_AUTH_SOCK="/run/user/$(id -u)/keyring/ssh"
   fi
 
   if [[ -n "$SSH_AUTH_SOCK" ]] && command -v ssh-add >/dev/null 2>&1; then
