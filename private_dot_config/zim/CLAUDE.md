@@ -49,6 +49,11 @@ Zim is a modular Zsh framework that provides:
   - `completion` - Tab completion settings
   - `git` - Git aliases and functions
 
+- **Prompt Modules**:
+  - `prompt-pwd` - Shows current directory in prompt with smart truncation
+  - `git-info` - Provides git repository information for prompts
+  - `gitster` - Minimal, informative prompt theme with git status
+
 - **Enhancement Modules**:
   - `zsh-syntax-highlighting` - Command syntax highlighting
   - `zsh-autosuggestions` - Fish-like autosuggestions
@@ -82,6 +87,50 @@ Zim is a modular Zsh framework that provides:
 
 ### Module Load Order
 **Critical**: Custom completion modules must load BEFORE zimfw's completion module to ensure proper initialization.
+
+## Prompt Configuration
+
+### Current Theme: Gitster
+
+The prompt uses the **gitster** theme, which provides a minimal, informative prompt with git integration.
+
+#### Prompt Components:
+1. **prompt-pwd** module:
+   - Shows current working directory
+   - Smart path truncation to keep prompt readable
+   - Highlights home directory with `~`
+
+2. **git-info** module:
+   - Provides git repository status
+   - Branch name display
+   - Dirty/clean state indicators
+   - Ahead/behind remote tracking
+
+3. **gitster** theme:
+   - Combines pwd and git info into clean prompt
+   - Shows username@hostname when in SSH session
+   - Error status indicator (red ✗ on command failure)
+   - Minimal design for maximum terminal space
+
+#### Prompt Format:
+```
+[user@host] ~/path/to/dir [git:branch*] ❯
+```
+- `*` indicates uncommitted changes
+- `❯` changes color based on last command status
+
+### Customizing the Prompt
+
+To change the prompt theme:
+1. Edit `zimrc` and replace `zmodule gitster` with desired theme
+2. Run `zimfw install` to download new theme
+3. Restart shell or run `exec zsh`
+
+Popular alternative themes:
+- `eriner` - Two-line prompt with more info
+- `s1ck94` - Powerline-style prompt
+- `asciiship` - ASCII-only starship alternative
+- `minimal` - Even more minimal than gitster
 
 ## Key Features
 
