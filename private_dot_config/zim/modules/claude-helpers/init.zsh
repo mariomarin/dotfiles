@@ -116,12 +116,16 @@ gitblade() {
     prompt+="Instructions:\n"
     prompt+="1. Group related changes together (e.g., all changes to a specific feature/component)\n"
     prompt+="2. Never use 'git add -A' or stage unrelated changes together\n"
-    prompt+="3. For each group, provide the files to stage and a conventional commit message\n\n"
+    prompt+="3. For each group, provide the files to stage and a conventional commit message\n"
+    prompt+="4. TITLE must be MAX 52 characters (type(scope): description)\n"
+    prompt+="5. BODY text must wrap at 70 characters per line\n\n"
     prompt+="Format your response EXACTLY like this for EACH commit group:\n"
     prompt+="COMMIT 1:\n"
     prompt+="FILES: file1.txt file2.txt file3.txt\n"
-    prompt+="MESSAGE: type(scope): short description\n\n"
-    prompt+="Detailed explanation (2-3 sentences).\n"
+    prompt+="MESSAGE: type(scope): short description (MAX 52 chars)\n"
+    prompt+="BODY:\n"
+    prompt+="Detailed explanation wrapped at 70 characters per line.\n"
+    prompt+="Each line of the body must not exceed 70 characters.\n"
     prompt+="---\n\n"
     prompt+="Current changes:\n$(git diff 2>/dev/null; git diff --cached 2>/dev/null)"
 
@@ -138,6 +142,14 @@ gitblade() {
     echo "$commit_plan"
     echo ""
     
+    # Ask for confirmation
+    echo -n "🤔 Execute these commits? [Y/n] "
+    read -r response
+    if [[ "$response" =~ ^[Nn]$ ]]; then
+        echo "❌ Aborted"
+        return 0
+    fi
+    
     # Parse and execute commits
     local in_commit=false
     local files=""
@@ -146,6 +158,9 @@ gitblade() {
     local commit_count=0
     
     while IFS= read -r line; do
+        # Debug: show what we're parsing
+        # echo "DEBUG: Parsing line: '$line'"
+        
         if [[ "$line" =~ ^COMMIT[[:space:]]+[0-9]+: ]]; then
             in_commit=true
             files=""
@@ -155,10 +170,20 @@ gitblade() {
             files="${BASH_REMATCH[1]}"
         elif [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
             message="${BASH_REMATCH[1]}"
+        elif [[ "$line" == "BODY:" ]]; then
+            # Body section starts, next lines will be body content
+            continue
         elif [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
             # Execute the commit
             if [[ -n "$files" ]] && [[ -n "$message" ]]; then
-                echo "🔄 Staging files: $files"
+                echo ""
+                echo "🔄 Executing commit #$((commit_count + 1)):"
+                echo "   Files: $files"
+                echo "   Message: $message"
+                if [[ -n "$body" ]]; then
+                    echo "   Body: $(echo "$body" | head -1)..."
+                fi
+                echo ""
                 # Split files and add them
                 for file in $files; do
                     git add "$file" || {
@@ -184,10 +209,11 @@ gitblade() {
                 echo ""
             fi
             in_commit=false
-        elif [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]]; then
-            # Build commit body
+        elif [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]] && [[ "$line" != "COMMIT"* ]] && [[ -n "$line" ]]; then
+            # Build commit body (skip empty lines at start)
             if [[ -n "$body" ]]; then
-                body="$body\n$line"
+                body="$body
+$line"
             else
                 body="$line"
             fi
