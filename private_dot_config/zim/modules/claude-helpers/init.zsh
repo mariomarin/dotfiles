@@ -100,107 +100,101 @@ copus() {
 
 # Claude with git commit assistance
 claude_chain() {
-    # Check if there are changes to commit
-    if ! git diff --quiet || ! git diff --cached --quiet; then
-        # Get list of changed files
-        local changed_files
-        changed_files=$(
-                        git diff --name-only
-                                              git diff --cached --name-only
-    )
-
-        # Build commit message prompt
-        local prompt="You are a git commit assistant. Analyze these changes and suggest how to group them into logical, atomic commits.\n\n"
-        prompt+="Changed files:\n$changed_files\n\n"
-        prompt+="Instructions:\n"
-        prompt+="1. Group related changes together (e.g., all changes to a specific feature/component)\n"
-        prompt+="2. Never use 'git add -A' or stage unrelated changes together\n"
-        prompt+="3. For each group, provide the files to stage and a conventional commit message\n\n"
-        prompt+="Format your response EXACTLY like this for EACH commit group:\n"
-        prompt+="COMMIT 1:\n"
-        prompt+="FILES: file1.txt file2.txt file3.txt\n"
-        prompt+="MESSAGE: type(scope): short description\n\n"
-        prompt+="Detailed explanation (2-3 sentences).\n"
-        prompt+="---\n\n"
-        prompt+="Current changes:\n$(
-                                     git diff 2> /dev/null
-                                                           git diff --cached 2> /dev/null
-    )"
-
-        # Get commit plan from Claude
-        local commit_plan
-        commit_plan=$(claude --model sonnet "$prompt")
-
-        if [[ -n "$commit_plan" ]]; then
-            echo "📋 Commit plan generated:"
-            echo "$commit_plan"
-            echo ""
-            
-            # Parse and execute commits
-            local in_commit=false
-            local files=""
-            local message=""
-            local body=""
-            local commit_count=0
-            
-            while IFS= read -r line; do
-                if [[ "$line" =~ ^COMMIT[[:space:]]+[0-9]+: ]]; then
-                    in_commit=true
-                    files=""
-                    message=""
-                    body=""
-                elif [[ "$line" =~ ^FILES:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
-                    files="${BASH_REMATCH[1]}"
-                elif [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
-                    message="${BASH_REMATCH[1]}"
-                elif [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
-                    # Execute the commit
-                    if [[ -n "$files" ]] && [[ -n "$message" ]]; then
-                        echo "🔄 Staging files: $files"
-                        # Split files and add them
-                        for file in $files; do
-                            git add "$file" || {
-                                echo "❌ Failed to stage $file" >&2
-                                return 1
-                            }
-                        done
-                        
-                        # Commit with message and body
-                        if [[ -n "$body" ]]; then
-                            git commit -m "$message" -m "$body" || {
-                                echo "❌ Failed to commit" >&2
-                                return 1
-                            }
-                        else
-                            git commit -m "$message" || {
-                                echo "❌ Failed to commit" >&2
-                                return 1
-                            }
-                        fi
-                        ((commit_count++))
-                        echo "✅ Committed: $message"
-                        echo ""
-                    fi
-                    in_commit=false
-                elif [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]]; then
-                    # Build commit body
-                    if [[ -n "$body" ]]; then
-                        body="$body\n$line"
-                    else
-                        body="$line"
-                    fi
-                fi
-            done <<< "$commit_plan"
-            
-            echo "🎉 Created $commit_count commits!"
-    else
-            echo "Failed to generate commit message" >&2
-            return 1
-    fi
-  else
+    # Early return if no changes
+    if git diff --quiet && git diff --cached --quiet; then
         echo "No changes to commit" >&2
         return 1
-  fi
+    fi
+
+    # Get list of changed files
+    local changed_files
+    changed_files=$(git diff --name-only; git diff --cached --name-only)
+
+    # Build commit message prompt
+    local prompt="You are a git commit assistant. Analyze these changes and suggest how to group them into logical, atomic commits.\n\n"
+    prompt+="Changed files:\n$changed_files\n\n"
+    prompt+="Instructions:\n"
+    prompt+="1. Group related changes together (e.g., all changes to a specific feature/component)\n"
+    prompt+="2. Never use 'git add -A' or stage unrelated changes together\n"
+    prompt+="3. For each group, provide the files to stage and a conventional commit message\n\n"
+    prompt+="Format your response EXACTLY like this for EACH commit group:\n"
+    prompt+="COMMIT 1:\n"
+    prompt+="FILES: file1.txt file2.txt file3.txt\n"
+    prompt+="MESSAGE: type(scope): short description\n\n"
+    prompt+="Detailed explanation (2-3 sentences).\n"
+    prompt+="---\n\n"
+    prompt+="Current changes:\n$(git diff 2>/dev/null; git diff --cached 2>/dev/null)"
+
+    # Get commit plan from Claude
+    local commit_plan
+    commit_plan=$(claude --model sonnet "$prompt")
+
+    if [[ -z "$commit_plan" ]]; then
+        echo "Failed to generate commit plan" >&2
+        return 1
+    fi
+
+    echo "📋 Commit plan generated:"
+    echo "$commit_plan"
+    echo ""
+    
+    # Parse and execute commits
+    local in_commit=false
+    local files=""
+    local message=""
+    local body=""
+    local commit_count=0
+    
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^COMMIT[[:space:]]+[0-9]+: ]]; then
+            in_commit=true
+            files=""
+            message=""
+            body=""
+        elif [[ "$line" =~ ^FILES:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
+            files="${BASH_REMATCH[1]}"
+        elif [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
+            message="${BASH_REMATCH[1]}"
+        elif [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
+            # Execute the commit
+            if [[ -n "$files" ]] && [[ -n "$message" ]]; then
+                echo "🔄 Staging files: $files"
+                # Split files and add them
+                for file in $files; do
+                    git add "$file" || {
+                        echo "❌ Failed to stage $file" >&2
+                        return 1
+                    }
+                done
+                
+                # Commit with message and body
+                if [[ -n "$body" ]]; then
+                    git commit -m "$message" -m "$body" || {
+                        echo "❌ Failed to commit" >&2
+                        return 1
+                    }
+                else
+                    git commit -m "$message" || {
+                        echo "❌ Failed to commit" >&2
+                        return 1
+                    }
+                fi
+                ((commit_count++))
+                echo "✅ Committed: $message"
+                echo ""
+            fi
+            in_commit=false
+        elif [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]]; then
+            # Build commit body
+            if [[ -n "$body" ]]; then
+                body="$body\n$line"
+            else
+                body="$line"
+            fi
+        fi
+    done <<< "$commit_plan"
+    
+    echo "🎉 Created $commit_count commits!"
 }
 
 # Fun Deadpool-style Claude
