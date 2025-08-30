@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
 # Claude Helper Functions Module for Zimfw
 # Based on John Lindquist's zshrc helpers from the Claude workshop
+# This is a Zsh module - no shebang needed as it's sourced, not executed
 
 # Directory for module functions
 CLAUDE_HELPERS_DIR="${0:h}/functions"
@@ -110,26 +110,35 @@ claude_chain() {
     )
 
         # Build commit message prompt
-        local prompt="Generate a git commit message for these changes:\n\n"
+        local prompt="You are a git commit assistant. Analyze these changes and suggest how to group them into logical, atomic commits.\n\n"
         prompt+="Changed files:\n$changed_files\n\n"
-        prompt+="Diff:\n$(
-                          git diff
-                                    git diff --cached
-    )\n\n"
-        prompt+="Follow conventional commit format (feat:, fix:, docs:, etc.) with:\n"
-        prompt+="1. A concise title\n"
-        prompt+="2. A blank line\n"
-        prompt+="3. A single paragraph (2-4 sentences) explaining what changed and why"
+        prompt+="Instructions:\n"
+        prompt+="1. Group related changes together (e.g., all changes to a specific feature/component)\n"
+        prompt+="2. Never use 'git add -A' or stage unrelated changes together\n"
+        prompt+="3. For each group, provide the files to stage and a conventional commit message\n\n"
+        prompt+="Format your response EXACTLY like this for EACH commit group:\n"
+        prompt+="COMMIT 1:\n"
+        prompt+="FILES: file1.txt file2.txt file3.txt\n"
+        prompt+="MESSAGE: type(scope): short description\n\n"
+        prompt+="Detailed explanation (2-3 sentences).\n"
+        prompt+="---\n\n"
+        prompt+="Current changes:\n$(
+                                     git diff 2> /dev/null
+                                                           git diff --cached 2> /dev/null
+    )"
 
-        # Get commit message from Claude
-        local commit_msg
-        commit_msg=$(claude --model sonnet "$prompt")
+        # Get commit plan from Claude
+        local commit_plan
+        commit_plan=$(claude --model sonnet "$prompt")
 
-        if [[ -n "$commit_msg" ]]; then
-            git add -A
-            git commit -m "$commit_msg"
-            echo "Committed with message:"
-            echo "$commit_msg"
+        if [[ -n "$commit_plan" ]]; then
+            echo "📋 Suggested commit plan:"
+            echo "$commit_plan"
+            echo ""
+            echo "⚠️  Please review and manually execute commits:"
+            echo "   Example: git add <files> && git commit -m 'message'"
+            echo ""
+            echo "This ensures you commit only related changes together."
     else
             echo "Failed to generate commit message" >&2
             return 1
@@ -167,7 +176,7 @@ claude_help() {
     echo "  popus      - Run opus model with clipboard content"
     echo "  dopus      - Run opus with dangerous permissions skipped"
     echo "  copus      - Run opus with specific MCP tools"
-    echo "  claude_chain - Git commit with semver format and paragraph"
+    echo "  claude_chain - Analyze changes and suggest grouped commits"
     echo "  claudepool - Fun Deadpool-style Claude personality"
     echo "  ccusage    - Show Claude usage statistics"
 }
@@ -175,14 +184,15 @@ claude_help() {
 # Alias for help
 alias clhelp='claude_help'
 
-# Export functions for use in subshells
-export -f cl improve popus dopus copus claude_chain claudepool ccusage claude_help
+# In zsh, functions are automatically available in subshells
+# No need to export them like in bash
 
 # Set up completion for claude command if not already done
+# Note: compdef is only available after compinit is called
+# So we define the completion function but don't call compdef here
 if ! command -v _claude &> /dev/null; then
     # Basic completion for claude command
     _claude() {
-        # shellcheck disable=SC2034
         local -a claude_opts=(
             '--help:Show help'
             '--model:Specify model (opus, sonnet, haiku)'
@@ -198,7 +208,14 @@ if ! command -v _claude &> /dev/null; then
         _describe 'claude options' claude_opts
   }
 
-    compdef _claude claude
+    # Store in fpath for autoloading
+    local completion_file="${0:h}/functions/_claude"
+    if [[ ! -f "$completion_file" ]]; then
+        mkdir -p "${0:h}/functions"
+        echo "#compdef claude" > "$completion_file"
+        declare -f _claude >> "$completion_file"
+  fi
+    fpath=("${0:h}/functions" $fpath)
 fi
 
 # Source local customizations if they exist
