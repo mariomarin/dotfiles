@@ -26,7 +26,7 @@
     # Git utilities
     git-branchless # Git workflow for trunk-based development
     git-sizer # Compute various size metrics for Git repo
-    bfg # BFG Repo-Cleaner for removing large files
+    bfg-repo-cleaner # BFG Repo-Cleaner for removing large files
     git-filter-repo # Quickly rewrite git repository history
 
     # System monitoring
