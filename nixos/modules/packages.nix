@@ -21,7 +21,6 @@
     awscli2
     baobab
     brave
-    claude-code
     firefox
     gimp
     gnome-disk-utility
