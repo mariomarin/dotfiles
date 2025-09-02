@@ -17,7 +17,6 @@
 
     # Development and diff tools
     jd-diff-patch # JSON diff and patch
-    ruff-lsp # Fast Python linter LSP
 
     # Media and download tools
     yewtube # Terminal YouTube viewer

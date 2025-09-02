@@ -13,9 +13,14 @@
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    claude-code-nix = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nur, home-manager, ... }@inputs: {
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nur, home-manager, claude-code-nix, ... }@inputs: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
 
@@ -43,6 +48,7 @@
                 config.allowUnfree = true;
               };
             })
+            claude-code-nix.overlays.default
           ];
         }
 

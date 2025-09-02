@@ -185,5 +185,7 @@
   ]) ++ (with pkgs; [
     # Packages from unstable channel
     unstable.devenv
+    # Claude Code from the claude-code-nix flake
+    claude-code
   ]);
 }
