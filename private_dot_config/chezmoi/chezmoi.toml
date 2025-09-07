@@ -1,5 +1,9 @@
 sourceDir = "~/.local/share/chezmoi"
 
+[diff]
+command = "delta"
+args = ["--side-by-side", "--syntax-theme", "Catppuccin-mocha"]
+
 [merge]
 command = "nvim -d"
 
