@@ -57,6 +57,25 @@ If chezmoi complains about a non-existent script (e.g., "install-container-use.s
 4. As a last resort, clear all script state: `chezmoi state delete-bucket --bucket=scriptState`
 5. The issue often comes from renamed or moved scripts that are still tracked in state
 
+## Shell Script Standards
+
+### Always Use Portable Shebang
+**ALWAYS** use `#!/usr/bin/env bash` as the shebang line for bash scripts:
+- ✅ Correct: `#!/usr/bin/env bash`
+- ❌ Incorrect: `#!/bin/bash`
+
+This ensures scripts work across different systems where bash might be installed in different locations (e.g., NixOS, macOS, Linux distributions).
+
+### Script Template
+```bash
+#!/usr/bin/env bash
+# Script description here
+
+set -euo pipefail  # Exit on error, undefined vars, pipe failures
+
+# Script content here
+```
+
 ## Repository Overview
 
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system configurations across different machines.
