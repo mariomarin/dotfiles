@@ -6,19 +6,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **NEVER** run these commands under any circumstances:
 - `chezmoi purge` - This deletes the entire chezmoi source directory
-- `chezmoi state reset` - This can cause chezmoi to lose track of managed files
-- `chezmoi state delete-bucket` - This can corrupt chezmoi's state
-- Any command that deletes `.chezmoidata.db` or `chezmoistate.boltdb`
+- `chezmoi state reset` - This can cause chezmoi to lose track of ALL managed files
+- Any command that deletes `.chezmoidata.db` or `chezmoistate.boltdb` files directly
 
 These commands are destructive and will break the chezmoi configuration. A pre-commit hook is in place to block these commands as an additional safety measure.
+
+## Safe State Management Commands
+
+These commands are SAFE to use when troubleshooting scripts:
+- `chezmoi state delete-bucket --bucket=scriptState` - Clears state of run_once_ scripts (forces re-run)
+- `chezmoi state delete-bucket --bucket=entryState` - Clears state of run_onchange_ scripts
+- `chezmoi state delete --bucket=scriptState --key=script-name` - Clear specific script state
+
+These only affect script execution tracking, not your actual files or configuration.
 
 ## Important Chezmoi Concepts
 
 ### Scripts and State Management
-- **run_once_ scripts**: Run only once and their state is tracked
-- **run_onchange_ scripts**: Run when their contents change
-- To clear script state (force re-run): `chezmoi state delete-bucket --bucket=scriptState`
-- Script state is stored in chezmoi's persistent state database
+- **run_once_ scripts**: Run only once, state tracked in `scriptState` bucket
+- **run_onchange_ scripts**: Run when their contents change, state tracked in `entryState` bucket
+- Chezmoi stores whether and when scripts have run successfully in its persistent state
+- To force re-run of ALL scripts:
+  - `chezmoi state delete-bucket --bucket=scriptState` (for run_once_ scripts)
+  - `chezmoi state delete-bucket --bucket=entryState` (for run_onchange_ scripts)
 
 ### Template Files
 - Files ending in `.tmpl` are chezmoi templates
