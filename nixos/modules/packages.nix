@@ -32,9 +32,10 @@
     zathura
 
     # Terminal tools
+    age  # Encryption tool for chezmoi
     atuin
     bash
-    chezmoi
+    unstable.chezmoi  # Use latest version from unstable
     curl
     devbox
     direnv
