@@ -1,14 +1,3 @@
-{{- /* Container-use version management */ -}}
-{{- $containerUseLatest := "" -}}
-{{- if and (hasKey . "versions") (hasKey .versions "containerUse") -}}
-  {{- /* Use pinned version if specified in .chezmoidata.toml */ -}}
-  {{- $containerUseLatest = .versions.containerUse -}}
-{{- else -}}
-  {{- /* Use chezmoi's gitHubLatestRelease to get latest version */ -}}
-  {{- $containerUseRelease := gitHubLatestRelease "dagger/container-use" -}}
-  {{- $containerUseLatest = $containerUseRelease.TagName -}}
-{{- end -}}
-
 # Polybar Pulseaudio Control
 ["pulseaudio-control"]
     type = "file"
@@ -16,11 +5,3 @@
     executable = true
     refreshPeriod = "168h"
 
-# container-use - Docker-based development environments
-# Current version: {{ $containerUseLatest }}
-[container-use]
-    type = "archive-file"
-    url = "https://github.com/dagger/container-use/releases/download/{{ $containerUseLatest }}/container-use_{{ $containerUseLatest }}_{{ .chezmoi.os }}_{{ .chezmoi.arch }}.tar.gz"
-    executable = true
-    refreshPeriod = "168h"  # Weekly check for updates
-    path = "container-use"

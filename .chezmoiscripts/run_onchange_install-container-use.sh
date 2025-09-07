@@ -1,0 +1,15 @@
+#!/bin/bash
+# Install container-use from source
+# This script runs when the containerUse version in .chezmoidata.toml changes
+
+set -euo pipefail
+
+CONTAINER_USE_VERSION="7555629"
+
+echo "Installing container-use@${CONTAINER_USE_VERSION} from source..."
+
+# Use go install to build and install the binary
+GOBIN="${HOME}/.local/bin" go install "github.com/dagger/container-use/cmd/container-use@${CONTAINER_USE_VERSION}"
+
+echo "container-use installed successfully"
+container-use version || true

@@ -3,6 +3,6 @@
 # By default, tools will use the latest GitHub release.
 # To pin a specific version, uncomment and modify the relevant line.
 #
-# [versions]
-# containerUse = "v0.4.2"  # Container-based development environments
+[versions]
+containerUse = "7555629"  # Container-based development environments (pinned to latest commit)
 # zimfw = "v1.18.0"       # Zim framework for Zsh
