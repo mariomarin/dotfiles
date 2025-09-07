@@ -2,6 +2,16 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## CRITICAL: Never Run These Commands
+
+**NEVER** run these commands under any circumstances:
+- `chezmoi purge` - This deletes the entire chezmoi source directory
+- `chezmoi state reset` - This can cause chezmoi to lose track of managed files
+- `chezmoi state delete-bucket` - This can corrupt chezmoi's state
+- Any command that deletes `.chezmoidata.db` or `chezmoistate.boltdb`
+
+These commands are destructive and will break the chezmoi configuration. A pre-commit hook is in place to block these commands as an additional safety measure.
+
 ## Repository Overview
 
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system configurations across different machines.
