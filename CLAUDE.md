@@ -12,6 +12,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 These commands are destructive and will break the chezmoi configuration. A pre-commit hook is in place to block these commands as an additional safety measure.
 
+## Important Chezmoi Concepts
+
+### Scripts and State Management
+- **run_once_ scripts**: Run only once and their state is tracked
+- **run_onchange_ scripts**: Run when their contents change
+- To clear script state (force re-run): `chezmoi state delete-bucket --bucket=scriptState`
+- Script state is stored in chezmoi's persistent state database
+
+### Template Files
+- Files ending in `.tmpl` are chezmoi templates
+- Use `chezmoi execute-template` to test template rendering
+- Edit templates with: `chezmoi edit path/to/file.tmpl`
+- Common template variables:
+  - `{{ .chezmoi.os }}` - Operating system (linux, darwin, windows)
+  - `{{ .chezmoi.arch }}` - Architecture (amd64, arm64)
+  - `{{ .chezmoi.homeDir }}` - User's home directory
+  - Custom data from `.chezmoidata.toml`
+
+### Debugging Templates
+When a template fails to render:
+1. Test with: `chezmoi execute-template < path/to/template.tmpl`
+2. Check data with: `chezmoi data`
+3. Verify syntax - common issues:
+   - Missing closing braces `}}`
+   - Undefined variables
+   - Incorrect spacing around template directives
+
+### Troubleshooting Ghost Scripts
+If chezmoi complains about a non-existent script (e.g., "install-container-use.sh"):
+1. Check managed files: `chezmoi managed | grep script-name`
+2. Check state: `chezmoi state dump | grep script-name`
+3. Clear specific script state: `chezmoi state delete --bucket=scriptState --key=script-name`
+4. As a last resort, clear all script state: `chezmoi state delete-bucket --bucket=scriptState`
+5. The issue often comes from renamed or moved scripts that are still tracked in state
+
 ## Repository Overview
 
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system configurations across different machines.

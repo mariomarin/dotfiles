@@ -9,7 +9,7 @@ CONTAINER_USE_VERSION="{{ .versions.containerUse }}"
 echo "Installing container-use@${CONTAINER_USE_VERSION} from source..."
 
 # Use go install to build and install the binary
-GOBIN="${HOME}/.local/bin" go install "github.com/dagger/container-use/cmd/container-use@${CONTAINER_USE_VERSION}"
+go install "github.com/dagger/container-use/cmd/container-use@${CONTAINER_USE_VERSION}"
 
 echo "container-use installed successfully"
 container-use version || true
