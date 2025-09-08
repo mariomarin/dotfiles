@@ -43,7 +43,7 @@
 # tmux-fingers - Copy/paste with vimium-like hints
 ["tmux-fingers"]
     type = "archive"
-    url = "https://github.com/Morantron/tmux-fingers/archive/main.tar.gz"
+    url = "https://github.com/Morantron/tmux-fingers/archive/master.tar.gz"
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"
