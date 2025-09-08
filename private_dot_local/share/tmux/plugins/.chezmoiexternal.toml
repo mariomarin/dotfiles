@@ -48,6 +48,13 @@
     stripComponents = 1
     refreshPeriod = "168h"
 
+# tmux-fingers binary (pinned to version 2.5.1)
+["tmux-fingers/bin/tmux-fingers"]
+    type = "file"
+    url = "https://github.com/Morantron/tmux-fingers/releases/download/2.5.1/tmux-fingers-2.5.1-linux-x86_64"
+    executable = true
+    refreshPeriod = "168h"
+
 # tmux-tilish - I3wm like keybindings for tmux
 ["tmux-tilish"]
     type = "archive"
