@@ -121,7 +121,7 @@ This repository automatically manages the following external tools and resources
 - **minimal-tmux-status** - Clean, minimal tmux theme
 - **tmux-resurrect** - Persists tmux environment across system restarts
 - **tmux-continuum** - Automatic tmux session save/restore
-- **tmux-thumbs** - Like vimium/vimperator for tmux
+- **tmux-fingers** - Copy/paste with vimium-like hints in tmux
 - **tmux-tilish** - I3wm-like keybindings for tmux
 - **tmux-navigate** - Seamless navigation between tmux panes and vim splits
 - **tmux-fzf** - Use fzf to manage tmux work environment

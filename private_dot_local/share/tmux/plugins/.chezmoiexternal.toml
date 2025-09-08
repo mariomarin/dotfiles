@@ -40,10 +40,10 @@
     stripComponents = 1
     refreshPeriod = "168h"
 
-# tmux-thumbs - Like vimium/vimperator for tmux
-["tmux-thumbs"]
+# tmux-fingers - Copy/paste with vimium-like hints
+["tmux-fingers"]
     type = "archive"
-    url = "https://github.com/fcsonline/tmux-thumbs/archive/master.tar.gz"
+    url = "https://github.com/Morantron/tmux-fingers/archive/main.tar.gz"
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"

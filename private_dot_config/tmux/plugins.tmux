@@ -32,13 +32,14 @@ set -g @continuum-restore 'on'
 set -g @continuum-boot 'on'
 
 # copy/pasting tmux like vimium/vimperator 
-set -g @plugin 'fcsonline/tmux-thumbs'
-# Choose in which direction you want to assign hints. Useful to get shorter
-# hints closer to the cursor.
-set -g @thumbs-reverse 'on'
-set -g @thumbs-command 'echo -n {} | xclip -in -selection clipboard && tmux display-message \"Copied {}\"'
-set -g @thumbs-upcase-command 'xdg-open {} && tmux display-message "Opened {}"'
-set -g @thumbs-regexp-1 '[a-z0-9]+-[^ ]+'
+set -g @plugin 'Morantron/tmux-fingers'
+# Configuration for tmux-fingers
+set -g @fingers-reverse 'on'  # Reverse hint order (similar to thumbs-reverse)
+set -g @fingers-key 'Space'   # Keep the same keybinding (prefix + Space)
+set -g @fingers-copy-command 'echo -n {} | xclip -in -selection clipboard && tmux display-message \"Copied {}\"'
+set -g @fingers-open-command 'xdg-open {} && tmux display-message "Opened {}"'
+# Additional patterns (tmux-fingers has built-in patterns for URLs, paths, etc.)
+set -g @fingers-pattern-0 '[a-z0-9]+-[^ ]+'  # Custom pattern like thumbs-regexp-1
 
 # i3wm like navigation with TAB key
 set -g @plugin 'farzadmf/tmux-tilish'

@@ -17,8 +17,9 @@ alias ce="chezmoi edit --apply"
 # kubernetes
 alias k='kubectl'
 
-# thumbs
-alias pick='thumbs -u -r | xsel --clipboard -i'
+# tmux-fingers (formerly thumbs)
+# Note: tmux-fingers doesn't have a standalone CLI tool
+# Use fzf or similar tools for picking outside of tmux
 
 # xsel
 alias xc='xsel --clipboard'
