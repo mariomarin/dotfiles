@@ -33,6 +33,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.dap.nlua" },
 
     -- Editor extras
+    { import = "lazyvim.plugins.extras.editor.telescope" }, -- Telescope (includes <leader><space> keybinding)
     { import = "lazyvim.plugins.extras.util.chezmoi" }, -- Chezmoi integration
     { import = "lazyvim.plugins.extras.lang.nix" }, -- Nix language support
     { import = "lazyvim.plugins.extras.test.core" }, -- Test support with neotest
