@@ -4,5 +4,5 @@
 # To pin a specific version, uncomment and modify the relevant line.
 #
 [versions]
-containerUse = "7555629"  # Container-based development environments (pinned to latest commit)
+containerUse = "d03dc1c"  # Container-based development environments (pinned to latest commit)
 # zimfw = "v1.18.0"       # Zim framework for Zsh
