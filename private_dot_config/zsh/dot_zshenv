@@ -78,8 +78,9 @@ export ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
 # podman rootless
 # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+
 # Docker rootless
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+# export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 export DOCKER_BUILDKIT=1
 
 # zim
