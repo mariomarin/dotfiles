@@ -17,8 +17,10 @@
     shellcheck
     shfmt
 
-    # Multi-format formatting (JSON, YAML, Markdown, TOML)
+    # Multi-format formatting
     biome
+
+    yamlfmt
 
     # Markdown linting
     markdownlint-cli
