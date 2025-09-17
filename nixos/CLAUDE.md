@@ -150,6 +150,7 @@ The system now uses Nix Flakes for:
 2. **Missing Packages**: Ensure correct channel is configured
 3. **Service Conflicts**: Review systemd service dependencies
 4. **Hardware Issues**: Verify hardware-configuration.nix
+5. **SSH Agent Connection Refused**: See SSH Agent Configuration section below
 
 ### Debug Commands
 ```bash
@@ -165,6 +166,53 @@ systemctl status <service>
 # List generations
 sudo nix-env --list-generations --profile /nix/var/nix/profiles/system
 ```
+
+## SSH Agent Configuration
+
+### Issue: GNOME Keyring SSH Component Not Starting
+
+The system is configured to use GNOME Keyring as the SSH agent, but the SSH component may not start properly.
+
+#### Configuration Files
+- `modules/security.nix`: Disables standard SSH agent (`programs.ssh.startAgent = false`)
+- `modules/desktop.nix`: Contains session commands to start GNOME keyring with SSH
+
+#### Problem
+GNOME keyring daemon starts with only the `secrets` component, missing the SSH component:
+```
+gnome-keyring-daemon --start --foreground --components=secrets
+```
+
+The session startup command should start it with SSH support, but fails if daemon is already running.
+
+#### Solutions
+
+1. **Temporary Fix - Kill and Restart GNOME Keyring**:
+   ```bash
+   pkill gnome-keyring-daemon
+   eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+   export SSH_AUTH_SOCK
+   ssh-add ~/.ssh/id_ed25519
+   ```
+
+2. **Use Systemd SSH Agent Instead**:
+   ```bash
+   export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
+   ssh-add ~/.ssh/id_ed25519
+   ```
+
+3. **Permanent Fix - Re-enable Standard SSH Agent**:
+   Edit `modules/security.nix` and change:
+   ```nix
+   programs.ssh.startAgent = true;  # was false
+   ```
+   Then rebuild: `sudo nixos-rebuild switch`
+
+#### Environment Variables
+When working correctly, you should have:
+- `SSH_AUTH_SOCK` pointing to either:
+  - `/run/user/1000/keyring/ssh` (GNOME keyring)
+  - `/run/user/1000/ssh-agent.socket` (systemd SSH agent)
 
 ## Related Documentation
 
