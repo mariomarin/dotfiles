@@ -124,7 +124,6 @@
     zeal # Offline documentation browser
 
     # Editors & Language Servers
-    neovim # Hyperextensible Vim-based text editor
     pandoc # Universal markup converter
     pyright # Static type checker for Python
     terraform-ls # Terraform language server
@@ -196,6 +195,7 @@
     yarn # JavaScript package manager
   ]) ++ (with pkgs; [
     # Packages from unstable channel
+    unstable.neovim # Hyperextensible Vim-based text editor
     unstable.devenv # Fast, declarative, reproducible development environments
     unstable.svu # Semantic Version Util v3.x
     # Claude Code from the claude-code-nix flake
