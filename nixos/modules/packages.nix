@@ -30,32 +30,39 @@
     transmission_3
     tridactyl-native
     zathura
+    zoom-us
 
     # Terminal tools
-    age  # Encryption tool for chezmoi
+    age # Encryption tool for chezmoi
     atuin
     bash
-    unstable.chezmoi  # Use latest version from unstable
+    unstable.chezmoi # Use latest version from unstable
     curl
-    devbox
+    devbox # Instant, portable dev environments
     direnv
+    dive # Docker image explorer and layer analyzer
     doggo
     envsubst
     file
     fuse
     fzf
     gh
+    git-branchless # High-velocity, monorepo-scale workflow for Git
     gitFull
     gitAndTools.gh
     hledger
     jq
+    just # Command runner similar to make
     libzip
     miller
     pay-respects
-    sesh
+    sesh # Smart session manager for tmux
+    stern # Multi-pod and container log tailing for Kubernetes
     tmux
     topgrade
     unzip
+    upterm # Secure terminal sharing
+    viddy # Modern watch command
     yq-go
 
     # iOS support
@@ -98,10 +105,12 @@
     openssl.dev
 
     # Networking
+    aws-sso-cli # AWS SSO credential helper
     nss
     nssTools
     ntfs3g
     rclone
+    speedtest-cli # Internet bandwidth speed test
     syncthing
     sysdig
     trippy
@@ -113,6 +122,7 @@
     gnumake
     go
     gopls
+    krew # kubectl plugin manager
     luarocks
     meilisearch
     nil # Nix language server
@@ -157,6 +167,8 @@
     poppler_utils
     portaudio
     pulseaudio
+    yewtube # YouTube in the terminal
+    yt-dlp # YouTube and other video downloader
 
     # Window manager and desktop
     conky
@@ -186,6 +198,7 @@
   ]) ++ (with pkgs; [
     # Packages from unstable channel
     unstable.devenv
+    unstable.svu # Semantic Version Util v3.x
     # Claude Code from the claude-code-nix flake
     claude-code
   ]);
