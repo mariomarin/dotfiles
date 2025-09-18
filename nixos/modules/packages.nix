@@ -41,6 +41,7 @@
     gh # GitHub CLI tool
     gitFull # Git version control system with all features
     hledger # Plain text accounting
+    lazygit # Terminal UI for git
     jq # Command-line JSON processor
     just # Command runner similar to make
     libnotify # Desktop notification library
@@ -127,7 +128,7 @@
     pandoc # Universal markup converter
     pyright # Static type checker for Python
     terraform-ls # Terraform language server
-    tree-sitter # Parser generator and incremental parsing library
+    unstable.tree-sitter # Parser generator and incremental parsing library
     tridactyl-native # Native messaging host for Tridactyl Firefox addon
     vim # Vi Improved text editor
     vscode # Visual Studio Code editor

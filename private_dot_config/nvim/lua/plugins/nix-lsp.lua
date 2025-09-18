@@ -21,7 +21,7 @@ return {
   },
 
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
       -- Skip nil_ls installation on NixOS
       if vim.fn.executable("nix") == 1 then

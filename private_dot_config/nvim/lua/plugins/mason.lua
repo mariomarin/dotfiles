@@ -2,7 +2,7 @@
 return {
   -- Configure mason to work better with NixOS
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
       -- On NixOS, prefer system-installed tools
       if vim.fn.has("unix") == 1 and vim.fn.executable("nix") == 1 then
@@ -20,7 +20,7 @@ return {
 
   -- Configure mason-lspconfig to handle NixOS
   {
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
     opts = function(_, opts)
       -- Don't auto-install on NixOS, use system packages
       if vim.fn.has("unix") == 1 and vim.fn.executable("nix") == 1 then

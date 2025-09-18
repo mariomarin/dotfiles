@@ -13,3 +13,7 @@ set-option -g pane-base-index 1
 
 # Keep commands history and set its limit.
 set-option -g history-file ~/.tmux/cache/history
+
+# Terminal settings for true color support
+set -g default-terminal "tmux-256color"
+set -ag terminal-overrides ",alacritty:RGB"
