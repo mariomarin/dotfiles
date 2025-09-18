@@ -61,9 +61,28 @@ The surround feature is enabled in **classic mode** (verb->s->surround).
 
 The following fzf keybindings are preserved:
 
-- `Ctrl+r` - Search command history with fzf
+- `Ctrl+r` - Search command history with fzf (replaced by atuin if available)
 - `Ctrl+t` - Search files with fzf  
 - `Alt+c` - Change directory with fzf
+
+### Atuin Integration
+
+When [atuin](https://github.com/atuinsh/atuin) is available, it provides enhanced history search:
+
+#### Key Bindings
+
+- `Ctrl+r` - Interactive history search with atuin
+- `↑` (Up Arrow) - Search history starting with current input
+- `/` (in NORMAL mode) - Search history in vi command mode
+- `k` (in NORMAL mode) - Navigate history in vi command mode
+
+#### Vi Mode Support
+
+Atuin bindings are configured to work seamlessly with zsh-vi-mode:
+
+- Insert mode uses `atuin-search-viins` and `atuin-up-search-viins` widgets
+- Command mode uses `atuin-search-vicmd` and `atuin-up-search-vicmd` widgets
+- Bindings are restored after zsh-vi-mode initialization to prevent conflicts
 
 ## Configuration
 
@@ -71,6 +90,7 @@ Settings are defined in:
 
 - `~/.config/zsh/.zshenv` - Environment variables
 - `~/.config/zsh/zsh-vi-mode-config.zsh` - Post-init configuration
+- `~/.config/zsh/atuin-config.zsh` - Atuin integration with custom bindings
 
 ### Environment Variables
 

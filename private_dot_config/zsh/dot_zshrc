@@ -1,5 +1,9 @@
 # User configuration sourced by interactive shells
 
+# Load atuin configuration before zim modules (which includes atuin)
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/atuin-config.zsh" ]] && \
+  source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/atuin-config.zsh"
+
 # Load zsh-vi-mode configuration if it exists
 [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/zsh-vi-mode-config.zsh" ]] && \
   source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/zsh-vi-mode-config.zsh"

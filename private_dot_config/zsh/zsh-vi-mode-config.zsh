@@ -9,11 +9,17 @@ function zvm_after_init() {
   if (( ${+functions[fzf-file-widget]} )); then
     bindkey '^T' fzf-file-widget
   fi
-  if (( ${+functions[fzf-history-widget]} )); then
+  # Skip fzf-history-widget if atuin is available (atuin replaces it)
+  if (( ${+functions[fzf-history-widget]} )) && ! (( ${+commands[atuin]} )); then
     bindkey '^R' fzf-history-widget
   fi
   if (( ${+functions[fzf-cd-widget]} )); then
     bindkey '\ec' fzf-cd-widget
+  fi
+  
+  # Set up atuin bindings if available
+  if (( ${+functions[setup_atuin_bindings]} )); then
+    setup_atuin_bindings
   fi
   
   # Restore any custom key bindings
