@@ -94,13 +94,9 @@ unalias gh 2>/dev/null
 unalias gt 2>/dev/null
 
 # Post-init module configuration
+# Note: Key bindings that might be overridden by zsh-vi-mode
+# are configured in zsh-vi-mode-config.zsh's zvm_after_init function
 
-bindkey '^P' history-substring-search-up
-bindkey '^N' history-substring-search-down
-bindkey '^n' history-substring-search-up
-bindkey '^p' history-substring-search-down
-
-bindkey '^y' autosuggest-accept
 bindkey "''${key[Up]}" up-line-or-search
 
 # kubernetes

@@ -11,6 +11,10 @@ function zvm_after_init() {
   bindkey '^P' history-substring-search-up
   bindkey '^N' history-substring-search-down
   bindkey '^y' autosuggest-accept
+  
+  # Additional bindings for case variations
+  bindkey '^p' history-substring-search-down
+  bindkey '^n' history-substring-search-up
 }
 
 # Ensure surround is enabled

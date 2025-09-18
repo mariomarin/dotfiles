@@ -6,7 +6,7 @@ This configuration uses [zsh-vi-mode](https://github.com/jeffreytse/zsh-vi-mode)
 
 ### Mode Switching
 
-- `ESC` or `jk` - Switch from INSERT to NORMAL mode
+- `ESC`, `Ctrl+[`, or `jk` - Switch from INSERT to NORMAL mode
 - `i` - Enter INSERT mode
 - `v` - Enter VISUAL mode
 - `V` - Enter VISUAL LINE mode
@@ -42,6 +42,20 @@ The surround feature is enabled in **classic mode** (verb->s->surround).
 - `ci"` - Change inside quotes
 - `di(` - Delete inside parentheses
 - `vi{` - Visual select inside braces
+
+### History Navigation
+
+- `Ctrl+p` / `Ctrl+P` - Previous command in history (substring search)
+- `Ctrl+n` / `Ctrl+N` - Next command in history (substring search)
+- `/` - Search backward in history (in NORMAL mode)
+- `?` - Search forward in history (in NORMAL mode)
+- `n` - Repeat the last search in same direction
+- `N` - Repeat the last search in opposite direction
+
+### Command Line Editing
+
+- `Ctrl+y` - Accept autosuggestion
+- Standard vi motions work in NORMAL mode (w, b, 0, $, etc.)
 
 ## Configuration
 
