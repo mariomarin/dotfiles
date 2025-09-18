@@ -87,12 +87,22 @@
         ];
       };
 
-      # JSON and TOML formatting with biome
+      # JSON formatting with biome
       biome = {
         enable = true;
         name = "biome";
         entry = "biome format --write --no-errors-on-unmatched";
-        files = "\\.(json|jsonc|toml)$";
+        files = "\\.(json|jsonc)$";
+        language = "system";
+        pass_filenames = true;
+      };
+
+      # TOML formatting with taplo
+      taplo = {
+        enable = true;
+        name = "taplo";
+        entry = "taplo fmt";
+        files = "\\.toml$";
         language = "system";
         pass_filenames = true;
       };
