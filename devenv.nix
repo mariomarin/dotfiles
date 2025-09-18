@@ -20,7 +20,11 @@
     # Multi-format formatting
     biome
 
+    # YAML formatting
     yamlfmt
+
+    # TOML formatting and LSP
+    taplo
 
     # Markdown linting
     markdownlint-cli

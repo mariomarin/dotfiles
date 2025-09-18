@@ -5,15 +5,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## CRITICAL: Never Run These Commands
 
 **NEVER** run these commands under any circumstances:
+
 - `chezmoi purge` - This deletes the entire chezmoi source directory
 - `chezmoi state reset` - This can cause chezmoi to lose track of ALL managed files
 - Any command that deletes `.chezmoidata.db` or `chezmoistate.boltdb` files directly
 
-These commands are destructive and will break the chezmoi configuration. A pre-commit hook is in place to block these commands as an additional safety measure.
+These commands are destructive and will break the chezmoi configuration. A pre-commit hook is in place to block
+these commands as an additional safety measure.
 
 ## Safe State Management Commands
 
 These commands are SAFE to use when troubleshooting scripts:
+
 - `chezmoi state delete-bucket --bucket=scriptState` - Clears state of run_once_ scripts (forces re-run)
 - `chezmoi state delete-bucket --bucket=entryState` - Clears state of run_onchange_ scripts
 - `chezmoi state delete --bucket=scriptState --key=script-name` - Clear specific script state
@@ -23,6 +26,7 @@ These only affect script execution tracking, not your actual files or configurat
 ## Important Chezmoi Concepts
 
 ### Scripts and State Management
+
 - **run_once_ scripts**: Run only once, state tracked in `scriptState` bucket
 - **run_onchange_ scripts**: Run when their contents change, state tracked in `entryState` bucket
 - Chezmoi stores whether and when scripts have run successfully in its persistent state
@@ -31,6 +35,7 @@ These only affect script execution tracking, not your actual files or configurat
   - `chezmoi state delete-bucket --bucket=entryState` (for run_onchange_ scripts)
 
 ### Template Files
+
 - Files ending in `.tmpl` are chezmoi templates
 - Use `chezmoi execute-template` to test template rendering
 - Edit templates with: `chezmoi edit path/to/file.tmpl`
@@ -41,7 +46,9 @@ These only affect script execution tracking, not your actual files or configurat
   - Custom data from `.chezmoidata.toml`
 
 ### Debugging Templates
+
 When a template fails to render:
+
 1. Test with: `chezmoi execute-template < path/to/template.tmpl`
 2. Check data with: `chezmoi data`
 3. Verify syntax - common issues:
@@ -50,7 +57,9 @@ When a template fails to render:
    - Incorrect spacing around template directives
 
 ### Troubleshooting Ghost Scripts
+
 If chezmoi complains about a non-existent script (e.g., "install-container-use.sh"):
+
 1. Check managed files: `chezmoi managed | grep script-name`
 2. Check state: `chezmoi state dump | grep script-name`
 3. Clear specific script state: `chezmoi state delete --bucket=scriptState --key=script-name`
@@ -60,13 +69,17 @@ If chezmoi complains about a non-existent script (e.g., "install-container-use.s
 ## Shell Script Standards
 
 ### Always Use Portable Shebang
+
 **ALWAYS** use `#!/usr/bin/env bash` as the shebang line for bash scripts:
+
 - ✅ Correct: `#!/usr/bin/env bash`
 - ❌ Incorrect: `#!/bin/bash`
 
-This ensures scripts work across different systems where bash might be installed in different locations (e.g., NixOS, macOS, Linux distributions).
+This ensures scripts work across different systems where bash might be installed in different locations
+(e.g., NixOS, macOS, Linux distributions).
 
 ### Script Template
+
 ```bash
 #!/usr/bin/env bash
 # Script description here
@@ -78,12 +91,15 @@ set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
 ## Repository Overview
 
-This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system configurations across different machines.
+This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system
+configurations across different machines.
 
 ## Plugin and Package Management
 
 ### Update Strategy
-The repository uses [topgrade](https://github.com/topgrade-rs/topgrade) for unified system updates. Topgrade automatically detects and updates:
+
+The repository uses [topgrade](https://github.com/topgrade-rs/topgrade) for unified system updates. Topgrade
+automatically detects and updates:
 
 1. **System packages**: NixOS packages, Nix flakes
 2. **Plugin managers**: Neovim (LazyVim), Tmux (TPM), Zim modules
@@ -91,11 +107,13 @@ The repository uses [topgrade](https://github.com/topgrade-rs/topgrade) for unif
 4. **Other tools**: Git repos, firmware (disabled by default)
 
 ### Automatic Updates
+
 - Topgrade runs automatically after `chezmoi apply` to keep everything in sync
 - Skip with: `CHEZMOI_SKIP_UPDATES=1 chezmoi apply` or `make quick-apply`
 - Configuration in `private_dot_config/topgrade.toml`
 
 ### Manual Updates
+
 ```bash
 # Update everything (system packages, plugins, tools)
 make update
@@ -113,6 +131,7 @@ make quick-apply
 ## Common Commands
 
 ### Chezmoi Operations
+
 ```bash
 # Apply changes (includes topgrade updates)
 chezmoi apply -v
@@ -128,6 +147,7 @@ chezmoi status
 ```
 
 ### NixOS Operations (Flakes)
+
 ```bash
 # From repository root (using pattern rule):
 make nixos              # Rebuild NixOS configuration (alias for nixos/switch)
@@ -143,6 +163,7 @@ cd nixos && make test   # Test configuration
 ```
 
 ### Configuration Management
+
 ```bash
 # Neovim operations:
 make nvim               # Sync plugins (alias for nvim/sync)
@@ -164,9 +185,13 @@ make zim/health         # Check health
 Note: Plugin updates for all tools are handled by topgrade (`make update`)
 
 ### Tmux Plugin Management
-Tmux plugins are now managed declaratively through chezmoi's external dependency system. All plugins are defined in `private_dot_local/share/tmux/plugins/.chezmoiexternal.toml` and are automatically downloaded/updated when running `chezmoi apply`.
+
+Tmux plugins are now managed declaratively through chezmoi's external dependency system. All plugins are defined
+in `private_dot_local/share/tmux/plugins/.chezmoiexternal.toml` and are automatically downloaded/updated when
+running `chezmoi apply`.
 
 Benefits:
+
 - No more git conflicts in plugin directories
 - Reproducible plugin versions
 - Atomic updates with chezmoi
@@ -177,18 +202,21 @@ Benefits:
 Detailed documentation for each major component is available in subdirectory CLAUDE.md and README files:
 
 ### CLAUDE.md Files (AI Guidance)
+
 - [Neovim CLAUDE.md](private_dot_config/nvim/CLAUDE.md) - LazyVim setup, plugins, keymaps
 - [NixOS CLAUDE.md](nixos/CLAUDE.md) - System configuration, modules, services
 - [Zsh/Zim CLAUDE.md](private_dot_config/zim/CLAUDE.md) - Shell setup, completions, modules
 - [Tmux CLAUDE.md](private_dot_config/tmux/CLAUDE.md) - **IMPORTANT: Update keybindings docs!**
 
 ### README Files (User Documentation)
+
 - [Tmux README](private_dot_config/tmux/README.md) - Complete keybindings reference
 - Additional component READMEs are created as needed
 
 ## ⚠️ Critical Documentation Rules
 
 **When modifying tmux configuration:**
+
 1. **ALWAYS** update the [Tmux README](private_dot_config/tmux/README.md) with keybinding changes
 2. **ALWAYS** check for duplicate or conflicting keybindings
 3. **ALWAYS** document plugin default keybindings
@@ -197,6 +225,7 @@ Detailed documentation for each major component is available in subdirectory CLA
 ## Architecture & Key Components
 
 ### Directory Structure
+
 - `private_dot_config/` - Maps to `~/.config/` containing application configurations
   - `nvim/` - Neovim configuration using lazy.nvim
   - `alacritty/` - Alacritty terminal configuration
@@ -207,31 +236,41 @@ Detailed documentation for each major component is available in subdirectory CLA
 - `.chezmoiexternal.toml` files - Define external dependencies to be fetched
 
 ### Key Configuration Files
+
 - `chezmoi.toml.tmpl` - Chezmoi configuration template
 - `Makefile` - Primary interface for common operations
 - `dot_zshenv` - ZSH environment configuration
 
 ### Dependency Management
-The repository uses `.chezmoiexternal.toml` files to manage external dependencies. These are automatically fetched and updated by chezmoi.
+
+The repository uses `.chezmoiexternal.toml` files to manage external dependencies. These are automatically
+fetched and updated by chezmoi.
 
 #### Dynamic Version Management
+
 External tools support dynamic version management:
+
 - By default, tools use the latest GitHub release via `gitHubLatestRelease`
 - Versions can be pinned in `.chezmoidata.toml`:
+
   ```toml
   [versions]
   containerUse = "v0.4.1"  # Pin specific version
   zimfw = "v1.17.0"        # Pin specific version
   ```
+
 - Template files (`.chezmoiexternal.toml.tmpl`) check for pinned versions first
 
 ### Zsh Completions
 
 #### Custom Zimfw Modules
+
 To add completions for new tools:
+
 1. Create a module directory: `private_dot_config/zim/modules/<tool-name>/`
 2. Create `init.zsh` that generates completions dynamically using Bash-compatible syntax
 3. Add to `zimrc` BEFORE the completion module:
+
    ```zsh
    zmodule ${ZIM_CONFIG_FILE:h}/modules/<tool-name>
    ```
@@ -239,6 +278,7 @@ To add completions for new tools:
 Example: The `container-use` module auto-generates completions for both `container-use` and `cu` commands.
 
 #### Key Points for Zsh Completions
+
 - Custom completion modules must load BEFORE zimfw's completion module
 - Completions are generated dynamically when the tool binary changes
 - Store completion files in the module's `functions/` subdirectory
@@ -246,7 +286,9 @@ Example: The `container-use` module auto-generates completions for both `contain
 - Use Bash-compatible code for Zimfw modules to ensure shfmt compatibility
 
 ### Git Configuration
+
 Chezmoi is configured with:
+
 - Auto-commit enabled
 - Auto-push enabled
 - Uses nvim for merge conflicts
@@ -257,6 +299,36 @@ Chezmoi is configured with:
 2. Use `chezmoi diff` to preview changes
 3. Apply changes with `chezmoi apply -v`
 4. Changes are automatically committed and pushed due to autoCommit/autoPush settings
+
+## Development Environment Management
+
+### Project-Specific Tools
+
+**IMPORTANT**: Do NOT add linters, formatters, or development tools system-wide. Instead:
+
+1. Each project should define its own development environment in a `devenv.nix` file
+2. Use `direnv` with `direnv allow` to automatically load project-specific tools
+3. This ensures reproducible development environments across different projects
+
+### This Repository's Tools
+
+The `devenv.nix` in this repository provides:
+
+- **Nix**: nixpkgs-fmt, deadnix, statix
+- **Lua**: stylua
+- **Shell**: shellcheck, shfmt
+- **JSON**: biome  
+- **TOML**: taplo
+- **YAML**: yamlfmt
+- **Markdown**: markdownlint-cli
+
+To use these tools:
+
+```bash
+direnv allow  # Load the development environment
+make format   # Format all files
+make lint     # Lint all files
+```
 
 ## Development Standards
 
@@ -273,16 +345,21 @@ Chezmoi is configured with:
 This repository includes a chezmoi script to manage the syncthing systemd user service on NixOS systems. The script:
 
 1. Resolves the system's syncthing service symlink to find the actual Nix store path
-2. Creates a direct symlink from `~/.config/systemd/user/syncthing.service` to the resolved Nix store path (e.g., `/nix/store/.../syncthing.service`)
+2. Creates a direct symlink from `~/.config/systemd/user/syncthing.service` to the resolved Nix store path
+   (e.g., `/nix/store/.../syncthing.service`)
 3. Enables the service for automatic startup
 4. Automatically updates the symlink when the Nix store path changes (e.g., after syncthing updates)
 
 ### How it Works
-- The script avoids fragile intermediate symlinks by resolving `/run/current-system/sw/lib/systemd/user/syncthing.service` to its actual target
+
+- The script avoids fragile intermediate symlinks by resolving
+  `/run/current-system/sw/lib/systemd/user/syncthing.service` to its actual target
 - This makes the user service symlink point directly to the Nix store, making it more robust
 
 ### Fix Broken Syncthing Symlink
+
 If the syncthing service symlink is broken, run:
+
 ```bash
 chezmoi apply
 ```
@@ -302,16 +379,20 @@ The repository uses LazyVim as the Neovim configuration framework:
 See [Neovim CLAUDE.md](private_dot_config/nvim/CLAUDE.md) for detailed configuration.
 
 ### Claude Integration
+
 - **Toggle**: `<leader>cc` opens Claude Code in a floating terminal
 - **Continue**: `<leader>c.` continues the conversation
 - **Reload**: `<leader>cr` reloads files modified by Claude
 - Configuration in `private_dot_config/nvim/lua/plugins/claude.lua`
 
 ### Key Customizations
+
 - Catppuccin colorscheme (mocha flavor)
 - nvim-tree instead of neo-tree for file exploration
 - Leap.nvim for navigation
 - Chezmoi integration for dotfile management
 
 ### NixOS Compatibility
-The configuration includes special handling for NixOS systems. See [NixOS CLAUDE.md](nixos/CLAUDE.md) for system configuration details.
+
+The configuration includes special handling for NixOS systems. See [NixOS CLAUDE.md](nixos/CLAUDE.md) for system
+configuration details.
