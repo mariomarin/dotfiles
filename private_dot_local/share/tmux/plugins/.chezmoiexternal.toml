@@ -16,6 +16,14 @@
     stripComponents = 1
     refreshPeriod = "168h"
 
+# tmux-yank - Clipboard integration for tmux
+["tmux-yank"]
+    type = "archive"
+    url = "https://github.com/tmux-plugins/tmux-yank/archive/master.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "168h"
+
 # minimal-tmux-status - A clean, minimal tmux theme
 ["minimal-tmux-status"]
     type = "archive"
