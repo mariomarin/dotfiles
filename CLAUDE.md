@@ -314,12 +314,12 @@ Chezmoi is configured with:
 
 The `devenv.nix` in this repository provides:
 
-- **Nix**: nixpkgs-fmt, deadnix, statix
-- **Lua**: stylua
-- **Shell**: shellcheck, shfmt
-- **JSON**: biome  
-- **TOML**: taplo
-- **YAML**: yamlfmt
+- **Nix**: nixpkgs-fmt, deadnix, statix, nil (LSP)
+- **Lua**: stylua, lua-language-server (LSP)
+- **Shell**: shellcheck, shfmt, bash-language-server (LSP)
+- **JSON**: biome, vscode-langservers-extracted (LSP)
+- **TOML**: taplo (formatter & LSP)
+- **YAML**: yamlfmt, yaml-language-server (LSP)
 - **Markdown**: markdownlint-cli, marksman (LSP)
 
 To use these tools:

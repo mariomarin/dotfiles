@@ -5,23 +5,28 @@
   # Includes formatters and linters for all languages used
 
   packages = with pkgs; [
-    # Nix formatting and linting
+    # Nix formatting, linting, and LSP
     nixpkgs-fmt
     deadnix
     statix
+    nil # Nix LSP
 
-    # Lua formatting
+    # Lua formatting and LSP
     stylua
+    lua-language-server
 
-    # Shell formatting and linting
+    # Shell formatting, linting, and LSP
     shellcheck
     shfmt
+    bash-language-server
 
-    # Multi-format formatting
+    # JSON formatting and LSP
     biome
+    vscode-langservers-extracted # Includes JSON, HTML, CSS LSPs
 
-    # YAML formatting
+    # YAML formatting and LSP
     yamlfmt
+    yaml-language-server
 
     # TOML formatting and LSP
     taplo
@@ -135,7 +140,7 @@
     echo "🚀 Development environment loaded"
     echo "📝 Pre-commit hooks installed - will format staged files on commit"
     echo "Available formatters: nixpkgs-fmt, stylua, shfmt, biome, yamlfmt, taplo, markdownlint"
-    echo "Available LSPs: taplo (TOML), marksman (Markdown)"
+    echo "Available LSPs: nil (Nix), lua-language-server, bash-language-server, jsonls, yaml-language-server, taplo, marksman"
     echo "Run 'make format' to format all files"
     echo "Run 'make lint' to check all files"
   '';
