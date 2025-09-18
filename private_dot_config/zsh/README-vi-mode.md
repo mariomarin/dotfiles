@@ -57,6 +57,14 @@ The surround feature is enabled in **classic mode** (verb->s->surround).
 - `Ctrl+y` - Accept autosuggestion
 - Standard vi motions work in NORMAL mode (w, b, 0, $, etc.)
 
+### FZF Integration
+
+The following fzf keybindings are preserved:
+
+- `Ctrl+r` - Search command history with fzf
+- `Ctrl+t` - Search files with fzf  
+- `Alt+c` - Change directory with fzf
+
 ## Configuration
 
 Settings are defined in:

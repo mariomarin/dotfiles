@@ -4,8 +4,17 @@
 
 # Function to be executed after zsh-vi-mode is initialized
 function zvm_after_init() {
-  # Re-enable fzf key bindings that might be overridden
-  [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+  # Re-enable fzf key bindings that might be overridden by zsh-vi-mode
+  # Note: fzf is loaded via zimfw module, but we need to restore bindings
+  if (( ${+functions[fzf-file-widget]} )); then
+    bindkey '^T' fzf-file-widget
+  fi
+  if (( ${+functions[fzf-history-widget]} )); then
+    bindkey '^R' fzf-history-widget
+  fi
+  if (( ${+functions[fzf-cd-widget]} )); then
+    bindkey '\ec' fzf-cd-widget
+  fi
   
   # Restore any custom key bindings
   bindkey '^P' history-substring-search-up
