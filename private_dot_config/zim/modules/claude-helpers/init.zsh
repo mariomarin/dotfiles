@@ -104,11 +104,14 @@ gitblade() {
     if git diff --quiet && git diff --cached --quiet; then
         echo "No changes to commit" >&2
         return 1
-    fi
+  fi
 
     # Get list of changed files
     local changed_files
-    changed_files=$(git diff --name-only; git diff --cached --name-only)
+    changed_files=$(
+                    git diff --name-only
+                                          git diff --cached --name-only
+  )
 
     # Build commit message prompt
     local prompt="You are a git commit assistant. Analyze these changes and suggest how to group them into logical, atomic commits.\n\n"
@@ -127,7 +130,10 @@ gitblade() {
     prompt+="Detailed explanation wrapped at 70 characters per line.\n"
     prompt+="Each line of the body must not exceed 70 characters.\n"
     prompt+="---\n\n"
-    prompt+="Current changes:\n$(git diff 2>/dev/null; git diff --cached 2>/dev/null)"
+    prompt+="Current changes:\n$(
+                                 git diff 2> /dev/null
+                                                       git diff --cached 2> /dev/null
+  )"
 
     # Get commit plan from Claude
     local commit_plan
@@ -136,44 +142,44 @@ gitblade() {
     if [[ -z "$commit_plan" ]]; then
         echo "Failed to generate commit plan" >&2
         return 1
-    fi
+  fi
 
     echo "📋 Commit plan generated:"
     echo "$commit_plan"
     echo ""
-    
+
     # Ask for confirmation
     echo -n "🤔 Execute these commits? [Y/n] "
     read -r response
     if [[ "$response" =~ ^[Nn]$ ]]; then
         echo "❌ Aborted"
         return 0
-    fi
-    
+  fi
+
     # Parse and execute commits
     local in_commit=false
     local files=""
     local message=""
     local body=""
     local commit_count=0
-    
+
     while IFS= read -r line; do
         # Debug: show what we're parsing
         # echo "DEBUG: Parsing line: '$line'"
-        
+
         if [[ "$line" =~ ^COMMIT[[:space:]]+[0-9]+: ]]; then
             in_commit=true
             files=""
             message=""
             body=""
-        elif [[ "$line" =~ ^FILES:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
+    elif     [[ "$line" =~ ^FILES:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
             files="${BASH_REMATCH[1]}"
-        elif [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
+    elif     [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
             message="${BASH_REMATCH[1]}"
-        elif [[ "$line" == "BODY:" ]]; then
+    elif     [[ "$line" == "BODY:" ]]; then
             # Body section starts, next lines will be body content
             continue
-        elif [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
+    elif     [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
             # Execute the commit
             if [[ -n "$files" ]] && [[ -n "$message" ]]; then
                 echo ""
@@ -182,44 +188,44 @@ gitblade() {
                 echo "   Message: $message"
                 if [[ -n "$body" ]]; then
                     echo "   Body: $(echo "$body" | head -1)..."
-                fi
+        fi
                 echo ""
                 # Split files and add them
                 for file in $files; do
                     git add "$file" || {
                         echo "❌ Failed to stage $file" >&2
                         return 1
-                    }
-                done
-                
+          }
+        done
+
                 # Commit with message and body
                 if [[ -n "$body" ]]; then
                     git commit -m "$message" -m "$body" || {
                         echo "❌ Failed to commit" >&2
                         return 1
-                    }
-                else
+          }
+        else
                     git commit -m "$message" || {
                         echo "❌ Failed to commit" >&2
                         return 1
-                    }
-                fi
+          }
+        fi
                 ((commit_count++))
                 echo "✅ Committed: $message"
                 echo ""
-            fi
+      fi
             in_commit=false
-        elif [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]] && [[ "$line" != "COMMIT"* ]] && [[ -n "$line" ]]; then
+    elif     [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]] && [[ "$line" != "COMMIT"* ]] && [[ -n "$line" ]]; then
             # Build commit body (skip empty lines at start)
             if [[ -n "$body" ]]; then
                 body="$body
 $line"
-            else
+      else
                 body="$line"
-            fi
-        fi
-    done <<< "$commit_plan"
-    
+      fi
+    fi
+  done   <<< "$commit_plan"
+
     echo "🎉 Created $commit_count commits!"
 }
 

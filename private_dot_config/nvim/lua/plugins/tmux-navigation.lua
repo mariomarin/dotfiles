@@ -12,15 +12,29 @@ return {
           sync_registers = true,
         },
         navigation = {
-          -- Enable default keybindings (C-hjkl) for navigation
-          enable_default_keybindings = true,
+          -- Use tilish-style navigation (M-hjkl)
+          enable_default_keybindings = false,
           cycle_navigation = true, -- Cycle to opposite pane when at edge
+          keybindings = {
+            left = "M-h",
+            down = "M-j",
+            up = "M-k",
+            right = "M-l",
+            last_active = "M-\\",
+            next = "M-Space",
+          },
         },
         resize = {
-          -- Enable resizing with Alt + hjkl
-          enable_default_keybindings = true,
-          resize_step_x = 1,
-          resize_step_y = 1,
+          -- Use Ctrl+Arrow keys for resizing
+          enable_default_keybindings = false,
+          resize_step_x = 5,
+          resize_step_y = 2,
+          keybindings = {
+            left = "C-Left",
+            down = "C-Down",
+            up = "C-Up",
+            right = "C-Right",
+          },
         },
       })
     end,

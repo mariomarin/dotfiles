@@ -4,8 +4,8 @@
 set -euo pipefail
 
 # Source necessary files
-source ~/.config/zsh/.zshrc >/dev/null 2>&1
-source ~/.config/zim/modules/claude-helpers/init.zsh >/dev/null 2>&1
+source ~/.config/zsh/.zshrc > /dev/null 2>&1
+source ~/.config/zim/modules/claude-helpers/init.zsh > /dev/null 2>&1
 
 # Change to chezmoi directory
 cd "$HOME/.local/share/chezmoi"
@@ -13,17 +13,20 @@ cd "$HOME/.local/share/chezmoi"
 # Check for changes
 if ! git diff --quiet || ! git diff --cached --quiet; then
     echo "📝 Analyzing changes for smart commit..."
-    
+
     # Get changed files
-    changed_files=$(git diff --name-only; git diff --cached --name-only | sort -u)
-    
+    changed_files=$(
+                    git diff --name-only
+                                          git diff --cached --name-only | sort -u
+  )
+
     # Count changes
     num_files=$(echo "$changed_files" | wc -l)
-    
+
     if [[ $num_files -le 3 ]]; then
         # For small changes, create a single commit
         echo "🔄 Creating single commit for $num_files file(s)..."
-        
+
         # Generate commit message using Claude
         commit_msg=$(claude --model haiku "
 Generate a conventional commit message for these git changes.
@@ -36,32 +39,35 @@ Where type is: feat|fix|docs|style|refactor|test|chore
 Keep it concise and accurate.
 
 Diff:
-$(git diff; git diff --cached)
-" 2>/dev/null || echo "chore: update configuration files")
-        
+$(
+      git diff
+            git diff --cached
+    )
+" 2> /dev/null || echo "chore: update configuration files")
+
         # Commit all changes
         git add -A
         git commit -m "$commit_msg"
         echo "✅ Committed: $commit_msg"
-        
+
         # Push if enabled
         if [[ "${CHEZMOI_AUTOPUSH:-true}" == "true" ]]; then
             git push
-        fi
-    else
+    fi
+  else
         # For larger changes, use claude_chain which now auto-commits
         echo "🤔 Multiple files changed. Using claude_chain to create atomic commits..."
-        
+
         # claude_chain now automatically stages and commits files
         if claude_chain; then
             echo "✅ Successfully created atomic commits"
-            
+
             # Push all the commits if enabled
             if [[ "${CHEZMOI_AUTOPUSH:-true}" == "true" ]]; then
                 echo "🚀 Pushing commits to remote..."
                 git push
-            fi
-        else
+      fi
+    else
             # Fallback if claude_chain fails
             echo "⚠️  claude_chain failed. Creating generic commit..."
             git add -A
@@ -69,12 +75,12 @@ $(git diff; git diff --cached)
 
 Updated $num_files files via chezmoi apply.
 See commit details for specific changes."
-            
+
             if [[ "${CHEZMOI_AUTOPUSH:-true}" == "true" ]]; then
                 git push
-            fi
-        fi
+      fi
     fi
+  fi
 else
     echo "✅ No changes to commit"
 fi

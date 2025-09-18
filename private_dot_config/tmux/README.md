@@ -38,9 +38,8 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 
 | Keybinding | Description |
 | --- | --- |
-| `C-h/j/k/l` | Navigate between panes (via tmux.nvim in Neovim) |
-| `M-h/j/k/l` | Navigate between panes (via tmux-tilish in tmux) |
-| `M-H/J/K/L` | Resize panes (via tmux.nvim in Neovim) |
+| `M-h/j/k/l` | Navigate between panes (unified for both tmux and Neovim) |
+| `C-Arrow` | Resize panes (when in Neovim) |
 | `prefix C-g` | Split window and run navi |
 
 ### Copy Mode
@@ -91,7 +90,7 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 | --- | --- |
 | `M-0` to `M-9` | Switch to workspace 0-9 |
 | `M-S-0` to `M-S-9` | Move pane to workspace 0-9 |
-| `M-h/j/k/l` | Navigate panes (when not in Neovim) |
+| `M-h/j/k/l` | Navigate panes (works everywhere now) |
 | `M-S-h/j/k/l` | Move pane in direction |
 | `M-Enter` | Create new pane |
 | `M-s` | Layout: main-horizontal |
@@ -164,8 +163,8 @@ The following keybindings may have conflicts:
 ## Neovim Integration
 
 Using **aserowy/tmux.nvim** for seamless tmux/neovim integration:
-- **Navigation**: `C-h/j/k/l` to move between tmux panes and Neovim splits
-- **Resizing**: `M-H/J/K/L` to resize panes (when in Neovim)
+- **Navigation**: `M-h/j/k/l` to move between tmux panes and Neovim splits (unified with tmux-tilish)
+- **Resizing**: `C-Arrow` keys to resize panes when in Neovim
 - **Clipboard Sync**: Automatic synchronization of registers between Neovim instances and tmux
 - **Cycle Navigation**: Wraps around to opposite pane when at edge
 
