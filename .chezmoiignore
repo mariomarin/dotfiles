@@ -18,6 +18,7 @@ chezmoi/**
 Makefile
 README.md
 CLAUDE.md
+**/*CLAUDE.md
 .devenv
 .devenv/**
 .direnv
