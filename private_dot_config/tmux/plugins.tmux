@@ -3,8 +3,6 @@ set-environment -g TMUX_PLUGIN_MANAGER_PATH "~/.local/share/tmux/plugins"
 
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
-# Enable true colours to override tmux-sensible
-set-option -g -a terminal-overrides ",alcritty:RGB"
 
 # minimal theme
 set -g @plugin 'niksingh710/minimal-tmux-status'
