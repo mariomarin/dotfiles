@@ -1,6 +1,6 @@
 # User configuration sourced by interactive shells
 
-# Load atuin configuration before zim modules (which includes atuin)
+# Load atuin configuration (sets ATUIN_NOBIND) before zim modules initialize atuin
 [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/atuin-config.zsh" ]] && \
   source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/atuin-config.zsh"
 

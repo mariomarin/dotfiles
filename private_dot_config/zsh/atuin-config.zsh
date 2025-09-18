@@ -5,10 +5,11 @@
 # Only configure if atuin is available
 if (( ${+commands[atuin]} )); then
   # Disable default bindings so we can set custom ones
+  # This must be set before atuin is initialized by the zim module
   export ATUIN_NOBIND="true"
   
-  # Initialize atuin without default bindings
-  eval "$(atuin init zsh)"
+  # Note: Atuin automatically adds itself as a zsh-autosuggestions strategy
+  # If you want to override this, configure it after the zim module loads
   
   # Function to set up atuin bindings after zsh-vi-mode is initialized
   function setup_atuin_bindings() {
