@@ -1,0 +1,12 @@
+[Unit]
+Description=Battery Combined UDev Monitor for Polybar
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/polybar/battery-combined-udev.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

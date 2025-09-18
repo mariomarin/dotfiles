@@ -61,6 +61,43 @@ create_autostart_link "{{ $applicationsDir }}/firefox.desktop" "firefox.desktop"
 echo "Firefox desktop file not found - skipping"
 {{ end }}
 
+# Xfce4 Power Manager - no delay needed
+{{ if stat (joinPath $applicationsDir "xfce4-power-manager.desktop") }}
+create_autostart_link "{{ $applicationsDir }}/xfce4-power-manager.desktop" "xfce4-power-manager.desktop" 0
+{{ else }}
+# If system desktop file doesn't exist, create a custom one
+echo "Creating custom xfce4-power-manager autostart file"
+cat > "{{ $autostartDir }}/xfce4-power-manager.desktop" << 'EOF'
+[Desktop Entry]
+Type=Application
+Name=Xfce Power Manager
+Comment=Power management for the Xfce desktop
+Icon=xfce4-power-manager-settings
+Exec=xfce4-power-manager --daemon
+Hidden=false
+Terminal=false
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+EOF
+{{ end }}
+
+# Alacritty with tmux - custom autostart entry
+echo "Creating alacritty-tmux autostart file"
+cat > "{{ $autostartDir }}/alacritty-tmux.desktop" << 'EOF'
+[Desktop Entry]
+Type=Application
+Name=Alacritty Terminal (tmux)
+Comment=Start Alacritty terminal with tmux session
+Icon=Alacritty
+Exec=alacritty -e tmux new-session -A -s main
+Terminal=false
+Hidden=false
+Categories=System;TerminalEmulator;
+StartupNotify=true
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=3
+EOF
+
 # Remove obsolete autostart files
 echo "Removing obsolete autostart files..."
 rm -f {{ $autostartDir }}/ssh-agent.desktop

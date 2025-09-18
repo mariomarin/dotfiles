@@ -365,6 +365,14 @@ Current autostart applications:
 
 - CopyQ (2s delay) - Clipboard manager
 - Firefox (5s delay) - Web browser
+- Xfce4 Power Manager - Power management daemon
+- Alacritty with tmux (3s delay) - Terminal emulator with session management
+
+### Systemd User Services
+
+Custom services managed by chezmoi:
+
+- `battery-combined-udev.service` - Battery monitor for Polybar
 
 ### How it Works
 

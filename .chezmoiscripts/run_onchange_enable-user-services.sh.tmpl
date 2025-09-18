@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Enable systemd user services
+
+set -euo pipefail
+
+# Enable and start battery monitor service if the script and service file exist
+if [ -x "$HOME/.config/polybar/battery-combined-udev.sh" ] && [ -f "$HOME/.config/systemd/user/battery-combined-udev.service" ]; then
+    echo "Enabling battery-combined-udev service..."
+    systemctl --user daemon-reload
+    systemctl --user enable battery-combined-udev.service
+    echo "Battery monitor service enabled"
+else
+    echo "Battery script or service file not found - skipping service enablement"
+fi
