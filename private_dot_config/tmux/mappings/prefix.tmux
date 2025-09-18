@@ -1,6 +1,6 @@
 # Jump search mode with prefix.
 bind / copy-mode \; send-keys '/'
-bind ? copy-mode \; send-keys '?'
+# bind ? copy-mode \; send-keys '?'  # Disabled - using tmux-fuzzback instead
 
 # Launch command prompt.
 bind : command-prompt
@@ -12,7 +12,7 @@ bind t clock-mode
 bind w choose-tree -Zw
 
 # -- buffers -------------------------------------------------------------------
-bind b list-buffers  # list paste buffers
+bind B list-buffers  # list paste buffers (moved to uppercase B)
 bind p paste-buffer  # paste from the top paste buffer
 bind P choose-buffer 
 # choose which buffer to paste from
