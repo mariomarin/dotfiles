@@ -1,10 +1,27 @@
-!tmux/plugins/tpm
-!zim/modules/kube-gitster
+# Compiled and temporary files
 *.old
 *.zwc*
-.claude
+
+# Environment and private files
 .env
-dot_git
+.claude
 private_init.zsh
 private_login_init.zsh
+
+# Development environment
+.devenv/
+.devenv.flake.nix
+.direnv/
+.devcontainer.json
+.pre-commit-config.yaml
+
+# Nix store symlinks
+**/nix/store
+
+# Chezmoi-specific
+dot_git
+
+# Plugin directories (managed by chezmoi)
 tmux/plugins
+!tmux/plugins/tpm
+!zim/modules/kube-gitster

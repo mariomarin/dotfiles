@@ -3,17 +3,7 @@
   "files": {
     "includes": ["**/*.{md,json,jsonc,toml,yml,yaml}"],
     "ignoreUnknown": true,
-    "experimentalScannerIgnores": [
-      "node_modules",
-      ".git",
-      "target",
-      ".devbox",
-      ".devenv",
-      "lazy-lock.json",
-      "/nix/store/**",
-      "**/nix/store/**",
-      ".devenv/state/**"
-    ]
+    "experimentalScannerIgnores": ["node_modules", ".git", "target", "lazy-lock.json"]
   },
   "formatter": {
     "enabled": true,
@@ -35,5 +25,10 @@
   },
   "assist": {
     "enabled": false
+  },
+  "vcs": {
+    "useIgnoreFile": true,
+    "enabled": true,
+    "clientKind": "git"
   }
 }
