@@ -320,7 +320,7 @@ The `devenv.nix` in this repository provides:
 - **JSON**: biome  
 - **TOML**: taplo
 - **YAML**: yamlfmt
-- **Markdown**: markdownlint-cli
+- **Markdown**: markdownlint-cli, marksman (LSP)
 
 To use these tools:
 

@@ -26,8 +26,9 @@
     # TOML formatting and LSP
     taplo
 
-    # Markdown linting
+    # Markdown linting and LSP
     markdownlint-cli
+    marksman
 
     # agents
     claude-code
@@ -133,7 +134,8 @@
   enterShell = ''
     echo "🚀 Development environment loaded"
     echo "📝 Pre-commit hooks installed - will format staged files on commit"
-    echo "Available formatters: nixpkgs-fmt, stylua, shfmt, biome, yamlfmt, markdownlint"
+    echo "Available formatters: nixpkgs-fmt, stylua, shfmt, biome, yamlfmt, taplo, markdownlint"
+    echo "Available LSPs: taplo (TOML), marksman (Markdown)"
     echo "Run 'make format' to format all files"
     echo "Run 'make lint' to check all files"
   '';
