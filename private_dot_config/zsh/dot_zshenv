@@ -75,6 +75,8 @@ export ZIM_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/zim/zimrc"
 # zsh-vi-mode
 export ZVM_INIT_MODE=sourcing
 export ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+# Enable surround feature with classic mode (verb->s->surround)
+export ZVM_VI_SURROUND_BINDKEY=classic
 
 # podman rootless
 # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
