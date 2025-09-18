@@ -38,7 +38,9 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 
 | Keybinding | Description |
 | --- | --- |
-| `M-h/j/k/l` | Navigate between panes (via tmux-navigate) |
+| `C-h/j/k/l` | Navigate between panes (via tmux.nvim in Neovim) |
+| `M-h/j/k/l` | Navigate between panes (via tmux-tilish in tmux) |
+| `M-H/J/K/L` | Resize panes (via tmux.nvim in Neovim) |
 | `prefix C-g` | Split window and run navi |
 
 ### Copy Mode
@@ -76,10 +78,38 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 | `prefix C-s` | Save tmux session |
 | `prefix C-r` | Restore tmux session |
 
+#### tmux-yank (Copy Mode)
+| Keybinding | Description |
+| --- | --- |
+| `y` | Copy selection to system clipboard |
+| `Y` | Copy line to system clipboard |
+| `C-y` | Copy selection and paste to command line |
+| `M-y` | Copy selection and paste to command line (open mode) |
+
+#### tmux-tilish (i3wm-style)
+| Keybinding | Description |
+| --- | --- |
+| `M-0` to `M-9` | Switch to workspace 0-9 |
+| `M-S-0` to `M-S-9` | Move pane to workspace 0-9 |
+| `M-h/j/k/l` | Navigate panes (when not in Neovim) |
+| `M-S-h/j/k/l` | Move pane in direction |
+| `M-Enter` | Create new pane |
+| `M-s` | Layout: main-horizontal |
+| `M-S-s` | Layout: even-vertical |
+| `M-v` | Layout: main-vertical |
+| `M-S-v` | Layout: even-horizontal |
+| `M-t` | Layout: tiled |
+| `M-z` | Layout: zoom (fullscreen) |
+| `M-r` | Refresh current layout |
+| `M-n` | Rename current window |
+| `M-S-q` | Close pane |
+| `M-S-e` | Detach from tmux |
+| `M-S-c` | Reload tmux config |
+
 #### tmux-fzf
 | Keybinding | Description |
 | --- | --- |
-| `prefix F` | Launch tmux-fzf menu |
+| `prefix F` | Launch tmux-fzf menu ⚠️ |
 
 #### tmux-fuzzback
 | Keybinding | Description |
@@ -89,7 +119,18 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 #### extrakto
 | Keybinding | Description |
 | --- | --- |
-| `prefix Tab` | Extract text from pane |
+| `prefix Tab` | Launch extrakto |
+
+##### Within extrakto mode:
+| Keybinding | Description |
+| --- | --- |
+| `Tab` | Insert selection to pane |
+| `Enter` | Copy selection to clipboard |
+| `C-f` | Toggle filter mode |
+| `C-g` | Toggle grab mode |
+| `C-e` | Edit selection in editor |
+| `C-o` | Open selection with system |
+| `C-h` | Show help |
 
 ### Utility
 
@@ -102,12 +143,11 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 | `prefix p` | Paste from buffer |
 | `prefix P` | Choose buffer to paste |
 
-## Duplicate Keybindings ⚠️
+## Potential Conflicts ⚠️
 
-The following keybindings have duplicate definitions (harmless):
+The following keybindings may have conflicts:
 
-- **`prefix x`**: Defined twice for `kill-pane`
-- **`M-f` and `M-j`**: Defined twice in tmux-fingers configuration
+- **`prefix F`**: Would conflict between tmux-fzf and tmux-fingers if using defaults (avoided by using custom `M-f` for tmux-fingers)
 
 ## Plugin List
 
@@ -117,10 +157,17 @@ The following keybindings have duplicate definitions (harmless):
 - **tmux-continuum**: Automatic session saves
 - **tmux-fingers**: Copy text with hints (like Vimium)
 - **tmux-tilish**: i3wm-like navigation
-- **tmux-navigate**: Seamless tmux/vim navigation
 - **tmux-fzf**: FZF integration for tmux
 - **tmux-fuzzback**: Search scrollback with FZF
 - **extrakto**: Extract and insert text
+
+## Neovim Integration
+
+Using **aserowy/tmux.nvim** for seamless tmux/neovim integration:
+- **Navigation**: `C-h/j/k/l` to move between tmux panes and Neovim splits
+- **Resizing**: `M-H/J/K/L` to resize panes (when in Neovim)
+- **Clipboard Sync**: Automatic synchronization of registers between Neovim instances and tmux
+- **Cycle Navigation**: Wraps around to opposite pane when at edge
 
 ## Settings
 

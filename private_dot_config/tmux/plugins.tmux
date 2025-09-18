@@ -43,11 +43,10 @@ set -g @plugin 'farzadmf/tmux-tilish'
 set -g @tilish-dmenu 'on'
 set -g @tilish-new_pane '"'
 
-# Seamless tmux/vim navigation (over SSH too!)
-set -g @plugin 'sunaku/tmux-navigate'
-# enable tilish bind keys for tmux-navigate
-# <M-[hjkl]>
-set -g @tilish-navigate 'on'
+# Seamless tmux/vim navigation with clipboard sync
+# Using aserowy/tmux.nvim on the Neovim side
+# Navigation keybindings are handled by Neovim
+# Note: tmux-tilish navigation (M-hjkl) still works for non-Neovim panes
 
 # Use fzf to manage your tmux work environment!
 # To launch tmux-fzf, press prefix + F (Shift+F).

@@ -174,12 +174,25 @@ Benefits:
 
 ## Component-Specific Documentation
 
-Detailed documentation for each major component is available in subdirectory CLAUDE.md files:
+Detailed documentation for each major component is available in subdirectory CLAUDE.md and README files:
 
-- [Neovim Configuration](private_dot_config/nvim/CLAUDE.md) - LazyVim setup, plugins, keymaps
-- [NixOS Configuration](nixos/CLAUDE.md) - System configuration, modules, services
-- [Zsh/Zim Configuration](private_dot_config/zim/CLAUDE.md) - Shell setup, completions, modules
-- [Tmux Configuration](private_dot_config/tmux/CLAUDE.md) - Terminal multiplexer, plugins, bindings
+### CLAUDE.md Files (AI Guidance)
+- [Neovim CLAUDE.md](private_dot_config/nvim/CLAUDE.md) - LazyVim setup, plugins, keymaps
+- [NixOS CLAUDE.md](nixos/CLAUDE.md) - System configuration, modules, services
+- [Zsh/Zim CLAUDE.md](private_dot_config/zim/CLAUDE.md) - Shell setup, completions, modules
+- [Tmux CLAUDE.md](private_dot_config/tmux/CLAUDE.md) - **IMPORTANT: Update keybindings docs!**
+
+### README Files (User Documentation)
+- [Tmux README](private_dot_config/tmux/README.md) - Complete keybindings reference
+- Additional component READMEs are created as needed
+
+## ⚠️ Critical Documentation Rules
+
+**When modifying tmux configuration:**
+1. **ALWAYS** update the [Tmux README](private_dot_config/tmux/README.md) with keybinding changes
+2. **ALWAYS** check for duplicate or conflicting keybindings
+3. **ALWAYS** document plugin default keybindings
+4. Refer to [Tmux CLAUDE.md](private_dot_config/tmux/CLAUDE.md) for detailed guidance
 
 ## Architecture & Key Components
 
@@ -244,6 +257,16 @@ Chezmoi is configured with:
 2. Use `chezmoi diff` to preview changes
 3. Apply changes with `chezmoi apply -v`
 4. Changes are automatically committed and pushed due to autoCommit/autoPush settings
+
+## Development Standards
+
+- Follow conventional commit format with **SHORT** titles and descriptions
+- Keep commit messages concise: title under 50 chars, description under 72 chars per line
+- Use format: `type: brief description`
+- Examples:
+  - `fix: resolve tmux keybinding conflict`
+  - `feat: add tmux.nvim for better integration`
+  - `docs: update tmux keybindings README`
 
 ## Syncthing Systemd User Unit
 

@@ -1,11 +1,21 @@
-# AGENTS.md - Tmux Configuration
+# CLAUDE.md - Tmux Configuration
 
-This file provides guidance to AI agents and assistants when working with the tmux configuration.
+This file provides guidance to Claude Code when working with the tmux configuration.
+
+## ⚠️ IMPORTANT: Always Update Documentation
+
+**When making ANY changes to tmux keybindings or settings:**
+1. **ALWAYS** update the [README.md](./README.md) keybindings documentation
+2. **ALWAYS** check for duplicate or conflicting keybindings
+3. **ALWAYS** document plugin-specific keybindings
+4. **NEVER** leave undocumented keybindings
 
 ## Directory Structure
 
 ```
 private_dot_config/tmux/
+├── CLAUDE.md           # This file - AI guidance
+├── README.md           # User-facing keybindings documentation
 ├── tmux.conf           # Main tmux configuration
 ├── settings.tmux       # General tmux settings
 ├── plugins.tmux        # Plugin configurations
@@ -15,178 +25,91 @@ private_dot_config/tmux/
     └── copy-mode-vi.tmux # Vi copy mode bindings
 ```
 
+## Key Configuration Files
+
+### tmux.conf
+- Entry point that sources all other configuration files
+- Order matters: settings → mappings → plugins → TPM initialization
+
+### settings.tmux
+- Prefix key: `C-a`
+- Terminal settings (colors, mouse, etc.)
+- Basic options
+
+### plugins.tmux
+- Plugin declarations and settings
+- Custom keybindings for plugins
+- Plugin-specific configuration
+
+### mappings/
+- **root.tmux**: Direct keybindings without prefix
+- **prefix.tmux**: Bindings requiring prefix key
+- **copy-mode-vi.tmux**: Vi-style copy mode bindings
+
 ## Plugin Management
 
-Tmux plugins are managed declaratively through chezmoi's external dependency system:
+Plugins are managed declaratively through chezmoi:
 - Defined in `private_dot_local/share/tmux/plugins/.chezmoiexternal.toml`
 - Automatically downloaded/updated with `chezmoi apply`
 - No manual TPM commands needed
 
-### Installed Plugins
-- **tpm**: Tmux Plugin Manager (base)
-- **tmux-sensible**: Sensible defaults
-- **tmux-yank**: System clipboard integration
-- **tmux-resurrect**: Session persistence
-- **tmux-continuum**: Automatic session saves
-- **vim-tmux-navigator**: Seamless vim/tmux navigation
-- **catppuccin/tmux**: Catppuccin theme
+## Neovim Integration
 
-## Configuration Components
-
-### Main Configuration (`tmux.conf`)
-Entry point that sources all other configuration files:
-1. Settings (general options)
-2. Plugins (TPM and plugin list)
-3. Key mappings (organized by table)
-
-### Settings (`settings.tmux`)
-- **Terminal**: True color support, 256 colors
-- **Mouse**: Full mouse support enabled
-- **Windows/Panes**: Base index 1, automatic renumbering
-- **Status Bar**: Position, update interval, theme
-- **History**: 10,000 lines scroll buffer
-- **Display**: Pane/message display times
-
-### Key Mappings
-
-#### Prefix Key
-- Default: `Ctrl-b`
-- All command mode bindings require prefix
-
-#### Root Bindings (`mappings/root.tmux`)
-Direct key bindings without prefix:
-- `C-h/j/k/l`: Navigate between panes (vim-tmux-navigator)
-- Window switching shortcuts
-
-#### Prefix Bindings (`mappings/prefix.tmux`)
-After pressing prefix key:
-- `|`: Split window horizontally
-- `-`: Split window vertically
-- `r`: Reload configuration
-- `h/j/k/l`: Resize panes
-- `H/J/K/L`: Navigate panes
-
-#### Copy Mode (`mappings/copy-mode-vi.tmux`)
-Vi-style bindings in copy mode:
-- `v`: Begin selection
-- `y`: Copy selection
-- `C-v`: Rectangle selection
-- `/`: Search forward
-- `?`: Search backward
-
-## Session Management
-
-### Resurrect/Continuum
-- Automatic session saves every 15 minutes
-- Restore with `prefix + Ctrl-r`
-- Save with `prefix + Ctrl-s`
-- Persists pane contents, programs, working directories
-
-### Session Files
-Stored in `~/.local/share/tmux/resurrect/`
-
-## Theme Configuration
-
-Using Catppuccin theme (mocha flavor):
-- Matches Neovim and terminal colorscheme
-- Configurable through plugin options
-- Status bar modules customizable
+Currently using **aserowy/tmux.nvim** for seamless integration:
+- Navigation: `C-h/j/k/l` between tmux panes and Neovim splits
+- Resizing: `M-H/J/K/L` to resize panes (in Neovim)
+- Clipboard sync between Neovim instances
+- Configured in Neovim's `lua/plugins/tmux-navigation.lua`
 
 ## Common Tasks
 
-### Creating Custom Bindings
-1. Add to appropriate mapping file
-2. Use `bind-key` for prefix bindings
-3. Use `bind-key -n` for root bindings
-4. Reload with `prefix + r`
+### Adding a New Keybinding
+1. Add binding to appropriate file in `mappings/`
+2. **UPDATE README.md** with the new keybinding
+3. Check for conflicts with existing bindings
+4. Test the binding
 
-### Adding Plugins
-1. Edit `.chezmoiexternal.toml` in plugins directory
-2. Add plugin repository details
-3. Run `chezmoi apply`
-4. Add to `plugins.tmux` if needed
+### Adding a New Plugin
+1. Add to `.chezmoiexternal.toml` in plugins directory
+2. Add configuration to `plugins.tmux`
+3. **UPDATE README.md** with plugin keybindings
+4. Run `chezmoi apply` to fetch plugin
 
-### Customizing Status Bar
-1. Edit catppuccin theme options in `plugins.tmux`
-2. Or override in `settings.tmux`
-3. Reload configuration
+### Changing Existing Bindings
+1. Make the change in the appropriate file
+2. **UPDATE README.md** immediately
+3. Check for conflicts or duplicates
+4. Update conflict section if needed
 
-### Window/Pane Management
-```bash
-# Windows
-prefix + c     # Create new window
-prefix + n/p   # Next/previous window
-prefix + 0-9   # Switch to window number
-prefix + ,     # Rename window
-prefix + &     # Kill window
+## Documentation Standards
 
-# Panes
-prefix + |     # Split horizontally
-prefix + -     # Split vertically
-prefix + x     # Kill pane
-prefix + z     # Zoom/unzoom pane
-prefix + !     # Convert pane to window
-prefix + space # Cycle pane layouts
-```
+The README.md must include:
+1. **Complete keybinding list** organized by category
+2. **Plugin-specific keybindings** for each plugin
+3. **Conflict warnings** with ⚠️ symbols
+4. **Default bindings** that plugins provide
+5. **Clear descriptions** for each binding
 
-## Integration with Other Tools
+## Testing Checklist
 
-### Neovim
-- Seamless navigation with vim-tmux-navigator
-- Shared clipboard through tmux-yank
-- Consistent colorscheme (Catppuccin)
+Before committing tmux changes:
+- [ ] All keybindings documented in README.md
+- [ ] No undocumented plugin bindings
+- [ ] Conflicts clearly marked
+- [ ] Tested all modified bindings
+- [ ] Checked for duplicates
 
-### Shell
-- Automatic window renaming based on running command
-- Shell integration for better titles
-- Directory tracking for new panes
+## Common Keybinding Conflicts
 
-### System Clipboard
-- Copy to system clipboard with `y` in copy mode
-- Paste from system clipboard with normal paste
-- Works with both X11 and Wayland
-
-## Performance Tips
-
-- Use `set -g escape-time 0` for instant command sequences
-- Limit status bar refresh rate if experiencing lag
-- Disable automatic-rename for better performance
-- Use native terminal scrolling when possible
-
-## Troubleshooting
-
-### Common Issues
-1. **Plugins not loading**: Run `chezmoi apply` to fetch
-2. **Colors incorrect**: Ensure `TERM=tmux-256color`
-3. **Clipboard not working**: Check `tmux-yank` dependencies
-4. **Navigation conflicts**: Verify vim-tmux-navigator setup
-
-### Debug Commands
-```bash
-# Show current settings
-tmux show-options -g
-
-# List key bindings
-tmux list-keys
-
-# Check plugin status
-tmux run-shell ~/.local/share/tmux/plugins/tpm/scripts/check_tmux_version.sh
-
-# Reload configuration
-tmux source-file ~/.config/tmux/tmux.conf
-```
+Watch out for these common conflicts:
+- `prefix ?` - Often used by search and help features
+- `prefix F` - Common for "find" features
+- `M-h/j/k/l` - Navigation keys used by multiple plugins
+- `prefix b` - Buffer operations vs status bar toggle
 
 ## Important Notes
 
-- Configuration assumes tmux 3.0+ for full feature support
-- Plugins managed by chezmoi, not manual TPM commands
-- Keep mappings consistent with Neovim for muscle memory
-- Test configuration changes in new sessions first
-- Use session management for persistent workflows
-
-## Related Documentation
-
-- [Root AGENTS.md](../../AGENTS.md)
-- [Neovim AGENTS.md](../nvim/AGENTS.md)
-- [Tmux Manual](https://man.openbsd.org/tmux)
-- [TPM Documentation](https://github.com/tmux-plugins/tpm)
+- Always preserve user preferences when resolving conflicts
+- Document WHY a conflict was resolved in a particular way
+- Keep the README.md as the single source of truth for keybindings
+- Test integration with Neovim after navigation changes
