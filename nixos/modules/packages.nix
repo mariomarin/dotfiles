@@ -61,6 +61,7 @@
     bat # Modern replacement for cat with syntax highlighting
     bottom # Modern replacement for htop/top
     delta # Modern replacement for diff with syntax highlighting
+    pstree # Show the set of running processes as a tree
     difftastic # Structural diff tool that understands syntax
     dua # Disk usage analyzer (alternative to du)
     eza # Modern replacement for ls
