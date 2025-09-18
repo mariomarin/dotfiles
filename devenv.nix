@@ -83,12 +83,32 @@
         ];
       };
 
-      # Multi-format formatting with biome
+      # JSON and TOML formatting with biome
       biome = {
         enable = true;
         name = "biome";
         entry = "biome format --write --no-errors-on-unmatched";
-        files = "\\.(json|jsonc|md|yml|yaml|toml)$";
+        files = "\\.(json|jsonc|toml)$";
+        language = "system";
+        pass_filenames = true;
+      };
+
+      # YAML formatting with yamlfmt
+      yamlfmt = {
+        enable = true;
+        name = "yamlfmt";
+        entry = "yamlfmt";
+        files = "\\.(yml|yaml)$";
+        language = "system";
+        pass_filenames = true;
+      };
+
+      # Markdown linting and formatting
+      markdownlint = {
+        enable = true;
+        name = "markdownlint";
+        entry = "markdownlint --fix";
+        files = "\\.md$";
         language = "system";
         pass_filenames = true;
       };
@@ -99,7 +119,7 @@
   enterShell = ''
     echo "🚀 Development environment loaded"
     echo "📝 Pre-commit hooks installed - will format staged files on commit"
-    echo "Available formatters: nixpkgs-fmt, stylua, shfmt, biome"
+    echo "Available formatters: nixpkgs-fmt, stylua, shfmt, biome, yamlfmt, markdownlint"
     echo "Run 'make format' to format all files"
     echo "Run 'make lint' to check all files"
   '';

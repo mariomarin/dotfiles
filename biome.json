@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
   "files": {
-    "includes": ["**/*.{md,json,jsonc,toml,yml,yaml}"],
+    "includes": ["**/*.{json,jsonc,toml}"],
     "ignoreUnknown": true,
     "experimentalScannerIgnores": ["node_modules", ".git", "target", "lazy-lock.json"]
   },

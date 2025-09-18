@@ -20,7 +20,7 @@ lint-shell:
 	@find . -name "*.sh" -type f -exec shellcheck {} \;
 	@echo "✅ Shell scripts valid"
 
-format: format-lua format-nix format-shell format-others
+format: format-lua format-nix format-shell format-yaml format-markdown format-others
 	@echo "✨ All formatting complete"
 
 format-lua:
@@ -41,11 +41,23 @@ format-shell:
 	@shfmt -w -i 2 -ci -sr -kp .
 	@echo "✅ Shell scripts formatted"
 
+format-yaml:
+	@echo "📝 Formatting YAML files with yamlfmt..."
+	@command -v yamlfmt >/dev/null 2>&1 || { echo "⚠️  yamlfmt not found. Run 'direnv allow' to load development environment"; exit 0; }
+	@find . -name "*.yml" -o -name "*.yaml" | grep -v "/.git/" | grep -v "/node_modules/" | xargs -r yamlfmt
+	@echo "✅ YAML files formatted"
+
+format-markdown:
+	@echo "📝 Formatting Markdown files with markdownlint..."
+	@command -v markdownlint >/dev/null 2>&1 || { echo "⚠️  markdownlint not found. Run 'direnv allow' to load development environment"; exit 0; }
+	@markdownlint --fix "**/*.md" --ignore node_modules --ignore .git || true
+	@echo "✅ Markdown files formatted"
+
 format-others:
-	@echo "📝 Formatting Markdown, JSON, TOML, YAML files with biome..."
+	@echo "📝 Formatting JSON and TOML files with biome..."
 	@command -v biome >/dev/null 2>&1 || { echo "⚠️  biome not found. Run 'direnv allow' to load development environment"; exit 0; }
 	@biome format --write .
-	@echo "✅ Other files formatted"
+	@echo "✅ JSON and TOML files formatted"
 
 # Development environment
 dev:
