@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Manage desktop autostart files as symlinks to Nix store packages
+# Similar to the syncthing systemd unit approach
+
+set -euo pipefail
+
+{{ $autostartDir := joinPath .chezmoi.homeDir ".config/autostart" -}}
+{{ $applicationsDir := "/run/current-system/sw/share/applications" -}}
+
+# Create autostart directory if it doesn't exist
+mkdir -p {{ $autostartDir }}
+
+# Function to create autostart symlink with optional modifications
+create_autostart_link() {
+    local source_file="$1"
+    local target_name="$2"
+    local add_delay="${3:-0}"
+    local target_file="{{ $autostartDir }}/$target_name"
+    
+    if [ ! -f "$source_file" ]; then
+        echo "Warning: Desktop file not found: $source_file"
+        return 1
+    fi
+    
+    # Resolve the symlink to get the actual Nix store path
+    local resolved_path=$(readlink -f "$source_file")
+    if [ -z "$resolved_path" ] || [ ! -f "$resolved_path" ]; then
+        echo "Error: Could not resolve $source_file to a valid file"
+        return 1
+    fi
+    
+    # For desktop files that need modifications (like adding delays),
+    # we'll create a modified copy instead of a direct symlink
+    if [ "$add_delay" -gt 0 ]; then
+        echo "Creating modified autostart file: $target_name (with ${add_delay}s delay)"
+        # Create a modified version with autostart-specific entries
+        {
+            grep -v "^X-GNOME-Autostart-" "$resolved_path" || true
+            echo "X-GNOME-Autostart-enabled=true"
+            echo "X-GNOME-Autostart-Delay=$add_delay"
+        } > "$target_file"
+    else
+        # Create direct symlink for unmodified files
+        echo "Creating autostart symlink: $target_name -> $resolved_path"
+        rm -f "$target_file"
+        ln -sf "$resolved_path" "$target_file"
+    fi
+}
+
+# CopyQ - with 2 second delay
+{{ if stat (joinPath $applicationsDir "com.github.hluk.copyq.desktop") }}
+create_autostart_link "{{ $applicationsDir }}/com.github.hluk.copyq.desktop" "copyq.desktop" 2
+{{ else }}
+echo "CopyQ desktop file not found - skipping"
+{{ end }}
+
+# Firefox - with 5 second delay
+{{ if stat (joinPath $applicationsDir "firefox.desktop") }}
+create_autostart_link "{{ $applicationsDir }}/firefox.desktop" "firefox.desktop" 5
+{{ else }}
+echo "Firefox desktop file not found - skipping"
+{{ end }}
+
+# Remove obsolete autostart files
+echo "Removing obsolete autostart files..."
+rm -f {{ $autostartDir }}/ssh-agent.desktop
+
+echo "Autostart configuration complete"

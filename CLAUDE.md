@@ -340,7 +340,9 @@ make lint     # Lint all files
   - `feat: add tmux.nvim for better integration`
   - `docs: update tmux keybindings README`
 
-## Syncthing Systemd User Unit
+## NixOS Integration Patterns
+
+### Syncthing Systemd User Unit
 
 This repository includes a chezmoi script to manage the syncthing systemd user service on NixOS systems. The script:
 
@@ -350,21 +352,25 @@ This repository includes a chezmoi script to manage the syncthing systemd user s
 3. Enables the service for automatic startup
 4. Automatically updates the symlink when the Nix store path changes (e.g., after syncthing updates)
 
+### Desktop Autostart Files
+
+Similar to the syncthing approach, desktop autostart files are managed via a chezmoi script:
+
+1. Links to system-installed desktop files from `/run/current-system/sw/share/applications/`
+2. For files needing modifications (e.g., startup delays), creates modified copies
+3. Automatically updates when packages are updated in NixOS
+4. Removes obsolete autostart files
+
+Current autostart applications:
+
+- CopyQ (2s delay) - Clipboard manager
+- Firefox (5s delay) - Web browser
+
 ### How it Works
 
-- The script avoids fragile intermediate symlinks by resolving
-  `/run/current-system/sw/lib/systemd/user/syncthing.service` to its actual target
-- This makes the user service symlink point directly to the Nix store, making it more robust
-
-### Fix Broken Syncthing Symlink
-
-If the syncthing service symlink is broken, run:
-
-```bash
-chezmoi apply
-```
-
-The script will automatically detect and fix the broken symlink, updating it to the current Nix store path.
+- Scripts avoid fragile intermediate symlinks by resolving to actual Nix store paths
+- This makes the configuration robust against package updates
+- Run `chezmoi apply` to fix any broken symlinks after system updates
 
 ## Important Notes
 
