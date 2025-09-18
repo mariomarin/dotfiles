@@ -29,32 +29,30 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @continuum-restore 'on'
 set -g @continuum-boot 'on'
 
-# copy/pasting tmux like vimium/vimperator 
+# copy/pasting tmux like vimium/vimperator
 set -g @plugin 'Morantron/tmux-fingers'
 # Configuration for tmux-fingers
-set -g @fingers-reverse 'on'  # Reverse hint order (similar to thumbs-reverse)
-set -g @fingers-key 'Space'   # Keep the same keybinding (prefix + Space)
-set -g @fingers-copy-command 'echo -n {} | xclip -in -selection clipboard && tmux display-message \"Copied {}\"'
-set -g @fingers-open-command 'xdg-open {} && tmux display-message "Opened {}"'
-# Additional patterns (tmux-fingers has built-in patterns for URLs, paths, etc.)
-set -g @fingers-pattern-0 '[a-z0-9]+-[^ ]+'  # Custom pattern like thumbs-regexp-1
+# Start tmux fingers by pressing Alt+F
+bind -n M-f run -b "#{@fingers-cli} start #{pane_id}"
+# Start tmux fingers in jump mode by pressing Alt+J
+bind -n M-j run -b "#{@fingers-cli} start #{pane_id} --mode jump"
 
 # i3wm like navigation with TAB key
 set -g @plugin 'farzadmf/tmux-tilish'
 set -g @tilish-dmenu 'on'
 set -g @tilish-new_pane '"'
 
-# Seamless tmux/vim navigation (over SSH too!) 
+# Seamless tmux/vim navigation (over SSH too!)
 set -g @plugin 'sunaku/tmux-navigate'
 # enable tilish bind keys for tmux-navigate
 # <M-[hjkl]>
 set -g @tilish-navigate 'on'
 
-# Use fzf to manage your tmux work environment! 
+# Use fzf to manage your tmux work environment!
 # To launch tmux-fzf, press prefix + F (Shift+F).
 set -g @plugin 'sainnhe/tmux-fzf'
 
-# Search your tmux scrollback buffer using fzf 
+# Search your tmux scrollback buffer using fzf
 # To use tmux-fuzzback, start it in a tmux session by typing prefix + ?
 set -g @plugin 'roosta/tmux-fuzzback'
 
@@ -64,4 +62,4 @@ set -g @plugin 'laktak/extrakto'
 # don't exit from tmux when closing a session
 set -g detach-on-destroy off
 # skip "kill-pane 1? (y/n)" prompt
-bind-key x kill-pane 
+bind-key x kill-pane
