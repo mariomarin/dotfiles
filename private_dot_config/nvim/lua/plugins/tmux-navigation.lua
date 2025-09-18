@@ -25,15 +25,15 @@ return {
           },
         },
         resize = {
-          -- Use Ctrl+Arrow keys for resizing
+          -- Use Alt+Arrow keys for resizing
           enable_default_keybindings = false,
           resize_step_x = 5,
           resize_step_y = 2,
           keybindings = {
-            left = "C-Left",
-            down = "C-Down",
-            up = "C-Up",
-            right = "C-Right",
+            left = "M-Left",
+            down = "M-Down",
+            up = "M-Up",
+            right = "M-Right",
           },
         },
       })
