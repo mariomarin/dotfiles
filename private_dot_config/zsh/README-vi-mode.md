@@ -9,6 +9,14 @@ This configuration uses [zsh-vi-mode](https://github.com/jeffreytse/zsh-vi-mode)
 - `ESC` or `jk` - Switch from INSERT to NORMAL mode
 - `i` - Enter INSERT mode
 - `v` - Enter VISUAL mode
+- `V` - Enter VISUAL LINE mode
+- `Ctrl+v` - Enter VISUAL BLOCK mode
+
+The mode is indicated in the prompt/cursor:
+
+- INSERT mode: Blinking beam cursor
+- NORMAL mode: Block cursor
+- VISUAL mode: Block cursor with highlighted selection
 
 ### Surround Feature
 
@@ -47,6 +55,19 @@ Settings are defined in:
 - `ZVM_INIT_MODE=sourcing` - Initialize in sourcing mode for better compatibility
 - `ZVM_VI_INSERT_ESCAPE_BINDKEY=jk` - Use 'jk' to escape to NORMAL mode
 - `ZVM_VI_SURROUND_BINDKEY=classic` - Use classic surround bindings
+- `ZVM_VI_HIGHLIGHT_FOREGROUND=black` - Highlight color for surround objects
+- `ZVM_VI_HIGHLIGHT_BACKGROUND=yellow` - Background color for surround objects
+- `ZVM_CLIPBOARD_PROVIDER='xsel'` - Use xsel for system clipboard integration
+
+### Clipboard Integration
+
+With xsel clipboard provider:
+
+- Yanking (`y`) copies to system clipboard
+- Deleting (`d`, `c`) in NORMAL mode also copies to clipboard
+- Pasting (`p`, `P`) uses system clipboard
+- Visual mode selections can be copied with `y`
+- Use `"+y` or `"*y` to explicitly yank to system clipboard registers
 
 ## Troubleshooting
 

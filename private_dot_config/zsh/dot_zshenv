@@ -77,6 +77,11 @@ export ZVM_INIT_MODE=sourcing
 export ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 # Enable surround feature with classic mode (verb->s->surround)
 export ZVM_VI_SURROUND_BINDKEY=classic
+# Highlight surround objects
+export ZVM_VI_HIGHLIGHT_FOREGROUND=black
+export ZVM_VI_HIGHLIGHT_BACKGROUND=yellow
+# Enable system clipboard integration (yank/paste with system clipboard)
+export ZVM_CLIPBOARD_PROVIDER='xsel'
 
 # podman rootless
 # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
