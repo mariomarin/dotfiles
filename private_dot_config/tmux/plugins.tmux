@@ -42,6 +42,10 @@ bind -n M-j run -b "#{@fingers-cli} start #{pane_id} --mode jump"
 set -g @plugin 'farzadmf/tmux-tilish'
 set -g @tilish-dmenu 'on'
 set -g @tilish-new_pane '"'
+# Enable smart splits for resize with vim awareness
+set -g @tilish-smart-splits 'on'
+# Configure custom resize keys to avoid conflicts (using Arrow keys)
+set -g @tilish-smart-splits-dirs 'Left Down Up Right'
 
 # Seamless tmux/vim navigation with clipboard sync
 # Using aserowy/tmux.nvim on the Neovim side

@@ -40,7 +40,7 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 | Keybinding | Description |
 | --- | --- |
 | `M-h/j/k/l` | Navigate between panes (unified for both tmux and Neovim) |
-| `M-Arrow` | Resize panes (unified for both tmux and Neovim) |
+| `M-Arrow` | Resize panes by 1 step (with vim awareness) |
 | `prefix C-g` | Split window and run navi |
 
 ### Copy Mode
@@ -177,8 +177,9 @@ Using **aserowy/tmux.nvim** for seamless tmux/neovim integration:
   - Provided by tmux-tilish with built-in vim awareness (`is_vim` check)
   - Works seamlessly in both tmux and Neovim
 - **Resizing**: `M-Arrow` keys to resize panes uniformly
+  - Provided by tmux-tilish smart splits with custom configuration
   - Works in both tmux and Neovim with vim awareness
-  - Resize steps: 5 (horizontal) and 2 (vertical)
+  - Resize step: 1 (matches tmux-tilish default)
 - **Clipboard Sync**: Automatic synchronization of registers between Neovim instances and tmux
 - **Cycle Navigation**: Wraps around to opposite pane when at edge
 

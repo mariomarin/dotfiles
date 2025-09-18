@@ -25,10 +25,10 @@ return {
           },
         },
         resize = {
-          -- Use Alt+Arrow keys for resizing
+          -- Use M-Arrow keys to match tmux-tilish custom config
           enable_default_keybindings = false,
-          resize_step_x = 5,
-          resize_step_y = 2,
+          resize_step_x = 1,
+          resize_step_y = 1,
           keybindings = {
             left = "M-Left",
             down = "M-Down",

@@ -23,8 +23,7 @@ private_dot_config/tmux/
 └── mappings/           # Key binding configurations
     ├── root.tmux       # Root key table mappings
     ├── prefix.tmux     # Prefix key mappings
-    ├── copy-mode-vi.tmux # Vi copy mode bindings
-    └── resize.tmux     # Resize pane bindings
+    └── copy-mode-vi.tmux # Vi copy mode bindings
 ```
 
 ## Key Configuration Files
@@ -51,7 +50,6 @@ private_dot_config/tmux/
 - **root.tmux**: Direct keybindings without prefix
 - **prefix.tmux**: Bindings requiring prefix key
 - **copy-mode-vi.tmux**: Vi-style copy mode bindings
-- **resize.tmux**: Alt+Arrow resize bindings with vim awareness
 
 ## Plugin Management
 
@@ -66,10 +64,10 @@ Plugins are managed declaratively through chezmoi:
 Currently using **aserowy/tmux.nvim** for seamless integration:
 
 - Navigation: `M-h/j/k/l` between tmux panes and Neovim splits (unified with tmux-tilish)
-- Resizing: `M-Arrow` keys to resize panes (works in both tmux and Neovim)
+- Resizing: `M-Arrow` keys to resize panes (tmux-tilish smart splits + tmux.nvim)
 - Clipboard sync between Neovim instances
 - Configured in Neovim's `lua/plugins/tmux-navigation.lua`
-- Resize integration in `mappings/resize.tmux`
+- tmux-tilish configured with custom resize keys in `plugins.tmux`
 
 ## Common Tasks
 
