@@ -388,6 +388,25 @@ Custom services managed by chezmoi:
 - External tools (tmux plugins, etc.) are synced separately from chezmoi apply
 - Chezmoi scripts in `.chezmoiscripts/` run automatically during `chezmoi apply`
 
+## Code Style and Linting
+
+### Markdown Files
+
+- **Always specify language for fenced code blocks** to pass markdownlint checks
+- Use `text` for directory structures, terminal output, or plain text
+- Use appropriate language identifiers (`bash`, `zsh`, `nix`, `yaml`, etc.) for code
+- Example:
+
+  ````markdown
+  ```text
+  directory/structure/
+  ```
+  
+  ```bash
+  echo "shell commands"
+  ```
+  ````
+
 ## Neovim Configuration (LazyVim)
 
 The repository uses LazyVim as the Neovim configuration framework:

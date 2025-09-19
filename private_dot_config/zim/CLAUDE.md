@@ -1,6 +1,6 @@
-# AGENTS.md - Zsh/Zim Configuration
+# CLAUDE.md - Zsh/Zim Configuration
 
-This file provides guidance to AI agents and assistants when working with the Zsh and Zim framework configuration.
+This file provides guidance to Claude Code when working with the Zsh and Zim framework configuration.
 
 ## Directory Structure
 
@@ -246,9 +246,35 @@ compaudit
 - Use templates (.tmpl) for machine-specific configurations
 - Keep startup time under 100ms for best experience
 
+## Code Style and Linting
+
+### Markdown Code Blocks
+
+Always specify the language for fenced code blocks to pass markdownlint checks (MD040):
+
+````markdown
+# Good - language specified
+```bash
+echo "Hello World"
+```
+
+# Bad - no language specified
+```
+echo "Hello World"
+```
+````
+
+For plain text output or directory structures, use `text`:
+
+```text
+private_dot_config/
+├── zsh/
+└── zim/
+```
+
 ## Related Documentation
 
-- [Root AGENTS.md](../../AGENTS.md)
-- [Tmux AGENTS.md](../tmux/AGENTS.md)
+- [Root CLAUDE.md](../../CLAUDE.md)
+- [Tmux CLAUDE.md](../tmux/CLAUDE.md)
 - [Zim Documentation](https://zimfw.sh/)
 - [Zsh Manual](https://zsh.sourceforge.io/Doc/)

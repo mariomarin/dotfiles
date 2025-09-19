@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with the NixOS configura
 
 ## Directory Structure
 
-```
+```text
 nixos/
 ├── Makefile                  # NixOS rebuild commands
 ├── flake.nix                 # Nix flakes configuration
@@ -48,22 +48,26 @@ nixos/
 ## Key Components
 
 ### System Configuration
+
 - **State Version**: 24.11 (NixOS version)
 - **Nix Features**: Flakes and nix-command enabled
 - **Garbage Collection**: Weekly, removes derivations older than 15 days
 
 ### Desktop Environment
+
 - Primary: GNOME or Hyprland (configurable)
 - Display Manager: GDM
 - Window Management: Mutter (GNOME) or Hyprland
 
 ### Development Tools
+
 - **Languages**: Go, Python, Rust, Node.js
 - **Editors**: Neovim (with LazyVim)
 - **Containers**: Docker, Podman
 - **Version Control**: Git with delta diff viewer
 
 ### Package Management
+
 - **System Packages**: Defined in `modules/packages.nix`
 - **Development Tools**: Language-specific modules
 - **Unfree Software**: Allowed (for proprietary tools)
@@ -71,17 +75,20 @@ nixos/
 ## Common Tasks
 
 ### Adding System Packages
+
 1. Edit `modules/packages.nix`
 2. Add package to `environment.systemPackages`
 3. Rebuild with `sudo nixos-rebuild switch`
 
 ### Enabling Services
+
 1. Create or edit service module in `modules/services/`
 2. Import in `modules/services.nix`
 3. Configure service options
 4. Rebuild system
 
 ### User Configuration
+
 1. Edit `modules/users/mario.nix` for user-specific settings
 2. Update `modules/users.nix` for system-wide user settings
 3. Rebuild to apply changes
@@ -123,6 +130,7 @@ nix search nixpkgs <package-name>
 ## Flake Configuration
 
 The system now uses Nix Flakes for:
+
 - **Reproducible builds**: All dependencies are locked in `flake.lock`
 - **Better dependency management**: Explicit input declarations
 - **Hardware optimizations**: Using nixos-hardware for ThinkPad T470
@@ -146,6 +154,7 @@ The system now uses Nix Flakes for:
 ## Troubleshooting
 
 ### Common Issues
+
 1. **Build Failures**: Check syntax with `nix-instantiate --parse`
 2. **Missing Packages**: Ensure correct channel is configured
 3. **Service Conflicts**: Review systemd service dependencies
@@ -153,6 +162,7 @@ The system now uses Nix Flakes for:
 5. **SSH Agent Connection Refused**: See SSH Agent Configuration section below
 
 ### Debug Commands
+
 ```bash
 # Check configuration syntax
 nix-instantiate --parse configuration.nix
@@ -174,12 +184,15 @@ sudo nix-env --list-generations --profile /nix/var/nix/profiles/system
 The system is configured to use GNOME Keyring as the SSH agent, but the SSH component may not start properly.
 
 #### Configuration Files
+
 - `modules/security.nix`: Disables standard SSH agent (`programs.ssh.startAgent = false`)
 - `modules/desktop.nix`: Contains session commands to start GNOME keyring with SSH
 
 #### Problem
+
 GNOME keyring daemon starts with only the `secrets` component, missing the SSH component:
-```
+
+```text
 gnome-keyring-daemon --start --foreground --components=secrets
 ```
 
@@ -188,6 +201,7 @@ The session startup command should start it with SSH support, but fails if daemo
 #### Solutions
 
 1. **Temporary Fix - Kill and Restart GNOME Keyring**:
+
    ```bash
    pkill gnome-keyring-daemon
    eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
@@ -196,6 +210,7 @@ The session startup command should start it with SSH support, but fails if daemo
    ```
 
 2. **Use Systemd SSH Agent Instead**:
+
    ```bash
    export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
    ssh-add ~/.ssh/id_ed25519
@@ -203,13 +218,17 @@ The session startup command should start it with SSH support, but fails if daemo
 
 3. **Permanent Fix - Re-enable Standard SSH Agent**:
    Edit `modules/security.nix` and change:
+
    ```nix
    programs.ssh.startAgent = true;  # was false
    ```
+
    Then rebuild: `sudo nixos-rebuild switch`
 
 #### Environment Variables
+
 When working correctly, you should have:
+
 - `SSH_AUTH_SOCK` pointing to either:
   - `/run/user/1000/keyring/ssh` (GNOME keyring)
   - `/run/user/1000/ssh-agent.socket` (systemd SSH agent)

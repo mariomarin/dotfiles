@@ -48,7 +48,7 @@ journalctl --user -u battery-combined-udev -f
 
 ## Service File Template
 
-```ini
+```systemd
 [Unit]
 Description=Service Description
 After=graphical-session.target
