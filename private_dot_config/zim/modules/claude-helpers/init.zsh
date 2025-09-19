@@ -103,135 +103,134 @@ copus() {
         "$@"
 }
 
-# Claude Git Commit Assassin - Slices through your changes like a hot katana through butter
+# Git commit assistant - analyzes changes and creates atomic commits
 gitblade() {
-    # Early return if no changes
-    if git diff --quiet && git diff --cached --quiet; then
-        echo "No changes to commit" >&2
-        return 1
-    fi
-
-    # Get list of changed files
-    local changed_files
-    changed_files=$(
-        git diff --name-only
-        git diff --cached --name-only
-    )
-
-    # Build commit message prompt
-    local prompt="You are a git commit assistant. Analyze these changes and suggest how to group them into logical, atomic commits.\n\n"
-    prompt+="Changed files:\n$changed_files\n\n"
-    prompt+="Instructions:\n"
-    prompt+="1. Group related changes together (e.g., all changes to a specific feature/component)\n"
-    prompt+="2. Never use 'git add -A' or stage unrelated changes together\n"
-    prompt+="3. For each group, provide the files to stage and a conventional commit message\n"
-    prompt+="4. TITLE must be MAX 52 characters (type(scope): description)\n"
-    prompt+="5. BODY text must wrap at 70 characters per line\n\n"
-    prompt+="Format your response EXACTLY like this for EACH commit group:\n"
-    prompt+="COMMIT 1:\n"
-    prompt+="FILES: file1.txt file2.txt file3.txt\n"
-    prompt+="MESSAGE: type(scope): short description (MAX 52 chars)\n"
-    prompt+="BODY:\n"
-    prompt+="Detailed explanation wrapped at 70 characters per line.\n"
-    prompt+="Each line of the body must not exceed 70 characters.\n"
-    prompt+="---\n\n"
-    prompt+="Current changes:\n$(
-        git diff 2>/dev/null
-        git diff --cached 2>/dev/null
-    )"
-
-    # Get commit plan from Claude
-    local commit_plan
-    commit_plan=$(claude --model sonnet "$prompt")
-
-    if [[ -z "$commit_plan" ]]; then
-        echo "Failed to generate commit plan" >&2
-        return 1
-    fi
-
-    echo "📋 Commit plan generated:"
-    echo "$commit_plan"
-    echo ""
-
-    # Ask for confirmation
-    echo -n "🤔 Execute these commits? [Y/n] "
-    read -r response
-    if [[ "$response" =~ ^[Nn]$ ]]; then
-        echo "❌ Aborted"
-        return 0
-    fi
-
-    # Parse and execute commits
-    local in_commit=false
-    local files=""
-    local message=""
-    local body=""
-    local commit_count=0
-
-    while IFS= read -r line; do
-        # Debug: show what we're parsing
-        # echo "DEBUG: Parsing line: '$line'"
-
-        if [[ "$line" =~ ^COMMIT[[:space:]]+[0-9]+: ]]; then
-            in_commit=true
-            files=""
-            message=""
-            body=""
-        elif [[ "$line" =~ ^FILES:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
-            files="${BASH_REMATCH[1]}"
-        elif [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
-            message="${BASH_REMATCH[1]}"
-        elif [[ "$line" == "BODY:" ]]; then
-            # Body section starts, next lines will be body content
-            continue
-        elif [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
-            # Execute the commit
-            if [[ -n "$files" ]] && [[ -n "$message" ]]; then
-                echo ""
-                echo "🔄 Executing commit #$((commit_count + 1)):"
-                echo "   Files: $files"
-                echo "   Message: $message"
-                if [[ -n "$body" ]]; then
-                    echo "   Body: $(echo "$body" | head -1)..."
-                fi
-                echo ""
-                # Split files and add them
-                for file in $files; do
-                    git add "$file" || {
-                        echo "❌ Failed to stage $file" >&2
-                        return 1
-                    }
-                done
-
-                # Commit with message and body
-                if [[ -n "$body" ]]; then
-                    git commit -m "$message" -m "$body" || {
-                        echo "❌ Failed to commit" >&2
-                        return 1
-                    }
-                else
-                    git commit -m "$message" || {
-                        echo "❌ Failed to commit" >&2
-                        return 1
-                    }
-                fi
-                ((commit_count++))
-                echo "✅ Committed: $message"
-                echo ""
-            fi
-            in_commit=false
-        elif [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]] && [[ "$line" != "COMMIT"* ]] && [[ -n "$line" ]]; then
-            # Build commit body (skip empty lines at start)
-            if [[ -n "$body" ]]; then
-                body="$body
-$line"
-            else
-                body="$line"
-            fi
+    # Helper: get git changes
+    get_changes() {
+        { git diff --name-only; git diff --cached --name-only; } | sort -u
+    }
+    
+    # Helper: get full diff
+    get_diff() {
+        git diff
+        git diff --cached
+    }
+    
+    # Helper: parse commit block
+    parse_commit() {
+        local block="$1"
+        local -A commit
+        
+        for line in ${(f)block}; do
+            case "$line" in
+                files:*) commit[files]="${line#files: }" ;;
+                message:*) commit[message]="${line#message: }" ;;
+                body:*) commit[body]="${line#body: }" ;;
+            esac
+        done
+        
+        [[ -n "${commit[files]}" && -n "${commit[message]}" ]] || return 1
+        
+        echo "${commit[files]}"
+        echo "${commit[message]}"
+        echo "${commit[body]:-}"
+    }
+    
+    # Helper: apply single commit
+    apply_commit() {
+        local files="$1" message="$2" body="$3"
+        
+        # Stage files
+        for file in ${=files}; do
+            git add "$file" || return 1
+        done
+        
+        # Create commit
+        if [[ -n "$body" ]]; then
+            git commit -m "$message" -m "$body"
+        else
+            git commit -m "$message"
         fi
-    done <<< "$commit_plan"
+    }
+    
+    # Helper: display commit info
+    show_commit() {
+        local num="$1" files="$2" message="$3" body="$4"
+        
+        echo "\nCommit #$num:"
+        echo "  Files: $files"
+        echo "  Message: $message"
+        [[ -n "$body" ]] && echo "  Body: $body"
+    }
+    
+    # Main logic
+    local -a changes
+    changes=(${(f)"$(get_changes)"})
+    
+    [[ ${#changes} -eq 0 ]] && { echo "No changes to commit" >&2; return 1; }
+    
+    echo "Changed files:"
+    printf "  %s\n" "${changes[@]}"
+    echo
+    
+    # Build and send prompt
+    local prompt="Analyze these git changes and suggest atomic commits.
 
-    echo "🎉 Created $commit_count commits!"
+Output format (use exactly):
+===
+files: file1.txt file2.txt
+message: type(scope): description (max 52 chars)
+body: optional detailed description
+===
+
+Repeat for each logical commit group.
+
+Changed files:
+${(j:\n:)changes}
+
+Diff:
+$(get_diff)"
+    
+    echo "Analyzing changes..."
+    local suggestions
+    suggestions=$(claude --model haiku "$prompt" 2>/dev/null) || {
+        echo "Failed to analyze changes" >&2
+        return 1
+    }
+    
+    # Process suggestions
+    local -a blocks
+    blocks=("${(@s:===:)suggestions}")
+    
+    local count=0 applied=0
+    for block in "${blocks[@]}"; do
+        [[ -z "${block// }" ]] && continue
+        
+        local -a commit_data
+        commit_data=($(parse_commit "$block")) || continue
+        
+        ((count++))
+        show_commit "$count" "${commit_data[@]}"
+        
+        echo -n "Apply this commit? [Y/n/q] "
+        read -k1 response
+        echo
+        
+        case "$response" in
+            q|Q) break ;;
+            n|N) continue ;;
+            *)
+                if apply_commit "${commit_data[@]}"; then
+                    echo "✓ Committed"
+                    ((applied++))
+                else
+                    echo "✗ Failed to commit" >&2
+                fi
+                ;;
+        esac
+    done
+    
+    echo "\nCreated $applied of $count suggested commits"
 }
 
 # Fun Deadpool-style Claude
@@ -261,7 +260,7 @@ claude_help() {
     echo "  popus      - Run opus model with clipboard content"
     echo "  dopus      - Run opus with dangerous permissions skipped"
     echo "  copus      - Run opus with specific MCP tools"
-    echo "  gitblade   - 🗡️  Slice your changes into perfect atomic commits (AI-powered)"
+    echo "  gitblade   - Analyze changes and create atomic commits"
     echo "  claudepool - Fun Deadpool-style Claude personality"
     echo "  ccusage    - Show Claude usage statistics"
 }

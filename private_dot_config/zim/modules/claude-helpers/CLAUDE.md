@@ -53,8 +53,10 @@ claude-helpers/
 ### gitblade - Git Commit Assistant
 
 - Analyzes git changes and suggests atomic commits
-- Groups related files together
-- Generates conventional commit messages
+- Interactive commit-by-commit approval
+- Uses Zsh native features for parsing
+- Simpler === delimited format
+- Uses haiku model for faster responses
 - Aliases: `blade`, `gb`
 
 ### Other Helpers
