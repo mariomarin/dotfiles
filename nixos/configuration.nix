@@ -17,6 +17,8 @@
   ];
 
   # Core system settings
+  # Note: system.stateVersion should remain at the version you first installed
+  # It does NOT need to be changed when upgrading NixOS versions
   system.stateVersion = "24.11";
 
   # Allow unfree packages

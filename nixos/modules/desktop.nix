@@ -94,7 +94,11 @@
   # Fonts
   fonts.packages = with pkgs; [
     corefonts
-    (nerdfonts.override { fonts = [ "Iosevka" "Noto" "RobotoMono" "NerdFontsSymbolsOnly" ]; })
+    # Note: In NixOS 25.05, individual nerd fonts are available as separate packages
+    nerd-fonts.iosevka
+    nerd-fonts.noto
+    nerd-fonts.roboto-mono
+    nerd-fonts.symbols-only
   ];
 
   fonts.fontDir.enable = true;

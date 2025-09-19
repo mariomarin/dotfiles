@@ -24,7 +24,7 @@
     firefox # Open-source web browser
     gimp # GNU Image Manipulation Program
     gnome-disk-utility # Disk management utility
-    transmission_3 # BitTorrent client
+    transmission-gtk # BitTorrent client with GTK interface
     zathura # PDF/document viewer
     zoom-us # Video conferencing software
 
