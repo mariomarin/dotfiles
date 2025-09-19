@@ -72,7 +72,11 @@ Currently using **aserowy/tmux.nvim** for seamless integration:
 - Sessions are saved automatically by persistence.nvim
 
 - Navigation: `M-h/j/k/l` between tmux panes and Neovim splits (unified with tmux-tilish)
-- Resizing: `M-Arrow` keys to resize panes (tmux-tilish smart splits + tmux.nvim)
+- Resizing: Omarchy-style keybindings (tmux-tilish smart splits + tmux.nvim)
+  - `M-=` (Alt+Equal): Grow pane to the left
+  - `M--` (Alt+Minus): Grow pane to the right
+  - `M-+` (Alt+Shift+Equal): Grow pane down
+  - `M-_` (Alt+Shift+Minus): Grow pane up
 - Clipboard sync between Neovim instances
 - Configured in Neovim's `lua/plugins/tmux-navigation.lua`
 - tmux-tilish configured with custom resize keys in `plugins.tmux`
