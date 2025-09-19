@@ -1,0 +1,50 @@
+#compdef claude
+
+local -a claude_options model_options format_options
+
+claude_options=(
+    {-h,--help}'[Show help information]'
+    {-V,--version}'[Show version information]'
+    '--model[Specify model to use]:model:->models'
+    '--mcp-env[Use MCP environment]'
+    '--allowed-tools[Specify allowed tools (comma-separated)]:tools'
+    '--append-system-prompt[Append to system prompt]:prompt'
+    '--dangerously-skip-permissions[Skip permission checks]'
+    '--output-format[Output format]:format:->formats'
+    '--print[Print output]'
+    '--verbose[Verbose output]'
+    '--temperature[Set model temperature (0-1)]:temperature'
+    '--max-tokens[Maximum tokens in response]:tokens'
+    '--top-p[Nucleus sampling parameter]:top-p'
+    '--stop-sequences[Stop sequences (comma-separated)]:sequences'
+    '--timeout[Request timeout in seconds]:seconds'
+    '--api-key[API key (overrides environment)]:key'
+    '--api-base[API base URL]:url'
+)
+
+model_options=(
+    'opus:Claude 3 Opus - Most capable model'
+    'sonnet:Claude 3.5 Sonnet - Balanced performance'
+    'haiku:Claude 3 Haiku - Fast and efficient'
+)
+
+format_options=(
+    'text:Plain text output (default)'
+    'json:JSON structured output'
+    'stream-json:Streaming JSON output'
+)
+
+_arguments -s -S -C \
+    "${claude_options[@]}" \
+    '*::prompt:_default'
+
+case "$state" in
+    models)
+        _describe -t models 'Claude model' model_options
+        ;;
+    formats)
+        _describe -t formats 'Output format' format_options
+        ;;
+esac
+
+return 0

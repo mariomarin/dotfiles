@@ -1,0 +1,12 @@
+#compdef popus
+
+# Completion for popus (opus with clipboard content)
+
+_arguments -s -S -C \
+    {-h,--help}'[Show help information]' \
+    '--temperature[Set model temperature (0-1)]:temperature' \
+    '--max-tokens[Maximum tokens in response]:tokens' \
+    '--output-format[Output format]:format:(text json stream-json)' \
+    '*::additional arguments:_default'
+
+return 0

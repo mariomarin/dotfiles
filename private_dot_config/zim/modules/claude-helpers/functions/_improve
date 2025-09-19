@@ -1,0 +1,8 @@
+#compdef improve
+
+# Completion for improve (prompt improvement helper)
+
+_arguments -s -S -C \
+    '*::prompt text:_default'
+
+return 0

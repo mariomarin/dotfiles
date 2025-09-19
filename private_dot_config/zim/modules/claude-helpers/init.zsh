@@ -11,6 +11,11 @@ CLAUDE_HELPERS_DIR="${0:h}/functions"
 # Add to fpath for autoloading
 fpath=("$CLAUDE_HELPERS_DIR" "${fpath[@]}")
 
+# Only proceed if claude command exists
+if (( ! ${+commands[claude]} )); then
+    return 0
+fi
+
 # MCP-based Claude with container-use enforcement
 cl() {
     local mcp_env="--mcp-env"
@@ -63,14 +68,14 @@ popus() {
     local clipboard_cmd
     if command -v pbpaste &> /dev/null; then
         clipboard_cmd="pbpaste"
-  elif   command -v xclip &> /dev/null; then
+    elif command -v xclip &> /dev/null; then
         clipboard_cmd="xclip -selection clipboard -o"
-  elif   command -v xsel &> /dev/null; then
+    elif command -v xsel &> /dev/null; then
         clipboard_cmd="xsel --clipboard --output"
-  else
+    else
         echo "No clipboard tool found. Install xclip or xsel on Linux." >&2
         return 1
-  fi
+    fi
 
     local clipboard_content
     clipboard_content=$(eval "$clipboard_cmd")
@@ -78,7 +83,7 @@ popus() {
     if [[ -z "$clipboard_content" ]]; then
         echo "Clipboard is empty" >&2
         return 1
-  fi
+    fi
 
     claude --model opus "$clipboard_content" "$@"
 }
@@ -104,14 +109,14 @@ gitblade() {
     if git diff --quiet && git diff --cached --quiet; then
         echo "No changes to commit" >&2
         return 1
-  fi
+    fi
 
     # Get list of changed files
     local changed_files
     changed_files=$(
-                    git diff --name-only
-                                          git diff --cached --name-only
-  )
+        git diff --name-only
+        git diff --cached --name-only
+    )
 
     # Build commit message prompt
     local prompt="You are a git commit assistant. Analyze these changes and suggest how to group them into logical, atomic commits.\n\n"
@@ -131,9 +136,9 @@ gitblade() {
     prompt+="Each line of the body must not exceed 70 characters.\n"
     prompt+="---\n\n"
     prompt+="Current changes:\n$(
-                                 git diff 2> /dev/null
-                                                       git diff --cached 2> /dev/null
-  )"
+        git diff 2>/dev/null
+        git diff --cached 2>/dev/null
+    )"
 
     # Get commit plan from Claude
     local commit_plan
@@ -142,7 +147,7 @@ gitblade() {
     if [[ -z "$commit_plan" ]]; then
         echo "Failed to generate commit plan" >&2
         return 1
-  fi
+    fi
 
     echo "📋 Commit plan generated:"
     echo "$commit_plan"
@@ -154,7 +159,7 @@ gitblade() {
     if [[ "$response" =~ ^[Nn]$ ]]; then
         echo "❌ Aborted"
         return 0
-  fi
+    fi
 
     # Parse and execute commits
     local in_commit=false
@@ -172,14 +177,14 @@ gitblade() {
             files=""
             message=""
             body=""
-    elif     [[ "$line" =~ ^FILES:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
+        elif [[ "$line" =~ ^FILES:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
             files="${BASH_REMATCH[1]}"
-    elif     [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
+        elif [[ "$line" =~ ^MESSAGE:[[:space:]]+(.*) ]] && [[ -n "${BASH_REMATCH[1]}" ]]; then
             message="${BASH_REMATCH[1]}"
-    elif     [[ "$line" == "BODY:" ]]; then
+        elif [[ "$line" == "BODY:" ]]; then
             # Body section starts, next lines will be body content
             continue
-    elif     [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
+        elif [[ "$line" == "---" ]] && [[ $in_commit == true ]]; then
             # Execute the commit
             if [[ -n "$files" ]] && [[ -n "$message" ]]; then
                 echo ""
@@ -188,43 +193,43 @@ gitblade() {
                 echo "   Message: $message"
                 if [[ -n "$body" ]]; then
                     echo "   Body: $(echo "$body" | head -1)..."
-        fi
+                fi
                 echo ""
                 # Split files and add them
                 for file in $files; do
                     git add "$file" || {
                         echo "❌ Failed to stage $file" >&2
                         return 1
-          }
-        done
+                    }
+                done
 
                 # Commit with message and body
                 if [[ -n "$body" ]]; then
                     git commit -m "$message" -m "$body" || {
                         echo "❌ Failed to commit" >&2
                         return 1
-          }
-        else
+                    }
+                else
                     git commit -m "$message" || {
                         echo "❌ Failed to commit" >&2
                         return 1
-          }
-        fi
+                    }
+                fi
                 ((commit_count++))
                 echo "✅ Committed: $message"
                 echo ""
-      fi
+            fi
             in_commit=false
-    elif     [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]] && [[ "$line" != "COMMIT"* ]] && [[ -n "$line" ]]; then
+        elif [[ $in_commit == true ]] && [[ -n "$message" ]] && [[ "$line" != "FILES:"* ]] && [[ "$line" != "MESSAGE:"* ]] && [[ "$line" != "COMMIT"* ]] && [[ -n "$line" ]]; then
             # Build commit body (skip empty lines at start)
             if [[ -n "$body" ]]; then
                 body="$body
 $line"
-      else
+            else
                 body="$line"
-      fi
-    fi
-  done   <<< "$commit_plan"
+            fi
+        fi
+    done <<< "$commit_plan"
 
     echo "🎉 Created $commit_count commits!"
 }
@@ -256,7 +261,7 @@ claude_help() {
     echo "  popus      - Run opus model with clipboard content"
     echo "  dopus      - Run opus with dangerous permissions skipped"
     echo "  copus      - Run opus with specific MCP tools"
-    echo "  gitblade    - 🗡️  Slice your changes into perfect atomic commits (AI-powered)"
+    echo "  gitblade   - 🗡️  Slice your changes into perfect atomic commits (AI-powered)"
     echo "  claudepool - Fun Deadpool-style Claude personality"
     echo "  ccusage    - Show Claude usage statistics"
 }
@@ -267,40 +272,6 @@ alias clhelp='claude_help'
 # Epic aliases for the commit assassin
 alias blade='gitblade'
 alias gb='gitblade'
-
-# In zsh, functions are automatically available in subshells
-# No need to export them like in bash
-
-# Set up completion for claude command if not already done
-# Note: compdef is only available after compinit is called
-# So we define the completion function but don't call compdef here
-if ! command -v _claude &> /dev/null; then
-    # Basic completion for claude command
-    _claude() {
-        local -a claude_opts=(
-            '--help:Show help'
-            '--model:Specify model (opus, sonnet, haiku)'
-            '--mcp-env:Use MCP environment'
-            '--allowed-tools:Specify allowed tools'
-            '--append-system-prompt:Append to system prompt'
-            '--dangerously-skip-permissions:Skip permission checks'
-            '--output-format:Output format (text, json, stream-json)'
-            '--print:Print output'
-            '--verbose:Verbose output'
-    )
-
-        _describe 'claude options' claude_opts
-  }
-
-    # Store in fpath for autoloading
-    local completion_file="${0:h}/functions/_claude"
-    if [[ ! -f "$completion_file" ]]; then
-        mkdir -p "${0:h}/functions"
-        echo "#compdef claude" > "$completion_file"
-        declare -f _claude >> "$completion_file"
-  fi
-    fpath=("${0:h}/functions" $fpath)
-fi
 
 # Source local customizations if they exist
 # shellcheck disable=SC1091
