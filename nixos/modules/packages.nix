@@ -79,7 +79,7 @@
     cheat # Create and view interactive cheatsheets
 
     # Desktop Integration
-    plasma5Packages.kdeconnect-kde # Connect phone to computer for file sharing and notifications
+    # Note: kdeconnect is enabled as a program in services.nix
     navi # Interactive cheatsheet tool
     tealdeer # Fast tldr client in Rust
 

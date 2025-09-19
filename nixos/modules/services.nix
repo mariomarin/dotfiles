@@ -78,6 +78,9 @@
   # Light control
   programs.light.enable = true;
 
+  # KDE Connect - Phone/computer integration
+  programs.kdeconnect.enable = true;
+
   # OBS Studio - commented out due to insecure qtwebengine dependency
   # To enable, add to nixpkgs.config.permittedInsecurePackages
   # programs.obs-studio = {
