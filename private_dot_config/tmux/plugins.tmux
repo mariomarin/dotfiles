@@ -57,9 +57,15 @@ set -g @tilish-smart-splits-dirs-large ''
 # Navigation keybindings are handled by Neovim
 # Note: tmux-tilish navigation (M-hjkl) still works for non-Neovim panes
 
-# Use fzf to manage your tmux work environment!
-# To launch tmux-fzf, press prefix + F (Shift+F).
-set -g @plugin 'sainnhe/tmux-fzf'
+# Quick session and pane navigation with harpoon
+# Note: M-h conflicts with tmux-tilish navigation, so we use custom bindings
+set -g @plugin 'Chaitanyabsprip/tmux-harpoon'
+# Keep default jump binding
+# C-h: Fuzzy-jump to saved session/pane
+# Override conflicting bindings:
+set -g @harpoon_key_append1 'C-S-a'  # Add current session (was C-S-h)
+set -g @harpoon_key_append2 'M-a'    # Add current session + pane (was M-h)
+# C-e: Edit saved list (no conflict)
 
 # Search your tmux scrollback buffer using fzf
 # To use tmux-fuzzback, start it in a tmux session by typing prefix + ?

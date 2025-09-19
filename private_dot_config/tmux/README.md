@@ -110,11 +110,14 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 | `M-S-e` | Detach from tmux |
 | `M-S-c` | Reload tmux config |
 
-#### tmux-fzf
+#### tmux-harpoon
 
 | Keybinding | Description |
 | --- | --- |
-| `prefix F` | Launch tmux-fzf menu ⚠️ |
+| `C-h` | Fuzzy-jump to saved session/pane |
+| `C-S-a` | Add current session to harpoon list |
+| `M-a` | Add current session + pane to harpoon list |
+| `C-e` | Edit harpoon saved list in popup |
 
 #### tmux-fuzzback
 
@@ -153,9 +156,11 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 
 ## Potential Conflicts ⚠️
 
-The following keybindings may have conflicts:
+The following keybindings have been resolved:
 
-- **`prefix F`**: Would conflict between tmux-fzf and tmux-fingers if using defaults (avoided by using custom `M-f` for tmux-fingers)
+- **`M-h`**: tmux-tilish navigation takes precedence; tmux-harpoon uses `M-a` instead
+- **`C-h`**: tmux-harpoon jump binding (no conflict with existing bindings)
+- **`prefix F`**: Previously used by tmux-fzf, now available
 
 ## Plugin List
 
@@ -165,7 +170,7 @@ The following keybindings may have conflicts:
 - **tmux-continuum**: Automatic session saves
 - **tmux-fingers**: Copy text with hints (like Vimium)
 - **tmux-tilish**: i3wm-like navigation
-- **tmux-fzf**: FZF integration for tmux
+- **tmux-harpoon**: Quick navigation between saved sessions and panes
 - **tmux-fuzzback**: Search scrollback with FZF
 - **extrakto**: Extract and insert text
 

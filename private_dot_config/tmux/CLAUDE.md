@@ -44,6 +44,8 @@ private_dot_config/tmux/
 - Plugin declarations and settings
 - Custom keybindings for plugins
 - Plugin-specific configuration
+- **Note**: tmux-harpoon replaced tmux-fzf for session navigation
+  - Custom bindings to avoid conflicts: `M-a` instead of `M-h`
 
 ### mappings/
 
