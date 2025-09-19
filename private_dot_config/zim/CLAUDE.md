@@ -4,7 +4,7 @@ This file provides guidance to AI agents and assistants when working with the Zs
 
 ## Directory Structure
 
-```
+```text
 private_dot_config/
 ├── zsh/
 │   ├── dot_zshenv          # Environment variables
@@ -21,6 +21,7 @@ private_dot_config/
 ## Zim Framework
 
 Zim is a modular Zsh framework that provides:
+
 - Fast startup times
 - Modular plugin system
 - Built-in themes and completions
@@ -30,12 +31,14 @@ Zim is a modular Zsh framework that provides:
 ## Configuration Components
 
 ### Environment Variables (`dot_zshenv`)
+
 - Sets up PATH
 - Defines ZDOTDIR
 - Configures development environments
 - Sets default applications
 
 ### Zsh Configuration (`dot_zshrc`)
+
 - Sources Zim framework
 - Loads custom aliases
 - Configures prompt
@@ -43,6 +46,7 @@ Zim is a modular Zsh framework that provides:
 - Initializes tools (direnv, zoxide, etc.)
 
 ### Zim Modules (`zimrc`)
+
 - **Core Modules**:
   - `environment` - Sets general Zsh options
   - `input` - Configures key bindings
@@ -62,17 +66,21 @@ Zim is a modular Zsh framework that provides:
 
 - **Custom Modules**:
   - `container-use` - Completions for container-use tool
+  - `git-branchless` - Completions for git-branchless commands
+  - `claude-helpers` - Claude Code helper functions
 
 ## Custom Completion Modules
 
 ### Creating a New Completion Module
 
 1. Create module directory:
+
    ```bash
    mkdir -p private_dot_config/zim/modules/<tool-name>
    ```
 
 2. Create `init.zsh` with completion generation:
+
    ```zsh
    # Generate completions if binary has changed
    if command -v <tool> >/dev/null 2>&1; then
@@ -81,11 +89,13 @@ Zim is a modular Zsh framework that provides:
    ```
 
 3. Add to `zimrc` BEFORE the completion module:
+
    ```zsh
    zmodule ${ZIM_CONFIG_FILE:h}/modules/<tool-name>
    ```
 
 ### Module Load Order
+
 **Critical**: Custom completion modules must load BEFORE zimfw's completion module to ensure proper initialization.
 
 ## Prompt Configuration
@@ -94,7 +104,8 @@ Zim is a modular Zsh framework that provides:
 
 The prompt uses the **gitster** theme, which provides a minimal, informative prompt with git integration.
 
-#### Prompt Components:
+#### Prompt Components
+
 1. **prompt-pwd** module:
    - Shows current working directory
    - Smart path truncation to keep prompt readable
@@ -112,21 +123,25 @@ The prompt uses the **gitster** theme, which provides a minimal, informative pro
    - Error status indicator (red ✗ on command failure)
    - Minimal design for maximum terminal space
 
-#### Prompt Format:
-```
+#### Prompt Format
+
+```text
 [user@host] ~/path/to/dir [git:branch*] ❯
 ```
+
 - `*` indicates uncommitted changes
 - `❯` changes color based on last command status
 
 ### Customizing the Prompt
 
 To change the prompt theme:
+
 1. Edit `zimrc` and replace `zmodule gitster` with desired theme
 2. Run `zimfw install` to download new theme
 3. Restart shell or run `exec zsh`
 
 Popular alternative themes:
+
 - `eriner` - Two-line prompt with more info
 - `s1ck94` - Powerline-style prompt
 - `asciiship` - ASCII-only starship alternative
@@ -135,19 +150,23 @@ Popular alternative themes:
 ## Key Features
 
 ### Aliases
+
 Common aliases defined in the configuration:
+
 - Git shortcuts
 - Directory navigation
 - File operations
 - Development tools
 
 ### Key Bindings
+
 - Vi mode with visual feedback
 - Emacs-style line editing
 - History search with arrow keys
 - Word navigation with Ctrl+arrows
 
 ### Completions
+
 - Command completions with descriptions
 - Path expansion
 - Git branch/tag completion
@@ -156,12 +175,14 @@ Common aliases defined in the configuration:
 ## Integration Points
 
 ### Development Tools
+
 - **direnv**: Automatic environment loading
 - **zoxide**: Smart directory jumping
 - **fzf**: Fuzzy file and history search
 - **starship**: Cross-shell prompt (if preferred over Zim's prompt)
 
 ### Container Tools
+
 - Docker/Podman completions
 - Kubernetes (kubectl) completions
 - Custom container-use completions
@@ -169,21 +190,25 @@ Common aliases defined in the configuration:
 ## Common Tasks
 
 ### Adding Aliases
+
 1. Edit `dot_zshrc`
 2. Add alias in the appropriate section
 3. Source with `source ~/.zshrc` or start new shell
 
 ### Installing Zim Modules
+
 1. Add module to `zimrc`
 2. Run `zimfw install`
 3. Restart shell or source configuration
 
 ### Updating Completions
+
 1. For custom tools, update the module's init.zsh
 2. Clear completion cache: `rm -rf ~/.cache/zim/completions`
 3. Restart shell to regenerate
 
 ### Debugging
+
 ```bash
 # Check Zim status
 zimfw info
@@ -202,11 +227,13 @@ compaudit
 ## Performance Optimization
 
 ### Startup Time
+
 - Lazy load heavy functions
 - Use `zimfw compile` for byte-compilation
 - Minimize synchronous operations in zshrc
 
 ### Completion Cache
+
 - Completions are cached in `~/.cache/zim/`
 - Clear cache if completions are outdated
 - Module init.zsh handles cache invalidation
