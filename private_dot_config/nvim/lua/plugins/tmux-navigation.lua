@@ -25,15 +25,15 @@ return {
           },
         },
         resize = {
-          -- Use M-Arrow keys to match tmux-tilish custom config
+          -- Use Omarchy-style keybindings to match tmux-tilish config
           enable_default_keybindings = false,
           resize_step_x = 1,
           resize_step_y = 1,
           keybindings = {
-            left = "M-Left",
-            down = "M-Down",
-            up = "M-Up",
-            right = "M-Right",
+            left = "M-=", -- Alt+Equal: grow left
+            right = "M--", -- Alt+Minus: grow right
+            down = "M-+", -- Alt+Shift+Equal: grow down
+            up = "M-_", -- Alt+Shift+Minus: grow up
           },
         },
       })

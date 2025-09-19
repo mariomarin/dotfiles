@@ -44,8 +44,13 @@ set -g @tilish-dmenu 'on'
 set -g @tilish-new_pane '"'
 # Enable smart splits for resize with vim awareness
 set -g @tilish-smart-splits 'on'
-# Configure custom resize keys to avoid conflicts (using Arrow keys)
-set -g @tilish-smart-splits-dirs 'Left Down Up Right'
+# Configure resize keys to match Omarchy keybindings:
+# Alt+Equal = grow left, Alt+Minus = grow right
+# Alt+Shift+Equal = grow down, Alt+Shift+Minus = grow up
+# Format: left/down/up/right (single step resize)
+set -g @tilish-smart-splits-dirs '= + _ -'
+# Disable large resize steps (not needed)
+set -g @tilish-smart-splits-dirs-large ''
 
 # Seamless tmux/vim navigation with clipboard sync
 # Using aserowy/tmux.nvim on the Neovim side

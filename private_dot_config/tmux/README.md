@@ -176,10 +176,13 @@ Using **aserowy/tmux.nvim** for seamless tmux/neovim integration:
 - **Navigation**: `M-h/j/k/l` to move between tmux panes and Neovim splits
   - Provided by tmux-tilish with built-in vim awareness (`is_vim` check)
   - Works seamlessly in both tmux and Neovim
-- **Resizing**: `M-Arrow` keys to resize panes uniformly
+- **Resizing**: Omarchy-style keybindings for pane resizing
+  - `M-=` (Alt+Equal): Grow pane to the left
+  - `M--` (Alt+Minus): Grow pane to the right
+  - `M-+` (Alt+Shift+Equal): Grow pane down
+  - `M-_` (Alt+Shift+Minus): Grow pane up
   - Provided by tmux-tilish smart splits with custom configuration
   - Works in both tmux and Neovim with vim awareness
-  - Resize step: 1 (matches tmux-tilish default)
 - **Clipboard Sync**: Automatic synchronization of registers between Neovim instances and tmux
 - **Cycle Navigation**: Wraps around to opposite pane when at edge
 
