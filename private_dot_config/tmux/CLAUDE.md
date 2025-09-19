@@ -65,6 +65,12 @@ Plugins are managed declaratively through chezmoi:
 
 Currently using **aserowy/tmux.nvim** for seamless integration:
 
+### Session Restoration
+
+- Neovim uses LazyVim's persistence.nvim (not vim-obsession)
+- tmux-resurrect configured to restore nvim without special session commands
+- Sessions are saved automatically by persistence.nvim
+
 - Navigation: `M-h/j/k/l` between tmux panes and Neovim splits (unified with tmux-tilish)
 - Resizing: `M-Arrow` keys to resize panes (tmux-tilish smart splits + tmux.nvim)
 - Clipboard sync between Neovim instances

@@ -67,7 +67,10 @@ Special handling for NixOS systems:
 
 - **Leap.nvim**: Quick cursor movement with `s` and `S`
 - **Tmux Navigator**: Seamless navigation between Neovim and tmux panes
-- **Session Management**: vim-obsession for session persistence
+- **Session Management**: persistence.nvim (LazyVim default)
+  - `<leader>qs` - Save current session
+  - `<leader>ql` - Load/restore last session
+  - `<leader>qd` - Don't save session on exit
 - **Harpoon2**: Quick file navigation
   - `<leader>H` - Add current file to Harpoon list
   - `<leader>h` - Toggle Harpoon quick menu

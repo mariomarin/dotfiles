@@ -18,10 +18,10 @@ set -g @minimal-tmux-bg "#E65050" # ayu dark red
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 # for vim
 set -g @resurrect-strategy-vim 'session'
-set -g @resurrect-processes '"vim->vim +SLoad"'
-# for neovim
+# for neovim - using LazyVim's persistence.nvim
 set -g @resurrect-strategy-nvim 'session'
-set -g @resurrect-processes '"nvim->nvim +SLoad"'
+# Combined processes configuration (single line to avoid overwriting)
+set -g @resurrect-processes '"vim->vim +SLoad" "nvim->nvim"'
 
 set -g @resurrect-capture-pane-contents 'on'
 
