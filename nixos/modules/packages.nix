@@ -77,6 +77,9 @@
 
     # Documentation & Help
     cheat # Create and view interactive cheatsheets
+
+    # Desktop Integration
+    plasma5Packages.kdeconnect-kde # Connect phone to computer for file sharing and notifications
     navi # Interactive cheatsheet tool
     tealdeer # Fast tldr client in Rust
 

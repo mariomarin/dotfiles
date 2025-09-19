@@ -98,6 +98,13 @@ X-GNOME-Autostart-enabled=true
 X-GNOME-Autostart-Delay=3
 EOF
 
+# KDE Connect - for non-Plasma desktops
+{{ if stat (joinPath $applicationsDir "org.kde.kdeconnect.nonplasma.desktop") }}
+create_autostart_link "{{ $applicationsDir }}/org.kde.kdeconnect.nonplasma.desktop" "kdeconnect-indicator.desktop" 5
+{{ else }}
+echo "KDE Connect indicator desktop file not found - skipping"
+{{ end }}
+
 # Remove obsolete autostart files
 echo "Removing obsolete autostart files..."
 rm -f {{ $autostartDir }}/ssh-agent.desktop

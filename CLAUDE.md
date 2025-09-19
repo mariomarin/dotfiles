@@ -367,6 +367,7 @@ Current autostart applications:
 - Firefox (5s delay) - Web browser
 - Xfce4 Power Manager - Power management daemon
 - Alacritty with tmux (3s delay) - Terminal emulator with session management
+- KDE Connect (5s delay) - Phone/computer integration (non-Plasma desktops)
 
 ### Systemd User Services
 
