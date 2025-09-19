@@ -176,20 +176,25 @@ gitblade() {
     # Build and send prompt
     local prompt="Analyze these git changes and suggest atomic commits.
 
-Output format (use exactly):
+Output format (use EXACTLY this format):
 ===
 files: file1.txt file2.txt
-message: type(scope): description (max 52 chars)
-body: optional detailed description
+message: type(scope): complete description here
+body: optional detailed description if needed
 ===
 
-Repeat for each logical commit group.
+Rules:
+- Group related changes together
+- Write COMPLETE commit messages, not just prefixes
+- Use conventional commit format: feat, fix, docs, style, refactor, test, chore
+- Message must be complete and descriptive (e.g., 'feat(todo): add todo item component')
+- Each === block is one commit
 
 Changed files:
 ${(j:\n:)changes}
 
-Diff:
-$(get_diff)"
+Diff (first 1000 lines):
+$(get_diff | head -1000)"
     
     echo "Analyzing changes..."
     local suggestions
@@ -213,8 +218,14 @@ $(get_diff)"
         show_commit "$count" "${commit_data[@]}"
         
         echo -n "Apply this commit? [Y/n/q] "
-        read -k1 response
-        echo
+        local response
+        if [[ -t 0 ]]; then
+            read -k1 response
+            echo
+        else
+            response="y"  # Default to yes if non-interactive
+            echo "y (non-interactive)"
+        fi
         
         case "$response" in
             q|Q) break ;;
