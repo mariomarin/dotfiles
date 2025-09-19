@@ -3,7 +3,7 @@
 {
   environment.systemPackages = with pkgs; [
     # Data processing and utilities
-    xsv # CSV data manipulation toolkit
+    xan # CSV data manipulation toolkit (maintained fork of xsv)
 
     # Kubernetes tools
     stern # Multi pod and container log tailing
