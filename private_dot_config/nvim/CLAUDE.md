@@ -1,10 +1,10 @@
-# AGENTS.md - Neovim Configuration
+# CLAUDE.md - Neovim Configuration
 
 This file provides guidance to AI agents and assistants when working with the Neovim configuration.
 
 ## Directory Structure
 
-```
+```text
 private_dot_config/nvim/
 ├── init.lua                  # Entry point for Neovim configuration
 ├── lua/
@@ -36,6 +36,7 @@ private_dot_config/nvim/
 ## Language Support
 
 The configuration includes LazyVim extras for:
+
 - Go (`lang.go`)
 - TypeScript (`lang.typescript`)
 - Python (`lang.python`)
@@ -43,10 +44,18 @@ The configuration includes LazyVim extras for:
 - YAML (`lang.yaml`)
 - Docker (`lang.docker`)
 - Markdown (`lang.markdown`)
+- Nix (`lang.nix`)
+- Telescope (`editor.telescope`)
+- Harpoon2 (`editor.harpoon2`)
+- Chezmoi (`util.chezmoi`)
+- Test support (`test.core`)
+- DAP Core (`dap.core`)
+- DAP Lua (`dap.nlua`)
 
 ## NixOS Compatibility
 
 Special handling for NixOS systems:
+
 - Mason prefers system-installed tools over downloading binaries
 - Python debugging uses system debugpy instead of Mason-installed version
 - Automatic LSP installation is disabled
@@ -55,11 +64,17 @@ Special handling for NixOS systems:
 ## Key Customizations
 
 ### Navigation
+
 - **Leap.nvim**: Quick cursor movement with `s` and `S`
 - **Tmux Navigator**: Seamless navigation between Neovim and tmux panes
 - **Session Management**: vim-obsession for session persistence
+- **Harpoon2**: Quick file navigation
+  - `<leader>H` - Add current file to Harpoon list
+  - `<leader>h` - Toggle Harpoon quick menu
+  - `<leader>1-9` - Jump to specific Harpoon marks
 
 ### Editor Enhancements
+
 - **File Explorer**: nvim-tree with git integration
 - **Chezmoi Integration**: Automatic source directory detection
 - **Toggle Keymaps**: Fixed Snacks.nvim toggle mappings
@@ -73,15 +88,18 @@ Special handling for NixOS systems:
 ## Common Tasks
 
 ### Adding a New Plugin
+
 1. Create a new file in `lua/plugins/`
 2. Return a table with the plugin specification
 3. Follow LazyVim's plugin specification format
 
 ### Modifying Keymaps
+
 1. Edit `lua/config/keymaps.lua` for global keymaps
 2. Add plugin-specific keymaps in the plugin's configuration file
 
 ### Debugging Issues
+
 1. Check `:checkhealth` for system compatibility
 2. Review `:Lazy` for plugin status
 3. Verify Mason installations with `:Mason`
