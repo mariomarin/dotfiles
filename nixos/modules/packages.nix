@@ -24,10 +24,7 @@
     firefox # Open-source web browser
     gimp # GNU Image Manipulation Program
     gnome-disk-utility # Disk management utility
-    obsidian # Knowledge base and note-taking application
-    transmission-gtk # BitTorrent client with GTK interface
     zathura # PDF/document viewer
-    zoom-us # Video conferencing software
 
     # Terminal Tools & Utilities
     age # Simple, modern encryption tool (for chezmoi)
@@ -132,26 +129,10 @@
 
     # Editors & Language Servers
     pandoc # Universal markup converter
-    pyright # Static type checker for Python
-    terraform-ls # Terraform language server
     unstable.tree-sitter # Parser generator and incremental parsing library
     tridactyl-native # Native messaging host for Tridactyl Firefox addon
     vim # Vi Improved text editor
-    vscode # Visual Studio Code editor
     yarn # Fast, reliable JavaScript package manager
-
-    # Python Environment
-    (python312.withPackages (p: with p; [
-      boto3 # AWS SDK for Python
-      coverage # Code coverage measurement for Python
-      debugpy # Python debugger for Neovim DAP
-      pip # Python package installer
-      pygments # Syntax highlighting package
-      pytest # Python testing framework
-      pytest-mock # Thin wrapper around mock for pytest
-      pyyaml # YAML parser and emitter for Python
-      requests # HTTP library for Python
-    ]))
 
     # Audio & Multimedia
     alsa-lib-with-plugins # Advanced Linux Sound Architecture libraries
@@ -184,28 +165,15 @@
     xdg-user-dirs # Tool to help manage user directories
     xsel # Command line clipboard utility (alternative to xclip)
 
-    # iOS Support
-    libimobiledevice # Library to communicate with iOS devices
-    ifuse # FUSE filesystem for iOS devices
-
     # Nix Tools
     niv # Dependency management for Nix
     nix-direnv # Integration of direnv with Nix
 
-  ] ++ (with nodePackages; [
-    bash-language-server # Bash language server for IDEs
-    typescript # TypeScript language
-    typescript-language-server # TypeScript language server
-    yaml-language-server # YAML language server
-    npm # Node package manager
-    pnpm # Fast, disk space efficient package manager
-    yarn # JavaScript package manager
-  ]) ++ (with pkgs; [
     # Packages from unstable channel
     unstable.neovim # Hyperextensible Vim-based text editor
     unstable.devenv # Fast, declarative, reproducible development environments
     unstable.svu # Semantic Version Util v3.x
     # Claude Code from the claude-code-nix flake
     claude-code # Claude AI coding assistant CLI
-  ]);
+  ];
 }
