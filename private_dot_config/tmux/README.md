@@ -53,7 +53,8 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 
 | Keybinding | Description |
 | --- | --- |
-| `v` | Begin selection (tmux-yank) |
+| `v` | Begin selection |
+| `V` | Select line |
 | `y` | Copy selection to clipboard (tmux-yank) |
 | `Y` | Copy line to clipboard (tmux-yank) |
 | `C-v` | Rectangle selection toggle |

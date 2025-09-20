@@ -2,6 +2,10 @@
 # Most bindings are handled by tmux-sensible and tmux-yank plugins
 # Only custom bindings that aren't provided by plugins are defined here
 
+# Visual selection (tmux-yank only provides copy, not selection)
+bind-key -T copy-mode-vi v send-keys -X begin-selection
+bind-key -T copy-mode-vi V send-keys -X select-line
+
 # Rectangle selection (not provided by plugins)
 bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
 
