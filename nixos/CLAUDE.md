@@ -143,6 +143,15 @@ The system now uses Nix Flakes for:
 - Changes are tracked in git
 - Apply with `chezmoi apply` then rebuild NixOS
 
+## User Services
+
+This repository uses two approaches for systemd user services:
+
+1. **NixOS modules** (in `modules/services.nix`) for system-wide services
+2. **Chezmoi scripts** for user-specific services
+
+See [../docs/USER_SERVICES.md](../docs/USER_SERVICES.md) for detailed guidelines.
+
 ## Important Notes
 
 - Always test configuration before switching

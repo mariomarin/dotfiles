@@ -351,6 +351,15 @@ make lint     # Lint all files
   - `feat: add tmux.nvim for better integration`
   - `docs: update tmux keybindings README`
 
+## User Services Management
+
+We use two approaches for managing systemd user services:
+
+- **NixOS Modules**: For system-wide services that all users need
+- **Chezmoi Scripts**: For user-specific services and configurations
+
+See [docs/USER_SERVICES.md](docs/USER_SERVICES.md) for detailed comparison and guidelines.
+
 ## NixOS Integration Patterns
 
 ### Syncthing Systemd User Unit
