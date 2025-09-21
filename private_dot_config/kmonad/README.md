@@ -1,6 +1,6 @@
 # KMonad Configuration
 
-Advanced keyboard remapping with Carabiner-style keymaps for ThinkPad T470.
+Advanced keyboard remapping with Carabiner-style keymaps and Space Cadet keyboard emulation for ThinkPad T470.
 
 ## Features
 
@@ -9,7 +9,11 @@ Advanced keyboard remapping with Carabiner-style keymaps for ThinkPad T470.
 | Physical Key | Mapped To | Description |
 | --- | --- | --- |
 | Caps Lock | Control/Escape | Tap for Escape, hold for Control |
-| Right Alt | Navigation Layer | Hold to activate vim-style navigation |
+| Tab | Tab/Hyper | Tap for Tab, hold for Hyper (Ctrl+Meta+Alt) |
+| Left Shift | (/Shift | Tap for (, hold for Shift |
+| Right Shift | )/Shift | Tap for ), hold for Shift |
+| Left Alt | </Alt | Tap for <, hold for Alt |
+| Right Alt | >/Navigation | Tap for >, hold for Navigation layer |
 
 ### Navigation Layer (Hold Right Alt)
 

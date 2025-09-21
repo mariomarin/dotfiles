@@ -1,8 +1,11 @@
 ;; KMonad configuration for ThinkPad T470 with Carabiner-style keymaps
 ;; This configuration provides:
 ;; - Caps Lock as Control (hold) / Escape (tap)
+;; - Space Cadet keyboard emulation:
+;;   - Shift keys tap for parentheses: ( )
+;;   - Alt keys tap for angle brackets: < >
+;;   - Tab as Hyper modifier (Ctrl+Meta+Alt)
 ;; - Better vim navigation with hjkl arrows on a layer
-;; - Media keys and function keys on layers
 ;; - Home row modifiers for ergonomic typing
 
 (defcfg
@@ -35,6 +38,18 @@
 (defalias
   ;; Caps Lock as Control/Escape (tap for Escape, hold for Control)
   cap (tap-hold-next-release 200 esc lctl)
+  
+  ;; Space Cadet keyboard emulation
+  ;; Shift keys tap for parentheses
+  lspc (tap-hold-next-release 200 \( lsft)  ;; Left shift → (
+  rspc (tap-hold-next-release 200 \) rsft)  ;; Right shift → )
+  
+  ;; Alt keys tap for angle brackets
+  lapc (tap-hold-next-release 200 < lalt)   ;; Left alt → <
+  rapc (tap-hold-next-release 200 > @nav)   ;; Right alt → > (tap) or navigation layer (hold)
+  
+  ;; Tab as hyper modifier (Ctrl+Meta+Alt)
+  hyper (tap-hold-next-release 200 tab (around (around lctl lmet) lalt))
   
   ;; Home row modifiers (optional - for more ergonomic modifier access)
   ;; Left hand
@@ -72,10 +87,10 @@
 (deflayer base
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  fn   lctl lmet lalt           spc            @nav prnt rctl pgup up   pgdn
+  @lspc z    x    c    v    b    n    m    ,    .    /    @rspc
+  fn   lctl lmet @lapc           spc            @rapc prnt rctl pgup up   pgdn
                                                               left down rght
 )
 
