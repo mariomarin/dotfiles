@@ -124,6 +124,7 @@ Enhanced session picker with icons and preview pane showing session contents.
 | `M-n` | Rename current window |
 | `M-S-q` | Close pane |
 | `M-S-e` | Detach from tmux |
+| `M-S-c` | Reload tmux configuration |
 
 #### tmux-harpoon
 
