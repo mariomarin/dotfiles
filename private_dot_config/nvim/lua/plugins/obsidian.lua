@@ -18,7 +18,7 @@ return {
     },
     completion = {
       nvim_cmp = false,
-      blink_cmp = true, -- Use blink.cmp for completion
+      blink = true, -- Use blink.cmp for completion
       min_chars = 2,
     },
     mappings = {
