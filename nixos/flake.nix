@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration for ThinkPad T470";
+  description = "NixOS configurations for multiple hosts";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
@@ -20,22 +20,10 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nur, home-manager, claude-code-nix, ... }@inputs: {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-
-      modules = [
-        # Main configuration
-        ./configuration.nix
-
-        # Hardware configuration for ThinkPad T470
-        nixos-hardware.nixosModules.lenovo-thinkpad-t470s
-
-        # Enable common hardware settings
-        nixos-hardware.nixosModules.common-cpu-intel
-        nixos-hardware.nixosModules.common-pc-laptop
-        nixos-hardware.nixosModules.common-pc-laptop-ssd
-
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nur, home-manager, claude-code-nix, ... }@inputs:
+    let
+      # Common modules shared by all hosts
+      commonModules = [
         # NUR overlay
         { nixpkgs.overlays = [ nur.overlays.default ]; }
 
@@ -56,7 +44,47 @@
         { _module.args = { inherit inputs; }; }
       ];
 
-      specialArgs = { inherit inputs; };
+      # Helper function to create a NixOS system
+      mkSystem = { hostname, system, modules }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = commonModules ++ modules;
+          specialArgs = { inherit inputs; };
+        };
+    in
+    {
+      nixosConfigurations = {
+        # Physical ThinkPad T470 with full desktop
+        nixos = mkSystem {
+          hostname = "nixos";
+          system = "x86_64-linux";
+          modules = [
+            # Main configuration
+            ./configuration.nix
+
+            # Host-specific configuration
+            ./hosts/t470/configuration.nix
+
+            # Hardware configuration for ThinkPad T470
+            nixos-hardware.nixosModules.lenovo-thinkpad-t470s
+            nixos-hardware.nixosModules.common-cpu-intel
+            nixos-hardware.nixosModules.common-pc-laptop
+            nixos-hardware.nixosModules.common-pc-laptop-ssd
+          ];
+        };
+
+        # Headless VM configuration
+        vm-headless = mkSystem {
+          hostname = "vm-headless";
+          system = "x86_64-linux";
+          modules = [
+            # Main configuration (shared)
+            ./configuration.nix
+
+            # VM-specific configuration
+            ./hosts/vm/configuration.nix
+          ];
+        };
+      };
     };
-  };
 }

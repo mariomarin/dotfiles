@@ -1,114 +1,100 @@
 { config, pkgs, lib, ... }:
 
+let
+  cfg = config.custom.desktop;
+in
 {
-  # X11 configuration
-  services.xserver = {
-    enable = true;
-    xkb.layout = "us";
-    xkb.variant = "altgr-intl";
+  options.custom.desktop = {
+    enable = lib.mkEnableOption "desktop environment";
 
-    displayManager.lightdm = {
+    type = lib.mkOption {
+      type = lib.types.enum [ "gnome" "hyprland" "leftwm" ];
+      default = "gnome";
+      description = "Desktop environment to use";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    # X11 configuration
+    services.xserver = {
       enable = true;
-      greeters.slick = {
-        enable = true;
-        theme.name = "Zukitre-dark";
-      };
-    };
+      xkb.layout = "us";
+      xkb.variant = "altgr-intl";
 
-    # Start GNOME Keyring with SSH support and polkit authentication agent
-    displayManager.sessionCommands = ''
-      eval $(${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
-      export SSH_AUTH_SOCK
-      
-      # Start polkit-gnome authentication agent if not already running
-      ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
-    '';
-
-    windowManager.leftwm.enable = true;
-
-    desktopManager = {
-      xterm.enable = false;
-      xfce = {
-        enable = true;
-        noDesktop = true;
-        enableXfwm = false;
-      };
-    };
-
-    videoDrivers = [ "modesetting" ];
-  };
-
-  services.displayManager.defaultSession = "xfce+leftwm";
-
-  # Input configuration
-  services.libinput = {
-    enable = true;
-    mouse = {
-      tapping = true;
-      scrollMethod = "twofinger";
-      horizontalScrolling = true;
-      leftHanded = false;
-    };
-  };
-
-  # XDG
-  xdg.autostart.enable = true;
-
-  # Audio
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-
-    # Bluetooth audio
-    extraConfig.pipewire."context.modules" = [
-      { name = "libpipewire-module-bluez5"; }
-    ];
-
-    wireplumber.enable = true;
-    wireplumber.configPackages = [
-      (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/10-bluez.conf" ''
-        monitor.bluez.properties = {
-          bluez5.roles = [ a2dp_sink a2dp_source bap_sink bap_source hsp_hs hsp_ag hfp_hf hfp_ag ]
-          bluez5.codecs = [ sbc sbc_xq aac ]
-          bluez5.enable-sbc-xq = true
-          bluez5.hfphsp-backend = "native"
+      displayManager = lib.mkMerge [
+        # Common display manager settings
+        {
+          sessionCommands = ''
+            eval $(${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+            export SSH_AUTH_SOCK
+            
+            # Start polkit-gnome authentication agent if not already running
+            ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
+          '';
         }
-      '')
-    ];
-    wireplumber.extraConfig.bluetoothEnhancements = {
-      "monitor.bluez.properties" = {
-        "bluez5.enable-hw-volume" = true;
-        "bluez5.enable-msbc" = true;
-        "bluez5.enable-sbc-xq" = true;
-        "bluez5.roles" = [ "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
+
+        # GNOME uses GDM
+        (lib.mkIf (cfg.type == "gnome") {
+          gdm.enable = true;
+        })
+
+        # Other desktops use LightDM
+        (lib.mkIf (cfg.type != "gnome") {
+          lightdm = {
+            enable = true;
+            greeters.slick = {
+              enable = true;
+              theme.name = "Zukitre-dark";
+            };
+          };
+        })
+      ];
+
+      windowManager.leftwm.enable = cfg.type == "leftwm";
+
+      desktopManager = {
+        xterm.enable = false;
+        xfce = lib.mkIf (cfg.type == "leftwm") {
+          enable = true;
+          noDesktop = true;
+          enableXfwm = false;
+        };
+        gnome.enable = cfg.type == "gnome";
       };
     };
-  };
 
-  # Bluetooth
-  services.blueman.enable = true;
+    # Hyprland (Wayland)
+    programs.hyprland.enable = cfg.type == "hyprland";
 
-  # Fonts
-  fonts.packages = with pkgs; [
-    corefonts
-    # Note: In NixOS 25.05, individual nerd fonts are available as separate packages
-    nerd-fonts.iosevka
-    nerd-fonts.noto
-    nerd-fonts.roboto-mono
-    nerd-fonts.symbols-only
-  ];
+    # Common desktop packages
+    environment.systemPackages = with pkgs; [
+      gnome-keyring
+      libsecret
+      polkit_gnome
+      xdg-utils
+      xdg-user-dirs
+    ] ++ (lib.optionals (cfg.type == "leftwm") [
+      polybar
+      rofi
+      picom
+      dunst
+      nitrogen
+    ]);
 
-  fonts.fontDir.enable = true;
-  fonts.fontconfig = {
-    enable = true;
-    defaultFonts = {
-      monospace = [ "Iosevka" ];
-      emoji = [ "Noto Color Emoji" ];
-      sansSerif = [ "FreeSans" ];
-      serif = [ "FreeSerif" ];
+    # Enable dconf for GTK apps
+    programs.dconf.enable = true;
+
+    # XDG portal for desktop integration
+    xdg.portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        (if cfg.type == "gnome" then xdg-desktop-portal-gnome
+        else if cfg.type == "hyprland" then xdg-desktop-portal-hyprland
+        else xdg-desktop-portal-gtk)
+      ];
     };
+
+    # Enable GVFS for file manager support
+    services.gvfs.enable = true;
   };
 }

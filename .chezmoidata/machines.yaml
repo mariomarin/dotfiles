@@ -1,0 +1,42 @@
+# Machine-specific configurations
+# This file defines different machine types and their capabilities
+machines:
+    # Physical ThinkPad T470 with full desktop environment
+    t470:
+        type: laptop
+        hostname: nixos # Update with your actual hostname
+        features:
+            desktop: true
+            audio: true
+            bluetooth: true
+            x11: true
+            physical_keyboard: true
+            kmonad: true
+        services:
+            - syncthing
+            - kdeconnect
+            - autostart_apps
+    # VM with SSH-only access (headless server)
+    vm-headless:
+        type: server
+        hostname_pattern: "vm-*" # Matches vm-dev, vm-prod, etc.
+        features:
+            desktop: false
+            audio: false
+            bluetooth: false
+            x11: false
+            physical_keyboard: false
+            kmonad: false
+        services:
+            - syncthing # Still useful for file sync
+# Default machine type if no match found
+default:
+    type: unknown
+    features:
+        desktop: false
+        audio: false
+        bluetooth: false
+        x11: false
+        physical_keyboard: false
+        kmonad: false
+    services: []

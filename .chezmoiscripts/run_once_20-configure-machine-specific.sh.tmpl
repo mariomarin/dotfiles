@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Configure machine-specific settings based on detected machine type
+
+set -euo pipefail
+
+MACHINE_TYPE="{{ .machineType }}"
+IS_DESKTOP="{{ .machineConfig.features.desktop }}"
+
+echo "Configuring for machine type: $MACHINE_TYPE"
+
+# Desktop-specific configuration
+if [[ "$IS_DESKTOP" == "true" ]]; then
+    echo "Setting up desktop environment..."
+    
+    # Ensure XDG directories exist
+    mkdir -p "$HOME/.config/autostart"
+    mkdir -p "$HOME/.local/share/applications"
+    mkdir -p "$HOME/Pictures/Wallpapers"
+    
+    # Set default applications for GUI
+    if command -v xdg-mime &> /dev/null; then
+        xdg-mime default firefox.desktop x-scheme-handler/http
+        xdg-mime default firefox.desktop x-scheme-handler/https
+        xdg-mime default org.gnome.Nautilus.desktop inode/directory
+    fi
+else
+    echo "Headless machine detected, skipping desktop setup"
+    
+    # Remove desktop-specific directories if they exist
+    rm -rf "$HOME/.config/autostart" 2>/dev/null || true
+    rm -rf "$HOME/.local/share/applications" 2>/dev/null || true
+fi
+
+# SSH key setup for servers
+if [[ "$MACHINE_TYPE" == "vm-headless" ]] || [[ "{{ .machineConfig.type }}" == "server" ]]; then
+    echo "Setting up SSH for server..."
+    
+    # Ensure SSH directory has correct permissions
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+    
+    # Create authorized_keys if it doesn't exist
+    touch "$HOME/.ssh/authorized_keys"
+    chmod 600 "$HOME/.ssh/authorized_keys"
+    
+    echo "Remember to add your SSH public key to ~/.ssh/authorized_keys"
+fi
+
+echo "Machine-specific configuration complete"

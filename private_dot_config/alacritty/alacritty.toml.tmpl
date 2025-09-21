@@ -1,0 +1,3 @@
+{{- if .machineConfig.features.desktop -}}
+{{- include "private_dot_config/alacritty/alacritty.toml.literal" . -}}
+{{- end -}}

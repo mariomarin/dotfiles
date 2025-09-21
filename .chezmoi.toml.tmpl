@@ -1,0 +1,50 @@
+{{/* Determine machine type based on hostname */}}
+{{- $hostname := .chezmoi.hostname -}}
+{{- $machineType := "default" -}}
+{{- $machineConfig := dict -}}
+
+{{/* Check for exact hostname match first */}}
+{{- range $name, $config := .machines -}}
+  {{- if and (hasKey $config "hostname") (eq $config.hostname $hostname) -}}
+    {{- $machineType = $name -}}
+    {{- $machineConfig = $config -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* Check for pattern match if no exact match */}}
+{{- if eq $machineType "default" -}}
+  {{- range $name, $config := .machines -}}
+    {{- if hasKey $config "hostname_pattern" -}}
+      {{- if regexMatch $config.hostname_pattern $hostname -}}
+        {{- $machineType = $name -}}
+        {{- $machineConfig = $config -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* Use default if no match */}}
+{{- if eq $machineType "default" -}}
+  {{- $machineConfig = .machines.default -}}
+{{- end -}}
+
+# Chezmoi configuration
+[data]
+  machineType = {{ $machineType | quote }}
+  machineConfig = {{ $machineConfig | toJson | quote }}
+  
+[git]
+  autoCommit = true
+  autoPush = true
+
+[merge]
+  command = "nvim"
+  args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+
+# Only run certain scripts on machines with desktop
+{{- if not $machineConfig.features.desktop }}
+[scripts]
+  # Skip desktop-related scripts on headless machines
+  "run_after_40-setup-desktop-autostart.sh" = false
+  "run_after_50-setup-desktop-applications.sh" = false
+{{- end }}
