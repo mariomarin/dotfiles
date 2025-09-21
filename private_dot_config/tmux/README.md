@@ -165,7 +165,6 @@ Enhanced session picker with icons and preview pane showing session contents.
 | --- | --- |
 | `prefix :` | Enter command prompt |
 | `prefix r` | Reload tmux configuration |
-| `M-S-c` | Reload tmux configuration (no prefix needed) |
 | `prefix t` | Show clock |
 | `prefix b` | Toggle status bar |
 | `prefix B` | List paste buffers |
