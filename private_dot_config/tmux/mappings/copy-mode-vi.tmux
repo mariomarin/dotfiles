@@ -1,13 +1,23 @@
 # Vi-mode copy configuration
-# Most bindings are handled by tmux-sensible and tmux-yank plugins
-# Only custom bindings that aren't provided by plugins are defined here
+# Native tmux clipboard integration without tmux-yank plugin
 
-# Visual selection (tmux-yank only provides copy, not selection)
+# Detect and set appropriate copy command for X11/Wayland
+if-shell -b 'echo $XDG_SESSION_TYPE | grep -q wayland' \
+  'set -s copy-command "wl-copy"' \
+  'set -s copy-command "xclip -in -selection clipboard"'
+
+# Visual selection
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 bind-key -T copy-mode-vi V send-keys -X select-line
 
-# Rectangle selection (not provided by plugins)
+# Rectangle selection
 bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+
+# Copy bindings (replacing tmux-yank)
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel
+bind-key -T copy-mode-vi Y send-keys -X copy-line
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel
 
 # Jump to other end of selection
 bind-key -T copy-mode-vi o send-keys -X other-end

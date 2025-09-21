@@ -1,6 +1,17 @@
 # Tmux Configuration
 
-Custom tmux configuration with vi-mode, session management, and seamless navigation.
+Custom tmux configuration with vi-mode, session management, seamless navigation, and native clipboard integration.
+
+## Requirements
+
+### Clipboard Support
+
+Native clipboard integration requires:
+
+- **X11**: `xclip` package
+- **Wayland**: `wl-clipboard` package (provides `wl-copy`)
+
+The configuration automatically detects your display server (X11/Wayland) and uses the appropriate clipboard tool.
 
 ## Keybindings
 
@@ -43,6 +54,13 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 | `M-Arrow` | Resize panes by 1 step (with vim awareness) |
 | `prefix C-g` | Split window and run navi |
 
+### Clipboard Operations
+
+| Keybinding | Description |
+| --- | --- |
+| `prefix y` | Copy current command line to clipboard |
+| `prefix Y` | Copy current pane's working directory to clipboard |
+
 ### Copy Mode
 
 | Keybinding | Description |
@@ -55,8 +73,10 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 | --- | --- |
 | `v` | Begin selection |
 | `V` | Select line |
-| `y` | Copy selection to clipboard (tmux-yank) |
-| `Y` | Copy line to clipboard (tmux-yank) |
+| `y` | Copy selection to clipboard |
+| `Y` | Copy current line |
+| `Enter` | Copy selection to clipboard and exit |
+| `MouseDragEnd1Pane` | Copy mouse selection to clipboard |
 | `C-v` | Rectangle selection toggle |
 | `o` | Jump to other end of selection |
 | `C-c` | Clear selection |
@@ -80,15 +100,6 @@ Custom tmux configuration with vi-mode, session management, and seamless navigat
 | --- | --- |
 | `prefix C-s` | Save tmux session |
 | `prefix C-r` | Restore tmux session |
-
-#### tmux-yank (Copy Mode)
-
-| Keybinding | Description |
-| --- | --- |
-| `y` | Copy selection to system clipboard |
-| `Y` | Copy line to system clipboard |
-| `C-y` | Copy selection and paste to command line |
-| `M-y` | Copy selection and paste to command line (open mode) |
 
 #### tmux-tilish (i3wm-style)
 
