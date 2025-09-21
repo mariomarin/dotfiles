@@ -11,11 +11,6 @@
         device = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
         # Read the configuration from the chezmoi-managed location
         config = builtins.readFile "${config.users.users.mario.home}/.config/kmonad/laptop.kbd";
-
-        # Optional: define extra options
-        extraOptions = [
-          # "--log-level" "debug"  # Uncomment for debugging
-        ];
       };
     };
   };
