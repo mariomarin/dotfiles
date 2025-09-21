@@ -15,3 +15,6 @@ bind-key "T" run-shell "sesh connect \"$(
 )\""
 
 bind -N "last-session (via sesh) " L run-shell "sesh last"
+
+# Reload tmux configuration (override tmux-tilish default)
+bind-key -n M-S-c source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"

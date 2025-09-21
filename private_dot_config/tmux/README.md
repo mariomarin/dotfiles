@@ -120,7 +120,6 @@ The configuration automatically detects your display server (X11/Wayland) and us
 | `M-n` | Rename current window |
 | `M-S-q` | Close pane |
 | `M-S-e` | Detach from tmux |
-| `M-S-c` | Reload tmux config |
 
 #### tmux-harpoon
 
@@ -160,6 +159,8 @@ The configuration automatically detects your display server (X11/Wayland) and us
 | Keybinding | Description |
 | --- | --- |
 | `prefix :` | Enter command prompt |
+| `prefix r` | Reload tmux configuration |
+| `M-S-c` | Reload tmux configuration (no prefix needed) |
 | `prefix t` | Show clock |
 | `prefix b` | Toggle status bar |
 | `prefix B` | List paste buffers |

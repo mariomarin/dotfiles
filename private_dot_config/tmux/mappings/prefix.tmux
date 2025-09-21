@@ -29,3 +29,6 @@ bind -n M-Tab last-window   # move to last active window
 
 # toggle status bar
 bind-key b set-option status
+
+# reload configuration
+bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"
