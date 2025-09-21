@@ -1,100 +1,92 @@
 { config, pkgs, lib, ... }:
 
-{
-  # Enable KMonad for advanced keyboard remapping
-  services.kmonad = {
-    enable = true;
-    keyboards = {
-      laptop = {
-        # ThinkPad T470 internal keyboard
-        # You may need to adjust this path for your specific hardware
-        device = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
-        # Inline configuration to avoid absolute path issues
-        config = ''
-          ;; KMonad configuration for ThinkPad T470 with Carabiner-style keymaps
-          ;; This configuration provides:
-          ;; - Caps Lock as Control (hold) / Escape (tap)
-          ;; - Space Cadet keyboard emulation:
-          ;;   - Shift keys tap for parentheses: ( )
-          ;;   - Alt keys tap for angle brackets: < >
-          ;;   - Tab as Hyper modifier (Ctrl+Meta+Alt)
-          ;; - Better vim navigation with hjkl arrows on a layer
-          ;; - Home row modifiers for ergonomic typing
+let
+  # KMonad configuration as a separate file for better syntax highlighting
+  laptop-kbd = pkgs.writeText "laptop.kbd" ''
+    ;; KMonad configuration for ThinkPad T470 with Carabiner-style keymaps
+    ;; This configuration provides:
+    ;; - Caps Lock as Control (hold) / Escape (tap)
+    ;; - Space Cadet keyboard emulation:
+    ;;   - Shift keys tap for parentheses: ( )
+    ;;   - Alt keys tap for angle brackets: < >
+    ;;   - Tab as Hyper modifier (Ctrl+Meta+Alt)
+    ;; - Better vim navigation with hjkl arrows on a layer
+    ;; - Home row modifiers for ergonomic typing
 
-          (defcfg
-            ;; Linux-specific input/output configuration
-            input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
-            output (uinput-sink "KMonad output")
+    (defcfg
+      ;; Linux-specific input/output configuration
+      input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
+      output (uinput-sink "KMonad output")
 
-            ;; Optional: enable compose key
-            cmp-seq ralt
+      ;; Optional: enable compose key
+      cmp-seq ralt
 
-            ;; Optional: disable command execution
-            fallthrough true
+      ;; Optional: disable command execution
+      fallthrough true
 
-            ;; Set this to false to disable any KMonad features
-            allow-cmd false
-          )
+      ;; Set this to false to disable any KMonad features
+      allow-cmd false
+    )
 
-          ;; Define the source keyboard layout (ThinkPad T470)
-          (defsrc
-            esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
-            grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
-            tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-            caps a    s    d    f    g    h    j    k    l    ;    '    ret
-            lsft z    x    c    v    b    n    m    ,    .    /    rsft
-            fn   lctl lmet lalt           spc            ralt prnt rctl pgup up   pgdn
-                                                                        left down rght
-          )
+    ;; Define the source keyboard layout (ThinkPad T470)
+    (defsrc
+      esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+      grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+      tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+      caps a    s    d    f    g    h    j    k    l    ;    '    ret
+      lsft z    x    c    v    b    n    m    ,    .    /    rsft
+      fn   lctl lmet lalt           spc            ralt prnt rctl pgup up   pgdn
+                                                                  left down rght
+    )
 
-          ;; Aliases for complex behaviors
-          (defalias
-            ;; Caps Lock as Control/Escape (tap for Escape, hold for Control)
-            cap (tap-hold-next-release 200 esc lctl)
-            
-            ;; Space Cadet keyboard emulation
-            ;; Shift keys tap for parentheses
-            lspc (tap-hold-next-release 200 \( lsft)  ;; Left shift → (
-            rspc (tap-hold-next-release 200 \) rsft)  ;; Right shift → )
-            
-            ;; Alt keys tap for angle brackets
-            lapc (tap-hold-next-release 200 < lalt)   ;; Left alt → <
-            rapc (tap-hold-next-release 200 > @nav)   ;; Right alt → > (tap) or navigation layer (hold)
-            
-            ;; Tab as hyper modifier (Ctrl+Meta+Alt)
-            hyper (tap-hold-next-release 200 tab (around (around lctl lmet) lalt))
-            
-            ;; Home row modifiers (optional - for more ergonomic modifier access)
-            ;; Left hand
-            a_met (tap-hold-next-release 200 a lmet)
-            s_alt (tap-hold-next-release 200 s lalt)
-            d_sft (tap-hold-next-release 200 d lsft)
-            f_ctl (tap-hold-next-release 200 f lctl)
-            
-            ;; Right hand
-            j_ctl (tap-hold-next-release 200 j rctl)
-            k_sft (tap-hold-next-release 200 k rsft)
-            l_alt (tap-hold-next-release 200 l ralt)
-            ;_met (tap-hold-next-release 200 ; rmet)
-            
-            ;; Layer toggles
-            nav (layer-toggle navigation)  ;; Hold for navigation layer
-            sym (layer-toggle symbols)     ;; Hold for symbols layer
-            num (layer-toggle numbers)     ;; Hold for numbers layer
-            
-            ;; Vim-style navigation keys (when nav layer is active)
-            vim_h left
-            vim_j down
-            vim_k up
-            vim_l rght
-            
-            ;; Common shortcuts
-            copy C-c
-            paste C-v
-            cut C-x
-            undo C-z
-            redo C-S-z
-          )
+    ;; Aliases for complex behaviors
+    (defalias
+      ;; Caps Lock as Control/Escape (tap for Escape, hold for Control)
+      cap (tap-hold-next-release 200 esc lctl)
+      
+      ;; Space Cadet keyboard emulation
+      ;; Shift keys tap for parentheses
+      lspc (tap-hold-next-release 200 \( lsft)  ;; Left shift → (
+      rspc (tap-hold-next-release 200 \) rsft)  ;; Right shift → )
+      
+      ;; Alt keys tap for angle brackets
+      lapc (tap-hold-next-release 200 < lalt)   ;; Left alt → <
+      rapc (tap-hold-next-release 200 > @nav)   ;; Right alt → > (tap) or navigation layer (hold)
+      
+      ;; Tab as hyper modifier (Ctrl+Meta+Alt)
+      hyper (tap-hold-next-release 200 tab (around (around lctl lmet) lalt))
+      
+      ;; Home row modifiers (optional - for more ergonomic modifier access)
+      ;; Left hand
+      a_met (tap-hold-next-release 200 a lmet)
+      s_alt (tap-hold-next-release 200 s lalt)
+      d_sft (tap-hold-next-release 200 d lsft)
+      f_ctl (tap-hold-next-release 200 f lctl)
+      
+      ;; Right hand
+      j_ctl (tap-hold-next-release 200 j rctl)
+      k_sft (tap-hold-next-release 200 k rsft)
+      l_alt (tap-hold-next-release 200 l ralt)
+      ;_met (tap-hold-next-release 200 ; rmet)
+      
+      ;; Layer toggles
+      nav (layer-toggle navigation)  ;; Hold for navigation layer
+      sym (layer-toggle symbols)     ;; Hold for symbols layer
+      num (layer-toggle numbers)     ;; Hold for numbers layer
+      
+      ;; Vim-style navigation keys (when nav layer is active)
+      vim_h left
+      vim_j down
+      vim_k up
+      vim_l rght
+      
+      ;; Common shortcuts
+      copy C-c
+      paste C-v
+      cut C-x
+      undo C-z
+      redo C-S-z
+    )
 
           ;; Base layer with Carabiner-style modifications
           (deflayer base
@@ -153,7 +145,19 @@
                                                                         left down rght
           )
           |#
-        '';
+  '';
+in
+{
+  # Enable KMonad for advanced keyboard remapping
+  services.kmonad = {
+    enable = true;
+    keyboards = {
+      laptop = {
+        # ThinkPad T470 internal keyboard
+        # You may need to adjust this path for your specific hardware
+        device = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
+        # Use the configuration from the let binding
+        config = builtins.readFile laptop-kbd;
       };
     };
   };
