@@ -57,7 +57,7 @@
   },
   "nvim-ts-autotag": { "branch": "main", "commit": "c4ca798ab95b316a768d51eaaaee48f64a4a46bc" },
   "nvim-web-devicons": { "branch": "master", "commit": "6e51ca170563330e063720449c21f43e27ca0bc1" },
-  "obsidian.nvim": { "branch": "main", "commit": "be28b70c59f87aaa1b11b97c0c8c4bc842e96f02" },
+  "obsidian.nvim": { "branch": "main", "commit": "14e0427bef6c55da0d63f9a313fd9941be3a2479" },
   "one-small-step-for-vimkind": {
     "branch": "main",
     "commit": "91b4e0fb0d640def73812aceb22dafb99261dd67"

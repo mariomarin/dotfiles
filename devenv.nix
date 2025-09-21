@@ -134,14 +134,4 @@
       };
     };
   };
-
-  # Shell initialization
-  enterShell = ''
-    echo "🚀 Development environment loaded"
-    echo "📝 Pre-commit hooks installed - will format staged files on commit"
-    echo "Available formatters: nixpkgs-fmt, stylua, shfmt, biome, yamlfmt, taplo, markdownlint"
-    echo "Available LSPs: nil (Nix), lua-language-server, bash-language-server, jsonls, yaml-language-server, taplo, marksman"
-    echo "Run 'make format' to format all files"
-    echo "Run 'make lint' to check all files"
-  '';
 }

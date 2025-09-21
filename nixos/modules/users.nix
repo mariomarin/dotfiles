@@ -8,11 +8,13 @@
     extraGroups = [
       "adbusers"
       "docker"
+      "input" # Required for KMonad
       "kvm"
       "libvirtd"
       "networkmanager"
       "podman"
       "qemu-libvirtd"
+      "uinput" # Required for KMonad
       "wheel"
     ];
     shell = pkgs.zsh;

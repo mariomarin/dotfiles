@@ -1,6 +1,9 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [
+    ./services/kmonad.nix
+  ];
   # iOS device support
   services.usbmuxd = {
     enable = true;
@@ -19,16 +22,17 @@
   # Power management
   services.upower.enable = true;
 
-  # Keyboard remapping
-  services.interception-tools = {
-    enable = true;
-    udevmonConfig = ''
-      - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.caps2esc}/bin/caps2esc | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
-        DEVICE:
-          EVENTS:
-            EV_KEY: [KEY_CAPSLOCK, KEY_ESC]
-    '';
-  };
+  # Keyboard remapping - Replaced by KMonad for more advanced features
+  # Note: If you want to use interception-tools instead of KMonad, uncomment below
+  # services.interception-tools = {
+  #   enable = true;
+  #   udevmonConfig = ''
+  #     - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.caps2esc}/bin/caps2esc | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
+  #       DEVICE:
+  #         EVENTS:
+  #           EV_KEY: [KEY_CAPSLOCK, KEY_ESC]
+  #   '';
+  # };
 
   # Polkit authentication agent
   systemd = {
