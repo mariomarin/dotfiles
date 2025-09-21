@@ -39,6 +39,11 @@
   ;; Caps Lock as Control/Escape (tap for Escape, hold for Control)
   cap (tap-hold-next-release 200 esc lctl)
   
+  ;; Layer toggles (define these first as they're referenced by other aliases)
+  nav (layer-toggle navigation)  ;; Hold for navigation layer
+  sym (layer-toggle symbols)     ;; Hold for symbols layer
+  num (layer-toggle numbers)     ;; Hold for numbers layer
+  
   ;; Space Cadet keyboard emulation
   ;; Shift keys tap for parentheses
   lspc (tap-hold-next-release 200 \( lsft)  ;; Left shift → (
@@ -63,11 +68,6 @@
   k_sft (tap-hold-next-release 200 k rsft)
   l_alt (tap-hold-next-release 200 l ralt)
   ;_met (tap-hold-next-release 200 ; rmet)
-  
-  ;; Layer toggles
-  nav (layer-toggle navigation)  ;; Hold for navigation layer
-  sym (layer-toggle symbols)     ;; Hold for symbols layer
-  num (layer-toggle numbers)     ;; Hold for numbers layer
   
   ;; Vim-style navigation keys (when nav layer is active)
   vim_h left
