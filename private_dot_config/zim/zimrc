@@ -28,6 +28,8 @@ zmodule zsh-users/zsh-completions --fpath src
 zmodule ${ZIM_CONFIG_FILE:h}/modules/container-use
 # git-branchless completions - must be loaded before completion module
 zmodule ${ZIM_CONFIG_FILE:h}/modules/git-branchless
+# sesh - Smart session manager with tmux integration
+zmodule ${ZIM_CONFIG_FILE:h}/modules/sesh
 # claude-helpers - Claude Code helper functions
 zmodule ${ZIM_CONFIG_FILE:h}/modules/claude-helpers
 # Enables and configures smart and extensive tab completion.

@@ -261,6 +261,17 @@ External tools support dynamic version management:
 
 - Template files (`.chezmoiexternal.toml.tmpl`) check for pinned versions first
 
+### Zsh Configuration Preferences
+
+#### Code Style
+
+- **Language**: Write proper zsh code, not bash
+- **Approach**: Use functional middle ground approach
+- **Control Flow**: Prefer early returns over nested conditionals
+- **Error Handling**: Use `|| return` for command failures
+- **Variables**: Always quote variables and use local scope
+- **Functions**: Use descriptive names with hyphens (e.g., `sesh-sessions`)
+
 ### Zsh Completions
 
 #### Custom Zimfw Modules
@@ -268,7 +279,7 @@ External tools support dynamic version management:
 To add completions for new tools:
 
 1. Create a module directory: `private_dot_config/zim/modules/<tool-name>/`
-2. Create `init.zsh` that generates completions dynamically using Bash-compatible syntax
+2. Create `init.zsh` that generates completions dynamically
 3. Add to `zimrc` BEFORE the completion module:
 
    ```zsh
@@ -283,7 +294,7 @@ Example: The `container-use` module auto-generates completions for both `contain
 - Completions are generated dynamically when the tool binary changes
 - Store completion files in the module's `functions/` subdirectory
 - Add to `fpath` in the module's init.zsh
-- Use Bash-compatible code for Zimfw modules to ensure shfmt compatibility
+- Write idiomatic zsh code with proper error handling
 
 ### Git Configuration
 

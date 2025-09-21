@@ -23,20 +23,24 @@ The configuration automatically detects your display server (X11/Wayland) and us
 | --- | --- |
 | `prefix C-c` | Create new session |
 | `prefix C-f` | Find and switch to session |
-| `prefix T` | **Session picker (sesh)** - Interactive session management |
-| `prefix L` | Switch to last session |
+| `prefix T` | **Session picker (sesh)** - Interactive session management with preview |
+| `prefix L` | Switch to last session (via sesh) |
 
 #### Sesh Session Picker (`prefix T`)
+
+Enhanced session picker with icons and preview pane showing session contents.
 
 | Keybinding | Description |
 | --- | --- |
 | `Tab`/`Shift+Tab` | Navigate up/down |
-| `C-a` | Show all sessions |
+| `C-a` | Show all sessions with icons |
 | `C-t` | Show tmux sessions only |
 | `C-g` | Show config directories |
 | `C-x` | Show zoxide directories |
 | `C-f` | Find directories |
 | `C-d` | Kill selected session |
+
+**Zsh Integration**: Press `Alt+s` in terminal to quickly connect to sessions
 
 ### Window Management
 
