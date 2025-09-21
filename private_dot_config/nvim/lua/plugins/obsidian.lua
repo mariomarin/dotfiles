@@ -17,7 +17,7 @@ return {
       },
     },
     completion = {
-      nvim_cmp = true,
+      nvim_cmp = false, -- Disable nvim-cmp integration (LazyVim uses blink.cmp now)
       min_chars = 2,
     },
     mappings = {
