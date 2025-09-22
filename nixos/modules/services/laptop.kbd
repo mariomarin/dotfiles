@@ -49,9 +49,9 @@
   lspc (tap-hold-next-release 200 \( lsft)  ;; Left shift → (
   rspc (tap-hold-next-release 200 \) rsft)  ;; Right shift → )
   
-  ;; Alt keys tap for angle brackets
-  lapc (tap-hold-next-release 200 < lalt)   ;; Left alt → <
-  rapc (tap-hold-next-release 200 > @nav)   ;; Right alt → > (tap) or navigation layer (hold)
+  ;; Keep left alt standard for international input (accented characters)
+  ;; Right alt: tap for >, hold for navigation layer
+  ranav (tap-hold-next-release 200 > @nav)   ;; Right alt → > (tap) or navigation layer (hold)
   
   ;; Tab as hyper modifier (Ctrl+Meta+Alt)
   hyper (tap-hold-next-release 200 tab (around (around lctl lmet) lalt))
@@ -90,7 +90,7 @@
   @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
   @lspc z    x    c    v    b    n    m    ,    .    /    @rspc
-  fn   lctl lmet @lapc           spc            @rapc prnt rctl pgup up   pgdn
+  fn   lctl lmet lalt           spc            @ranav prnt rctl pgup up   pgdn
                                                               left down rght
 )
 
