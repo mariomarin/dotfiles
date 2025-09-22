@@ -10,6 +10,8 @@ Advanced keyboard remapping with Carabiner-style keymaps and Space Cadet keyboar
 | --- | --- | --- |
 | Caps Lock | Control/Escape | Tap for Escape, hold for Control |
 | Tab | Tab/Hyper | Tap for Tab, hold for Hyper (Ctrl+Meta+Alt) |
+| Left Ctrl | {/Ctrl | Tap for {, hold for Control |
+| Right Ctrl | }/Ctrl | Tap for }, hold for Control |
 | Left Shift | (/Shift | Tap for (, hold for Shift |
 | Right Shift | )/Shift | Tap for ), hold for Shift |
 | Left Alt | </Alt | Tap for <, hold for Alt (preserves international input) |

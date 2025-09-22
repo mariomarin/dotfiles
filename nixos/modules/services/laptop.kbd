@@ -58,6 +58,10 @@
   ;; Tab as hyper modifier (Ctrl+Meta+Alt)
   hyper (tap-hold-next-release 200 tab (around (around lctl lmet) lalt))
   
+  ;; Control keys with tap functionality for curly braces
+  lctl{ (tap-hold-next-release 200 (around lsft [) lctl)  ;; Left ctrl → { (tap) or Ctrl (hold)
+  rctl} (tap-hold-next-release 200 (around lsft ]) rctl)  ;; Right ctrl → } (tap) or Ctrl (hold)
+  
   ;; Home row modifiers (optional - for more ergonomic modifier access)
   ;; Left hand
   a_met (tap-hold-next-release 200 a lmet)
@@ -92,7 +96,7 @@
   @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
   @lspc z    x    c    v    b    n    m    ,    .    /    @rspc
-  fn   lctl lmet @lalt<           spc            @ralt> prnt rctl pgup up   pgdn
+  fn   @lctl{ lmet @lalt<           spc            @ralt> prnt @rctl} pgup up   pgdn
                                                               left down rght
 )
 
