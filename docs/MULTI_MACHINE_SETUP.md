@@ -82,6 +82,24 @@ nixos/
 
 ### Building for Different Hosts
 
+Using make targets (recommended):
+
+```bash
+# From repository root
+make nixos                      # Build T470 configuration (default)
+make vm-switch                  # Build VM configuration locally
+make vm-test                    # Test VM config without switching
+
+# Or from nixos directory
+cd nixos
+make switch                     # Build default (T470)
+make HOST=vm-headless switch    # Build VM config
+make vm/switch                  # Shortcut for VM
+make hosts                      # Show available configurations
+```
+
+Using nixos-rebuild directly:
+
 ```bash
 # Build T470 configuration
 sudo nixos-rebuild switch --flake .#nixos
@@ -94,6 +112,24 @@ sudo nixos-rebuild test --flake .#vm-headless
 ```
 
 ### Deploying to Remote VM
+
+Using make targets:
+
+```bash
+# From repository root
+make deploy-vm TARGET_HOST=user@vm-hostname
+
+# From nixos directory
+cd nixos
+make deploy-vm TARGET_HOST=user@192.168.1.100
+make remote/switch HOST=vm-headless TARGET_HOST=user@host
+make remote/test TARGET_HOST=user@host    # Test first
+
+# Build on remote server (faster for slow upload)
+make deploy-vm TARGET_HOST=user@vm BUILD_HOST=user@vm
+```
+
+Manual deployment:
 
 ```bash
 # Build locally and deploy to remote

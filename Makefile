@@ -122,6 +122,12 @@ apply: chezmoi/apply
 quick-apply: chezmoi/quick-apply
 diff: chezmoi/diff
 nvim: nvim/sync
+
+# Multi-machine deployment aliases
+vm-switch: nixos/vm/switch
+vm-test: nixos/vm/test
+deploy-vm: 
+	@$(MAKE) -C nixos deploy-vm TARGET_HOST=$(TARGET_HOST) BUILD_HOST=$(BUILD_HOST)
 tmux: tmux/reload
 zim: zim/update
 update: topgrade/update
