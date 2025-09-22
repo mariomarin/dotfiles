@@ -12,7 +12,7 @@ Advanced keyboard remapping with Carabiner-style keymaps and Space Cadet keyboar
 | Tab | Tab/Hyper | Tap for Tab, hold for Hyper (Ctrl+Meta+Alt) |
 | Left Shift | (/Shift | Tap for (, hold for Shift |
 | Right Shift | )/Shift | Tap for ), hold for Shift |
-| Left Alt | Alt | Standard Alt (preserved for international input) |
+| Left Alt | </Alt | Tap for <, hold for Alt (preserves international input) |
 | Right Alt | >/Navigation | Tap for >, hold for Navigation layer |
 
 ### Navigation Layer (Hold Right Alt)

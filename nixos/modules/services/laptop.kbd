@@ -3,7 +3,7 @@
 ;; - Caps Lock as Control (hold) / Escape (tap)
 ;; - Space Cadet keyboard emulation:
 ;;   - Shift keys tap for parentheses: ( )
-;;   - Alt keys tap for angle brackets: < >
+;;   - Alt keys tap for angle brackets: < > (hold preserves Alt for intl input)
 ;;   - Tab as Hyper modifier (Ctrl+Meta+Alt)
 ;; - Better vim navigation with hjkl arrows on a layer
 ;; - Home row modifiers for ergonomic typing
@@ -49,9 +49,11 @@
   lspc (tap-hold-next-release 200 \( lsft)  ;; Left shift → (
   rspc (tap-hold-next-release 200 \) rsft)  ;; Right shift → )
   
-  ;; Keep left alt standard for international input (accented characters)
+  ;; Alt keys with tap functionality that preserves Alt behavior when held
+  ;; Left alt: tap for <, hold for Alt (preserves international input)
+  lalt< (tap-hold-next-release 200 (around lsft ,) lalt)  ;; Left alt → < (tap) or Alt (hold)
   ;; Right alt: tap for >, hold for navigation layer
-  ranav (tap-hold-next-release 200 > @nav)   ;; Right alt → > (tap) or navigation layer (hold)
+  ralt> (tap-hold-next-release 200 (around lsft .) @nav)   ;; Right alt → > (tap) or navigation layer (hold)
   
   ;; Tab as hyper modifier (Ctrl+Meta+Alt)
   hyper (tap-hold-next-release 200 tab (around (around lctl lmet) lalt))
@@ -90,7 +92,7 @@
   @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
   @lspc z    x    c    v    b    n    m    ,    .    /    @rspc
-  fn   lctl lmet lalt           spc            @ranav prnt rctl pgup up   pgdn
+  fn   lctl lmet @lalt<           spc            @ralt> prnt rctl pgup up   pgdn
                                                               left down rght
 )
 
