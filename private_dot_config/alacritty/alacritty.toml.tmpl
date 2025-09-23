@@ -1,5 +1,3 @@
 {{- if .machineConfig.features.desktop -}}
-# Alacritty Configuration
-# TODO: Add actual alacritty.toml content here
-# For now, this is a placeholder that only gets created on desktop machines
+{{- include "private_dot_config/alacritty/alacritty.toml.literal" . -}}
 {{- end -}}
