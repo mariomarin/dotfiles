@@ -34,8 +34,6 @@ export KUBECONFIG=~/.kube/config
 # fly
 export FLYCTL_INSTALL="$HOME/.fly"
 
-# devbox
-eval "$(devbox global shellenv --init-hook)"
 
 # PATH
 typeset -U PATH path
