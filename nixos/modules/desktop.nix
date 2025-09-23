@@ -68,7 +68,12 @@ in
         };
         gnome.enable = cfg.type == "gnome";
       };
+
+      videoDrivers = [ "modesetting" ];
     };
+
+    # Set the default session for LeftWM
+    services.displayManager.defaultSession = lib.mkIf (cfg.type == "leftwm") "xfce+leftwm";
 
     # Hyprland (Wayland)
     programs.hyprland.enable = cfg.type == "hyprland";
