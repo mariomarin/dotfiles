@@ -4,15 +4,15 @@
 [misc]
 # Don't update these - handled separately or not needed
 disable = [
-    "system",         # System update (NixOS uses flakes, not channels)
-    "containers",     # Docker/Podman containers
-    "firmware",       # Firmware updates (handle manually)
-    "restarts",       # Don't auto-restart services
-    "vscode",         # VSCode extensions (using Neovim instead)
-    "poetry",         # Poetry packages (not using)
-    "yarn",           # Yarn global packages (using pnpm instead)
-    "rustup",         # Rustup (managed by Nix on NixOS)
-    "bun",            # Bun (managed by NixOS)
+  "system",     # System update (NixOS uses flakes, not channels)
+  "containers", # Docker/Podman containers
+  "firmware",   # Firmware updates (handle manually)
+  "restarts",   # Don't auto-restart services
+  "vscode",     # VSCode extensions (using Neovim instead)
+  "poetry",     # Poetry packages (not using)
+  "yarn",       # Yarn global packages (using pnpm instead)
+  "rustup",     # Rustup (managed by Nix on NixOS)
+  "bun",        # Bun (managed by NixOS)
 ]
 
 # Don't retry failed steps automatically
@@ -38,8 +38,17 @@ cleanup = true
 "NixOS Flake" = "cd $(chezmoi source-path) && make nixos/switch"
 
 [post_commands]
-# Add updated lock files to chezmoi after updates
-"Add lock files to chezmoi" = "chezmoi add ~/.config/nvim/lazy-lock.json 2>/dev/null || true"
+# Add and commit updated lock files to chezmoi after updates
+"Commit Neovim plugin updates" = """
+if [ -f ~/.config/nvim/lazy-lock.json ]; then
+    chezmoi add ~/.config/nvim/lazy-lock.json && \
+    cd $(chezmoi source-path) && \
+    if git diff --name-only private_dot_config/nvim/lazy-lock.json | grep -q .; then
+        git add private_dot_config/nvim/lazy-lock.json && \
+        git commit -m 'chore(nvim): update lazy-lock.json'
+    fi
+fi
+"""
 
 [git]
 # Pull git repositories
@@ -77,4 +86,3 @@ enable_pipupgrade = false
 [distrobox]
 # Update distrobox containers
 use_root = false
-
