@@ -110,7 +110,6 @@
     bear # Build EAR - tool for generating compilation database
     bun # Fast JavaScript runtime and package manager
     clang # C language family frontend for LLVM
-    devbox # Instant, portable dev environments
     dive # Docker image explorer and layer analyzer
     git-branchless # High-velocity, monorepo-scale workflow for Git
     gnumake # GNU Make build automation tool
