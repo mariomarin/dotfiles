@@ -108,7 +108,6 @@
 
     # Development Tools
     bear # Build EAR - tool for generating compilation database
-    bun # Fast JavaScript runtime and package manager
     clang # C language family frontend for LLVM
     dive # Docker image explorer and layer analyzer
     git-branchless # High-velocity, monorepo-scale workflow for Git
@@ -132,7 +131,6 @@
     unstable.tree-sitter # Parser generator and incremental parsing library
     tridactyl-native # Native messaging host for Tridactyl Firefox addon
     vim # Vi Improved text editor
-    yarn # Fast, reliable JavaScript package manager
 
     # Audio & Multimedia
     alsa-lib-with-plugins # Advanced Linux Sound Architecture libraries
