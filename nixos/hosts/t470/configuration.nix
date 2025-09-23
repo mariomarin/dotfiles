@@ -13,7 +13,7 @@
   # Enable desktop environment
   custom.desktop = {
     enable = true;
-    type = "gnome"; # or "hyprland" or "leftwm"
+    type = "leftwm"; # LeftWM + XFCE (no desktop)
   };
 
   # Enable all desktop-related services
@@ -21,7 +21,7 @@
   programs.kdeconnect.enable = true;
 
   # Audio
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -42,8 +42,8 @@
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
       # ThinkPad battery thresholds
-      START_CHARGE_THRESH_BAT0 = 75;
-      STOP_CHARGE_THRESH_BAT0 = 80;
+      START_CHARGE_THRESH_BAT0 = lib.mkForce 75;
+      STOP_CHARGE_THRESH_BAT0 = lib.mkForce 80;
     };
   };
 
