@@ -4,7 +4,7 @@
 
 # Apply dotfiles changes
 apply:
-	chezmoi apply
+	chezmoi apply --no-tty
 
 # Show what would change
 diff:
@@ -12,7 +12,7 @@ diff:
 
 # Quick apply without updates
 quick-apply:
-	CHEZMOI_SKIP_UPDATES=1 chezmoi apply
+	CHEZMOI_SKIP_UPDATES=1 chezmoi apply --no-tty
 
 # Initialize chezmoi with repository
 init:
