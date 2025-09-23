@@ -29,5 +29,3 @@ devenv.yaml
 .claude
 .claude/**
 TODO_NEXT_TIME.md
-# Literal files are included by templates, not managed directly
-**/*.literal
