@@ -1,0 +1,13 @@
+{{- if .machineConfig.features.desktop -}}
+[Unit]
+Description=Rotate wallpaper using feh
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+Environment="DISPLAY=:0"
+ExecStart=/bin/sh -c 'feh --bg-fill --randomize ~/.wallpaper/*'
+
+[Install]
+WantedBy=default.target
+{{- end -}}

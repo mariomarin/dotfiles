@@ -1,0 +1,13 @@
+{{- if .machineConfig.features.desktop -}}
+[Unit]
+Description=Rotate wallpaper every 30 minutes
+Requires=wallpaper-rotation.service
+
+[Timer]
+OnStartupSec=5min
+OnUnitActiveSec=30min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+{{- end -}}

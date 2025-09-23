@@ -31,7 +31,8 @@ in
             # Start polkit-gnome authentication agent if not already running
             ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
             
-            # Set random wallpaper for LeftWM
+            # Set random wallpaper for LeftWM (initial wallpaper)
+            # Note: wallpaper rotation is handled by systemd timer
             ${lib.optionalString (cfg.type == "leftwm") ''
               if [ -d "$HOME/.wallpaper" ] && [ "$(ls -A $HOME/.wallpaper 2>/dev/null)" ]; then
                 ${pkgs.feh}/bin/feh --bg-fill --randomize $HOME/.wallpaper/* &
