@@ -207,6 +207,8 @@ Detailed documentation for each major component is available in subdirectory CLA
 - [NixOS CLAUDE.md](nixos/CLAUDE.md) - System configuration, modules, services
 - [Zsh/Zim CLAUDE.md](private_dot_config/zim/CLAUDE.md) - Shell setup, completions, modules
 - [Tmux CLAUDE.md](private_dot_config/tmux/CLAUDE.md) - **IMPORTANT: Update keybindings docs!**
+- [LeftWM CLAUDE.md](private_dot_config/leftwm/CLAUDE.md) - Window manager configuration
+- [Polybar CLAUDE.md](private_dot_config/polybar/CLAUDE.md) - Status bar and scripts
 
 ### README Files (User Documentation)
 
@@ -229,6 +231,9 @@ Detailed documentation for each major component is available in subdirectory CLA
 - `private_dot_config/` - Maps to `~/.config/` containing application configurations
   - `nvim/` - Neovim configuration using lazy.nvim
   - `alacritty/` - Alacritty terminal configuration
+  - `leftwm/` - LeftWM window manager configuration
+  - `picom/` - X11 compositor configuration
+  - `polybar/` - Status bar configuration and scripts
 - `private_dot_local/` - Maps to `~/.local/` containing local data
   - `share/tmux/plugins/` - Tmux plugins managed by TPM
   - `share/zim/` - Zim framework modules
