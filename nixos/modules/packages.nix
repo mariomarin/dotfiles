@@ -147,6 +147,7 @@
     yt-dlp # YouTube and other video downloader
 
     # Window Manager & Desktop Environment
+    autorandr # Automatic display configuration
     conky # System monitor for X
     dmenu # Dynamic menu for X
     dunst # Notification daemon

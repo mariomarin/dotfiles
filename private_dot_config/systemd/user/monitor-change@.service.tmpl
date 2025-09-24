@@ -1,0 +1,10 @@
+{{- if .machineConfig.features.desktop -}}
+[Unit]
+Description=Monitor change handler for %i
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+Environment="DISPLAY=:0"
+ExecStart=/bin/bash -c 'sleep 2 && systemctl --user restart polybar.service'
+{{- end -}}

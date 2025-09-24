@@ -1,0 +1,20 @@
+{{- if .machineConfig.features.desktop -}}#!/usr/bin/env bash
+# This script runs after autorandr switches display configuration
+
+# Give X11 time to stabilize
+sleep 1
+
+# Restart polybar to adapt to new monitor setup
+systemctl --user restart polybar.service
+
+# Notify user
+notify-send "Display Configuration" "Monitor layout changed - polybar restarted" -i display
+
+# Optional: Set wallpaper on new monitors
+if [ -d "$HOME/.wallpaper" ] && [ "$(ls -A "$HOME/.wallpaper" 2>/dev/null)" ]; then
+    feh --bg-fill --randomize "$HOME/.wallpaper"/*
+fi
+
+# Optional: Restart picom to handle new displays properly
+systemctl --user restart picom.service
+{{- end -}}
