@@ -1,0 +1,8 @@
+{{- if .machineConfig.features.desktop -}}#!/usr/bin/env bash
+
+leftwm-command "UnloadTheme"
+
+# Stop services via systemd
+systemctl --user stop polybar.service
+systemctl --user stop picom.service
+{{- end -}}

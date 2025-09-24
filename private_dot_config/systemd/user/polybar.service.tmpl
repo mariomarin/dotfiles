@@ -1,0 +1,17 @@
+{{- if .machineConfig.features.desktop -}}
+[Unit]
+Description=Polybar status bar
+After=graphical-session.target
+PartOf=graphical-session.target
+Wants=tray.target
+
+[Service]
+Type=forking
+Environment="PATH=/usr/bin:/bin"
+ExecStart=%h/.config/polybar/launch.sh
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target
+{{- end -}}

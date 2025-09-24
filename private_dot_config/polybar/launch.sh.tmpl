@@ -1,0 +1,21 @@
+{{- if .machineConfig.features.desktop -}}#!/usr/bin/env bash
+
+# Terminate already running bar instances
+pkill -x polybar
+
+# Wait until the processes have been shut down
+while pgrep -x polybar >/dev/null; do sleep 1; done
+
+# Launch polybar on all monitors
+if type "xrandr" >/dev/null 2>&1; then
+    for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+        echo "Starting polybar on monitor $m"
+        MONITOR=$m polybar --reload mainbar 2>&1 | tee -a /tmp/polybar-$m.log &
+    done
+else
+    echo "xrandr not found, starting single polybar instance"
+    polybar --reload mainbar 2>&1 | tee -a /tmp/polybar.log &
+fi
+
+echo "Polybar launched..."
+{{- end -}}
