@@ -1,0 +1,12 @@
+{{- if .machineConfig.features.desktop -}}#!/usr/bin/env -S /run/current-system/sw/bin/bash
+
+# Terminate already running bar instances
+/run/current-system/sw/bin/pkill -x polybar || true
+
+# Wait until the processes have been shut down
+while /run/current-system/sw/bin/pgrep -x polybar >/dev/null; do sleep 1; done
+
+# Launch polybar
+echo "Starting polybar..."
+exec /run/current-system/sw/bin/polybar --config="$HOME/.config/polybar/config" mainbar 2>&1
+{{- end -}}

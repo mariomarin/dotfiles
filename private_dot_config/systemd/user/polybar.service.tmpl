@@ -6,8 +6,8 @@ PartOf=graphical-session.target
 Wants=tray.target
 
 [Service]
-Type=forking
-Environment="PATH=/usr/bin:/bin"
+Type=exec
+Environment="PATH=/run/current-system/sw/bin:/usr/bin:/bin"
 ExecStart=%h/.config/polybar/launch.sh
 Restart=on-failure
 RestartSec=2
