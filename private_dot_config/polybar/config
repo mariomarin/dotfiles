@@ -86,8 +86,8 @@ exec-if = "playerctl -a status > /dev/null 2>&1"
 type = internal/network
 interface = wlp4s0
 format-connected = <label-connected>
-format-disconnected =  <label-disconnected>
-label-connected =   %essid%
+format-disconnected = 睊 <label-disconnected>
+label-connected = 直 %essid%
 label-connected-foreground = ${colors.purple-color}
 label-disconnected-foreground = ${colors.red-color}
 
