@@ -14,6 +14,7 @@
     ./modules/services.nix
     ./modules/virtualization.nix
     ./modules/security.nix
+    ./modules/system/fonts.nix
   ];
 
   # Core system settings
