@@ -10,12 +10,7 @@ ln -s "$SCRIPTPATH/down" "/tmp/leftwm-theme-down"
 # Load theme settings
 leftwm-command "LoadTheme $SCRIPTPATH/theme.ron"
 
-# Set initial wallpaper using feh (systemd timer handles rotation)
-if [ -d "$HOME/.wallpapers" ] && [ "$(ls -A "$HOME/.wallpapers" 2>/dev/null)" ]; then
-    feh --bg-fill --randomize "$HOME/.wallpapers"/* >/dev/null 2>&1
-fi
-
-# Start services via systemd
+# Start services via systemd (wallpaper-rotation.timer triggers immediately)
 systemctl --user start picom.service
 systemctl --user start polybar.service
 {{- end -}}
