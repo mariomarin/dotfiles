@@ -132,6 +132,17 @@
         language = "system";
         pass_filenames = true;
       };
+
+      # LeftWM config validation
+      leftwm-check = {
+        enable = true;
+        name = "leftwm-check";
+        entry = "leftwm check";
+        files = "config\\.ron(\\.tmpl)?$";
+        language = "system";
+        pass_filenames = false;
+        always_run = false;
+      };
     };
   };
 }
