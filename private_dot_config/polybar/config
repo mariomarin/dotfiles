@@ -59,20 +59,20 @@ label-empty-foreground = ${colors.foreground}
 
 [module/badge]
 type = custom/text
-content = " %{T3}%{T-} "
-content-foreground = ${colors.foreground}
+format = " %{T3}%{T-} "
+format-foreground = ${colors.foreground}
 click-left = ~/.config/leftwm/themes/Epitaph/scripts/rofi/applist
 
 [module/SP]
 type = custom/text
-content = " %{T2}%{T-} "
-content-background = ${colors.background}
-content-foreground = ${colors.sep-color}
+format = " %{T2}%{T-} "
+format-background = ${colors.background}
+format-foreground = ${colors.sep-color}
 
 [module/play]
 type = custom/text
-content = "%{T0}%{T-} "
-content-foreground = ${colors.red-color}
+format = "%{T0}%{T-} "
+format-foreground = ${colors.red-color}
 
 [module/song]
 type = custom/script
