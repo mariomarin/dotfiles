@@ -3,6 +3,10 @@ sourceDir = "~/.local/share/chezmoi"
 [diff]
 command = "delta"
 args = ["--syntax-theme", "Dracula", "--line-numbers"]
+exclude = ["scripts"]
+
+[status]
+exclude = ["scripts"]
 
 [merge]
 command = "nvim -d"
