@@ -9,11 +9,40 @@ private_dot_config/leftwm/
 ├── CLAUDE.md           # This file - AI guidance
 ├── config.ron.tmpl     # Main LeftWM configuration (keybindings, layouts, etc.)
 └── themes/
+    ├── current/        # Symlink to active theme (points to custom/)
     └── custom/         # Custom theme managed by chezmoi
         ├── up.tmpl     # Theme startup script
         ├── down.tmpl   # Theme cleanup script
         └── theme.ron.tmpl # Theme-specific settings (colors, borders)
 ```
+
+## Configuration Separation
+
+LeftWM separates configuration into two distinct parts:
+
+### 1. Core Configuration (`~/.config/leftwm/config.ron`)
+
+- **Functional settings** that remain consistent across themes:
+  - Keybindings and shortcuts
+  - Workspace and tag definitions
+  - Window rules and behaviors
+  - Available layouts
+  - Scratchpad definitions
+  - Focus behavior settings
+
+### 2. Theme Configuration (`~/.config/leftwm/themes/[theme-name]/`)
+
+- **Visual settings** that can change with themes:
+  - `theme.ron` - Appearance settings:
+    - Border width and colors
+    - Window margins and gaps (margin, gutter, workspace_margin)
+    - Default window sizes
+  - `up` - Script to start theme components (polybar, picom, wallpaper)
+  - `down` - Script to clean up when switching themes
+  - Theme-specific configs (if any)
+
+The `themes/current` symlink points to the active theme directory, allowing LeftWM to load the correct visual
+settings while maintaining your core configuration.
 
 ## Configuration Philosophy
 
