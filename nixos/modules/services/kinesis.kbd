@@ -1,4 +1,4 @@
-;; KMonad configuration for ThinkPad T470 with Carabiner-style keymaps
+;; KMonad configuration for Kinesis Freestyle 2 USB keyboard
 ;; This configuration provides:
 ;; - Caps Lock as Control (hold) / Escape (tap)
 ;; - Space Cadet keyboard emulation:
@@ -10,9 +10,9 @@
 ;; - Home row modifiers for ergonomic typing (optional, commented out)
 
 (defcfg
-  ;; Linux-specific input/output configuration
-  input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
-  output (uinput-sink "KMonad output")
+  ;; Linux-specific input/output configuration for Kinesis Freestyle 2
+  input  (device-file "/dev/input/by-id/usb-KINESIS_FREESTYLE_KB800_KB800_Kinesis_Freestyle-event-kbd")
+  output (uinput-sink "KMonad Kinesis output")
 
   ;; Optional: enable compose key
   cmp-seq ralt
@@ -24,67 +24,67 @@
   allow-cmd false
 )
 
-;; Define the source keyboard layout (ThinkPad T470)
+;; Define the source keyboard layout (Kinesis Freestyle 2)
+;; Note: Kinesis Freestyle 2 is a split keyboard with standard layout
 (defsrc
-  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  prnt slck pause
   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  fn   lctl lmet lalt           spc            ralt prnt rctl pgup up   pgdn
-                                                              left down rght
+  lctl lmet lalt           spc            ralt rmet menu rctl
 )
 
 ;; Aliases for complex behaviors
 (defalias
   ;; Caps Lock as Control/Escape (tap for Escape, hold for Control)
   cap (tap-hold-next-release 200 esc lctl)
-  
+
   ;; Layer toggles (define these first as they're referenced by other aliases)
   nav (layer-toggle navigation)  ;; Hold for navigation layer
   sym (layer-toggle symbols)     ;; Hold for symbols layer
   num (layer-toggle numbers)     ;; Hold for numbers layer
 
-  ;; Alternative navigation layer activation (Fn + Space or Right Control)
+  ;; Alternative navigation layer activation
   nav_fn (tap-hold-next-release 200 spc @nav)  ;; Space with Fn for navigation
-  
+
   ;; Space Cadet keyboard emulation
   ;; Shift keys tap for parentheses
   lspc (tap-hold-next-release 200 \( lsft)  ;; Left shift → (
   rspc (tap-hold-next-release 200 \) rsft)  ;; Right shift → )
-  
+
   ;; Alt keys with tap functionality that preserves Alt behavior when held
   ;; Left alt: tap for <, hold for Alt (preserves international input)
   lalt< (tap-hold-next-release 200 (around lsft ,) lalt)  ;; Left alt → < (tap) or Alt (hold)
   ;; Right alt: tap for >, hold for Right Alt (AltGr for international input)
   ralt> (tap-hold-next-release 200 (around lsft .) ralt)   ;; Right alt → > (tap) or AltGr (hold)
-  
+
   ;; Tab as hyper modifier (Ctrl+Meta+Alt)
   hyper (tap-hold-next-release 200 tab (around (around lctl lmet) lalt))
-  
+
   ;; Control keys with tap functionality for curly braces
   lctl{ (tap-hold-next-release 200 (around lsft [) lctl)  ;; Left ctrl → { (tap) or Ctrl (hold)
   rctl} (tap-hold-next-release 200 (around lsft ]) rctl)  ;; Right ctrl → } (tap) or Ctrl (hold)
-  
+
   ;; Home row modifiers (optional - for more ergonomic modifier access)
   ;; Left hand
   a_met (tap-hold-next-release 200 a lmet)
   s_alt (tap-hold-next-release 200 s lalt)
   d_sft (tap-hold-next-release 200 d lsft)
   f_ctl (tap-hold-next-release 200 f lctl)
-  
+
   ;; Right hand
   j_ctl (tap-hold-next-release 200 j rctl)
   k_sft (tap-hold-next-release 200 k rsft)
   l_alt (tap-hold-next-release 200 l ralt)
   ;_met (tap-hold-next-release 200 ; rmet)
-  
+
   ;; Vim-style navigation keys (when nav layer is active)
   vim_h left
   vim_j down
   vim_k up
   vim_l rght
-  
+
   ;; Common shortcuts
   copy C-c
   paste C-v
@@ -95,58 +95,53 @@
 
 ;; Base layer with Carabiner-style modifications
 (deflayer base
-  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  prnt slck pause
   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
   @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
   @lspc z    x    c    v    b    n    m    ,    .    /    @rspc
-  fn   @lctl{ lmet @lalt<           spc            @ralt> prnt @rctl} pgup up   pgdn
-                                                              left down rght
+  @lctl{ lmet @lalt<           spc            @ralt> rmet menu @rctl}
 )
 
-;; Navigation layer (activated by holding right Alt)
+;; Navigation layer (can be activated with custom key combos)
 (deflayer navigation
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    home pgdn pgup end  _    _    _    _
   _    _    _    _    _    _    @vim_h @vim_j @vim_k @vim_l _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _              _              _    _    _    _    _    _
-                                                              _    _    _
+  _    _    _              _              _    _    _    _
 )
 
 ;; Symbols layer (can be activated with a custom key combo)
 (deflayer symbols
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    !    @    #    $    %    ^    &    *    \(   \)   _    +    _
   _    _    _    _    _    _    _    _    _    _    _    {    }    |
   _    _    _    _    _    _    _    _    _    _    :    "    _
   _    _    _    _    _    _    _    _    <    >    ?    _
-  _    _    _    _              _              _    _    _    _    _    _
-                                                              _    _    _
+  _    _    _              _              _    _    _    _
 )
 
 ;; Numbers layer with numpad-style layout
 (deflayer numbers
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    7    8    9    *    _    _    _
   _    _    _    _    _    _    _    4    5    6    +    _    _
   _    _    _    _    _    _    0    1    2    3    -    _
-  _    _    _    _              _              _    _    _    _    _    _
-                                                              _    _    _
+  _    _    _              _              _    _    _    _
 )
 
 ;; Optional: Home row mods layer (uncomment to use)
 ;; This provides a more ergonomic way to access modifiers
 #|
 (deflayer homerow-mods
-  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end  ins  del
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  prnt slck pause
   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap @a_met @s_alt @d_sft @f_ctl g h @j_ctl @k_sft @l_alt @;_met ' ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  fn   lctl lmet lalt           spc            ralt prnt rctl pgup up   pgdn
-                                                              left down rght
+  lctl lmet lalt           spc            ralt rmet menu rctl
 )
 |#

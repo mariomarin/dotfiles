@@ -12,6 +12,12 @@
         # Read the configuration from the separate .kbd file
         config = builtins.readFile ./laptop.kbd;
       };
+      kinesis = {
+        # Kinesis Freestyle 2 USB keyboard
+        device = "/dev/input/by-id/usb-KINESIS_FREESTYLE_KB800_KB800_Kinesis_Freestyle-event-kbd";
+        # Read the configuration from the separate .kbd file
+        config = builtins.readFile ./kinesis.kbd;
+      };
     };
   };
 
