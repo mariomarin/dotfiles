@@ -1,4 +1,3 @@
-{{- if .machineConfig.features.desktop -}}
 #![enable(implicit_some)]
 (
     modkey: "Mod4",
@@ -48,7 +47,7 @@
     keybind: [
         (command: Execute, value: "rofi -show drun", modifier: ["modkey"], key: "space"),
         (command: Execute, value: "maim $HOME/Imágenes/\"$(date)\"", modifier: [], key: "Print"),
-        (command: Execute, value: "PATH=\"$HOME/.local/bin:$PATH\" ~/.local/bin/ytfzf -D", modifier: ["modkey"], key: "y"),
+        (command: Execute, value: "ytfzf -D", modifier: ["modkey"], key: "y"),
         (command: Execute, value: "~/.config/rofi/power-menu.sh", modifier: ["modkey"], key: "p"),
         (command: Execute, value: "alacritty", modifier: ["modkey", "Shift"], key: "Return"),
         (command: CloseWindow, value: "", modifier: ["modkey", "Shift"], key: "q"),
@@ -64,6 +63,9 @@
         (command: FocusWindowDown, value: "", modifier: ["modkey"], key: "j"),
         (command: NextLayout, value: "", modifier: ["modkey", "Control"], key: "k"),
         (command: PreviousLayout, value: "", modifier: ["modkey", "Control"], key: "j"),
+        (command: FocusWorkspaceNext, value: "", modifier: ["modkey", "Alt"], key: "Tab"),
+        (command: FocusWorkspacePrevious, value: "", modifier: ["modkey", "Alt", "Shift"], key: "Tab"),
+        (command: SwapTags, value: "", modifier: ["modkey", "Control"], key: "Tab"),
         (command: FocusWorkspaceNext, value: "", modifier: ["modkey"], key: "l"),
         (command: FocusWorkspacePrevious, value: "", modifier: ["modkey"], key: "h"),
         (command: MoveWindowUp, value: "", modifier: ["modkey", "Shift"], key: "Up"),
@@ -105,4 +107,3 @@
     ],
     state_path: None,
 )
-{{- end -}}

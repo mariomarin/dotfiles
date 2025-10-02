@@ -79,6 +79,9 @@ The `custom` theme is designed to work with systemd services:
 
 - `Mod4 + 1-9` - Go to workspace 1-9
 - `Mod4 + Shift + 1-9` - Move window to workspace 1-9
+- `Mod4 + Alt + Tab` - Jump to next workspace
+- `Mod4 + Alt + Shift + Tab` - Jump to previous workspace
+- `Mod4 + Ctrl + Tab` - Jump to former workspace (swap to last)
 - `Mod4 + h/l` - Focus previous/next workspace
 - `Mod4 + w` - Swap to last workspace
 
@@ -88,8 +91,10 @@ The `custom` theme is designed to work with systemd services:
 
 ### Applications
 
-- `Mod4 + p` - Launch rofi (application launcher)
+- `Mod4 + space` - Launch rofi (application launcher)
 - `Mod4 + Shift + Return` - Launch alacritty terminal
+- `Mod4 + y` - YouTube search (ytfzf)
+- `Mod4 + p` - Power menu (shutdown/reboot/logout)
 - `Mod4 + Control + l` - Lock screen (slock)
 - `Mod4 + Shift + x` - Logout
 
