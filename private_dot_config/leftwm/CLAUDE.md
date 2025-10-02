@@ -98,6 +98,13 @@ The `custom` theme is designed to work with systemd services:
 - `Mod4 + Control + l` - Lock screen (slock)
 - `Mod4 + Shift + x` - Logout
 
+### Screenshots
+
+- `Print Screen` - Screenshot a region (select with mouse)
+- `Shift + Print Screen` - Screenshot active window
+- `Ctrl + Print Screen` - Screenshot full monitor
+- Screenshots saved to `~/Pictures/screenshots/`
+
 ## Integration with Other Components
 
 ### Polybar

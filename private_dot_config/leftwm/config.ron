@@ -46,7 +46,9 @@
     sloppy_mouse_follows_focus: true,
     keybind: [
         (command: Execute, value: "rofi -show drun", modifier: ["modkey"], key: "space"),
-        (command: Execute, value: "maim $HOME/Imágenes/\"$(date)\"", modifier: [], key: "Print"),
+        (command: Execute, value: "maim -s $HOME/Pictures/screenshots/\"region-$(date +%Y%m%d-%H%M%S).png\"", modifier: [], key: "Print"),
+        (command: Execute, value: "maim -i $(xdotool getactivewindow) $HOME/Pictures/screenshots/\"window-$(date +%Y%m%d-%H%M%S).png\"", modifier: ["Shift"], key: "Print"),
+        (command: Execute, value: "maim $HOME/Pictures/screenshots/\"monitor-$(date +%Y%m%d-%H%M%S).png\"", modifier: ["Control"], key: "Print"),
         (command: Execute, value: "ytfzf -D", modifier: ["modkey"], key: "y"),
         (command: Execute, value: "~/.config/rofi/power-menu.sh", modifier: ["modkey"], key: "p"),
         (command: Execute, value: "alacritty", modifier: ["modkey", "Shift"], key: "Return"),
