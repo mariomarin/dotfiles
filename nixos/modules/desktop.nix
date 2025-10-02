@@ -95,6 +95,7 @@ in
       ytfzf
       maim
       xdotool
+      transmission_4-gtk
     ]);
 
     # Enable dconf for GTK apps
