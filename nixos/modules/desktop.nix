@@ -92,6 +92,9 @@ in
       picom
       dunst
       feh
+      ytfzf
+      maim
+      xdotool
     ]);
 
     # Enable dconf for GTK apps
