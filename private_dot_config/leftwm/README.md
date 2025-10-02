@@ -24,9 +24,9 @@ This document lists all configured keybindings for the LeftWM window manager.
 | `Mod + Shift + 1-9` | Move focused window to workspace/tag 1-9 |
 | `Mod + h` / `Mod + ←` | Focus previous workspace |
 | `Mod + l` / `Mod + →` | Focus next workspace |
+| `Mod + Tab` | Swap to last visited workspace ¹ |
 | `Mod + Alt + Tab` | Jump to next workspace |
 | `Mod + Alt + Shift + Tab` | Jump to previous workspace |
-| `Mod + Ctrl + Tab` | Swap to last visited workspace ¹ |
 | `Mod + w` | Swap to last visited workspace ¹ |
 | `Mod + Shift + w` | Move window to last visited workspace |
 
@@ -68,10 +68,7 @@ Screenshots are saved to `~/Pictures/screenshots/` with descriptive filenames.
 | ---------- | ----------- |
 | `Mod + Shift + r` | Reload LeftWM configuration (soft reload) |
 | `Mod + Shift + x` | Exit LeftWM (logout) |
-| `Mod + Ctrl + l` | Lock screen (slock) ³ |
-| `Mod + Shift + l` | Lock screen (xfce4-screensaver) ³ |
-
-³ *Two different lock screen implementations available*
+| `Mod + Shift + l` | Lock screen (xfce4-screensaver) |
 
 ## Media & Hardware Controls
 
