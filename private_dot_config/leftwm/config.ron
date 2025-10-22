@@ -69,6 +69,8 @@
         (command: FocusWorkspacePrevious, value: "", modifier: ["modkey", "Alt", "Shift"], key: "Tab"),
         (command: FocusWorkspaceNext, value: "", modifier: ["modkey"], key: "l"),
         (command: FocusWorkspacePrevious, value: "", modifier: ["modkey"], key: "h"),
+        (command: MoveWindowToNextWorkspace, value: "", modifier: ["modkey", "Shift"], key: "period"),
+        (command: MoveWindowToPreviousWorkspace, value: "", modifier: ["modkey", "Shift"], key: "comma"),
         (command: MoveWindowUp, value: "", modifier: ["modkey", "Shift"], key: "Up"),
         (command: MoveWindowDown, value: "", modifier: ["modkey", "Shift"], key: "Down"),
         (command: FocusWindowUp, value: "", modifier: ["modkey"], key: "Up"),
