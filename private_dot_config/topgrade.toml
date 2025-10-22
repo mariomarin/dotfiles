@@ -43,9 +43,9 @@ cleanup = true
 if [ -f ~/.config/nvim/lazy-lock.json ]; then
     chezmoi add ~/.config/nvim/lazy-lock.json && \
     cd $(chezmoi source-path) && \
-    if git diff --name-only private_dot_config/nvim/lazy-lock.json | grep -q .; then
+    if git diff --staged --name-only private_dot_config/nvim/lazy-lock.json | grep -q . || git diff --name-only private_dot_config/nvim/lazy-lock.json | grep -q .; then
         git add private_dot_config/nvim/lazy-lock.json && \
-        git commit -m 'chore(nvim): update lazy-lock.json'
+        git commit -m 'chore(nvim): update lazy-lock.json' || true
     fi
 fi
 """
