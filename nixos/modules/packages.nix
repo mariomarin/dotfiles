@@ -117,6 +117,7 @@
     luarocks # Package manager for Lua
     meilisearch # Fast, open-source search engine
     nil # Nix language server
+    nodejs # JavaScript runtime built on Chrome's V8 engine
     openjdk # Open Java Development Kit
     pkg-config # Helper tool for compiling applications and libraries
     plantuml # Tool to generate UML diagrams from text
