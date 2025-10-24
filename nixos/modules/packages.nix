@@ -114,6 +114,7 @@
     gnumake # GNU Make build automation tool
     go # Go programming language
     gopls # Go language server
+    lua5_1 # Lua 5.1 interpreter (needed for nvim-dap-python)
     luarocks # Package manager for Lua
     meilisearch # Fast, open-source search engine
     nil # Nix language server
