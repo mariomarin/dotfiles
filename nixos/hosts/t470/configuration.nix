@@ -10,6 +10,12 @@
   # Set hostname
   networking.hostName = "nixos";
 
+  # Enable minimal system packages with modern CLI tools
+  custom.minimal = {
+    enable = true;
+    modernCli = true;
+  };
+
   # Enable desktop environment
   custom.desktop = {
     enable = true;

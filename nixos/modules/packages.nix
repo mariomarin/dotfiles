@@ -41,7 +41,6 @@
     gh # GitHub CLI tool
     gitFull # Git version control system with all features
     hledger # Plain text accounting
-    lazygit # Terminal UI for git
     jq # Command-line JSON processor
     just # Command runner similar to make
     libnotify # Desktop notification library
@@ -56,20 +55,16 @@
     viddy # Modern watch command with diff highlighting
     yq-go # Command-line YAML processor
 
-    # Modern CLI Replacements
-    bat # Modern replacement for cat with syntax highlighting
-    bottom # Modern replacement for htop/top
-    delta # Modern replacement for diff with syntax highlighting
+    # Modern CLI Replacements (additional desktop tools)
+    # Core modern CLI tools (bat, eza, ripgrep, fd, bottom, delta, lazygit)
+    # are provided by custom.minimal module
     pstree # Show the set of running processes as a tree
     difftastic # Structural diff tool that understands syntax
     dua # Disk usage analyzer (alternative to du)
-    eza # Modern replacement for ls
-    fd # Modern replacement for find
     lfs # List file system info (modern lsfd)
     lsd # Modern ls with colors and icons
     pipr # Interactive pipe evaluation tool
     procs # Modern replacement for ps
-    ripgrep # Modern replacement for grep (faster)
     sd # Modern replacement for sed
     xcp # Modern replacement for cp with progress
     zoxide # Modern replacement for cd with frecency
