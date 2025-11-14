@@ -7,6 +7,12 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
+    # NixOS-WSL support
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nur.url = "github:nix-community/NUR";
 
     home-manager = {
@@ -20,7 +26,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nur, home-manager, claude-code-nix, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nixos-wsl, nur, home-manager, claude-code-nix, ... }@inputs:
     let
       # Common modules shared by all hosts
       commonModules = [
@@ -83,6 +89,22 @@
 
             # VM-specific configuration
             ./hosts/vm/configuration.nix
+          ];
+        };
+
+        # WSL configuration (headless, CLI-only)
+        nixos-wsl = mkSystem {
+          hostname = "nixos-wsl";
+          system = "x86_64-linux";
+          modules = [
+            # NixOS-WSL base module
+            nixos-wsl.nixosModules.wsl
+
+            # Main configuration (shared)
+            ./configuration.nix
+
+            # WSL-specific configuration
+            ./hosts/wsl/configuration.nix
           ];
         };
       };
