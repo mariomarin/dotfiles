@@ -18,6 +18,12 @@
         # Read the configuration from the separate .kbd file
         config = builtins.readFile ./kinesis.kbd;
       };
+      calliope = {
+        # Lenovo Calliope USB Keyboard G2
+        device = "/dev/input/by-id/usb-LiteOn_Lenovo_Calliope_USB_Keyboard_G2-event-kbd";
+        # Read the configuration from the separate .kbd file
+        config = builtins.readFile ./calliope.kbd;
+      };
     };
   };
 
