@@ -2,6 +2,8 @@ all: chezmoi/quick-apply
 
 
 # Linting and formatting targets
+# Note: Formatting is also configured as git pre-commit hooks in devenv.nix
+# These targets are for manual formatting outside of git workflow
 lint: lint-lua lint-nix lint-shell
 	@echo "✅ All linting checks passed"
 
