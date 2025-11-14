@@ -1,3 +1,6 @@
+# Desktop-specific packages module
+# Provides GUI applications and desktop-only utilities
+# Note: CLI tools are in minimal.nix, dev tools are in development.nix
 { config, pkgs, lib, ... }:
 
 {
@@ -28,19 +31,10 @@
     zathura # PDF/document viewer
 
     # Terminal Tools & Utilities
-    # Core tools (age, bash, curl, file, fzf, gh, jq, just, tmux, unzip, yq-go)
-    # are provided by custom.minimal module
-    # Development tools (chezmoi, direnv) are in custom.development module
-    # Common utilities (atuin, envsubst, gitFull, libnotify, libzip, miller,
-    # pay-respects, topgrade) are in custom.minimal module
+    # Most CLI tools are in custom.minimal module
     fuse # Filesystem in Userspace
     hledger # Plain text accounting
     speechd # Common interface to speech synthesis
-
-    # Modern CLI Replacements
-    # All modern CLI tools (bat, eza, ripgrep, fd, bottom, delta, lazygit,
-    # pstree, difftastic, dua, lfs, lsd, pipr, procs, sd, xcp, zoxide)
-    # are provided by custom.minimal module (when modernCli = true)
 
     # Documentation & Help
     cheat # Create and view interactive cheatsheets

@@ -1,5 +1,6 @@
 # Minimal system packages module
-# Provides essential CLI tools for server/headless environments
+# Provides essential CLI tools and utilities for all hosts (headless and desktop)
+# Includes optional modern CLI replacements when modernCli = true
 { config, pkgs, lib, ... }:
 
 let

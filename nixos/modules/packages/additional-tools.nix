@@ -1,3 +1,5 @@
+# Additional specialized tools module
+# Provides domain-specific tools (Kubernetes, cloud, git utilities, media)
 { config, pkgs, lib, ... }:
 
 {
@@ -26,8 +28,5 @@
     git-sizer # Compute various size metrics for Git repo
     bfg-repo-cleaner # BFG Repo-Cleaner for removing large files
     git-filter-repo # Quickly rewrite git repository history
-
-    # Note: viddy, upterm, and just are in minimal.nix
-    # Note: svu is in development.nix
   ];
 }
