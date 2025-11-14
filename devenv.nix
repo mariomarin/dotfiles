@@ -38,16 +38,6 @@
     claude-code
   ];
 
-  # JavaScript/TypeScript environment
-  languages.javascript = {
-    enable = true;
-    package = pkgs.nodejs_20;
-    bun = {
-      enable = true;
-      install.enable = true;
-    };
-  };
-
   # Git hooks - format only staged files on commit
   git-hooks = {
     hooks = {
