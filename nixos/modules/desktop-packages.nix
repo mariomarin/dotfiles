@@ -24,7 +24,6 @@
     bitwarden-desktop # Password manager GUI
     baobab # Disk usage analyzer with graphical interface
     brave # Privacy-focused web browser
-    copyq # Clipboard Manager with Advanced Features
     firefox # Open-source web browser
     gimp # GNU Image Manipulation Program
     gnome-disk-utility # Disk management utility
