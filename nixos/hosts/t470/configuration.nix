@@ -16,6 +16,9 @@
     modernCli = true;
   };
 
+  # Enable development tools
+  custom.development.enable = true;
+
   # Enable desktop environment
   custom.desktop = {
     enable = true;

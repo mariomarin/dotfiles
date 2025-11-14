@@ -161,15 +161,7 @@
     xdg-user-dirs # Tool to help manage user directories
     xsel # Command line clipboard utility (alternative to xclip)
 
-    # Nix Tools
-    niv # Dependency management for Nix
-    nix-direnv # Integration of direnv with Nix
-
-    # Packages from unstable channel
-    unstable.neovim # Hyperextensible Vim-based text editor
-    unstable.devenv # Fast, declarative, reproducible development environments
-    unstable.svu # Semantic Version Util v3.x
-    # Claude Code from the claude-code-nix flake
-    claude-code # Claude AI coding assistant CLI
+    # Development tools (neovim, devenv, claude-code, nix-direnv, niv, svu)
+    # are provided by custom.development module
   ];
 }

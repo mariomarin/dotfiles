@@ -36,6 +36,9 @@
     modernCli = true;  # Include modern replacements (bat, eza, ripgrep, etc.)
   };
 
+  # Enable development tools
+  custom.development.enable = true;
+
   # Enable Docker for containers
   virtualisation.docker = {
     enable = true;

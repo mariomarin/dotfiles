@@ -11,6 +11,7 @@
     ./modules/locale.nix
     ./modules/wsl.nix
     ./modules/minimal.nix
+    ./modules/development.nix
     ./modules/desktop.nix
     ./modules/users.nix
     ./modules/packages.nix
