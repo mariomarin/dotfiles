@@ -1,5 +1,5 @@
 # Development tools module
-# Provides Nix tooling and development environment tools
+# Provides languages, build tools, and development environment for coding workstations
 { config, pkgs, lib, ... }:
 
 let
