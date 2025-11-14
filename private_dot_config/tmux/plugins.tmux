@@ -28,6 +28,8 @@ set -g @resurrect-capture-pane-contents 'on'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @continuum-restore 'on'
 set -g @continuum-boot 'on'
+# Start tmux server without creating a session (let sesh manage sessions)
+set -g @continuum-systemd-start-cmd 'start-server'
 
 # copy/pasting tmux like vimium/vimperator
 set -g @plugin 'Morantron/tmux-fingers'
