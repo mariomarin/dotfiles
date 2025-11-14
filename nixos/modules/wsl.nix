@@ -1,0 +1,80 @@
+# WSL-specific NixOS configuration module
+{ config, pkgs, lib, ... }:
+
+let
+  cfg = config.custom.wsl;
+in
+{
+  options.custom.wsl = {
+    enable = lib.mkEnableOption "WSL-specific configuration";
+
+    windowsInterop = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable Windows binary execution from WSL";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    # Enable WSL integration
+    wsl = {
+      enable = true;
+      defaultUser = "mario";
+
+      # Windows interop - run .exe files from WSL
+      interop.enable = cfg.windowsInterop;
+
+      # WSL-specific mounts
+      wslConf = {
+        automount.root = "/mnt";
+        network.generateHosts = true;
+        network.generateResolvConf = true;
+      };
+
+      # Use systemd as init (NixOS-WSL supports this)
+      nativeSystemd = true;
+    };
+
+    # Disable incompatible boot/bootloader services
+    boot.loader.systemd-boot.enable = lib.mkForce false;
+    boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
+    boot.plymouth.enable = lib.mkForce false;
+
+    # Disable hardware-specific services
+    services.fprintd.enable = lib.mkForce false;
+    services.tlp.enable = lib.mkForce false;
+    services.upower.enable = lib.mkForce false;
+    hardware.bluetooth.enable = lib.mkForce false;
+    services.blueman.enable = lib.mkForce false;
+
+    # Use WSL networking instead of NetworkManager
+    networking.networkmanager.enable = lib.mkForce false;
+    networking.dhcpcd.enable = lib.mkForce false;
+
+    # Disable services that require special kernel modules
+    services.kmonad.enable = lib.mkForce false;
+
+    # No desktop environment or display manager
+    services.xserver.enable = lib.mkForce false;
+    services.displayManager.enable = lib.mkForce false;
+
+    # No audio (use Windows audio)
+    hardware.pulseaudio.enable = lib.mkForce false;
+    services.pipewire.enable = lib.mkForce false;
+
+    # WSL-specific packages (minimal)
+    environment.systemPackages = with pkgs; [
+      wslu # WSL utilities (wslview, wslpath, etc.)
+    ];
+
+    # Configure systemd for WSL
+    systemd.services = {
+      # Disable services that don't work in WSL
+      systemd-resolved.enable = lib.mkForce false;
+      systemd-timesyncd.enable = lib.mkForce false;
+    };
+
+    # Use Windows time
+    time.hardwareClockInLocalTime = lib.mkDefault true;
+  };
+}
