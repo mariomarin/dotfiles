@@ -21,6 +21,7 @@
   environment.systemPackages = with pkgs; [
     # Desktop Applications
     alacritty # GPU-accelerated terminal emulator
+    bitwarden-desktop # Password manager GUI
     baobab # Disk usage analyzer with graphical interface
     brave # Privacy-focused web browser
     copyq # Clipboard Manager with Advanced Features
@@ -28,76 +29,8 @@
     gimp # GNU Image Manipulation Program
     gnome-disk-utility # Disk management utility
     obsidian # Knowledge base and note-taking application
-    zathura # PDF/document viewer
-
-    # Terminal Tools & Utilities
-    # Most CLI tools are in custom.minimal module
-    fuse # Filesystem in Userspace
-    hledger # Plain text accounting
-    speechd # Common interface to speech synthesis
-
-    # Documentation & Help
-    cheat # Create and view interactive cheatsheets
-
-    # Desktop Integration
-    # Note: kdeconnect is enabled as a program in services.nix
-    navi # Interactive cheatsheet tool
-    tealdeer # Fast tldr client in Rust
-
-    # Security & Authentication
-    bitwarden-desktop # Password manager GUI
-    credstash # Credential management using AWS KMS
-    gnupg # GNU Privacy Guard
-    libsecret # Library for storing and retrieving passwords
-    openssl # Cryptography and SSL/TLS toolkit
-    openssl.dev # OpenSSL development files
-
-    nss # Network Security Services
-    nssTools # NSS security tools
-    ntfs3g # NTFS filesystem driver
-    speedtest-cli # Internet bandwidth speed test
-    syncthing # Continuous file synchronization
-    trippy # Network diagnostic tool combining traceroute and ping
-
-    # Development Tools
-    bear # Build EAR - tool for generating compilation database
-    clang # C language family frontend for LLVM
-    dive # Docker image explorer and layer analyzer
-    git-branchless # High-velocity, monorepo-scale workflow for Git
-    gnumake # GNU Make build automation tool
-    go # Go programming language
-    gopls # Go language server
-    lua5_1 # Lua 5.1 interpreter (needed for nvim-dap-python)
-    luarocks # Package manager for Lua
-    meilisearch # Fast, open-source search engine
-    nil # Nix language server
-    nodejs # JavaScript runtime built on Chrome's V8 engine
-    openjdk # Open Java Development Kit
-    pkg-config # Helper tool for compiling applications and libraries
-    plantuml # Tool to generate UML diagrams from text
-    poetry # Python dependency management and packaging
-    rustup # Rust toolchain installer
-    sqlite # SQL database engine
-    zeal # Offline documentation browser
-
-    # Editors & Language Servers
-    pandoc # Universal markup converter
-    unstable.tree-sitter # Parser generator and incremental parsing library
     tridactyl-native # Native messaging host for Tridactyl Firefox addon
-
-    # Audio & Multimedia
-    alsa-lib-with-plugins # Advanced Linux Sound Architecture libraries
-    alsa-lib-with-plugins.dev # ALSA development files
-    feh # Fast and light image viewer
-    noisetorch # Real-time microphone noise suppression
-    pamixer # PulseAudio command-line mixer
-    pavucontrol # PulseAudio volume control GUI
-    playerctl # Media player controller
-    poppler_utils # PDF rendering library utilities
-    portaudio # Portable audio I/O library
-    pulseaudio # Sound server system
-    yewtube # YouTube client in the terminal
-    yt-dlp # YouTube and other video downloader
+    zathura # PDF/document viewer
 
     # Window Manager & Desktop Environment
     autorandr # Automatic display configuration
@@ -117,7 +50,27 @@
     xdg-user-dirs # Tool to help manage user directories
     xsel # Command line clipboard utility (alternative to xclip)
 
-    # Development tools (neovim, devenv, claude-code, nix-direnv, niv, svu)
-    # are provided by custom.development module
+    # Terminal Tools & Utilities
+    fuse # Filesystem in Userspace
+    hledger # Plain text accounting
+    speechd # Common interface to speech synthesis
+
+    # System utilities
+    nss # Network Security Services
+    nssTools # NSS security tools
+    ntfs3g # NTFS filesystem driver
+    syncthing # Continuous file synchronization
+
+    # Audio & Multimedia
+    alsa-lib-with-plugins # Advanced Linux Sound Architecture libraries
+    alsa-lib-with-plugins.dev # ALSA development files
+    feh # Fast and light image viewer
+    noisetorch # Real-time microphone noise suppression
+    pamixer # PulseAudio command-line mixer
+    pavucontrol # PulseAudio volume control GUI
+    playerctl # Media player controller
+    poppler_utils # PDF rendering library utilities
+    portaudio # Portable audio I/O library
+    pulseaudio # Sound server system
   ];
 }

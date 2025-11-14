@@ -12,12 +12,14 @@
     krew # Kubernetes plugin manager
 
     # Network and cloud tools
-    speedtest-cli # Internet speed testing
     awscli # AWS CLI v1
     aws-sso-cli # AWS SSO authentication helper
 
     # Development and diff tools
     jd-diff-patch # JSON diff and patch
+
+    # Search and indexing
+    meilisearch # Fast, open-source search engine
 
     # Media and download tools
     yewtube # Terminal YouTube viewer

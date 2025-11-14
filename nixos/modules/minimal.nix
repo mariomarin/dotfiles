@@ -54,12 +54,18 @@ in
       just      # Command runner similar to make
 
       # System utilities
-      atuin        # Shell history sync, search and backup
-      envsubst     # Substitutes environment variables in shell format strings
-      libnotify    # Desktop notification library
-      libzip       # Library for reading, creating, and modifying zip archives
-      pay-respects # Press F to pay respects in the terminal
-      topgrade     # Upgrade all the things (system packages, plugins, etc.)
+      atuin           # Shell history sync, search and backup
+      bitwarden-cli   # Password manager CLI
+      cheat           # Create and view interactive cheatsheets
+      envsubst        # Substitutes environment variables in shell format strings
+      libnotify       # Desktop notification library
+      libzip          # Library for reading, creating, and modifying zip archives
+      navi            # Interactive cheatsheet tool
+      pay-respects    # Press F to pay respects in the terminal
+      speedtest-cli   # Internet bandwidth speed test
+      tealdeer        # Fast tldr client in Rust
+      topgrade        # Upgrade all the things (system packages, plugins, etc.)
+      trippy          # Network diagnostic tool combining traceroute and ping
     ] ++ lib.optionals cfg.modernCli [
       # Modern CLI replacements
       bat          # cat with syntax highlighting

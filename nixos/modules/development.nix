@@ -29,6 +29,31 @@ in
 
       # AI assistant
       claude-code       # Claude AI coding assistant CLI
+
+      # Languages & runtimes
+      go              # Go programming language
+      gopls           # Go language server
+      lua5_1          # Lua 5.1 interpreter
+      luarocks        # Package manager for Lua
+      nodejs          # JavaScript runtime
+      openjdk         # Open Java Development Kit
+      rustup          # Rust toolchain installer
+
+      # Build tools & compilers
+      bear            # Build EAR - tool for generating compilation database
+      clang           # C language family frontend for LLVM
+      gnumake         # GNU Make build automation tool
+      pkg-config      # Helper tool for compiling applications and libraries
+
+      # Development utilities
+      dive            # Docker image explorer and layer analyzer
+      nil             # Nix language server
+      pandoc          # Universal markup converter
+      plantuml        # Tool to generate UML diagrams from text
+      poetry          # Python dependency management and packaging
+      sqlite          # SQL database engine
+      unstable.tree-sitter # Parser generator and incremental parsing library
+      zeal            # Offline documentation browser
     ];
   };
 }
