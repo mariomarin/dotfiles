@@ -64,65 +64,18 @@ nixos/
 
 ### Package Management
 
-Packages are organized into four tiers for maintainability and to avoid duplication:
+See [README.md](README.md) for the complete four-tier package organization structure.
 
-#### 1. Minimal (`modules/minimal.nix`)
-Essential CLI tools and utilities for **all hosts** (headless and desktop).
-- Core utilities: vim, git, tmux, bash, curl, wget
-- Development helpers: fzf, gh, age, jq, just
-- System utilities: atuin, topgrade, bitwarden-cli, speedtest-cli, trippy
-- Documentation: cheat, navi, tealdeer
-- Modern CLI replacements (when `modernCli = true`): bat, eza, ripgrep, fd, delta, lazygit, difftastic, dua, lsd, pipr, procs, pstree, sd, xcp, zoxide
-
-#### 2. Development (`modules/development.nix`)
-Languages, build tools, and development environments for coding workstations.
-- Nix tooling: chezmoi, direnv, niv, nix-direnv, devenv
-- Languages & runtimes: go, gopls, lua, nodejs, openjdk, rustup
-- Build tools: bear, clang, gnumake, pkg-config
-- Dev utilities: dive, nil, pandoc, plantuml, poetry, sqlite, tree-sitter, zeal
-- Editor: neovim (from unstable)
-- AI: claude-code
-
-#### 3. Desktop (`modules/desktop-packages.nix`)
-GUI applications and desktop-only utilities.
-- Applications: alacritty, brave, firefox, obsidian, gimp, bitwarden-desktop
-- Window manager: leftwm, rofi, polybar, dunst, dmenu
-- Desktop tools: syncthing, copyq, autorandr
-- System: nss, nssTools, ntfs3g
-- Multimedia: feh, pavucontrol, playerctl
-
-#### 4. Specialized (`modules/packages/additional-tools.nix`)
-Domain-specific tools for specialized workflows.
-- Kubernetes: stern, krew
-- Cloud: awscli, aws-sso-cli
-- Media: yewtube, yt-dlp
-- Git: git-branchless, git-sizer, bfg-repo-cleaner, git-filter-repo
-- Data: xan, jd-diff-patch
-- Search: meilisearch
-
-**Key Principles:**
-- CLI tools that are useful everywhere → minimal.nix
-- Language tooling and IDEs → development.nix
-- GUI applications → desktop-packages.nix
-- Domain-specific/specialized → additional-tools.nix
-- Check for duplicates before adding packages
-
-**Unfree Software**: Allowed for proprietary tools
+**Key Principle**: Check for duplicates before adding packages using `rg "package-name"`
 
 ## Common Tasks
 
 ### Adding Packages
 
-Choose the appropriate module based on the package type:
-- **CLI tools** for all hosts → `modules/minimal.nix`
-- **Development tools** → `modules/development.nix`
-- **GUI applications** → `modules/desktop-packages.nix`
-- **Specialized tools** (K8s, cloud, etc.) → `modules/packages/additional-tools.nix`
-
-Then:
+See [README.md](README.md#adding-packages) for module selection guide. Then:
 1. Edit the appropriate module file
 2. Add package to `environment.systemPackages`
-3. Rebuild with `sudo nixos-rebuild switch`
+3. Rebuild with `sudo nixos-rebuild switch` or `make`
 
 ### Enabling Services
 
@@ -170,39 +123,9 @@ Then:
 - Module header comments should describe purpose, not list contents
 - Host-specific docs go in `hosts/*/README.md`
 
-## NixOS Commands (Flakes)
+## NixOS Commands
 
-```bash
-# From the nixos directory:
-cd nixos
-
-# Rebuild system configuration
-make switch  # or just 'make'
-
-# Test configuration without switching
-make test
-
-# Update boot configuration (apply on next boot)
-make boot
-
-# Build configuration without activating
-make build
-
-# Update flake inputs
-make update
-
-# Check flake configuration
-make check
-
-# Show flake metadata
-make show
-
-# Garbage collection
-sudo nix-collect-garbage -d
-
-# Search for packages
-nix search nixpkgs <package-name>
-```
+See [README.md](README.md#common-operations) for common NixOS commands and Makefile targets.
 
 ## Flake Configuration
 

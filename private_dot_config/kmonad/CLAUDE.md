@@ -20,23 +20,7 @@ private_dot_config/kmonad/
 
 ## Key Mappings
 
-### Base Layer Modifications
-
-1. **Caps Lock → Control/Escape**
-   - Tap: Escape (for vim)
-   - Hold: Control (for shortcuts)
-
-2. **Navigation Layer** (Hold Right Alt)
-   - Vim-style arrow keys (hjkl)
-   - Home/End/PageUp/PageDown
-
-### Optional Features
-
-The configuration includes commented-out sections for:
-
-- Home row modifiers
-- Symbol layers
-- Number pad layer
+See [README.md](README.md) for complete key mapping reference and optional features.
 
 ## NixOS Integration
 

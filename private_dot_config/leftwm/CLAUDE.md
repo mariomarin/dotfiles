@@ -65,45 +65,9 @@ The `custom` theme is designed to work with systemd services:
 2. **polybar.service** - Status bar with multi-monitor support
 3. **wallpaper-rotation.timer** - Rotates wallpapers every 30 minutes
 
-## Key Bindings (Mod4 = Super/Windows key)
+## Key Bindings
 
-### Window Management
-
-- `Mod4 + Shift + q` - Close window
-- `Mod4 + Shift + r` - Soft reload LeftWM
-- `Mod4 + Enter` - Move window to top of stack
-- `Mod4 + j/k` - Focus down/up
-- `Mod4 + Shift + j/k` - Move window down/up
-
-### Workspace Navigation
-
-- `Mod4 + 1-9` - Go to workspace 1-9
-- `Mod4 + Shift + 1-9` - Move window to workspace 1-9
-- `Mod4 + Tab` - Swap to last visited workspace
-- `Mod4 + Alt + Tab` - Jump to next workspace
-- `Mod4 + Alt + Shift + Tab` - Jump to previous workspace
-- `Mod4 + h/l` - Focus previous/next workspace
-- `Mod4 + w` - Swap to last workspace (duplicate of Mod4 + Tab)
-
-### Layouts
-
-- `Mod4 + Control + j/k` - Previous/Next layout
-
-### Applications
-
-- `Mod4 + space` - Launch rofi (application launcher)
-- `Mod4 + Shift + Return` - Launch alacritty terminal
-- `Mod4 + y` - YouTube search (ytfzf)
-- `Mod4 + p` - Power menu (shutdown/reboot/logout)
-- `Mod4 + Shift + l` - Lock screen (xfce4-screensaver)
-- `Mod4 + Shift + x` - Logout
-
-### Screenshots
-
-- `Print Screen` - Screenshot a region (select with mouse)
-- `Shift + Print Screen` - Screenshot active window
-- `Ctrl + Print Screen` - Screenshot full monitor
-- Screenshots saved to `~/Pictures/screenshots/`
+See [README.md](README.md) for complete keybinding reference. Mod key is Super/Windows key (Mod4).
 
 ## Integration with Other Components
 

@@ -130,72 +130,19 @@ make quick-apply
 
 ## Common Commands
 
-### Chezmoi Operations
+See [README.md](README.md) for comprehensive command reference. Key workflows:
 
 ```bash
-# Apply changes (includes topgrade updates)
-chezmoi apply -v
-
-# Quick apply without running topgrade
+# Quick apply without topgrade updates
 make quick-apply
 
-# See what changes will be made
-chezmoi diff
+# NixOS rebuild (see nixos/README.md for details)
+make nixos
 
-# Show status of managed files
-chezmoi status
+# Component operations (nvim, tmux, zim)
+make <component>        # Default action for component
+make <component>/health # Check component health
 ```
-
-### NixOS Operations (Flakes)
-
-```bash
-# From repository root (using pattern rule):
-make nixos              # Rebuild NixOS configuration (alias for nixos/switch)
-make nixos/test         # Test configuration without switching
-make nixos/boot         # Update boot configuration
-make nixos/update       # Update flake inputs
-make nixos/check        # Check flake configuration
-make nixos/show         # Show flake metadata
-
-# Or directly from nixos directory:
-cd nixos && make        # Rebuild (switch is default)
-cd nixos && make test   # Test configuration
-```
-
-### Configuration Management
-
-```bash
-# Neovim operations:
-make nvim               # Sync plugins (alias for nvim/sync)
-make nvim/clean         # Clean unused plugins
-make nvim/health        # Check health
-
-# Tmux operations:
-make tmux               # Reload config (alias for tmux/reload)
-make tmux/status        # Show tmux status
-make tmux/health        # Check health
-
-# Zim operations:
-make zim                # Update modules (alias for zim/update)
-make zim/compile        # Compile for faster loading
-make zim/clean          # Clean cache
-make zim/health         # Check health
-```
-
-Note: Plugin updates for all tools are handled by topgrade (`make update`)
-
-### Tmux Plugin Management
-
-Tmux plugins are now managed declaratively through chezmoi's external dependency system. All plugins are defined
-in `private_dot_local/share/tmux/plugins/.chezmoiexternal.toml` and are automatically downloaded/updated when
-running `chezmoi apply`.
-
-Benefits:
-
-- No more git conflicts in plugin directories
-- Reproducible plugin versions
-- Atomic updates with chezmoi
-- No need to run TPM update commands
 
 ## Component-Specific Documentation
 
@@ -224,49 +171,13 @@ Detailed documentation for each major component is available in subdirectory CLA
 3. **ALWAYS** document plugin default keybindings
 4. Refer to [Tmux CLAUDE.md](private_dot_config/tmux/CLAUDE.md) for detailed guidance
 
-## Architecture & Key Components
+## Architecture
 
-### Directory Structure
-
-- `private_dot_config/` - Maps to `~/.config/` containing application configurations
-  - `nvim/` - Neovim configuration using lazy.nvim
-  - `alacritty/` - Alacritty terminal configuration
-  - `leftwm/` - LeftWM window manager configuration
-  - `picom/` - X11 compositor configuration
-  - `polybar/` - Status bar configuration and scripts
-- `private_dot_local/` - Maps to `~/.local/` containing local data
-  - `share/tmux/plugins/` - Tmux plugins managed by TPM
-  - `share/zim/` - Zim framework modules
-- `.chezmoiscripts/` - Scripts that run during chezmoi apply
-- `.chezmoiexternal.toml` files - Define external dependencies to be fetched
-
-### Key Configuration Files
-
-- `chezmoi.toml.tmpl` - Chezmoi configuration template
-- `Makefile` - Primary interface for common operations
-- `dot_zshenv` - ZSH environment configuration
-
-### Dependency Management
-
-The repository uses `.chezmoiexternal.toml` files to manage external dependencies. These are automatically
-fetched and updated by chezmoi.
-
-#### Dynamic Version Management
-
-External tools support dynamic version management:
-
-- By default, tools use the latest GitHub release via `gitHubLatestRelease`
-- Versions can be pinned in `.chezmoidata.toml`:
-
-  ```toml
-  [versions]
-  containerUse = "v0.4.1"  # Pin specific version
-  zimfw = "v1.17.0"        # Pin specific version
-  ```
-
-- Template files (`.chezmoiexternal.toml.tmpl`) check for pinned versions first
+See [README.md](README.md) for directory structure, key files, and external dependency management.
 
 ### Zsh Configuration Preferences
+
+See [private_dot_config/zsh/CLAUDE.md](private_dot_config/zsh/CLAUDE.md) and [private_dot_config/zim/CLAUDE.md](private_dot_config/zim/CLAUDE.md) for detailed Zsh configuration guidance.
 
 #### Code Style
 
@@ -276,30 +187,6 @@ External tools support dynamic version management:
 - **Error Handling**: Use `|| return` for command failures
 - **Variables**: Always quote variables and use local scope
 - **Functions**: Use descriptive names with hyphens (e.g., `sesh-sessions`)
-
-### Zsh Completions
-
-#### Custom Zimfw Modules
-
-To add completions for new tools:
-
-1. Create a module directory: `private_dot_config/zim/modules/<tool-name>/`
-2. Create `init.zsh` that generates completions dynamically
-3. Add to `zimrc` BEFORE the completion module:
-
-   ```zsh
-   zmodule ${ZIM_CONFIG_FILE:h}/modules/<tool-name>
-   ```
-
-Example: The `container-use` module auto-generates completions for both `container-use` and `cu` commands.
-
-#### Key Points for Zsh Completions
-
-- Custom completion modules must load BEFORE zimfw's completion module
-- Completions are generated dynamically when the tool binary changes
-- Store completion files in the module's `functions/` subdirectory
-- Add to `fpath` in the module's init.zsh
-- Write idiomatic zsh code with proper error handling
 
 ### Git Configuration
 
@@ -318,33 +205,13 @@ Chezmoi is configured with:
 
 ## Development Environment Management
 
-### Project-Specific Tools
-
 **IMPORTANT**: Do NOT add linters, formatters, or development tools system-wide. Instead:
 
 1. Each project should define its own development environment in a `devenv.nix` file
 2. Use `direnv` with `direnv allow` to automatically load project-specific tools
 3. This ensures reproducible development environments across different projects
 
-### This Repository's Tools
-
-The `devenv.nix` in this repository provides:
-
-- **Nix**: nixpkgs-fmt, deadnix, statix, nil (LSP)
-- **Lua**: stylua, lua-language-server (LSP)
-- **Shell**: shellcheck, shfmt, bash-language-server (LSP)
-- **JSON**: biome, vscode-langservers-extracted (LSP)
-- **TOML**: taplo (formatter & LSP)
-- **YAML**: yamlfmt, yaml-language-server (LSP)
-- **Markdown**: markdownlint-cli, marksman (LSP)
-
-To use these tools:
-
-```bash
-direnv allow  # Load the development environment
-make format   # Format all files
-make lint     # Lint all files
-```
+This repository uses `devenv.nix` for development tools. Use `make format` and `make lint` to format and check files.
 
 ## Development Standards
 
@@ -365,46 +232,11 @@ We use two approaches for managing systemd user services:
 
 See [docs/USER_SERVICES.md](docs/USER_SERVICES.md) for detailed comparison and guidelines.
 
-## NixOS Integration Patterns
+## NixOS Integration
 
-### Syncthing Systemd User Unit
+See [docs/USER_SERVICES.md](docs/USER_SERVICES.md) for details on systemd user service management.
 
-This repository includes a chezmoi script to manage the syncthing systemd user service on NixOS systems. The script:
-
-1. Resolves the system's syncthing service symlink to find the actual Nix store path
-2. Creates a direct symlink from `~/.config/systemd/user/syncthing.service` to the resolved Nix store path
-   (e.g., `/nix/store/.../syncthing.service`)
-3. Enables the service for automatic startup
-4. Automatically updates the symlink when the Nix store path changes (e.g., after syncthing updates)
-
-### Desktop Autostart Files
-
-Similar to the syncthing approach, desktop autostart files are managed via a chezmoi script:
-
-1. Links to system-installed desktop files from `/run/current-system/sw/share/applications/`
-2. For files needing modifications (e.g., startup delays), creates modified copies
-3. Automatically updates when packages are updated in NixOS
-4. Removes obsolete autostart files
-
-Current autostart applications:
-
-- CopyQ (2s delay) - Clipboard manager
-- Firefox (5s delay) - Web browser
-- Xfce4 Power Manager - Power management daemon
-- Alacritty with tmux (3s delay) - Terminal emulator with session management
-- KDE Connect (5s delay) - Phone/computer integration (non-Plasma desktops)
-
-### Systemd User Services
-
-Custom services managed by chezmoi:
-
-- `battery-combined-udev.service` - Battery monitor for Polybar
-
-### How it Works
-
-- Scripts avoid fragile intermediate symlinks by resolving to actual Nix store paths
-- This makes the configuration robust against package updates
-- Run `chezmoi apply` to fix any broken symlinks after system updates
+NixOS-specific integration is handled via chezmoi scripts that resolve system paths and create robust symlinks. Run `chezmoi apply` after system updates to fix any broken symlinks.
 
 ## Important Notes
 
@@ -432,26 +264,6 @@ Custom services managed by chezmoi:
   ```
   ````
 
-## Neovim Configuration (LazyVim)
+## Neovim Configuration
 
-The repository uses LazyVim as the Neovim configuration framework:
-See [Neovim CLAUDE.md](private_dot_config/nvim/CLAUDE.md) for detailed configuration.
-
-### Claude Integration
-
-- **Toggle**: `<leader>cc` opens Claude Code in a floating terminal
-- **Continue**: `<leader>c.` continues the conversation
-- **Reload**: `<leader>cr` reloads files modified by Claude
-- Configuration in `private_dot_config/nvim/lua/plugins/claude.lua`
-
-### Key Customizations
-
-- Catppuccin colorscheme (mocha flavor)
-- nvim-tree instead of neo-tree for file exploration
-- Leap.nvim for navigation
-- Chezmoi integration for dotfile management
-
-### NixOS Compatibility
-
-The configuration includes special handling for NixOS systems. See [NixOS CLAUDE.md](nixos/CLAUDE.md) for system
-configuration details.
+See [private_dot_config/nvim/CLAUDE.md](private_dot_config/nvim/CLAUDE.md) for detailed configuration and [README.md](README.md) for feature overview.
