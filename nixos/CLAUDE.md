@@ -64,14 +64,48 @@ nixos/
 
 ### Package Management
 
-Packages are organized into three tiers:
-- **Minimal** (`modules/minimal.nix`): Essential CLI tools for all hosts (headless and desktop)
-  - Includes optional modern CLI replacements when `modernCli = true`
-- **Development** (`modules/development.nix`): Development tools and environments
-  - Enabled on developer workstations (t470, wsl)
-- **Desktop** (`modules/desktop-packages.nix`): GUI applications and desktop-only utilities
-  - Only enabled on desktop hosts (t470)
-- **Specialized** (`modules/packages/additional-tools.nix`): Domain-specific tools (Kubernetes, cloud, etc.)
+Packages are organized into four tiers for maintainability and to avoid duplication:
+
+#### 1. Minimal (`modules/minimal.nix`)
+Essential CLI tools and utilities for **all hosts** (headless and desktop).
+- Core utilities: vim, git, tmux, bash, curl, wget
+- Development helpers: fzf, gh, age, jq, just
+- System utilities: atuin, topgrade, bitwarden-cli, speedtest-cli, trippy
+- Documentation: cheat, navi, tealdeer
+- Modern CLI replacements (when `modernCli = true`): bat, eza, ripgrep, fd, delta, lazygit, difftastic, dua, lsd, pipr, procs, pstree, sd, xcp, zoxide
+
+#### 2. Development (`modules/development.nix`)
+Languages, build tools, and development environments for coding workstations.
+- Nix tooling: chezmoi, direnv, niv, nix-direnv, devenv
+- Languages & runtimes: go, gopls, lua, nodejs, openjdk, rustup
+- Build tools: bear, clang, gnumake, pkg-config
+- Dev utilities: dive, nil, pandoc, plantuml, poetry, sqlite, tree-sitter, zeal
+- Editor: neovim (from unstable)
+- AI: claude-code
+
+#### 3. Desktop (`modules/desktop-packages.nix`)
+GUI applications and desktop-only utilities.
+- Applications: alacritty, brave, firefox, obsidian, gimp, bitwarden-desktop
+- Window manager: leftwm, rofi, polybar, dunst, dmenu
+- Desktop tools: syncthing, copyq, autorandr
+- System: nss, nssTools, ntfs3g
+- Multimedia: feh, pavucontrol, playerctl
+
+#### 4. Specialized (`modules/packages/additional-tools.nix`)
+Domain-specific tools for specialized workflows.
+- Kubernetes: stern, krew
+- Cloud: awscli, aws-sso-cli
+- Media: yewtube, yt-dlp
+- Git: git-branchless, git-sizer, bfg-repo-cleaner, git-filter-repo
+- Data: xan, jd-diff-patch
+- Search: meilisearch
+
+**Key Principles:**
+- CLI tools that are useful everywhere → minimal.nix
+- Language tooling and IDEs → development.nix
+- GUI applications → desktop-packages.nix
+- Domain-specific/specialized → additional-tools.nix
+- Check for duplicates before adding packages
 
 **Unfree Software**: Allowed for proprietary tools
 
@@ -102,6 +136,39 @@ Then:
 1. Edit `modules/users/mario.nix` for user-specific settings
 2. Update `modules/users.nix` for system-wide user settings
 3. Rebuild to apply changes
+
+## Best Practices
+
+### Module Organization
+- **Avoid duplicates**: Always check existing modules before adding packages
+  - Use `rg "package-name"` to search across all modules
+- **Think globally**: If a CLI tool would be useful on all hosts (including WSL), put it in minimal.nix
+- **Module descriptions**: Focus on purpose/role, not package lists (which change frequently)
+- **Comments**: Avoid detailed "moved from X to Y" comments - they create noise and maintenance burden
+
+### Package Placement Guidelines
+- **minimal.nix**: Would a headless server benefit from this CLI tool? → Yes = minimal.nix
+- **development.nix**: Is it a language, compiler, or dev tool? → Yes = development.nix
+- **desktop-packages.nix**: Does it have a GUI or require X11? → Yes = desktop-packages.nix
+- **additional-tools.nix**: Is it domain-specific (K8s, cloud, specialized workflow)? → Yes = additional-tools.nix
+
+### Commit Guidelines
+- Keep commits focused and granular
+- Avoid listing every package in commit messages
+- Focus on the "why" (purpose/reason) rather than the "what" (specific changes)
+- Group related changes together (e.g., "reorganize packages" not "move X, move Y, move Z")
+
+### Working with Multi-Host Configuration
+- Each host imports `common.nix` for universal settings
+- Host-specific settings go in `hosts/*/configuration.nix`
+- Conditional modules (boot, networking) automatically disabled for WSL
+- Test changes on one host before applying to all
+
+### Documentation
+- Update `README.md` for human-readable changes
+- Update `CLAUDE.md` when changing structure or adding best practices
+- Module header comments should describe purpose, not list contents
+- Host-specific docs go in `hosts/*/README.md`
 
 ## NixOS Commands (Flakes)
 
