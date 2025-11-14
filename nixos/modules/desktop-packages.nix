@@ -31,17 +31,11 @@
     # Core tools (age, bash, curl, file, fzf, gh, jq, just, tmux, unzip, yq-go)
     # are provided by custom.minimal module
     # Development tools (chezmoi, direnv) are in custom.development module
-    atuin # Shell history sync, search and backup
-    envsubst # Substitutes environment variables in shell format strings
+    # Common utilities (atuin, envsubst, gitFull, libnotify, libzip, miller,
+    # pay-respects, topgrade) are in custom.minimal module
     fuse # Filesystem in Userspace
-    gitFull # Git version control system with all features
     hledger # Plain text accounting
-    libnotify # Desktop notification library
-    libzip # Library for reading, creating, and modifying zip archives
-    miller # Like awk, sed, cut, join for CSV, TSV, and JSON
-    pay-respects # Press F to pay respects in the terminal
     speechd # Common interface to speech synthesis
-    topgrade # Upgrade all the things (system packages, plugins, etc.)
 
     # Modern CLI Replacements (additional desktop tools)
     # Core modern CLI tools (bat, eza, ripgrep, fd, bottom, delta, lazygit)

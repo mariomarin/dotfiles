@@ -22,7 +22,7 @@ in
     environment.systemPackages = with pkgs; [
       # Essential tools
       vim
-      git
+      gitFull   # Git version control system with all features
       tmux
       sesh      # Smart session manager for tmux
       upterm    # Secure terminal sharing
@@ -44,12 +44,21 @@ in
       # Data processing
       jq
       yq-go
+      miller    # Like awk, sed, cut, join for CSV, TSV, and JSON
 
       # Development utilities
       age       # Encryption tool (for chezmoi)
       fzf       # Command-line fuzzy finder
       gh        # GitHub CLI tool
       just      # Command runner similar to make
+
+      # System utilities
+      atuin        # Shell history sync, search and backup
+      envsubst     # Substitutes environment variables in shell format strings
+      libnotify    # Desktop notification library
+      libzip       # Library for reading, creating, and modifying zip archives
+      pay-respects # Press F to pay respects in the terminal
+      topgrade     # Upgrade all the things (system packages, plugins, etc.)
     ] ++ lib.optionals cfg.modernCli [
       # Modern CLI replacements
       bat       # cat with syntax highlighting
