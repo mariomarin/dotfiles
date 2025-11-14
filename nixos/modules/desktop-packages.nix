@@ -48,7 +48,6 @@
     bitwarden # Password manager
     credstash # Credential management using AWS KMS
     gnupg # GNU Privacy Guard
-    keychain # Re-use SSH and GPG agents between logins
     libsecret # Library for storing and retrieving passwords
     openssl # Cryptography and SSL/TLS toolkit
     openssl.dev # OpenSSL development files
