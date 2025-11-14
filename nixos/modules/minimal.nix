@@ -24,6 +24,12 @@ in
       vim
       git
       tmux
+      sesh      # Smart session manager for tmux
+      bash      # Bourne Again Shell
+
+      # File utilities
+      file      # Determine file types
+      unzip     # Extract compressed files
 
       # Network utilities
       wget
@@ -36,6 +42,12 @@ in
       # Data processing
       jq
       yq-go
+
+      # Development utilities
+      age       # Encryption tool (for chezmoi)
+      fzf       # Command-line fuzzy finder
+      gh        # GitHub CLI tool
+      just      # Command runner similar to make
     ] ++ lib.optionals cfg.modernCli [
       # Modern CLI replacements
       bat       # cat with syntax highlighting

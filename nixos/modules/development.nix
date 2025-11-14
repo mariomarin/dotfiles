@@ -12,9 +12,13 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      # Dotfiles and environment management
+      unstable.chezmoi  # Dotfiles manager (latest version from unstable)
+      direnv            # Environment switcher for the shell
+
       # Nix development tools
-      niv          # Dependency management for Nix
-      nix-direnv   # Integration of direnv with Nix
+      niv               # Dependency management for Nix
+      nix-direnv        # Integration of direnv with Nix
 
       # Development environment
       unstable.devenv   # Fast, declarative, reproducible development environments
