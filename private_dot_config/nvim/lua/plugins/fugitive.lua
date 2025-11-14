@@ -1,7 +1,7 @@
 return {
   -- Disable Snacks.nvim git features that override Fugitive commands
   {
-    "snacks.nvim",
+    "folke/snacks.nvim",
     opts = {
       git = { enabled = false }, -- Disable git commands (like G status showing in popup)
       gitbrowse = { enabled = false }, -- Disable git browse feature
@@ -10,13 +10,13 @@ return {
   -- vim-fugitive for Git integration
   {
     "tpope/vim-fugitive",
-    cmd = { "Git", "G", "Gstatus", "Gblame", "Gpush", "Gpull", "Gcommit", "Glog" },
     keys = {
-      { "<leader>gs", "<cmd>G<cr>", desc = "Git status (Fugitive)" },
+      { "<leader>gs", "<cmd>Git<cr>", desc = "Git status (Fugitive)" },
       { "<leader>gb", "<cmd>Git blame<cr>", desc = "Git blame" },
       { "<leader>gd", "<cmd>Gdiff<cr>", desc = "Git diff" },
     },
-    -- Load early to ensure G command is defined by fugitive
+    -- Load immediately to ensure commands are available and override Snacks
     lazy = false,
+    priority = 100,
   },
 }
