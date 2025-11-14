@@ -61,13 +61,23 @@ in
       topgrade     # Upgrade all the things (system packages, plugins, etc.)
     ] ++ lib.optionals cfg.modernCli [
       # Modern CLI replacements
-      bat       # cat with syntax highlighting
-      eza       # modern ls
-      ripgrep   # modern grep
-      fd        # modern find
-      bottom    # modern top/htop
-      delta     # modern diff
-      lazygit   # TUI for git
+      bat          # cat with syntax highlighting
+      bottom       # modern top/htop
+      delta        # modern diff
+      difftastic   # structural diff tool that understands syntax
+      dua          # disk usage analyzer (alternative to du)
+      eza          # modern ls
+      fd           # modern find
+      lazygit      # TUI for git
+      lfs          # list file system info (modern lsfd)
+      lsd          # modern ls with colors and icons
+      pipr         # interactive pipe evaluation tool
+      procs        # modern replacement for ps
+      pstree       # show the set of running processes as a tree
+      ripgrep      # modern grep
+      sd           # modern replacement for sed
+      xcp          # modern replacement for cp with progress
+      zoxide       # modern replacement for cd with frecency
     ];
   };
 }

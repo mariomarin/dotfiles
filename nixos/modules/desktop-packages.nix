@@ -37,19 +37,10 @@
     hledger # Plain text accounting
     speechd # Common interface to speech synthesis
 
-    # Modern CLI Replacements (additional desktop tools)
-    # Core modern CLI tools (bat, eza, ripgrep, fd, bottom, delta, lazygit)
-    # are provided by custom.minimal module
-    pstree # Show the set of running processes as a tree
-    difftastic # Structural diff tool that understands syntax
-    dua # Disk usage analyzer (alternative to du)
-    lfs # List file system info (modern lsfd)
-    lsd # Modern ls with colors and icons
-    pipr # Interactive pipe evaluation tool
-    procs # Modern replacement for ps
-    sd # Modern replacement for sed
-    xcp # Modern replacement for cp with progress
-    zoxide # Modern replacement for cd with frecency
+    # Modern CLI Replacements
+    # All modern CLI tools (bat, eza, ripgrep, fd, bottom, delta, lazygit,
+    # pstree, difftastic, dua, lfs, lsd, pipr, procs, sd, xcp, zoxide)
+    # are provided by custom.minimal module (when modernCli = true)
 
     # Documentation & Help
     cheat # Create and view interactive cheatsheets
