@@ -6,36 +6,32 @@ This file provides guidance to Claude Code when working with the NixOS configura
 
 ```text
 nixos/
-├── Makefile                  # NixOS rebuild commands
-├── flake.nix                 # Nix flakes configuration
-├── flake.lock                # Locked flake dependencies
-├── configuration.nix         # Main NixOS configuration
-├── hardware-configuration.nix # Hardware-specific settings
-└── modules/                  # Modular configuration
-    ├── boot.nix             # Boot loader configuration
-    ├── desktop.nix          # Desktop environment setup
-    ├── desktop/
-    │   ├── gnome.nix       # GNOME desktop configuration
-    │   └── hyprland.nix    # Hyprland compositor configuration
-    ├── development/
-    │   ├── go.nix          # Go development environment
-    │   ├── node.nix        # Node.js development environment
-    │   ├── python.nix      # Python development environment
-    │   └── rust.nix        # Rust development environment
-    ├── locale.nix          # Localization settings
-    ├── networking.nix      # Network configuration
-    ├── desktop-packages.nix # Desktop-specific packages
-    ├── security.nix        # Security settings
-    ├── services.nix        # System services
-    ├── services/
-    │   ├── docker.nix      # Docker configuration
-    │   └── syncthing.nix   # Syncthing service
-    ├── system/
-    │   └── fonts.nix       # Font configuration
-    ├── users.nix           # User accounts
-    ├── users/
-    │   └── mario.nix       # User-specific configuration
-    └── virtualization.nix  # Virtualization settings
+├── Makefile                     # NixOS rebuild commands
+├── flake.nix                    # Nix flakes configuration
+├── flake.lock                   # Locked flake dependencies
+├── common.nix                   # Universal settings for all hosts
+├── configuration.nix            # Module imports
+├── hosts/                       # Host-specific configurations
+│   ├── t470/                    # ThinkPad T470 (desktop)
+│   ├── vm/                      # Virtual machine
+│   └── wsl/                     # WSL (headless)
+└── modules/                     # Modular configuration
+    ├── minimal.nix              # Essential CLI tools for all hosts
+    ├── development.nix          # Development tools and environment
+    ├── desktop-packages.nix     # Desktop GUI applications
+    ├── boot.nix                 # Boot loader configuration
+    ├── wsl.nix                  # WSL-specific configuration
+    ├── desktop.nix              # Desktop environment setup
+    ├── locale.nix               # Localization settings
+    ├── networking.nix           # Network configuration
+    ├── security.nix             # Security settings
+    ├── services.nix             # System services
+    ├── users.nix                # User accounts
+    ├── virtualization.nix       # Virtualization settings
+    ├── packages/                # Specialized package collections
+    │   └── additional-tools.nix # Domain-specific tools
+    └── system/
+        └── fonts.nix            # Font configuration
 ```
 
 ## Configuration Philosophy
@@ -68,15 +64,29 @@ nixos/
 
 ### Package Management
 
-- **Desktop Packages**: Defined in `modules/desktop-packages.nix`
-- **Development Tools**: Language-specific modules
-- **Unfree Software**: Allowed (for proprietary tools)
+Packages are organized into three tiers:
+- **Minimal** (`modules/minimal.nix`): Essential CLI tools for all hosts (headless and desktop)
+  - Includes optional modern CLI replacements when `modernCli = true`
+- **Development** (`modules/development.nix`): Development tools and environments
+  - Enabled on developer workstations (t470, wsl)
+- **Desktop** (`modules/desktop-packages.nix`): GUI applications and desktop-only utilities
+  - Only enabled on desktop hosts (t470)
+- **Specialized** (`modules/packages/additional-tools.nix`): Domain-specific tools (Kubernetes, cloud, etc.)
+
+**Unfree Software**: Allowed for proprietary tools
 
 ## Common Tasks
 
-### Adding Desktop Packages
+### Adding Packages
 
-1. Edit `modules/desktop-packages.nix`
+Choose the appropriate module based on the package type:
+- **CLI tools** for all hosts → `modules/minimal.nix`
+- **Development tools** → `modules/development.nix`
+- **GUI applications** → `modules/desktop-packages.nix`
+- **Specialized tools** (K8s, cloud, etc.) → `modules/packages/additional-tools.nix`
+
+Then:
+1. Edit the appropriate module file
 2. Add package to `environment.systemPackages`
 3. Rebuild with `sudo nixos-rebuild switch`
 
