@@ -7,7 +7,6 @@
 
     # Kubernetes tools
     stern # Multi pod and container log tailing
-    just # Command runner for project-specific tasks
     krew # Kubernetes plugin manager
 
     # Network and cloud tools
@@ -28,13 +27,8 @@
     bfg-repo-cleaner # BFG Repo-Cleaner for removing large files
     git-filter-repo # Quickly rewrite git repository history
 
-    # System monitoring
-    viddy # Modern watch command
-
-    # Version management
-    svu # Semantic Version Utility
-
-    # Remote access
-    upterm # Secure terminal sharing
+    # Note: viddy and upterm are in packages.nix
+    # Note: svu is in development.nix
+    # Note: just is in minimal.nix
   ];
 }
