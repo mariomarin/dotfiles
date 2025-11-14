@@ -3,6 +3,10 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [
+    ../../common.nix  # Universal NixOS settings
+  ];
+
   # Set hostname - can be customized per WSL instance
   networking.hostName = "nixos-wsl";
 

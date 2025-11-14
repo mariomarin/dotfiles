@@ -2,13 +2,13 @@
 { config, pkgs, lib, ... }:
 
 {
-  # Set hostname
-  networking.hostName = "nixos"; # Change to your preferred hostname
-
-  # Hardware-specific imports
   imports = [
-    ../../hardware-configuration.nix # Your current hardware config
+    ../../common.nix                  # Universal NixOS settings
+    ../../hardware-configuration.nix  # T470 hardware configuration
   ];
+
+  # Set hostname
+  networking.hostName = "nixos";
 
   # Enable desktop environment
   custom.desktop = {

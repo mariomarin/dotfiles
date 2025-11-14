@@ -2,6 +2,10 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [
+    ../../common.nix  # Universal NixOS settings
+  ];
+
   # Set hostname (will be overridden by VM provisioning usually)
   networking.hostName = "vm-headless";
 
