@@ -20,8 +20,7 @@
     shfmt
     bash-language-server
 
-    # JSON formatting and LSP
-    biome
+    # JSON LSP
     vscode-langservers-extracted # Includes JSON, HTML, CSS LSPs
 
     # YAML formatting and LSP
@@ -91,16 +90,6 @@
           ".*zshenv$"
           "private_dot_config/zim/.*" # Exclude zim modules
         ];
-      };
-
-      # JSON formatting with biome
-      biome = {
-        enable = true;
-        name = "biome";
-        entry = "biome format --write --no-errors-on-unmatched";
-        files = "\\.(json|jsonc)$";
-        language = "system";
-        pass_filenames = true;
       };
 
       # TOML formatting with taplo
