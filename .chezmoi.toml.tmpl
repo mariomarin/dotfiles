@@ -4,10 +4,20 @@
 {{- $isServer := false -}}
 {{- $isDesktop := false -}}
 {{- $hasKmonad := false -}}
+{{- $isWSL := false -}}
+
+{{- /* Detect WSL environment */ -}}
+{{- $wslEnv := env "WSL_DISTRO_NAME" -}}
+{{- if $wslEnv -}}
+  {{- $isWSL = true -}}
+{{- end -}}
 
 {{- /* Determine machine type based on hostname and environment */ -}}
 {{- if $codespaces -}}
   {{- $isServer = true -}}
+{{- else if $isWSL -}}
+  {{- $isServer = true -}}
+  {{- /* WSL is treated as a server (headless, CLI-only) */ -}}
 {{- else if eq $hostname "nixos" -}}
   {{- $isDesktop = true -}}
   {{- $hasKmonad = true -}}
@@ -23,6 +33,9 @@
 {{- if $isServer -}}
   {{- $machineType = "server" -}}
 {{- end -}}
+{{- if $isWSL -}}
+  {{- $machineType = "wsl" -}}
+{{- end -}}
 
 [data]
     machineType = {{ $machineType | quote }}
@@ -35,5 +48,6 @@
         [data.machineConfig.features]
             desktop = {{ $isDesktop }}
             kmonad = {{ $hasKmonad }}
-            audio = {{ $isDesktop }}
-            bluetooth = {{ $isDesktop }}
+            audio = {{ and $isDesktop (not $isWSL) }}
+            bluetooth = {{ and $isDesktop (not $isWSL) }}
+            wsl = {{ $isWSL }}
