@@ -10,6 +10,7 @@
     ./modules/networking.nix
     ./modules/locale.nix
     ./modules/wsl.nix
+    ./modules/minimal.nix
     ./modules/desktop.nix
     ./modules/users.nix
     ./modules/packages.nix

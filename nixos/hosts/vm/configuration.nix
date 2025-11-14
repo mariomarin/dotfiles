@@ -25,6 +25,12 @@
   hardware.pulseaudio.enable = false;
   services.pipewire.enable = false;
 
+  # Enable minimal system packages (essential CLI tools only)
+  custom.minimal = {
+    enable = true;
+    modernCli = false;  # Basic tools only, no modern replacements
+  };
+
   # Essential services for headless operation
   services.openssh = {
     enable = true;
@@ -35,17 +41,6 @@
       PubkeyAuthentication = true;
     };
   };
-
-  # Minimal packages for server
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-    tmux
-    htop
-    wget
-    curl
-    rsync
-  ];
 
   # Firewall - only SSH by default
   networking.firewall = {

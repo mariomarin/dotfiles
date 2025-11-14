@@ -29,30 +29,12 @@
   services.pipewire.enable = lib.mkForce false;
   hardware.pulseaudio.enable = lib.mkForce false;
 
-  # Minimal system packages - core CLI tools only
+  # Enable minimal system packages with modern CLI tools
   # Per-project tools should come from devenv.nix
-  environment.systemPackages = with pkgs; [
-    # Essential tools (everything else via devenv.nix)
-    vim
-    git
-    tmux
-
-    # Modern CLI replacements (universal across projects)
-    bat
-    eza
-    ripgrep
-    fd
-    bottom
-    delta
-    lazygit
-
-    # Core utilities
-    wget
-    curl
-    rsync
-    jq
-    yq-go
-  ];
+  custom.minimal = {
+    enable = true;
+    modernCli = true;  # Include modern replacements (bat, eza, ripgrep, etc.)
+  };
 
   # Enable Docker for containers
   virtualisation.docker = {
