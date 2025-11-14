@@ -100,6 +100,7 @@
     nssTools # NSS security tools
     ntfs3g # NTFS filesystem driver
     rclone # Cloud storage sync utility
+    remmina # Remote desktop client with RDP, VNC, SSH support
     speedtest-cli # Internet bandwidth speed test
     stern # Multi-pod and container log tailing for Kubernetes
     syncthing # Continuous file synchronization
