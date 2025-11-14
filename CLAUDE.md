@@ -213,6 +213,35 @@ Chezmoi is configured with:
 
 This repository uses `devenv.nix` for development tools. Use `make format` and `make lint` to format and check files.
 
+### Formatting Tools Configuration
+
+**CRITICAL**: Formatting tools are configured in TWO places that must be kept in sync:
+
+1. **`devenv.nix` git hooks** (lines 52-135) - Automatic formatting on commit
+   - Runs on **staged files only**
+   - Fast, incremental
+   - Pre-commit hooks
+
+2. **`Makefile` format targets** (lines 4-62) - Manual formatting
+   - Runs on **entire repository**
+   - For manual use outside git workflow
+   - Useful for batch formatting
+
+**When changing formatter arguments**, update BOTH locations:
+
+Example - if changing shfmt arguments:
+- `devenv.nix` line 74: `entry = lib.mkForce "shfmt -w -i 2 -ci -sr -kp";`
+- `Makefile` line 43: `@shfmt -w -i 2 -ci -sr -kp .`
+
+**Formatters to keep in sync**:
+- nixpkgs-fmt (Nix files)
+- stylua (Lua files)
+- shfmt (Shell scripts) - **includes exclude patterns**
+- shellcheck (Shell linting) - **includes exclude patterns**
+- taplo (TOML files)
+- yamlfmt (YAML files)
+- markdownlint (Markdown files)
+
 ## Development Standards
 
 - Follow conventional commit format with **SHORT** titles and descriptions
