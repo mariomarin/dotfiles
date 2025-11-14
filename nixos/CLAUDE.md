@@ -24,7 +24,7 @@ nixos/
     │   └── rust.nix        # Rust development environment
     ├── locale.nix          # Localization settings
     ├── networking.nix      # Network configuration
-    ├── packages.nix        # System-wide packages
+    ├── desktop-packages.nix # Desktop-specific packages
     ├── security.nix        # Security settings
     ├── services.nix        # System services
     ├── services/
@@ -68,15 +68,15 @@ nixos/
 
 ### Package Management
 
-- **System Packages**: Defined in `modules/packages.nix`
+- **Desktop Packages**: Defined in `modules/desktop-packages.nix`
 - **Development Tools**: Language-specific modules
 - **Unfree Software**: Allowed (for proprietary tools)
 
 ## Common Tasks
 
-### Adding System Packages
+### Adding Desktop Packages
 
-1. Edit `modules/packages.nix`
+1. Edit `modules/desktop-packages.nix`
 2. Add package to `environment.systemPackages`
 3. Rebuild with `sudo nixos-rebuild switch`
 

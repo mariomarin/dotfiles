@@ -27,7 +27,7 @@
     bfg-repo-cleaner # BFG Repo-Cleaner for removing large files
     git-filter-repo # Quickly rewrite git repository history
 
-    # Note: viddy and upterm are in packages.nix
+    # Note: viddy and upterm are in desktop-packages.nix
     # Note: svu is in development.nix
     # Note: just is in minimal.nix
   ];

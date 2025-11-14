@@ -116,7 +116,6 @@
     pandoc # Universal markup converter
     unstable.tree-sitter # Parser generator and incremental parsing library
     tridactyl-native # Native messaging host for Tridactyl Firefox addon
-    vim # Vi Improved text editor
 
     # Audio & Multimedia
     alsa-lib-with-plugins # Advanced Linux Sound Architecture libraries

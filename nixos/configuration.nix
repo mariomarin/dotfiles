@@ -14,7 +14,7 @@
     ./modules/development.nix
     ./modules/desktop.nix
     ./modules/users.nix
-    ./modules/packages.nix
+    ./modules/desktop-packages.nix
     ./modules/packages/additional-tools.nix
     ./modules/services.nix
     ./modules/virtualization.nix
