@@ -42,8 +42,6 @@
     pay-respects # Press F to pay respects in the terminal
     speechd # Common interface to speech synthesis
     topgrade # Upgrade all the things (system packages, plugins, etc.)
-    upterm # Secure terminal sharing
-    viddy # Modern watch command with diff highlighting
 
     # Modern CLI Replacements (additional desktop tools)
     # Core modern CLI tools (bat, eza, ripgrep, fd, bottom, delta, lazygit)

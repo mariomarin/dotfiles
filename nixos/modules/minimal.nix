@@ -25,6 +25,8 @@ in
       git
       tmux
       sesh      # Smart session manager for tmux
+      upterm    # Secure terminal sharing
+      viddy     # Modern watch command with diff highlighting
       bash      # Bourne Again Shell
 
       # File utilities
