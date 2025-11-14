@@ -152,6 +152,75 @@ This repository uses two approaches for systemd user services:
 
 See [../docs/USER_SERVICES.md](../docs/USER_SERVICES.md) for detailed guidelines.
 
+## WSL Support
+
+This repository supports NixOS on Windows Subsystem for Linux (WSL2) via the NixOS-WSL project.
+
+### WSL Configuration
+
+- **Host**: `nixos-wsl`
+- **Type**: Headless, CLI-only (no GUI)
+- **Use Case**: Development via browser (MS DevBox) or SSH
+- **Philosophy**: Minimal system packages, per-project tooling via `devenv.nix`
+
+### WSL-Specific Features
+
+✅ **Enabled:**
+- Full NixOS with flakes and systemd
+- Windows interop (run `.exe` from Linux)
+- Docker for containers
+- SSH server
+- Core CLI tools only
+
+❌ **Disabled:**
+- All GUI applications
+- Desktop environment and X11
+- Audio services (use Windows audio)
+- Hardware-specific services (Bluetooth, TLP, KMonad)
+- NetworkManager (uses WSL networking)
+
+### Building WSL Configuration
+
+```bash
+# From any NixOS system (test build)
+cd nixos
+nix build .#nixosConfigurations.nixos-wsl.config.system.build.toplevel
+
+# On WSL (apply configuration)
+sudo nixos-rebuild switch --flake /etc/nixos#nixos-wsl
+
+# Update flake inputs
+nix flake update
+```
+
+### WSL Detection
+
+Chezmoi automatically detects WSL via `$WSL_DISTRO_NAME`:
+- Machine type: `"wsl"`
+- Features: `wsl = true`, `desktop = false`, `audio = false`
+
+### Development Workflow
+
+System packages are minimal. Use `devenv.nix` per repository:
+
+```bash
+cd /path/to/project
+devenv shell  # If project has devenv.nix
+
+# Or with direnv
+echo "use devenv" > .envrc
+direnv allow
+```
+
+### WSL Limitations
+
+- No boot loader or kernel configuration
+- No hardware-specific services
+- No NetworkManager (uses WSL networking)
+- No GUI (pure CLI/TUI workflow)
+
+For detailed WSL documentation, see [hosts/wsl/README.md](hosts/wsl/README.md).
+
 ## Important Notes
 
 - Always test configuration before switching
