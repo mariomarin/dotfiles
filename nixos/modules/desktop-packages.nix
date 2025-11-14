@@ -45,26 +45,18 @@
     tealdeer # Fast tldr client in Rust
 
     # Security & Authentication
-    bitwarden # Password manager
+    bitwarden-desktop # Password manager GUI
     credstash # Credential management using AWS KMS
     gnupg # GNU Privacy Guard
     libsecret # Library for storing and retrieving passwords
     openssl # Cryptography and SSL/TLS toolkit
     openssl.dev # OpenSSL development files
 
-    # Cloud & Networking
-    aws-sso-cli # AWS SSO credential helper
-    awscli2 # Amazon Web Services CLI v2
-    kubectl # Kubernetes command-line tool
-    krew # Plugin manager for kubectl
     nss # Network Security Services
     nssTools # NSS security tools
     ntfs3g # NTFS filesystem driver
-    rclone # Cloud storage sync utility
     speedtest-cli # Internet bandwidth speed test
-    stern # Multi-pod and container log tailing for Kubernetes
     syncthing # Continuous file synchronization
-    sysdig # System exploration and troubleshooting tool
     trippy # Network diagnostic tool combining traceroute and ping
 
     # Development Tools
