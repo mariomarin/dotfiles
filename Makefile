@@ -147,16 +147,16 @@ chezmoi/%:
 	@cd chezmoi && just $*
 
 nvim/%:
-	@$(MAKE) -C private_dot_config/nvim $*
+	@cd private_dot_config/nvim && just $*
 
 tmux/%:
-	@$(MAKE) -C private_dot_config/tmux $*
+	@cd private_dot_config/tmux && just $*
 
 zim/%:
-	@$(MAKE) -C private_dot_config/zim $*
+	@cd private_dot_config/zim && just $*
 
 topgrade/%:
-	@$(MAKE) -C private_dot_config/topgrade $*
+	@cd private_dot_config/topgrade && just $*
 
 # Convenience aliases
 nixos: nixos/switch
