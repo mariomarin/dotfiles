@@ -144,7 +144,7 @@ make bw-reload
 make
 ```
 
-**Manual workflow:**
+**Manual workflow (Unix):**
 
 ```bash
 # Unlock and export session
@@ -153,6 +153,19 @@ export BW_SESSION=$(bw unlock --raw)
 # Apply dotfiles
 chezmoi apply -v
 ```
+
+**Manual workflow (Windows):**
+
+```powershell
+# Unlock and export session in PowerShell
+$env:BW_SESSION = bw unlock --raw
+
+# Apply dotfiles
+chezmoi apply -v
+```
+
+**Note:** The `make bw-unlock` and `make bw-reload` targets use direnv, which works on Windows but
+the development environment (`devenv.nix`) does not. On Windows, use the manual PowerShell workflow above.
 
 ### How It Works
 
