@@ -4,6 +4,9 @@
   # Development environment for this repository
   # Includes formatters and linters for all languages used
 
+  # Enable dotenv support for loading .env file
+  dotenv.enable = true;
+
   packages = with pkgs; [
     # Nix formatting, linting, and LSP
     nixpkgs-fmt
