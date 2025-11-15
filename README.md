@@ -5,11 +5,13 @@ This is a chezmoi-managed dotfiles repository that uses templating and external 
 ## Quick Start
 
 ### Install chezmoi and initialize dotfiles
+
 ```bash
 make install
 ```
 
 ### Initialize with this repository
+
 ```bash
 make init
 ```
@@ -57,6 +59,10 @@ make apply
 # Install chezmoi (if not already installed)
 make install
 
+# Bitwarden session management
+make bw-unlock   # Unlock vault and save session
+make bw-reload   # Reload direnv environment
+
 # Sync (currently empty - reserved for future use)
 make sync
 ```
@@ -98,24 +104,81 @@ The repository is configured via `chezmoi.toml.tmpl`:
   
 This means any changes made via `chezmoi apply` are automatically version controlled.
 
+## Bitwarden Integration
+
+This repository uses Bitwarden to securely store and manage secrets like SSH keys.
+
+### Setup
+
+1. **Install Bitwarden CLI** (if not already installed)
+2. **Login to Bitwarden:**
+
+   ```bash
+   bw login <your-email>
+   ```
+
+3. **Create SSH Key item in Bitwarden:**
+   - Open Bitwarden web vault or desktop app
+   - Create a new **SSH Key** item
+   - Name it `id-rsa`
+   - Paste your SSH private key in the "Private Key" field
+   - Paste your SSH public key in the "Public Key" field
+   - Save the item
+
+### Usage
+
+**Quick workflow:**
+
+```bash
+# 1. Unlock vault and save session
+make bw-unlock
+
+# 2. Reload environment to load session
+make bw-reload
+
+# 3. Apply dotfiles (SSH keys are fetched from Bitwarden)
+make
+```
+
+**Manual workflow:**
+
+```bash
+# Unlock and export session
+export BW_SESSION=$(bw unlock --raw)
+
+# Apply dotfiles
+chezmoi apply -v
+```
+
+### How It Works
+
+- SSH key templates fetch keys from Bitwarden using the `bitwarden` template function
+- Session token is saved to `.envrc.local` (ignored by git)
+- `direnv` automatically loads the session when you enter the directory
+- Session persists until you run `bw lock` or `bw logout`
+
 ## External Dependencies
 
 This repository automatically manages the following external tools and resources:
 
 ### Development Tools
+
 - **container-use** (`~/.local/bin/container-use`) - Docker-based development environments
   - Alias: `cu` (symlinked)
   - Custom Zsh completions included
 
 ### Shell Framework
+
 - **zimfw** (`~/.config/zim/zimfw.zsh`) - Modular Zsh framework
   - Auto-updates to latest release
   - Custom modules for tool completions
 
 ### Terminal
+
 - **Alacritty themes** (`~/.config/alacritty/themes/`) - Color schemes for Alacritty terminal
 
 ### Tmux Plugins (via TPM)
+
 - **tpm** - Tmux Plugin Manager
 - **tmux-sensible** - Basic tmux settings everyone can agree on
 - **minimal-tmux-status** - Clean, minimal tmux theme
@@ -129,6 +192,7 @@ This repository automatically manages the following external tools and resources
 - **extrakto** - Quickly select, copy/insert text
 
 ### Utilities
+
 - **pulseaudio-control** (`~/.local/bin/pulseaudio-control`) - Polybar PulseAudio control script
 
 ## Version Management
@@ -168,6 +232,7 @@ Scripts in `.chezmoiscripts/` run automatically during `chezmoi apply`:
 Chezmoi uses Go's text/template system. Files ending in `.tmpl` are processed as templates:
 
 ### Available Variables
+
 - `{{ .chezmoi.os }}` - Operating system (linux, darwin, windows)
 - `{{ .chezmoi.arch }}` - Architecture (amd64, arm64)
 - `{{ .chezmoi.homeDir }}` - User's home directory
@@ -175,11 +240,13 @@ Chezmoi uses Go's text/template system. Files ending in `.tmpl` are processed as
 - Custom data from `.chezmoidata.toml`
 
 ### Template Functions
+
 - `{{ gitHubLatestRelease "owner/repo" }}` - Get latest release info from GitHub
 - `{{ hasKey . "key" }}` - Check if a key exists in data
 - `{{ joinPath "path" "segments" }}` - Join path segments
 
 ### Example: Dynamic Versions
+
 ```toml
 # .chezmoiexternal.toml.tmpl
 {{- $version := gitHubLatestRelease "owner/repo" -}}
@@ -191,23 +258,27 @@ url = "https://github.com/owner/repo/releases/download/{{ $version.TagName }}/..
 The repository includes a comprehensive Zsh configuration:
 
 ### File Structure
+
 - `dot_zshenv` - Environment variables (sourced first)
 - `private_dot_config/zsh/dot_zshrc` - Interactive shell configuration
 - `private_dot_config/zim/` - Zim framework configuration and modules
 
 ### Key Components
+
 - **Zim Framework**: Modular Zsh configuration framework
   - Manages plugins via `zimrc`
   - Custom modules in `modules/` directory
   - Auto-updates to latest version
 
 ### Notable Aliases
+
 - `vi` → `nvim`
 - `ce` → `chezmoi edit --apply`
 - `k` → `kubectl`
 - Git workflow aliases (pr, checks, merge, approve)
 
 ### Integrations
+
 - Zoxide (modern `cd` replacement)
 - Direnv (environment variable management)
 - Atuin (shell history sync)
@@ -219,6 +290,7 @@ The repository includes a comprehensive Zsh configuration:
 The Neovim setup uses LazyVim, a modern Neovim configuration framework:
 
 ### Structure
+
 - `private_dot_config/nvim/init.lua` - Entry point
 - `private_dot_config/nvim/lua/` - Lua configuration modules
   - `config/` - Core configuration (options, keymaps, lazy.nvim)
@@ -227,6 +299,7 @@ The Neovim setup uses LazyVim, a modern Neovim configuration framework:
 - `stylua.toml` - Lua code formatting rules
 
 ### Key Features
+
 - **Base**: LazyVim distribution with sensible defaults
 - **Language Support**: Pre-configured extras for Go, TypeScript, Python, Rust, YAML, Docker, Markdown
 - **AI Integration**: Claude Code integration
@@ -241,6 +314,7 @@ The Neovim setup uses LazyVim, a modern Neovim configuration framework:
 - **Chezmoi Integration**: Auto-apply on save for chezmoi-managed files
 
 ### Default LazyVim Keymaps
+
 - `<leader><space>` - Find files
 - `<leader>ff` - Find files
 - `<leader>sg` - Search grep
@@ -250,7 +324,9 @@ The Neovim setup uses LazyVim, a modern Neovim configuration framework:
 - And many more (press `<leader>sk` to see all keymaps)
 
 ### NixOS Compatibility
+
 Special configurations are included for NixOS users:
+
 - Mason package manager is configured to use system-installed tools first
 - Python debugging automatically detects and uses system debugpy
 - LSP servers should be installed via Nix rather than Mason

@@ -203,6 +203,7 @@ The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.)
 #### Setup
 
 1. **Install Bitwarden CLI**:
+
    ```bash
    # Already included in .install/windows-setup.ps1 for Windows
    # For Linux/NixOS, install via your package manager
@@ -210,6 +211,7 @@ The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.)
    ```
 
 2. **Authenticate**:
+
    ```bash
    # Login to Bitwarden
    bw login <your-email>
@@ -220,31 +222,31 @@ The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.)
    ```
 
 3. **Store SSH Keys in Bitwarden**:
-   - Create a "Secure Note" or "Login" item named `id-rsa`
-   - Attach both `id_ed25519` (private key) and `id_ed25519.pub` (public key) as attachments
+   - Create an **SSH Key** item (type 5) in Bitwarden vault
+   - Store private and public keys in the dedicated fields
 
-#### SSH Keys Template
+#### Implementation Details (for AI)
 
-SSH keys are automatically fetched from Bitwarden:
-- Template location: `private_dot_ssh/private_id_ed25519.tmpl`
-- Public key: `private_dot_ssh/id_ed25519.pub.tmpl`
-- Uses `bitwardenAttachmentByRef` to fetch attachments from the "id-rsa" item
+**SSH Key Templates:**
 
-When you run `chezmoi apply`, it will:
-1. Fetch the SSH keys from Bitwarden
-2. Create `~/.ssh/id_ed25519` with correct permissions (600)
-3. Create `~/.ssh/id_ed25519.pub` with correct permissions (644)
+- `private_dot_ssh/private_id_ed25519.tmpl` - Uses `{{ (bitwarden "item" "id-rsa").sshKey.privateKey }}`
+- `private_dot_ssh/id_ed25519.pub.tmpl` - Uses `{{ (bitwarden "item" "id-rsa").sshKey.publicKey }}`
 
-#### Usage
+**SSH Key Item Type (type 5) structure:**
 
-```bash
-# Ensure vault is unlocked
-bw unlock
-export BW_SESSION="your-session-key"
+- `.sshKey.privateKey` - Private key content
+- `.sshKey.publicKey` - Public key content
+- `.sshKey.keyFingerprint` - Key fingerprint
 
-# Apply dotfiles (will fetch secrets from Bitwarden)
-chezmoi apply -v
-```
+**Session Management:**
+
+- `make bw-unlock` - Unlocks vault, saves session to `.env` and `.envrc.local`
+- `make bw-reload` - Reloads direnv environment
+- `.envrc` sources `.envrc.local` to load `BW_SESSION`
+- Post-commit hook sources `.envrc.local` before running `chezmoi apply`
+- Session persists until `bw lock` or `bw logout` (no auto-expiration)
+
+**For detailed user documentation, see README.md "Bitwarden Integration" section.**
 
 ## Development Workflow
 
@@ -280,10 +282,12 @@ This repository uses `devenv.nix` for development tools. Use `make format` and `
 **When changing formatter arguments**, update BOTH locations:
 
 Example - if changing shfmt arguments:
+
 - `devenv.nix` line 74: `entry = lib.mkForce "shfmt -w -i 2 -ci -sr -kp";`
 - `Makefile` line 43: `@shfmt -w -i 2 -ci -sr -kp .`
 
 **Formatters to keep in sync**:
+
 - nixpkgs-fmt (Nix files)
 - stylua (Lua files)
 - shfmt (Shell scripts) - **includes exclude patterns**
