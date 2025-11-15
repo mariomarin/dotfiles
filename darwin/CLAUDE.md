@@ -84,31 +84,57 @@ darwin/
 
 ## Key Concepts
 
-### Homebrew Philosophy
+### Package Management Philosophy
 
-**Use Homebrew ONLY for**:
+**Priority order for installing applications**:
 
-- GUI applications not available in nixpkgs
-- Apps that require system integration (like Alfred, Bartender)
+1. **nixpkgs first** (CLI and GUI)
+2. **Homebrew casks** only when nixpkgs doesn't have it or macOS integration is critical
 
-**Do NOT use Homebrew for**:
+**nixpkgs advantages**:
 
-- CLI tools (use nixpkgs instead)
-- Development tools (managed by nix-darwin or devenv)
+- Fully declarative and reproducible
+- Automatic updates via `just darwin`
+- Works across NixOS and macOS
+- No separate package manager needed
+
+**Use nixpkgs for**:
+
+- CLI tools (git, neovim, tmux)
+- Development tools
+- **GUI applications** (firefox, alacritty, obsidian, discord, etc.)
 - Anything available in nixpkgs
+
+**Use Homebrew casks ONLY for**:
+
+- Apps NOT in nixpkgs (check first: `nix search nixpkgs app-name`)
+- Apps requiring tight macOS integration (Alfred, Bartender)
+- Proprietary apps not in nixpkgs (Adobe Creative Cloud)
 
 **Example**:
 
 ```nix
+# darwin/modules/packages.nix - PREFERRED
+environment.systemPackages = with pkgs; [
+  # GUI apps from nixpkgs
+  firefox
+  alacritty
+  obsidian
+  discord
+  # CLI tools
+  git
+  neovim
+];
+
+# darwin/modules/homebrew.nix - ONLY when nixpkgs doesn't have it
 homebrew = {
   enable = true;
-  onActivation.cleanup = "zap";  # Remove unlisted packages
+  onActivation.cleanup = "zap";
 
   casks = [
-    "visual-studio-code"  # GUI editor
-    "slack"               # GUI chat
-    "spotify"             # GUI app
-    # NO: "git", "neovim", "docker" - these should be in packages.nix
+    "alfred"         # Not in nixpkgs
+    "cleanshot"      # Not in nixpkgs
+    # NOT: "firefox", "discord" - these ARE in nixpkgs!
   ];
 };
 ```
