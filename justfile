@@ -31,6 +31,7 @@ bw-unlock:
     echo "💡 Run 'just bw-reload' to reload direnv and load the session"
 
 # Direnv management (convenience wrapper)
+
 # Note: Named bw-reload for workflow clarity, but this is a general direnv command
 bw-reload:
     #!/usr/bin/env bash
@@ -263,6 +264,7 @@ topgrade-system:
     @make -C private_dot_config/topgrade system
 
 # Convenience aliases
+
 alias nixos := nixos-switch
 alias apply := chezmoi-apply
 alias quick-apply := chezmoi-quick-apply
@@ -283,4 +285,4 @@ vm-test:
     @make -C nixos vm/test
 
 deploy-vm TARGET_HOST BUILD_HOST:
-    @make -C nixos deploy-vm TARGET_HOST={{TARGET_HOST}} BUILD_HOST={{BUILD_HOST}}
+    @make -C nixos deploy-vm TARGET_HOST={{ TARGET_HOST }} BUILD_HOST={{ BUILD_HOST }}

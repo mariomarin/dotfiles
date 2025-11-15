@@ -96,31 +96,41 @@ configurations across different machines.
 
 ## Bootstrap Architecture
 
-### Pre-Hook System (Phase 1)
+### Pre-Hook Bootstrap System (Phase 1)
 
-The repository uses chezmoi pre-hooks to install critical dependencies **before** reading source state:
+The repository uses chezmoi pre-hooks for OS-specific bootstrap before reading source state:
 
-**Purpose:** Install Bitwarden CLI before chezmoi reads templates (which may reference BW secrets)
+**Purpose:** Install critical dependencies before chezmoi reads templates
 
 **Configuration in `private_dot_config/chezmoi/chezmoi.toml.tmpl`:**
 
 ```toml
 [hooks.read-source-state.pre]
 {{- if eq .chezmoi.os "windows" }}
-    command = ".local/share/chezmoi/.install-bw-cli.ps1"
+    command = ".local/share/chezmoi/.bootstrap-windows.ps1"
 {{- else }}
-    command = ".local/share/chezmoi/.install-bw-cli.sh"
+    command = ".local/share/chezmoi/.bootstrap-unix.sh"
 {{- end }}
 ```
 
 **Implementation:**
 
-- `.install-bw-cli.sh` - Unix/macOS installer (homebrew + direct download)
-- `.install-bw-cli.ps1` - Windows installer (winget)
-- Both scripts exit immediately if `bw` is already in PATH (idempotent)
-- Run on every `chezmoi init` and `chezmoi apply` (fast due to early exit)
+**`.bootstrap-unix.sh`** - Unix/macOS/Linux bootstrap:
 
-**Critical pattern:** Pre-hooks must be idempotent and exit fast when nothing to do
+- **macOS**: Installs Homebrew → Nix (for nix-darwin) → Bitwarden CLI
+- **Linux**: Installs Bitwarden CLI (NixOS via `just nixos/first-time`)
+
+**`.bootstrap-windows.ps1`** - Windows bootstrap:
+
+- Installs Bitwarden CLI via winget
+- Requires PowerShell (pre-installed on Windows)
+
+**Critical patterns:**
+
+- Scripts must be idempotent (exit fast if nothing to do)
+- Windows script uses PowerShell (not bash - won't exist on fresh Windows)
+- Run on every `chezmoi init` and `chezmoi apply` (fast due to early exits)
+- macOS gets Nix for nix-darwin configuration management
 
 ### Declarative Package Management (Phase 2)
 

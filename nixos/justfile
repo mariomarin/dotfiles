@@ -1,10 +1,29 @@
 # NixOS rebuild commands for multi-machine setup
 
-# Default target
-default: switch
+# Default target - first-time setup or switch
+default:
+    @just switch
 
 # Default host (physical T470)
 HOST := env_var_or_default("HOST", "nixos")
+
+# First-time NixOS setup (use this after fresh NixOS install)
+first-time:
+    #!/usr/bin/env bash
+    echo "🚀 First-time NixOS setup..."
+    echo "  This will:"
+    echo "  1. Enable flakes in current session"
+    echo "  2. Build and switch to flake configuration"
+    echo ""
+
+    # Enable flakes for this command
+    echo "📦 Building NixOS configuration with flakes..."
+    sudo nixos-rebuild switch --flake .#{{HOST}} \
+        --extra-experimental-features "nix-command flakes"
+
+    echo ""
+    echo "✅ First-time setup complete!"
+    echo "💡 Flakes are now enabled system-wide. Future rebuilds use: just switch"
 
 # Local build and switch commands
 switch:

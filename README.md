@@ -5,16 +5,49 @@ configurations across different machines.
 
 ## Quick Start
 
-### Install chezmoi and initialize dotfiles
+### NixOS (Fresh Install)
 
 ```bash
-make install
+# 1. Clone dotfiles
+git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
+cd ~/.local/share/chezmoi
+
+# 2. First-time NixOS setup (enables flakes and applies configuration)
+just nixos/first-time
+
+# 3. Future updates
+just nixos
 ```
 
-### Initialize with this repository
+### macOS
 
 ```bash
-make init
+# 1. Install chezmoi
+brew install chezmoi
+
+# 2. Initialize (auto-installs Homebrew, Nix, Bitwarden CLI)
+chezmoi init https://github.com/mariomarin/dotfiles.git
+
+# 3. Login to Bitwarden and apply
+bw login
+export BW_SESSION=$(bw unlock --raw)
+chezmoi apply
+```
+
+### Windows
+
+```bash
+# 1. Install Git and chezmoi
+winget install Git.Git
+winget install twpayne.chezmoi
+
+# 2. Initialize (auto-installs Bitwarden CLI)
+chezmoi init https://github.com/mariomarin/dotfiles.git
+
+# 3. Login to Bitwarden and apply
+bw login
+$env:BW_SESSION = bw unlock --raw
+chezmoi apply
 ```
 
 ## Directory Structure

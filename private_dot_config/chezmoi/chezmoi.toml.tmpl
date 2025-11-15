@@ -1,7 +1,11 @@
 sourceDir = "~/.local/share/chezmoi"
 
 [hooks.read-source-state.pre]
-    command = ".local/share/chezmoi/.install-bw-cli.sh"
+{{- if eq .chezmoi.os "windows" }}
+    command = ".local/share/chezmoi/.bootstrap-windows.ps1"
+{{- else }}
+    command = ".local/share/chezmoi/.bootstrap-unix.sh"
+{{- end}}
 
 [diff]
 command = "delta"
