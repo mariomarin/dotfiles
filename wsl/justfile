@@ -33,6 +33,14 @@ check-wsl: _check-os
 # Install WSL2 (requires Administrator privileges)
 install-wsl: _check-os
     #!/usr/bin/env nu
+    # Check if WSL is already installed
+    let wsl_installed = (do { wsl --version } | complete | get exit_code) == 0
+    if $wsl_installed {
+        print "✅ WSL2 is already installed"
+        wsl --version
+        exit 0
+    }
+
     print "📦 Installing WSL2..."
     print "⚠️  This requires Administrator privileges"
     print "   You may be prompted for elevation"
@@ -46,6 +54,13 @@ install-wsl: _check-os
 # Download latest NixOS-WSL tarball
 download-nixos: _check-os
     #!/usr/bin/env nu
+    # Check if already downloaded
+    if ("nixos-wsl.tar.gz" | path exists) {
+        print "✅ nixos-wsl.tar.gz already exists"
+        print "💡 To re-download, delete the file first: rm nixos-wsl.tar.gz"
+        exit 0
+    }
+
     print "📥 Downloading latest NixOS-WSL..."
 
     # Fetch latest release info from GitHub
@@ -60,7 +75,7 @@ download-nixos: _check-os
 
     # Download to current directory
     print "⏬ Downloading..."
-    http get $download_url | save --force nixos-wsl.tar.gz
+    http get $download_url | save nixos-wsl.tar.gz
 
     print "✅ Downloaded nixos-wsl.tar.gz"
     print $"💡 Next step: just import-nixos"
@@ -68,6 +83,14 @@ download-nixos: _check-os
 # Import NixOS into WSL
 import-nixos: _check-os
     #!/usr/bin/env nu
+    # Check if NixOS is already imported
+    let nixos_exists = (wsl --list --quiet | lines | any {|line| $line =~ "NixOS" })
+    if $nixos_exists {
+        print "✅ NixOS is already imported in WSL"
+        print "💡 To reinstall, first run: just uninstall-nixos"
+        exit 0
+    }
+
     print "📦 Importing NixOS into WSL..."
 
     if not ("nixos-wsl.tar.gz" | path exists) {
