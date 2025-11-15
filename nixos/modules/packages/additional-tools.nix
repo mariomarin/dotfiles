@@ -8,6 +8,7 @@
     xan # CSV data manipulation toolkit (maintained fork of xsv)
 
     # Kubernetes tools
+    kubectl # Kubernetes CLI
     stern # Multi pod and container log tailing
     krew # Kubernetes plugin manager
 
