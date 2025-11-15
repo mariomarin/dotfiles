@@ -1,5 +1,7 @@
 # Chezmoi operations
 
+set shell := ["nu", "-c"]
+
 # Default target
 default: apply
 
@@ -41,15 +43,37 @@ update:
 
 # Health check
 health:
-    #!/usr/bin/env bash
-    echo "🔍 Chezmoi Health Check"
-    echo "======================"
-    echo -n "✓ Chezmoi version: "; chezmoi --version | head -1
-    echo -n "✓ Source directory: "; chezmoi source-path
-    echo -n "✓ Config file: "; test -f ~/.config/chezmoi/chezmoi.toml && echo "exists" || echo "using defaults"
-    echo -n "✓ Managed files: "; chezmoi managed | wc -l
-    echo -n "✓ Modified files: "; chezmoi status 2>/dev/null | wc -l | awk '{print $1 " files"}'
-    echo -n "✓ Git status: "; cd $(chezmoi source-path) && git status --porcelain | wc -l | awk '{if ($1 == 0) print "clean"; else print $1 " changes"}'
-    echo -n "✓ Git remote: "; cd $(chezmoi source-path) && git remote get-url origin 2>/dev/null || echo "no remote"
-    echo -n "✓ Auto commit: "; grep -q "autoCommit.*true" ~/.config/chezmoi/chezmoi.toml 2>/dev/null && echo "enabled" || echo "disabled"
-    echo ""
+    #!/usr/bin/env nu
+    print "🔍 Chezmoi Health Check"
+    print "======================"
+    let version_result = (do { chezmoi --version } | complete)
+    let version = if $version_result.exit_code == 0 { $version_result.stdout | lines | first } else { "unknown" }
+    print $"✓ Chezmoi version: ($version)"
+    let source_result = (do { chezmoi source-path } | complete)
+    let source = if $source_result.exit_code == 0 { $source_result.stdout | str trim } else { "unknown" }
+    print $"✓ Source directory: ($source)"
+    let config_exists = ("~/.config/chezmoi/chezmoi.toml" | path expand | path exists)
+    print $"✓ Config file: (if $config_exists { 'exists' } else { 'using defaults' })"
+    let managed_result = (do { chezmoi managed } | complete)
+    let managed_count = if $managed_result.exit_code == 0 { $managed_result.stdout | lines | length } else { 0 }
+    print $"✓ Managed files: ($managed_count)"
+    let status_result = (do { chezmoi status } | complete)
+    let status_count = if $status_result.exit_code == 0 { $status_result.stdout | lines | length } else { 0 }
+    print $"✓ Modified files: ($status_count) files"
+    cd $source
+    let git_status_result = (do { git status --porcelain } | complete)
+    let git_status = if $git_status_result.exit_code == 0 {
+        let changes = ($git_status_result.stdout | lines | length)
+        if $changes == 0 { "clean" } else { $"($changes) changes" }
+    } else { "unknown" }
+    print $"✓ Git status: ($git_status)"
+    let remote_result = (do { git remote get-url origin } | complete)
+    let remote = if $remote_result.exit_code == 0 { $remote_result.stdout | str trim } else { "no remote" }
+    print $"✓ Git remote: ($remote)"
+    let config_path = ("~/.config/chezmoi/chezmoi.toml" | path expand)
+    let auto_commit = if ($config_path | path exists) {
+        let content = (open $config_path | to text)
+        if ($content | str contains "autoCommit") and ($content | str contains "true") { "enabled" } else { "disabled" }
+    } else { "disabled" }
+    print $"✓ Auto commit: ($auto_commit)"
+    print ""
