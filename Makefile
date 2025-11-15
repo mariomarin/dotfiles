@@ -141,10 +141,10 @@ health-all:
 
 # Pass-through targets to subdirectories
 nixos/%:
-	@$(MAKE) -C nixos $*
+	@cd nixos && just $*
 
 chezmoi/%:
-	@$(MAKE) -C chezmoi $*
+	@cd chezmoi && just $*
 
 nvim/%:
 	@$(MAKE) -C private_dot_config/nvim $*
