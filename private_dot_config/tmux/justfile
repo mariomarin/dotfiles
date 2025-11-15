@@ -1,37 +1,46 @@
 # Tmux configuration management
 
+# OS compatibility check
+_check-os:
+    #!/usr/bin/env nu
+    if (sys | get host.name) == "Windows" {
+        print "❌ Error: Tmux is only available on Unix-like systems (Linux, macOS)"
+        print "   Windows does not support tmux. Consider using Windows Terminal with WSL instead."
+        exit 1
+    }
+
 # Default: reload config
-default: reload
+default: _check-os reload
 
 # Reload tmux configuration
-reload:
+reload: _check-os
     tmux source-file ~/.config/tmux/tmux.conf ; tmux display-message "Config reloaded!"
 
 # Install TPM plugins
-plugins-install:
+plugins-install: _check-os
     ~/.local/share/tmux/plugins/tpm/bin/install_plugins
 
 # Update TPM plugins
-plugins-update:
+plugins-update: _check-os
     ~/.local/share/tmux/plugins/tpm/bin/update_plugins all
 
 # Clean unused plugins
-plugins-clean:
+plugins-clean: _check-os
     ~/.local/share/tmux/plugins/tpm/bin/clean_plugins
 
 # Show tmux status
-status:
+status: _check-os
     #!/usr/bin/env bash
     tmux list-sessions 2>/dev/null || echo "No tmux sessions running"
     tmux list-windows 2>/dev/null || true
     tmux list-panes 2>/dev/null || true
 
 # Kill tmux server
-kill-server:
+kill-server: _check-os
     tmux kill-server
 
 # Health check
-health:
+health: _check-os
     #!/usr/bin/env bash
     echo "🔍 Tmux Health Check"
     echo "=================="
