@@ -296,3 +296,19 @@ vm-test:
 
 deploy-vm TARGET_HOST BUILD_HOST:
     @just nixos/deploy-vm TARGET_HOST={{ TARGET_HOST }} BUILD_HOST={{ BUILD_HOST }}
+
+# WSL NixOS setup (Windows only)
+wsl-setup:
+    @just wsl/setup
+
+wsl-check:
+    @just wsl/check-wsl
+
+wsl-health:
+    @just wsl/health
+
+wsl-start:
+    @just wsl/start-nixos
+
+wsl-stop:
+    @just wsl/stop-nixos
