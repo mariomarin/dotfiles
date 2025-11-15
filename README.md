@@ -63,7 +63,9 @@ make install
 
 # Bitwarden session management
 make bw-unlock   # Unlock vault and save session
-make bw-reload   # Reload direnv environment
+
+# Direnv management
+make bw-reload   # Reload direnv (loads BW_SESSION from .envrc.local)
 
 # Sync (currently empty - reserved for future use)
 make sync
@@ -155,9 +157,10 @@ chezmoi apply -v
 ### How It Works
 
 - SSH key templates fetch keys from Bitwarden using the `bitwarden` template function
-- Session token is saved to `.envrc.local` (ignored by git)
-- `direnv` automatically loads the session when you enter the directory
+- `make bw-unlock` saves session token to `.envrc.local` (ignored by git)
+- `make bw-reload` reloads direnv, which sources `.envrc.local` and loads `BW_SESSION`
 - Session persists until you run `bw lock` or `bw logout`
+- Note: `bw-reload` is a general direnv reload command, not BW-specific
 
 ## External Dependencies
 

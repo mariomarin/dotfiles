@@ -25,8 +25,10 @@ bw-unlock:
 	echo "export BW_SESSION=\"$$BW_SESSION\"" > .envrc.local && \
 	echo "BW_SESSION=\"$$BW_SESSION\"" > .env && \
 	echo "✅ Session saved to .env and .envrc.local" && \
-	echo "💡 Run 'make bw-reload' to load the session into your environment"
+	echo "💡 Run 'make bw-reload' to reload direnv and load the session"
 
+# Direnv management (convenience wrapper)
+# Note: Named bw-reload for workflow clarity, but this is a general direnv command
 bw-reload:
 	@echo "🔄 Reloading direnv environment..."
 	@direnv allow
