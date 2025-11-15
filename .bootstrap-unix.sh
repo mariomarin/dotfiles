@@ -12,28 +12,21 @@ case "$(uname -s)" in
     # macOS bootstrap
     echo "📦 macOS bootstrap..."
 
-    # Install Homebrew if not present
-    if ! command -v brew > /dev/null 2>&1; then
-      echo "  Installing Homebrew..."
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    else
-      echo "  ✓ Homebrew already installed"
-    fi
-
-    # Install Nix for nix-darwin
+    # Install Nix with Determinate Systems installer (includes flakes by default)
     if ! command -v nix > /dev/null 2>&1; then
-      echo "  Installing Nix (for nix-darwin)..."
-      curl -L https://nixos.org/nix/install | sh -s -- --daemon
+      echo "  Installing Nix with Determinate Systems installer..."
+      echo "  This installer enables flakes by default and provides better macOS integration"
+      curl -fsSL https://install.determinate.systems/nix | sh -s -- install
       echo "  ⚠️  Please restart your shell and run 'chezmoi apply' again"
       exit 0
     else
       echo "  ✓ Nix already installed"
     fi
 
-    # Install Bitwarden CLI
+    # Install Bitwarden CLI via Nix (avoid Homebrew dependency)
     if ! command -v bw > /dev/null 2>&1; then
-      echo "  Installing Bitwarden CLI..."
-      brew install bitwarden-cli
+      echo "  Installing Bitwarden CLI via Nix..."
+      nix profile install nixpkgs#bitwarden-cli
     else
       echo "  ✓ Bitwarden CLI already installed"
     fi

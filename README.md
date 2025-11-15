@@ -22,13 +22,15 @@ just nixos
 ### macOS
 
 ```bash
-# 1. Manual prerequisites (one-time only)
-# Install chezmoi (Homebrew installed by bootstrap if missing)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# 1. Manual prerequisite: Install chezmoi
+# Option A: Using Nix (if already installed)
+nix profile install nixpkgs#chezmoi
+
+# Option B: Using Homebrew (temporary, will switch to nix-darwin)
 brew install chezmoi
 
 # 2. Initialize dotfiles
-# (Bootstrap script auto-installs Homebrew, Nix, Bitwarden CLI)
+# Bootstrap auto-installs: Nix (via Determinate Systems), Bitwarden CLI
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
 # 3. Login to Bitwarden
@@ -37,13 +39,18 @@ bw login
 # 4. Unlock and apply dotfiles
 export BW_SESSION=$(bw unlock --raw)
 chezmoi apply
+
+# 5. Set up nix-darwin (declarative macOS management)
+cd ~/.local/share/chezmoi
+just darwin/first-time
 ```
 
 **What happens automatically:**
 
-- ✅ Bootstrap script installs Homebrew (if missing), Nix, Bitwarden CLI
-- ✅ Packages auto-install (git, neovim, just, nushell, etc.) via Homebrew
+- ✅ Bootstrap installs Nix (Determinate Systems installer with flakes enabled)
+- ✅ Bootstrap installs Bitwarden CLI via Nix
 - ✅ SSH keys fetched from Bitwarden vault
+- ✅ After first-time setup, packages managed via nix-darwin (not Homebrew)
 
 ### Windows
 
@@ -161,9 +168,9 @@ order. Understanding this order helps you know where to place different types of
 
 **macOS** (`.bootstrap-unix.sh`):
 
-1. Install Homebrew if missing
-2. Install Nix for nix-darwin support
-3. Install Bitwarden CLI via Homebrew
+1. Install Nix via Determinate Systems installer (flakes enabled by default)
+2. Install Bitwarden CLI via Nix
+3. No Homebrew dependency - fully managed via nix-darwin after first-time setup
 
 **Linux** (`.bootstrap-unix.sh`):
 
