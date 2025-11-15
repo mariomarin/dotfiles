@@ -1,0 +1,67 @@
+# WSL Configuration File
+# Location: C:\Users\<username>\.wslconfig (Windows home directory)
+#
+# This file configures global WSL2 settings that affect ALL distributions.
+# Changes require WSL restart: wsl --shutdown (from PowerShell)
+
+[wsl2]
+# Memory allocation - 8GB for development workloads
+# Adjust based on your system RAM (default is 50% of total RAM)
+memory=8GB
+
+# Processor allocation - 4 cores
+# Adjust based on your CPU (default is all processors)
+processors=4
+
+# Swap size - 2GB
+# Used when memory is exhausted (default is 25% of memory)
+swap=2GB
+
+# Swap file location (optional)
+# swapFile=C:\\Users\\{{ env "USERNAME" }}\\wsl-swap.vhdx
+
+# Enable localhost forwarding
+# Allows accessing WSL services from Windows via localhost
+localhostForwarding=true
+
+# Enable nested virtualization (for Docker, VMs)
+# Required for running Docker inside WSL2
+nestedVirtualization=true
+
+# GUI applications support (WSLg)
+# Enable if you want to run Linux GUI apps
+guiApplications=false
+
+# Network mode (default: NAT)
+# Options: NAT, bridged, mirrored (Windows 11 22H2+)
+# networkingMode=NAT
+
+# DNS tunneling (Windows 11 22H2+)
+# Improves DNS resolution in some scenarios
+# dnsTunneling=true
+
+# Firewall settings (Windows 11 22H2+)
+# Options: true, false, hyper-v
+# firewall=true
+
+# Auto-proxy (Windows 11 22H2+)
+# Automatically configure WSL to use Windows proxy settings
+# autoProxy=true
+
+# Page reporting (default: true)
+# Report page faults to Windows for better memory management
+pageReporting=true
+
+# Kernel parameters (optional)
+# kernelCommandLine = "sysctl.vm.max_map_count=262144"
+
+# Custom kernel (optional)
+# kernel=C:\\Users\\{{ env "USERNAME" }}\\bzImage
+
+# Debug console (for troubleshooting)
+# debugConsole=false
+
+[experimental]
+# Experimental features (use with caution)
+# autoMemoryReclaim=gradual  # Windows 11 22H2+
+# sparseVhd=true            # Automatically shrink WSL disk

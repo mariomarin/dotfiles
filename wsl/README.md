@@ -114,6 +114,118 @@ WSL NixOS is **headless** and **minimal**:
 
 See [nixos/hosts/wsl/README.md](../nixos/hosts/wsl/README.md) for detailed WSL NixOS documentation.
 
+## WSL Configuration Files
+
+### .wslconfig (Global WSL Settings)
+
+The `.wslconfig` file controls global WSL2 settings for **all distributions**.
+
+**Location**: `C:\Users\<username>\.wslconfig` (Windows home directory)
+
+**Setup**:
+
+```powershell
+# From Windows PowerShell
+# The template is provided in this directory as .wslconfig.tmpl
+# Copy it to your Windows home directory and customize as needed
+copy wsl\dot_wslconfig.tmpl $env:USERPROFILE\.wslconfig
+
+# Edit settings
+notepad $env:USERPROFILE\.wslconfig
+
+# Apply changes (restart WSL)
+wsl --shutdown
+```
+
+**Key Settings**:
+
+- `memory=8GB` - RAM allocation (adjust based on your system)
+- `processors=4` - CPU cores (adjust based on your CPU)
+- `swap=2GB` - Swap space when memory is full
+- `localhostForwarding=true` - Access WSL services from Windows via localhost
+- `nestedVirtualization=true` - Required for Docker in WSL
+
+**Note**: This file is **not** managed by chezmoi because it lives in the Windows filesystem, outside the WSL
+distribution. You need to manually copy and maintain it.
+
+### wsl.conf (Per-Distribution Settings)
+
+The `wsl.conf` file controls settings for **this specific WSL distribution**.
+
+**Location**: `/etc/wsl.conf` (inside WSL)
+
+**For NixOS WSL**: This file should be managed by your NixOS configuration, **not** chezmoi, because:
+
+1. It's a system file (`/etc/wsl.conf`)
+2. NixOS-WSL module already provides sensible defaults
+3. System-level changes should go through `nixos-rebuild`
+
+**Recommended settings** (if you need to customize):
+
+Add to your NixOS configuration (`nixos/hosts/wsl/configuration.nix`):
+
+```nix
+# WSL-specific configuration
+wsl = {
+  enable = true;
+  defaultUser = "mario";
+  startMenuLaunchers = true;
+
+  # Network configuration
+  wslConf = {
+    network = {
+      hostname = "nixos-wsl";
+      generateResolvConf = true;
+    };
+
+    # Interop settings
+    interop = {
+      enabled = true;
+      appendWindowsPath = true;
+    };
+
+    # User settings
+    user = {
+      default = "mario";
+    };
+
+    # Boot settings
+    boot = {
+      systemd = true;
+    };
+  };
+};
+```
+
+Then apply: `sudo nixos-rebuild switch --flake .#nixos-wsl`
+
+**Why not chezmoi?**
+
+- System files in `/etc/` require root access
+- NixOS declarative configuration is more reliable for system settings
+- Avoids permission and ownership issues
+- Integrates with NixOS module system
+
+### Applying Configuration Changes
+
+After modifying `.wslconfig` (Windows side):
+
+```powershell
+# Shutdown all WSL distributions
+wsl --shutdown
+
+# Wait a few seconds, then start NixOS
+wsl -d NixOS
+```
+
+After modifying NixOS configuration (WSL side):
+
+```bash
+# Inside NixOS WSL
+cd ~/.local/share/chezmoi
+sudo nixos-rebuild switch --flake .#nixos-wsl
+```
+
 ## Troubleshooting
 
 ### WSL not installed
