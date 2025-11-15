@@ -44,11 +44,11 @@
   # Git hooks - format only staged files on commit
   git-hooks = {
     hooks = {
-      # Post-commit hook to run make (applies chezmoi changes)
+      # Post-commit hook to run just (applies chezmoi changes)
       post-commit = {
         enable = true;
-        name = "Apply changes with make";
-        entry = lib.mkForce "bash -c 'if [ -f .envrc.local ]; then source .envrc.local; fi && make'";
+        name = "Apply changes with just";
+        entry = lib.mkForce "bash -c 'if [ -f .envrc.local ]; then source .envrc.local; fi && just'";
         language = "system";
         pass_filenames = false;
         always_run = true;
