@@ -164,8 +164,8 @@ $env:BW_SESSION = bw unlock --raw
 chezmoi apply -v
 ```
 
-**Note:** The `make bw-unlock` and `make bw-reload` targets use direnv, which works on Windows but
-the development environment (`devenv.nix`) does not. On Windows, use the manual PowerShell workflow above.
+**Note:** On Windows, `direnv` is available but `devenv.nix` (which provides the `make` targets) is not.
+Use the manual PowerShell workflow above instead of `make` commands.
 
 ### How It Works
 

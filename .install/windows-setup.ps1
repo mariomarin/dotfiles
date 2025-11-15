@@ -51,6 +51,7 @@ Write-Host ""
 Install-WingetPackage -PackageId "Git.Git" -Name "Git"
 Install-WingetPackage -PackageId "twpayne.chezmoi" -Name "chezmoi"
 Install-WingetPackage -PackageId "Bitwarden.CLI" -Name "Bitwarden CLI"
+Install-WingetPackage -PackageId "direnv.direnv" -Name "direnv"
 Install-WingetPackage -PackageId "Alacritty.Alacritty" -Name "Alacritty"
 Install-WingetPackage -PackageId "Neovim.Neovim" -Name "Neovim"
 
@@ -72,8 +73,8 @@ if (Get-Command chezmoi -ErrorAction SilentlyContinue) {
     Write-Host "  chezmoi diff" -ForegroundColor Yellow
     Write-Host "  chezmoi apply -v" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "💡 Note: Set `$env:BW_SESSION before each 'chezmoi apply'" -ForegroundColor Cyan
-    Write-Host "   (devenv/direnv not available on Windows)" -ForegroundColor Cyan
+    Write-Host "💡 Note: direnv is installed but devenv.nix doesn't work on Windows" -ForegroundColor Cyan
+    Write-Host "   You'll need to manually unlock Bitwarden before each 'chezmoi apply'" -ForegroundColor Cyan
     Write-Host ""
 } else {
     Write-Host "⚠️  chezmoi not found in PATH. Please restart PowerShell and try again." -ForegroundColor Yellow
