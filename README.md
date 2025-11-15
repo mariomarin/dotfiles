@@ -22,33 +22,53 @@ just nixos
 ### macOS
 
 ```bash
-# 1. Install chezmoi
+# 1. Manual prerequisites (one-time only)
+# Install chezmoi (Homebrew installed by bootstrap if missing)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew install chezmoi
 
-# 2. Initialize (auto-installs Homebrew, Nix, Bitwarden CLI)
+# 2. Initialize dotfiles
+# (Bootstrap script auto-installs Homebrew, Nix, Bitwarden CLI)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
-# 3. Login to Bitwarden and apply
+# 3. Login to Bitwarden
 bw login
+
+# 4. Unlock and apply dotfiles
 export BW_SESSION=$(bw unlock --raw)
 chezmoi apply
 ```
 
+**What happens automatically:**
+
+- ✅ Bootstrap script installs Homebrew (if missing), Nix, Bitwarden CLI
+- ✅ Packages auto-install (git, neovim, just, nushell, etc.) via Homebrew
+- ✅ SSH keys fetched from Bitwarden vault
+
 ### Windows
 
-```bash
-# 1. Install Git and chezmoi
+```powershell
+# 1. Manual prerequisites (one-time only)
 winget install Git.Git
 winget install twpayne.chezmoi
 
-# 2. Initialize (auto-installs Bitwarden CLI)
+# 2. Restart PowerShell to refresh PATH, then initialize
+# (Bootstrap script auto-installs Bitwarden CLI and other tools)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
-# 3. Login to Bitwarden and apply
+# 3. Login to Bitwarden
 bw login
+
+# 4. Unlock and apply dotfiles
 $env:BW_SESSION = bw unlock --raw
 chezmoi apply
 ```
+
+**What happens automatically:**
+
+- ✅ Bootstrap script installs Bitwarden CLI
+- ✅ Packages auto-install (just, nushell, neovim, etc.) via declarative package management
+- ✅ SSH keys fetched from Bitwarden vault
 
 ## Directory Structure
 
