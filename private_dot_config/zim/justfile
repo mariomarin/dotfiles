@@ -1,5 +1,7 @@
 # Zim framework management
 
+set shell := ["nu", "-c"]
+
 # OS compatibility check
 _check-os:
     #!/usr/bin/env nu
@@ -47,24 +49,38 @@ version: _check-os
 
 # Build custom completions
 completions: _check-os
-    #!/usr/bin/env bash
-    echo "Regenerating custom completions..."
-    for module in modules/*/init.zsh; do
-        echo "Processing ${module}..."
-        zsh -c "source ${module}"
-    done
+    #!/usr/bin/env nu
+    print "Regenerating custom completions..."
+    let modules = (glob "modules/*/init.zsh")
+    for module in $modules {
+        print $"Processing ($module)..."
+        zsh -c $"source ($module)"
+    }
 
 # Health check
 health: _check-os
-    #!/usr/bin/env bash
-    echo "🔍 Zim Health Check"
-    echo "=================="
-    echo -n "✓ Zim installed: "; test -d ~/.zim && echo "yes" || echo "❌ no"
-    echo -n "✓ Zim version: "; zimfw version 2>/dev/null | head -1 || echo "not installed"
-    echo -n "✓ Config file: "; test -f ~/.config/zim/zimrc && echo "exists" || echo "❌ missing"
-    echo -n "✓ Modules installed: "; ls ~/.zim/modules 2>/dev/null | wc -l | awk '{print $1 " modules"}' || echo "0 modules"
-    echo -n "✓ Custom modules: "; ls modules 2>/dev/null | wc -l | awk '{print $1 " custom"}' || echo "0 custom"
-    echo -n "✓ Compiled files: "; find ~/.zim -name "*.zwc" 2>/dev/null | wc -l | awk '{print $1 " files"}'
-    echo -n "✓ Completion cache: "; ls ~/.cache/zim/compdump* 2>/dev/null | wc -l | awk '{print $1 " files"}' || echo "0 files"
-    echo -n "✓ Zsh version: "; zsh --version | head -1
-    echo ""
+    #!/usr/bin/env nu
+    print "🔍 Zim Health Check"
+    print "=================="
+    let zim_dir = ("~/.zim" | path expand)
+    let zim_installed = if ($zim_dir | path exists) { "yes" } else { "❌ no" }
+    print $"✓ Zim installed: ($zim_installed)"
+    let version_result = (do { zimfw version } | complete)
+    let version = if $version_result.exit_code == 0 { $version_result.stdout | lines | first } else { "not installed" }
+    print $"✓ Zim version: ($version)"
+    let config_exists = ("~/.config/zim/zimrc" | path expand | path exists)
+    print $"✓ Config file: (if $config_exists { 'exists' } else { '❌ missing' })"
+    let modules_dir = ("~/.zim/modules" | path expand)
+    let modules_count = if ($modules_dir | path exists) { (ls $modules_dir | length) } else { 0 }
+    print $"✓ Modules installed: ($modules_count) modules"
+    let custom_modules = if ("modules" | path exists) { (ls modules | length) } else { 0 }
+    print $"✓ Custom modules: ($custom_modules) custom"
+    let compiled = (glob ($zim_dir | path join "**" "*.zwc") | length)
+    print $"✓ Compiled files: ($compiled) files"
+    let cache_dir = ("~/.cache/zim" | path expand)
+    let cache_files = if ($cache_dir | path exists) { (glob ($cache_dir | path join "compdump*") | length) } else { 0 }
+    print $"✓ Completion cache: ($cache_files) files"
+    let zsh_result = (do { zsh --version } | complete)
+    let zsh_version = if $zsh_result.exit_code == 0 { $zsh_result.stdout | lines | first } else { "unknown" }
+    print $"✓ Zsh version: ($zsh_version)"
+    print ""
