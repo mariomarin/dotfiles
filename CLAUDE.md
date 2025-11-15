@@ -184,15 +184,21 @@ See [README.md](README.md) for comprehensive command reference. Key workflows:
 
 ```bash
 # Quick apply without topgrade updates
-make quick-apply
+just quick-apply
 
 # NixOS rebuild (see nixos/README.md for details)
-make nixos
+just nixos
 
 # Component operations (nvim, tmux, zim)
-make <component>        # Default action for component
-make <component>/health # Check component health
+just <component>        # Default action for component
+just <component>-health # Check component health
+
+# Formatting and linting
+just format             # Format all files
+just lint               # Run all linting checks
 ```
+
+**Note:** The repository uses `justfile` for task automation. Component-specific Makefiles remain for specialized operations.
 
 ## Component-Specific Documentation
 

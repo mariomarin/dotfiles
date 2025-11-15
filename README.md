@@ -46,30 +46,46 @@ makes directories look unusual at first glance:
 
 This naming scheme allows chezmoi to recreate the exact file structure and permissions in your home directory.
 
-## Makefile Targets
+## Common Tasks (justfile)
 
 ```bash
-# Initialize chezmoi with this repository and apply
-make init
+# List all available commands
+just --list
 
-# Pull latest changes and show diff
-make diff
+# Apply dotfiles (default command)
+just               # Same as: just quick-apply
 
 # Apply changes verbosely
-make apply
+just apply
 
-# Install chezmoi (if not already installed)
-make install
+# Quick apply without topgrade updates
+just quick-apply
+
+# Preview changes before applying
+just diff
 
 # Bitwarden session management
-make bw-unlock   # Unlock vault and save session
+just bw-unlock     # Unlock vault and save session
+just bw-reload     # Reload direnv (loads BW_SESSION from .envrc.local)
 
-# Direnv management
-make bw-reload   # Reload direnv (loads BW_SESSION from .envrc.local)
+# Development tasks
+just format        # Format all files (Lua, Nix, Shell, YAML, Markdown)
+just lint          # Run all linting checks
+just check         # Run all checks
 
-# Sync (currently empty - reserved for future use)
-make sync
+# System health
+just health        # Quick health summary
+just health-all    # Detailed health checks for all subsystems
+
+# Component updates
+just update        # Update everything (via topgrade)
+just nixos         # NixOS rebuild
+just nvim          # Sync Neovim plugins
+just tmux          # Reload tmux config
+just zim           # Update Zim modules
 ```
+
+**Note:** Component-specific Makefiles (nvim, tmux, etc.) are still available for advanced operations.
 
 ## Common Chezmoi Commands
 
