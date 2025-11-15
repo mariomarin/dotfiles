@@ -202,11 +202,21 @@ health-summary:
     print "========================"
     print ""
     print "🔍 Quick Status:"
-    print $"  NixOS:   (do { nixos-version | lines | first | split row ' ' | get 0..1 | str join ' ' } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not available" })"
-    print $"  Chezmoi: (do { chezmoi --version | lines | first | split row ',' | first } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not installed" })"
-    print $"  Neovim:  (do { nvim --version | lines | first } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not installed" })"
-    print $"  Tmux:    (do { tmux -V } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not installed" })"
-    print $"  Zsh:     (do { zsh --version | lines | first } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not installed" })"
+    let nixos_result = (do { nixos-version } | complete)
+    let nixos = if $nixos_result.exit_code == 0 { $nixos_result.stdout | lines | first | split row ' ' | first 2 | str join ' ' } else { '❌ not available' }
+    let chezmoi_result = (do { chezmoi --version } | complete)
+    let chezmoi = if $chezmoi_result.exit_code == 0 { $chezmoi_result.stdout | lines | first | split row ',' | first } else { '❌ not installed' }
+    let nvim_result = (do { nvim --version } | complete)
+    let nvim = if $nvim_result.exit_code == 0 { $nvim_result.stdout | lines | first } else { '❌ not installed' }
+    let tmux_result = (do { tmux -V } | complete)
+    let tmux = if $tmux_result.exit_code == 0 { $tmux_result.stdout | str trim } else { '❌ not installed' }
+    let zsh_result = (do { zsh --version } | complete)
+    let zsh = if $zsh_result.exit_code == 0 { $zsh_result.stdout | lines | first } else { '❌ not installed' }
+    print $"  NixOS:   ($nixos)"
+    print $"  Chezmoi: ($chezmoi)"
+    print $"  Neovim:  ($nvim)"
+    print $"  Tmux:    ($tmux)"
+    print $"  Zsh:     ($zsh)"
 
 # Full system health check
 health-all:
