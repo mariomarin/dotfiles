@@ -4,7 +4,7 @@
 
 {
   imports = [
-    ../../common.nix  # Universal NixOS settings
+    ../../common.nix # Universal NixOS settings
   ];
 
   # Set hostname - can be customized per WSL instance
@@ -33,7 +33,7 @@
   # Per-project tools should come from devenv.nix
   custom.minimal = {
     enable = true;
-    modernCli = true;  # Include modern replacements (bat, eza, ripgrep, etc.)
+    modernCli = true; # Include modern replacements (bat, eza, ripgrep, etc.)
   };
 
   # Enable development tools

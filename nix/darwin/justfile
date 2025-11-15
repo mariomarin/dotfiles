@@ -28,35 +28,35 @@ first-time: _check-os
     print ""
     print "📦 Installing nix-darwin..."
     # Run darwin-rebuild from nix-darwin flake (uses master/unstable)
-    sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake $"../nixos#{{HOST}}"
+    sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake $"..#{{HOST}}"
     print ""
     print "✅ nix-darwin installed!"
     print "💡 Future rebuilds: just darwin"
 
 # Local build and switch
 switch: _check-os
-    darwin-rebuild switch --flake ../nixos#{{HOST}}
+    darwin-rebuild switch --flake ..#{{HOST}}
 
 test: _check-os
-    darwin-rebuild check --flake ../nixos#{{HOST}}
+    darwin-rebuild check --flake ..#{{HOST}}
 
 build: _check-os
-    darwin-rebuild build --flake ../nixos#{{HOST}}
+    darwin-rebuild build --flake ..#{{HOST}}
 
 # Flake management
 update: _check-os
     #!/usr/bin/env nu
-    cd ../nixos
+    cd ..
     nix flake update
 
 check: _check-os
     #!/usr/bin/env nu
-    cd ../nixos
+    cd ..
     nix flake check
 
 show: _check-os
     #!/usr/bin/env nu
-    cd ../nixos
+    cd ..
     nix flake show
 
 # Show available hosts

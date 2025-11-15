@@ -13,10 +13,10 @@ git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
 
 # 2. First-time NixOS setup (enables flakes and applies configuration)
-just nixos/first-time
+just nix/nixos/first-time
 
 # 3. Future updates
-just nixos
+just nixos  # Alias points to nix/nixos/switch
 ```
 
 ### macOS
@@ -42,7 +42,7 @@ chezmoi apply
 
 # 5. Set up nix-darwin (declarative macOS management)
 cd ~/.local/share/chezmoi
-just darwin/first-time
+just nix/darwin/first-time
 ```
 
 **What happens automatically:**
@@ -175,7 +175,7 @@ order. Understanding this order helps you know where to place different types of
 **Linux** (`.bootstrap-unix.sh`):
 
 - Install Bitwarden CLI only
-- NixOS: System packages managed via `just nixos/first-time`
+- NixOS: System packages managed via `just nix/nixos/first-time`
 
 **Windows** (`.bootstrap-windows.ps1`):
 

@@ -3,8 +3,8 @@
 
 {
   imports = [
-    ../../common.nix                  # Universal NixOS settings
-    ../../hardware-configuration.nix  # T470 hardware configuration
+    ../../common.nix # Universal NixOS settings
+    ../../hardware-configuration.nix # T470 hardware configuration
   ];
 
   # Set hostname

@@ -236,10 +236,10 @@ health-all:
 
 # Pass-through targets to subdirectories
 nixos-switch:
-    @just nixos/switch
+    @just nix/nixos/switch
 
 nixos-health:
-    @just nixos/health
+    @just nix/nixos/health
 
 chezmoi-apply:
     @just chezmoi/apply
@@ -299,13 +299,13 @@ alias update-system := topgrade-system
 
 # Multi-machine deployment
 vm-switch:
-    @just nixos/vm-switch
+    @just nix/nixos/vm-switch
 
 vm-test:
-    @just nixos/vm-test
+    @just nix/nixos/vm-test
 
 deploy-vm TARGET_HOST BUILD_HOST:
-    @just nixos/deploy-vm TARGET_HOST={{ TARGET_HOST }} BUILD_HOST={{ BUILD_HOST }}
+    @just nix/nixos/deploy-vm TARGET_HOST={{ TARGET_HOST }} BUILD_HOST={{ BUILD_HOST }}
 
 # WSL NixOS setup (Windows only)
 wsl-setup:
@@ -325,13 +325,13 @@ wsl-stop:
 
 # nix-darwin setup (macOS only)
 darwin-first-time:
-    @just darwin/first-time
+    @just nix/darwin/first-time
 
 darwin-switch:
-    @just darwin/switch
+    @just nix/darwin/switch
 
 darwin-health:
-    @just darwin/health
+    @just nix/darwin/health
 
 # Convenience aliases
 

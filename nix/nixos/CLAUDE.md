@@ -73,6 +73,7 @@ See [README.md](README.md) for the complete four-tier package organization struc
 ### Adding Packages
 
 See [README.md](README.md#adding-packages) for module selection guide. Then:
+
 1. Edit the appropriate module file
 2. Add package to `environment.systemPackages`
 3. Rebuild with `sudo nixos-rebuild switch` or `make`
@@ -93,6 +94,7 @@ See [README.md](README.md#adding-packages) for module selection guide. Then:
 ## Best Practices
 
 ### Module Organization
+
 - **Avoid duplicates**: Always check existing modules before adding packages
   - Use `rg "package-name"` to search across all modules
 - **Think globally**: If a CLI tool would be useful on all hosts (including WSL), put it in minimal.nix
@@ -100,24 +102,28 @@ See [README.md](README.md#adding-packages) for module selection guide. Then:
 - **Comments**: Avoid detailed "moved from X to Y" comments - they create noise and maintenance burden
 
 ### Package Placement Guidelines
+
 - **minimal.nix**: Would a headless server benefit from this CLI tool? → Yes = minimal.nix
 - **development.nix**: Is it a language, compiler, or dev tool? → Yes = development.nix
 - **desktop-packages.nix**: Does it have a GUI or require X11? → Yes = desktop-packages.nix
 - **additional-tools.nix**: Is it domain-specific (K8s, cloud, specialized workflow)? → Yes = additional-tools.nix
 
 ### Commit Guidelines
+
 - Keep commits focused and granular
 - Avoid listing every package in commit messages
 - Focus on the "why" (purpose/reason) rather than the "what" (specific changes)
 - Group related changes together (e.g., "reorganize packages" not "move X, move Y, move Z")
 
 ### Working with Multi-Host Configuration
+
 - Each host imports `common.nix` for universal settings
 - Host-specific settings go in `hosts/*/configuration.nix`
 - Conditional modules (boot, networking) automatically disabled for WSL
 - Test changes on one host before applying to all
 
 ### Documentation
+
 - Update `README.md` for human-readable changes
 - Update `CLAUDE.md` when changing structure or adding best practices
 - Module header comments should describe purpose, not list contents
@@ -166,6 +172,7 @@ This repository supports NixOS on Windows Subsystem for Linux (WSL2) via the Nix
 ### WSL-Specific Features
 
 ✅ **Enabled:**
+
 - Full NixOS with flakes and systemd
 - Windows interop (run `.exe` from Linux)
 - Docker for containers
@@ -173,6 +180,7 @@ This repository supports NixOS on Windows Subsystem for Linux (WSL2) via the Nix
 - Core CLI tools only
 
 ❌ **Disabled:**
+
 - All GUI applications
 - Desktop environment and X11
 - Audio services (use Windows audio)
@@ -196,6 +204,7 @@ nix flake update
 ### WSL Detection
 
 Chezmoi automatically detects WSL via `$WSL_DISTRO_NAME`:
+
 - Machine type: `"wsl"`
 - Features: `wsl = true`, `desktop = false`, `audio = false`
 

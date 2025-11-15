@@ -4,10 +4,9 @@ This file provides guidance to Claude Code when working with the nix-darwin conf
 
 ## Critical Information
 
-**Integration Approach**: This darwin configuration is integrated into the existing NixOS flake
-(`../nixos/flake.nix`), NOT a separate flake.
+**Integration Approach**: This darwin configuration shares a unified flake with NixOS configurations.
 
-**Flake Location**: All configurations (NixOS + nix-darwin) are defined in `../nixos/flake.nix`
+**Flake Location**: All configurations (NixOS + nix-darwin) are defined in `../flake.nix`
 
 ## First-Time Setup Workflow
 
@@ -24,7 +23,7 @@ When a user sets up macOS for the first time:
    just darwin/first-time
    ```
 
-   This runs: `sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake ../nixos#HOSTNAME`
+   This runs: `sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake ..#HOSTNAME`
 
 3. **Future rebuilds**:
 
@@ -34,7 +33,7 @@ When a user sets up macOS for the first time:
 
 ## Flake Integration
 
-The `../nixos/flake.nix` should contain both `nixosConfigurations` and `darwinConfigurations`:
+The `../flake.nix` should contain both `nixosConfigurations` and `darwinConfigurations`:
 
 ```nix
 {

@@ -17,6 +17,7 @@ make switch
 ### Multi-Host Support
 
 The configuration supports three host types:
+
 - **t470**: Desktop workstation (ThinkPad T470) with GNOME/LeftWM
 - **wsl**: Headless WSL environment for development
 - **vm**: Virtual machine for testing
@@ -26,14 +27,19 @@ The configuration supports three host types:
 Packages are organized into four tiers for maintainability and reusability:
 
 #### 1. Minimal (`modules/minimal.nix`)
+
 Essential CLI tools and utilities for **all hosts** (headless and desktop).
+
 - Core utilities: vim, git, tmux, bash, curl, wget, rsync
 - Development tools: fzf, gh, age, jq
 - System utilities: atuin, topgrade, bitwarden-cli
-- Modern CLI replacements (optional via `modernCli = true`): bat, eza, ripgrep, fd, delta, lazygit, difftastic, dua, lsd, procs, sd, xcp, zoxide
+- Modern CLI replacements (optional via `modernCli = true`): bat, eza, ripgrep, fd, delta, lazygit,
+  difftastic, dua, lsd, procs, sd, xcp, zoxide
 
 #### 2. Development (`modules/development.nix`)
+
 Development languages, build tools, and environments for coding workstations.
+
 - Nix tooling: chezmoi, direnv, niv, nix-direnv, devenv
 - Languages: go, lua, nodejs, openjdk, rustup
 - Build tools: bear, clang, gnumake, pkg-config
@@ -42,14 +48,18 @@ Development languages, build tools, and environments for coding workstations.
 - AI assistant: claude-code
 
 #### 3. Desktop (`modules/desktop-packages.nix`)
+
 GUI applications and desktop-only utilities.
+
 - Applications: alacritty, brave, firefox, obsidian, gimp
 - Window manager: leftwm, rofi, polybar, dunst
 - Desktop tools: syncthing, bitwarden-desktop
 - Multimedia: feh, pavucontrol, playerctl
 
 #### 4. Specialized (`modules/packages/additional-tools.nix`)
+
 Domain-specific tools for specialized workflows.
+
 - Kubernetes: kubectl, krew, stern
 - Cloud: awscli, aws-sso-cli, rclone
 - Media: yewtube, yt-dlp
@@ -59,7 +69,7 @@ Domain-specific tools for specialized workflows.
 
 ### Configuration Hierarchy
 
-```
+```text
 common.nix (universal settings)
     ↓
 configuration.nix (module imports)
@@ -68,6 +78,7 @@ hosts/*/configuration.nix (host-specific)
 ```
 
 Each host:
+
 1. Imports `common.nix` for universal settings (state version, nix config, GC)
 2. Sets its own hostname
 3. Enables appropriate modules (minimal, development, desktop, wsl)
@@ -85,6 +96,7 @@ Choose the appropriate module based on package purpose:
 | Specialized tool | `modules/packages/additional-tools.nix` | kubectl, meilisearch |
 
 Then:
+
 1. Edit the appropriate module file
 2. Add package to `environment.systemPackages`
 3. Rebuild: `sudo nixos-rebuild switch`
@@ -92,16 +104,19 @@ Then:
 ## Host Configurations
 
 ### t470 (Desktop)
+
 - Modules: minimal, development, desktop
 - Desktop: LeftWM tiling window manager
 - Features: Full development environment with GUI tools
 
 ### wsl (Headless)
+
 - Modules: minimal, development, wsl
 - Purpose: Development via browser (MS DevBox)
 - Features: CLI-only, Docker enabled, per-project devenv.nix
 
 ### vm (Virtual Machine)
+
 - Modules: minimal
 - Purpose: Testing and experimentation
 - Features: Minimal footprint
@@ -109,6 +124,7 @@ Then:
 ## Module System
 
 ### Core Modules
+
 - `boot.nix`: Boot loader (conditional, not for WSL)
 - `networking.nix`: Network configuration (conditional, not for WSL)
 - `locale.nix`: Localization and timezone
@@ -118,6 +134,7 @@ Then:
 - `virtualization.nix`: Docker, containers
 
 ### Optional Modules
+
 - `wsl.nix`: WSL-specific configuration
 - `desktop.nix`: Desktop environment (GNOME/LeftWM)
 
@@ -141,17 +158,20 @@ outputs:
 ## Best Practices
 
 ### Package Placement
+
 - **Don't duplicate**: Check existing modules before adding packages
 - **Think globally**: If a CLI tool is useful everywhere, put it in minimal.nix
 - **Separation**: Keep GUI apps separate from CLI tools
 - **Development**: Language tools go in development.nix, not per-language modules
 
 ### Module Descriptions
+
 - Each module has a header comment describing its purpose
 - Focus on roles, not specific package lists (they change frequently)
 - Update CLAUDE.md when adding new modules
 
 ### Commits
+
 - Keep commits focused and granular
 - Avoid listing every package in commit messages
 - Focus on the "why" rather than the "what"
@@ -187,14 +207,17 @@ chezmoi apply -v
 ## Troubleshooting
 
 ### Build fails with "option does not exist"
+
 - Check if conditional modules are properly configured
 - Verify host-specific settings in `hosts/*/configuration.nix`
 
 ### Package conflicts
+
 - Check for duplicates across modules with `rg "package-name"`
 - Remove from the less appropriate module
 
 ### WSL-specific issues
+
 - Ensure `custom.wsl.enable = true` in WSL host config
 - Check that boot and networking modules are disabled
 

@@ -3,7 +3,7 @@
 
 {
   imports = [
-    ../../common.nix  # Universal NixOS settings
+    ../../common.nix # Universal NixOS settings
   ];
 
   # Set hostname (will be overridden by VM provisioning usually)
@@ -28,7 +28,7 @@
   # Enable minimal system packages (essential CLI tools only)
   custom.minimal = {
     enable = true;
-    modernCli = false;  # Basic tools only, no modern replacements
+    modernCli = false; # Basic tools only, no modern replacements
   };
 
   # Essential services for headless operation

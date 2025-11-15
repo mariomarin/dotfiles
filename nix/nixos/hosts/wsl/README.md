@@ -15,6 +15,7 @@ This WSL configuration is designed for:
 ## Features
 
 ✅ **Enabled:**
+
 - Full NixOS with flakes
 - Systemd support
 - Windows interop (run `.exe` from Linux)
@@ -24,6 +25,7 @@ This WSL configuration is designed for:
 - WSL utilities (wslu)
 
 ❌ **Disabled:**
+
 - All GUI applications (use Windows host)
 - Desktop environment and X11
 - Audio services (use Windows audio)
@@ -42,7 +44,7 @@ wsl --install
 ### 2. Import NixOS-WSL
 
 Download the latest NixOS-WSL tarball from:
-https://github.com/nix-community/NixOS-WSL/releases
+<https://github.com/nix-community/NixOS-WSL/releases>
 
 ```powershell
 # Import NixOS distribution
@@ -116,7 +118,8 @@ docker compose up -d
 
 ### Port Forwarding
 
-WSL2 automatically forwards ports to Windows. Dev servers running on `localhost:3000` in WSL are accessible from Windows browsers at `localhost:3000`.
+WSL2 automatically forwards ports to Windows. Dev servers running on `localhost:3000` in WSL are
+accessible from Windows browsers at `localhost:3000`.
 
 ## Development Workflow
 
@@ -171,7 +174,7 @@ Everything else comes from per-project `devenv.nix`.
 
 ## Configuration Structure
 
-```
+```text
 nixos/hosts/wsl/
 ├── configuration.nix    # WSL-specific settings
 └── README.md           # This file
@@ -300,6 +303,7 @@ nix-env -q
 Chezmoi automatically detects WSL via the `WSL_DISTRO_NAME` environment variable.
 
 Machine features for WSL:
+
 - `machineType = "wsl"`
 - `desktop = false`
 - `kmonad = false`
