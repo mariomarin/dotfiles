@@ -177,7 +177,8 @@ See [README.md](README.md) for directory structure, key files, and external depe
 
 ### Zsh Configuration Preferences
 
-See [private_dot_config/zsh/CLAUDE.md](private_dot_config/zsh/CLAUDE.md) and [private_dot_config/zim/CLAUDE.md](private_dot_config/zim/CLAUDE.md) for detailed Zsh configuration guidance.
+See [private_dot_config/zsh/CLAUDE.md](private_dot_config/zsh/CLAUDE.md) and
+[private_dot_config/zim/CLAUDE.md](private_dot_config/zim/CLAUDE.md) for detailed Zsh configuration guidance.
 
 #### Code Style
 
@@ -319,7 +320,8 @@ See [docs/USER_SERVICES.md](docs/USER_SERVICES.md) for detailed comparison and g
 
 See [docs/USER_SERVICES.md](docs/USER_SERVICES.md) for details on systemd user service management.
 
-NixOS-specific integration is handled via chezmoi scripts that resolve system paths and create robust symlinks. Run `chezmoi apply` after system updates to fix any broken symlinks.
+NixOS-specific integration is handled via chezmoi scripts that resolve system paths and create robust symlinks.
+Run `chezmoi apply` after system updates to fix any broken symlinks.
 
 ## Important Notes
 
@@ -349,4 +351,5 @@ NixOS-specific integration is handled via chezmoi scripts that resolve system pa
 
 ## Neovim Configuration
 
-See [private_dot_config/nvim/CLAUDE.md](private_dot_config/nvim/CLAUDE.md) for detailed configuration and [README.md](README.md) for feature overview.
+See [private_dot_config/nvim/CLAUDE.md](private_dot_config/nvim/CLAUDE.md) for detailed configuration and
+[README.md](README.md) for feature overview.

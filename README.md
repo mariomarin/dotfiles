@@ -1,6 +1,7 @@
 # Dotfiles
 
-This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system configurations across different machines.
+This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system
+configurations across different machines.
 
 ## Quick Start
 
@@ -18,9 +19,10 @@ make init
 
 ## Directory Structure
 
-This repository uses [chezmoi's naming conventions](https://www.chezmoi.io/reference/source-state-attributes/), which makes directories look unusual at first glance:
+This repository uses [chezmoi's naming conventions](https://www.chezmoi.io/reference/source-state-attributes/), which
+makes directories look unusual at first glance:
 
-```
+```text
 .
 ├── private_dot_config/           # → ~/.config/
 │   ├── alacritty/               # → ~/.config/alacritty/
@@ -298,7 +300,7 @@ The Neovim setup uses LazyVim, a modern Neovim configuration framework:
 - `.neoconf.json` - Neovim LSP configuration
 - `stylua.toml` - Lua code formatting rules
 
-### Key Features
+### LazyVim Features
 
 - **Base**: LazyVim distribution with sensible defaults
 - **Language Support**: Pre-configured extras for Go, TypeScript, Python, Rust, YAML, Docker, Markdown
