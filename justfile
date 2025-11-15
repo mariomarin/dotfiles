@@ -188,41 +188,41 @@ dev:
 
 # Run all checks
 check: lint
-    @echo "✅ All checks passed"
+    print "✅ All checks passed"
 
 # Health checks
 health: health-summary
-    @echo ""
-    @echo "Run 'just health-all' for detailed checks of all subsystems"
+    print ""
+    print "Run 'just health-all' for detailed checks of all subsystems"
 
 # System health summary
 health-summary:
-    #!/usr/bin/env bash
-    echo "🏥 System Health Summary"
-    echo "========================"
-    echo ""
-    echo "🔍 Quick Status:"
-    echo -n "  NixOS:   "; nixos-version 2>/dev/null | cut -d' ' -f1,2 || echo "❌ not available"
-    echo -n "  Chezmoi: "; chezmoi --version 2>/dev/null | head -1 | cut -d, -f1 || echo "❌ not installed"
-    echo -n "  Neovim:  "; nvim --version 2>/dev/null | head -1 || echo "❌ not installed"
-    echo -n "  Tmux:    "; tmux -V 2>/dev/null || echo "❌ not installed"
-    echo -n "  Zsh:     "; zsh --version 2>/dev/null | head -1 || echo "❌ not installed"
+    #!/usr/bin/env nu
+    print "🏥 System Health Summary"
+    print "========================"
+    print ""
+    print "🔍 Quick Status:"
+    print $"  NixOS:   (do { nixos-version | lines | first | split row ' ' | get 0..1 | str join ' ' } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not available" })"
+    print $"  Chezmoi: (do { chezmoi --version | lines | first | split row ',' | first } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not installed" })"
+    print $"  Neovim:  (do { nvim --version | lines | first } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not installed" })"
+    print $"  Tmux:    (do { tmux -V } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not installed" })"
+    print $"  Zsh:     (do { zsh --version | lines | first } | complete | if $in.exit_code == 0 { $in.stdout } else { "❌ not installed" })"
 
 # Full system health check
 health-all:
-    #!/usr/bin/env bash
-    echo "🏥 Full System Health Check"
-    echo "==========================="
-    echo ""
-    just nixos-health || true
-    echo ""
-    just chezmoi-health || true
-    echo ""
-    just nvim-health || true
-    echo ""
-    just tmux-health || true
-    echo ""
-    just zim-health || true
+    #!/usr/bin/env nu
+    print "🏥 Full System Health Check"
+    print "==========================="
+    print ""
+    do { just nixos-health } | complete | ignore
+    print ""
+    do { just chezmoi-health } | complete | ignore
+    print ""
+    do { just nvim-health } | complete | ignore
+    print ""
+    do { just tmux-health } | complete | ignore
+    print ""
+    do { just zim-health } | complete | ignore
 
 # Pass-through targets to subdirectories
 nixos-switch:
