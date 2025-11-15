@@ -70,6 +70,22 @@ chezmoi apply
 - ✅ Packages auto-install (just, nushell, neovim, etc.) via declarative package management
 - ✅ SSH keys fetched from Bitwarden vault
 
+### Windows + WSL (NixOS on Windows)
+
+For a full NixOS experience on Windows via WSL2:
+
+```powershell
+# After setting up Windows dotfiles above
+
+# Navigate to wsl directory
+cd $env:USERPROFILE\.local\share\chezmoi\wsl
+
+# One-command WSL NixOS setup
+just setup
+```
+
+See [wsl/README.md](wsl/README.md) for detailed WSL setup documentation.
+
 ## Directory Structure
 
 This repository uses [chezmoi's naming conventions](https://www.chezmoi.io/reference/source-state-attributes/), which
