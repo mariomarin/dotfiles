@@ -48,13 +48,7 @@
       post-commit = {
         enable = true;
         name = "Apply changes with make";
-        entry = ''
-          # Source BW_SESSION if available
-          if [ -f .envrc.local ]; then
-            source .envrc.local
-          fi
-          make
-        '';
+        entry = lib.mkForce "bash -c 'if [ -f .envrc.local ]; then source .envrc.local; fi && make'";
         language = "system";
         pass_filenames = false;
         always_run = true;
