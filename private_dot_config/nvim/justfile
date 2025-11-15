@@ -1,5 +1,7 @@
 # Neovim configuration management
 
+set shell := ["nu", "-c"]
+
 # Default: sync plugins
 default: sync
 
@@ -17,17 +19,27 @@ clean:
 
 # Health check
 health:
-    #!/usr/bin/env bash
-    echo "🔍 Neovim Health Check"
-    echo "===================="
-    echo -n "✓ Neovim version: "; nvim --version | head -1
-    echo -n "✓ Config location: "; echo ~/.config/nvim
-    echo -n "✓ LazyVim plugins: "; find ~/.local/share/nvim/lazy -maxdepth 1 -type d | wc -l | awk '{print $1-1 " installed"}'
-    echo -n "✓ Treesitter parsers: "; find ~/.local/share/nvim/lazy/nvim-treesitter/parser -name "*.so" 2>/dev/null | wc -l | awk '{print $1 " installed"}'
-    echo -n "✓ Mason packages: "; ls ~/.local/share/nvim/mason/packages 2>/dev/null | wc -l | awk '{print $1 " installed"}'
-    echo -n "✓ Config syntax: "; nvim --headless -c "try | source init.lua | echo 'valid' | catch | echo 'invalid' | endtry" -c "qa!" 2>/dev/null || echo "checking..."
-    echo ""
-    echo "For detailed health check, run: just health-full"
+    #!/usr/bin/env nu
+    print "🔍 Neovim Health Check"
+    print "===================="
+    let version_result = (do { nvim --version } | complete)
+    let version = if $version_result.exit_code == 0 { $version_result.stdout | lines | first } else { "unknown" }
+    print $"✓ Neovim version: ($version)"
+    print $"✓ Config location: (~/.config/nvim | path expand)"
+    let lazy_dir = ("~/.local/share/nvim/lazy" | path expand)
+    let plugins = if ($lazy_dir | path exists) { (ls $lazy_dir | where type == dir | length) } else { 0 }
+    print $"✓ LazyVim plugins: ($plugins) installed"
+    let parser_dir = ("~/.local/share/nvim/lazy/nvim-treesitter/parser" | path expand)
+    let parsers = if ($parser_dir | path exists) { (ls $parser_dir | where name =~ ".so$" | length) } else { 0 }
+    print $"✓ Treesitter parsers: ($parsers) installed"
+    let mason_dir = ("~/.local/share/nvim/mason/packages" | path expand)
+    let mason = if ($mason_dir | path exists) { (ls $mason_dir | length) } else { 0 }
+    print $"✓ Mason packages: ($mason) installed"
+    let syntax_result = (do { nvim --headless -c "try | source init.lua | echo 'valid' | catch | echo 'invalid' | endtry" -c "qa!" } | complete)
+    let syntax = if $syntax_result.exit_code == 0 { "valid" } else { "checking..." }
+    print $"✓ Config syntax: ($syntax)"
+    print ""
+    print "For detailed health check, run: just health-full"
 
 # Full health check
 health-full:
@@ -39,18 +51,23 @@ plugins:
 
 # Lint Lua files
 lint:
-    #!/usr/bin/env bash
-    if command -v stylua >/dev/null 2>&1; then
-        stylua --check . || (echo "❌ Lua files need formatting. Run 'just format' to fix." && exit 1)
-    else
-        echo "⚠️  stylua not found"
-    fi
+    #!/usr/bin/env nu
+    if (which stylua | is-not-empty) {
+        let result = (do { stylua --check . } | complete)
+        if $result.exit_code != 0 {
+            print "❌ Lua files need formatting. Run 'just format' to fix."
+            exit 1
+        }
+    } else {
+        print "⚠️  stylua not found"
+    }
 
 # Format Lua files
 format:
-    #!/usr/bin/env bash
-    if command -v stylua >/dev/null 2>&1; then
-        stylua . && echo "✅ Lua files formatted"
-    else
-        echo "⚠️  stylua not found"
-    fi
+    #!/usr/bin/env nu
+    if (which stylua | is-not-empty) {
+        stylua .
+        print "✅ Lua files formatted"
+    } else {
+        print "⚠️  stylua not found"
+    }
