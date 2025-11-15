@@ -25,8 +25,19 @@ bw-unlock:
 	echo "export BW_SESSION=\"$$BW_SESSION\"" > .envrc.local && \
 	echo "BW_SESSION=\"$$BW_SESSION\"" > .env && \
 	echo "✅ Session saved to .env and .envrc.local" && \
-	direnv allow && \
-	echo "✅ Environment updated. Run 'direnv reload' or restart your shell to load the session."
+	echo "💡 Run 'make bw-reload' to load the session into your environment"
+
+bw-reload:
+	@echo "🔄 Reloading direnv environment..."
+	@direnv allow
+	@direnv reload
+	@echo "✅ Environment reloaded"
+	@if [ -n "$$BW_SESSION" ]; then \
+		echo "✅ BW_SESSION is loaded"; \
+	else \
+		echo "⚠️  BW_SESSION not found in environment"; \
+		echo "   You may need to restart your shell or run: source .envrc.local"; \
+	fi
 
 # Linting and formatting targets
 # Note: Formatting is also configured as git pre-commit hooks in devenv.nix
