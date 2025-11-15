@@ -9,6 +9,7 @@ packages:
             - neovim
             - direnv
             - just
+            - nushell
         casks:
             - alacritty
     # Windows packages via winget
@@ -18,4 +19,5 @@ packages:
             - Neovim.Neovim
             - direnv.direnv
             - casey.just
+            - Nushell.Nushell
             - Alacritty.Alacritty
