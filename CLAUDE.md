@@ -96,9 +96,49 @@ configurations across different machines.
 
 ## Bootstrap Architecture
 
+Understanding the bootstrap process is critical for maintaining this repository. Chezmoi executes setup in a
+specific order, and placing code in the wrong phase will cause failures.
+
+### Complete Execution Order
+
+When you run `chezmoi init` or `chezmoi apply`, chezmoi executes these phases in order:
+
+#### Phase 1: Bootstrap Scripts (`hooks.read-source-state.pre`)
+
+- Runs **before** any templates are processed
+- Installs tools that templates need to reference
+- Must complete successfully or chezmoi aborts
+
+#### Phase 2: Read Source State & Process Templates
+
+- Chezmoi reads `.local/share/chezmoi` directory
+- Processes all `.tmpl` files and evaluates template functions
+- Can now use tools installed in Phase 1
+
+#### Phase 3: Pre-Entry Scripts (`run_before_` scripts)
+
+- Runs before files are applied
+- Rarely used in this repository
+
+#### Phase 4: Update Entries (files, directories, symlinks)
+
+- Chezmoi creates/updates actual files in home directory
+- Sets permissions and ownership
+
+#### Phase 5: Change Scripts (`run_onchange_` scripts)
+
+- Runs when script content changes
+- **This is where declarative packages are installed**
+- Scripts can be templates (processed in Phase 2)
+
+#### Phase 6: Post-Entry Scripts (`run_after_` scripts)
+
+- Runs after all files are applied
+- Rarely used in this repository
+
 ### Pre-Hook Bootstrap System (Phase 1)
 
-The repository uses chezmoi pre-hooks for OS-specific bootstrap before reading source state:
+The repository uses chezmoi pre-hooks for OS-specific bootstrap **before reading source state**:
 
 **Purpose:** Install critical dependencies before chezmoi reads templates
 
@@ -132,7 +172,35 @@ The repository uses chezmoi pre-hooks for OS-specific bootstrap before reading s
 - Run on every `chezmoi init` and `chezmoi apply` (fast due to early exits)
 - macOS gets Nix for nix-darwin configuration management
 
-### Declarative Package Management (Phase 2)
+### Decision Guide: Bootstrap vs Packages
+
+**Use Bootstrap (Phase 1) if:**
+
+- Templates reference this tool (e.g., `{{ bitwarden ... }}`, `{{ gitHubLatestRelease ... }}`)
+- Tool is required for template processing (e.g., `jq` for parsing JSON in templates)
+- Platform package manager needs installing (Homebrew, Nix)
+- Failure to install would prevent chezmoi from reading source
+
+**Use Packages YAML (Phase 5) if:**
+
+- Regular development tool (git, neovim, direnv)
+- Cross-platform shell (nushell for justfile scripting)
+- Editor or terminal emulator
+- Tool doesn't need to be available during template processing
+
+**Examples:**
+
+| Tool | Location | Reason |
+|------|----------|--------|
+| Bitwarden CLI | Bootstrap | Templates use `{{ bitwarden "id-rsa" }}` |
+| jq | Bootstrap | Templates might parse JSON data |
+| Homebrew (macOS) | Bootstrap | Needed to install other bootstrap tools |
+| Nix (macOS) | Bootstrap | Required for nix-darwin system management |
+| nushell | Packages | Used by justfiles, not templates |
+| git | Packages | Regular dev tool, not needed by templates |
+| neovim | Packages | Regular dev tool, not needed by templates |
+
+### Declarative Package Management (Phase 5)
 
 Packages are defined declaratively in `.chezmoidata/packages.yaml`:
 

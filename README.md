@@ -79,6 +79,74 @@ makes directories look unusual at first glance:
 
 This naming scheme allows chezmoi to recreate the exact file structure and permissions in your home directory.
 
+## Bootstrap Process
+
+When you run `chezmoi init` or `chezmoi apply` for the first time, chezmoi executes several steps in a specific
+order. Understanding this order helps you know where to place different types of setup logic.
+
+### Execution Order
+
+1. **Bootstrap Scripts** (`hooks.read-source-state.pre`)
+   - Runs **before** templates are processed
+   - Installs tools that templates need to reference
+   - OS-specific: `.bootstrap-unix.sh` (macOS/Linux) or `.bootstrap-windows.ps1` (Windows)
+
+2. **Template Processing**
+   - Chezmoi reads the source directory and processes all `.tmpl` files
+   - Templates can reference tools installed in step 1
+   - Example: `{{ bitwarden "id-rsa" }}` requires `bw` CLI from bootstrap
+
+3. **Package Installation** (`run_onchange_` scripts)
+   - Installs regular development tools declaratively
+   - Defined in `.chezmoidata/packages.yaml`
+   - Examples: git, neovim, nushell, just, direnv
+
+4. **File Application**
+   - Chezmoi creates/updates files and directories
+   - Sets correct permissions and ownership
+
+### What Goes Where?
+
+**Bootstrap Scripts** (step 1):
+
+- Bitwarden CLI (templates use `{{ bitwarden ... }}`)
+- Platform package managers (Homebrew on macOS)
+- Nix package manager (for nix-darwin on macOS)
+- Tools required by template processing
+
+**Package YAML** (step 3):
+
+- Regular development tools (git, neovim, direnv)
+- Cross-platform shells (nushell for justfile scripting)
+- Editor and terminal emulators
+- Tools that don't need to be available during template processing
+
+### Platform-Specific Bootstrap
+
+**macOS** (`.bootstrap-unix.sh`):
+
+1. Install Homebrew if missing
+2. Install Nix for nix-darwin support
+3. Install Bitwarden CLI via Homebrew
+
+**Linux** (`.bootstrap-unix.sh`):
+
+- Install Bitwarden CLI only
+- NixOS: System packages managed via `just nixos/first-time`
+
+**Windows** (`.bootstrap-windows.ps1`):
+
+- Install Bitwarden CLI via winget
+- Uses PowerShell (fresh Windows doesn't have bash)
+
+### Why This Matters
+
+- **Templates fail without bootstrap**: If a template uses `{{ bitwarden ... }}` but `bw` isn't installed,
+  chezmoi fails
+- **Packages can use templates**: Package installation scripts are processed as templates
+- **Bootstrap runs every time**: `hooks.read-source-state.pre` executes on every `chezmoi apply` (but scripts
+  check if tools are already installed)
+
 ## Common Tasks (justfile)
 
 ```bash
