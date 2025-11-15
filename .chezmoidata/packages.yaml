@@ -1,0 +1,21 @@
+# Declarative package management for chezmoi
+# Packages defined here are installed via run_onchange_ scripts
+# NixOS packages are managed via system configuration (not here)
+packages:
+    # macOS packages via homebrew
+    darwin:
+        brews:
+            - git
+            - neovim
+            - direnv
+            - just
+        casks:
+            - alacritty
+    # Windows packages via winget
+    windows:
+        winget:
+            - Git.Git
+            - Neovim.Neovim
+            - direnv.direnv
+            - casey.just
+            - Alacritty.Alacritty

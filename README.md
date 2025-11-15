@@ -108,26 +108,59 @@ The repository is configured via `chezmoi.toml.tmpl`:
   
 This means any changes made via `chezmoi apply` are automatically version controlled.
 
+## Quick Start: Windows
+
+**First-time setup on Windows:**
+
+```powershell
+# Install Git and chezmoi via winget
+winget install Git.Git
+winget install twpayne.chezmoi
+
+# Restart PowerShell, then initialize dotfiles
+chezmoi init https://github.com/mariomarin/dotfiles.git
+
+# Bitwarden CLI is auto-installed by chezmoi pre-hook
+# Login to Bitwarden
+bw login
+
+# Unlock and set session
+$env:BW_SESSION = bw unlock --raw
+
+# Apply dotfiles (packages auto-install, SSH keys fetched from Bitwarden)
+chezmoi apply -v
+```
+
+**What happens automatically:**
+
+- ✅ Bitwarden CLI installs via pre-hook (before reading templates)
+- ✅ Packages install via `run_onchange_` scripts (Git, Neovim, direnv, just, Alacritty)
+- ✅ SSH keys fetch from Bitwarden vault
+
 ## Bitwarden Integration
 
 This repository uses Bitwarden to securely store and manage secrets like SSH keys.
 
 ### Setup
 
-1. **Install Bitwarden CLI** (if not already installed)
-2. **Login to Bitwarden:**
+**Create SSH Key item in Bitwarden (CLI method):**
 
-   ```bash
-   bw login <your-email>
-   ```
+```bash
+# Encode your SSH keys and create the item
+bw get template item | jq \
+  '.type = 5 | .name = "id-rsa" | .sshKey = {
+    "privateKey": "'$(cat ~/.ssh/id_ed25519)'",
+    "publicKey": "'$(cat ~/.ssh/id_ed25519.pub)'"
+  }' | bw encode | bw create item
 
-3. **Create SSH Key item in Bitwarden:**
-   - Open Bitwarden web vault or desktop app
-   - Create a new **SSH Key** item
-   - Name it `id-rsa`
-   - Paste your SSH private key in the "Private Key" field
-   - Paste your SSH public key in the "Public Key" field
-   - Save the item
+# Or use the web vault if you prefer a GUI
+```
+
+**Alternative: Web vault method:**
+
+1. Open Bitwarden web vault
+2. Create new **SSH Key** item named `id-rsa`
+3. Paste keys in respective fields
 
 ### Usage
 

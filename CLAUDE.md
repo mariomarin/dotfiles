@@ -94,7 +94,57 @@ set -euo pipefail  # Exit on error, undefined vars, pipe failures
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system
 configurations across different machines.
 
-## Plugin and Package Management
+## Bootstrap Architecture
+
+### Pre-Hook System (Phase 1)
+
+The repository uses chezmoi pre-hooks to install critical dependencies **before** reading source state:
+
+**Purpose:** Install Bitwarden CLI before chezmoi reads templates (which may reference BW secrets)
+
+**Configuration in `private_dot_config/chezmoi/chezmoi.toml.tmpl`:**
+
+```toml
+[hooks.read-source-state.pre]
+{{- if eq .chezmoi.os "windows" }}
+    command = ".local/share/chezmoi/.install-bw-cli.ps1"
+{{- else }}
+    command = ".local/share/chezmoi/.install-bw-cli.sh"
+{{- end }}
+```
+
+**Implementation:**
+
+- `.install-bw-cli.sh` - Unix/macOS installer (homebrew + direct download)
+- `.install-bw-cli.ps1` - Windows installer (winget)
+- Both scripts exit immediately if `bw` is already in PATH (idempotent)
+- Run on every `chezmoi init` and `chezmoi apply` (fast due to early exit)
+
+**Critical pattern:** Pre-hooks must be idempotent and exit fast when nothing to do
+
+### Declarative Package Management (Phase 2)
+
+Packages are defined declaratively in `.chezmoidata/packages.yaml`:
+
+```yaml
+packages:
+  darwin:
+    brews: [git, neovim, direnv, just]
+    casks: [alacritty]
+  windows:
+    winget: [Git.Git, Neovim.Neovim, direnv.direnv, casey.just, Alacritty.Alacritty]
+```
+
+**Installation via run_onchange scripts:**
+
+- `.chezmoiscripts/run_onchange_darwin-install-packages.sh.tmpl` - macOS (homebrew)
+- `.chezmoiscripts/run_onchange_windows-install-packages.ps1.tmpl` - Windows (winget)
+- Scripts read from `.chezmoidata/packages.yaml` and install packages
+- Run automatically during `chezmoi apply` when package list or script changes
+
+**NixOS exception:** Packages managed via system configuration, not chezmoi
+
+### Plugin and Package Management
 
 ### Update Strategy
 
@@ -204,12 +254,8 @@ The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.)
 #### Setup
 
 1. **Install Bitwarden CLI**:
-
-   ```bash
-   # Already included in .install/windows-setup.ps1 for Windows
-   # For Linux/NixOS, install via your package manager
-   winget install Bitwarden.CLI  # Windows
-   ```
+   - **Automatic:** BW CLI auto-installs via pre-hook on first `chezmoi init`
+   - **Manual:** Install via package manager if needed before running chezmoi
 
 2. **Authenticate**:
 
@@ -223,8 +269,9 @@ The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.)
    ```
 
 3. **Store SSH Keys in Bitwarden**:
-   - Create an **SSH Key** item (type 5) in Bitwarden vault
-   - Store private and public keys in the dedicated fields
+   - Use CLI to create SSH Key item (type 5): `bw get template item | jq ...`
+   - Or create via web vault/desktop app
+   - See README.md for detailed CLI commands
 
 #### Implementation Details (for AI)
 
