@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Chezmoi pre-hook: Install Bitwarden CLI before reading source state
 # This runs every time chezmoi reads source state, so exit fast if nothing to do
+# NOTE: This is NOT a template - it must handle OS detection itself
 
 set -euo pipefail
 
@@ -53,6 +54,18 @@ case "$(uname -s)" in
 
     echo "✅ Bitwarden CLI installed to ~/.local/bin/bw"
     echo "💡 Make sure ~/.local/bin is in your PATH"
+    ;;
+
+  MINGW* | MSYS* | CYGWIN*)
+    # Windows (Git Bash or similar)
+    # Check if winget is available
+    if ! command -v winget.exe > /dev/null 2>&1; then
+      echo "❌ winget not found. Please install App Installer from Microsoft Store."
+      exit 1
+    fi
+
+    echo "  Installing via winget..."
+    winget.exe install --id Bitwarden.CLI --exact --silent --accept-package-agreements --accept-source-agreements
     ;;
 
   *)

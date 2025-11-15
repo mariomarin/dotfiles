@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Install packages from .chezmoidata/packages.yaml
+# This script runs when the package list or script content changes
+
+set -euo pipefail
+
+# Detect OS (chezmoi templates work in run_onchange scripts)
+OS="{{ .chezmoi.os }}"
+
+echo "📦 Installing packages for $OS..."
+
+case "$OS" in
+  darwin)
+    # macOS - use homebrew
+    if ! command -v brew > /dev/null 2>&1; then
+      echo "❌ Homebrew not found. Please install: https://brew.sh"
+      exit 1
+    fi
+
+    # Install brews
+{{- range .packages.darwin.brews }}
+    if ! brew list {{ . }} > /dev/null 2>&1; then
+      echo "  Installing {{ . }}..."
+      brew install {{ . }}
+    else
+      echo "  ✓ {{ . }} already installed"
+    fi
+{{- end }}
+
+    # Install casks
+{{- range .packages.darwin.casks }}
+    if ! brew list --cask {{ . }} > /dev/null 2>&1; then
+      echo "  Installing {{ . }} (cask)..."
+      brew install --cask {{ . }}
+    else
+      echo "  ✓ {{ . }} already installed"
+    fi
+{{- end }}
+    ;;
+
+  windows)
+    # Windows - use winget
+    if ! command -v winget.exe > /dev/null 2>&1; then
+      echo "❌ winget not found. Please install App Installer from Microsoft Store."
+      exit 1
+    fi
+
+    # Install winget packages
+{{- range .packages.windows.winget }}
+    echo "  Checking {{ . }}..."
+    if ! winget.exe list --id {{ . }} --exact 2>&1 | grep -q "{{ . }}"; then
+      echo "  Installing {{ . }}..."
+      winget.exe install --id {{ . }} --exact --silent --accept-package-agreements --accept-source-agreements
+    else
+      echo "  ✓ {{ . }} already installed"
+    fi
+{{- end }}
+    ;;
+
+  linux)
+    # NixOS - packages managed via system configuration
+    echo "⏭️  Skipping: NixOS packages managed via system configuration"
+    ;;
+
+  *)
+    echo "❌ Unsupported OS: $OS"
+    exit 1
+    ;;
+esac
+
+echo "✅ Packages installed successfully"
