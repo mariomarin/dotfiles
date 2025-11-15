@@ -216,10 +216,10 @@ health-all:
 
 # Pass-through targets to subdirectories
 nixos-switch:
-    @make -C nixos switch
+    @just nixos/switch
 
 nixos-health:
-    @make -C nixos health
+    @just nixos/health
 
 chezmoi-apply:
     @just chezmoi/apply
@@ -234,34 +234,34 @@ chezmoi-health:
     @just chezmoi/health
 
 nvim-sync:
-    @make -C private_dot_config/nvim sync
+    @just private_dot_config/nvim/sync
 
 nvim-health:
-    @make -C private_dot_config/nvim health
+    @just private_dot_config/nvim/health
 
 tmux-reload:
-    @make -C private_dot_config/tmux reload
+    @just private_dot_config/tmux/reload
 
 tmux-health:
-    @make -C private_dot_config/tmux health
+    @just private_dot_config/tmux/health
 
 zim-update:
-    @make -C private_dot_config/zim update
+    @just private_dot_config/zim/update
 
 zim-health:
-    @make -C private_dot_config/zim health
+    @just private_dot_config/zim/health
 
 topgrade-update:
-    @make -C private_dot_config/topgrade update
+    @just private_dot_config/topgrade/update
 
 topgrade-status:
-    @make -C private_dot_config/topgrade status
+    @just private_dot_config/topgrade/status
 
 topgrade-plugins:
-    @make -C private_dot_config/topgrade plugins
+    @just private_dot_config/topgrade/plugins
 
 topgrade-system:
-    @make -C private_dot_config/topgrade system
+    @just private_dot_config/topgrade/system
 
 # Convenience aliases
 
@@ -279,10 +279,10 @@ alias update-system := topgrade-system
 
 # Multi-machine deployment
 vm-switch:
-    @make -C nixos vm/switch
+    @just nixos/vm-switch
 
 vm-test:
-    @make -C nixos vm/test
+    @just nixos/vm-test
 
 deploy-vm TARGET_HOST BUILD_HOST:
-    @make -C nixos deploy-vm TARGET_HOST={{ TARGET_HOST }} BUILD_HOST={{ BUILD_HOST }}
+    @just nixos/deploy-vm TARGET_HOST={{ TARGET_HOST }} BUILD_HOST={{ BUILD_HOST }}
