@@ -1,5 +1,17 @@
 all: chezmoi/quick-apply
 
+# Direnv management
+direnv-allow:
+	@echo "✅ Allowing direnv for this directory..."
+	@direnv allow
+	@echo "✅ Direnv allowed"
+
+direnv-reload:
+	@echo "🔄 Reloading direnv environment..."
+	@direnv allow
+	@direnv reload
+	@echo "✅ Environment reloaded"
+
 # Bitwarden session management
 bw-unlock:
 	@if [ ! -t 0 ]; then \
@@ -25,19 +37,7 @@ bw-unlock:
 	echo "export BW_SESSION=\"$$BW_SESSION\"" > .envrc.local && \
 	echo "BW_SESSION=\"$$BW_SESSION\"" > .env && \
 	echo "✅ Session saved to .env and .envrc.local" && \
-	echo "💡 Run 'make bw-reload' to load the session into your environment"
-
-bw-reload:
-	@echo "🔄 Reloading direnv environment..."
-	@direnv allow
-	@direnv reload
-	@echo "✅ Environment reloaded"
-	@if [ -n "$$BW_SESSION" ]; then \
-		echo "✅ BW_SESSION is loaded"; \
-	else \
-		echo "⚠️  BW_SESSION not found in environment"; \
-		echo "   You may need to restart your shell or run: source .envrc.local"; \
-	fi
+	echo "💡 Run 'make direnv-reload' to load the session into your environment"
 
 # Linting and formatting targets
 # Note: Formatting is also configured as git pre-commit hooks in devenv.nix
