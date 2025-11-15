@@ -1,5 +1,12 @@
 sourceDir = "~/.local/share/chezmoi"
 
+[hooks.read-source-state.pre]
+{{- if eq .chezmoi.os "windows" }}
+    command = ".local/share/chezmoi/.install-bw-cli.ps1"
+{{- else }}
+    command = ".local/share/chezmoi/.install-bw-cli.sh"
+{{- end }}
+
 [diff]
 command = "delta"
 args = ["--syntax-theme", "Dracula", "--line-numbers"]
