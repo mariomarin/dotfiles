@@ -62,7 +62,7 @@ lint-shell:
 	@find . -name "*.sh" -type f -exec shellcheck {} \;
 	@echo "✅ Shell scripts valid"
 
-format: format-lua format-nix format-shell format-yaml format-markdown format-others
+format: format-lua format-nix format-shell format-yaml format-markdown format-justfile format-others
 	@echo "✨ All formatting complete"
 
 format-lua:
@@ -94,6 +94,12 @@ format-markdown:
 	@command -v markdownlint >/dev/null 2>&1 || { echo "⚠️  markdownlint not found. Run 'direnv allow' to load development environment"; exit 0; }
 	@markdownlint --fix "**/*.md" --ignore node_modules --ignore .git || true
 	@echo "✅ Markdown files formatted"
+
+format-justfile:
+	@echo "📝 Formatting justfiles..."
+	@command -v just >/dev/null 2>&1 || { echo "⚠️  just not found"; exit 0; }
+	@find . -name "justfile" -type f -exec sh -c 'cd "$$(dirname "{}")" && just --fmt --unstable' \;
+	@echo "✅ Justfiles formatted"
 
 format-others:
 	@echo "📝 Formatting JSON and TOML files with biome..."

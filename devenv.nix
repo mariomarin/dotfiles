@@ -115,6 +115,17 @@
         pass_filenames = true;
       };
 
+      # Justfile formatting
+      justfile-fmt = {
+        enable = true;
+        name = "justfile-fmt";
+        entry = "just --fmt --unstable";
+        files = "justfile$";
+        language = "system";
+        pass_filenames = false;
+        always_run = false;
+      };
+
       # LeftWM config validation
       leftwm-check = {
         enable = true;
