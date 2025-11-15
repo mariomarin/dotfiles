@@ -56,42 +56,47 @@ bw-reload:
 
 # Run all linting checks
 lint: lint-lua lint-nix lint-shell
-    @echo "✅ All linting checks passed"
+    print "✅ All linting checks passed"
 
 # Check Lua files with stylua
 lint-lua:
-    #!/usr/bin/env bash
-    echo "🔍 Checking Lua files with stylua..."
-    if ! command -v stylua >/dev/null 2>&1; then
-        echo "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"
+    #!/usr/bin/env nu
+    print "🔍 Checking Lua files with stylua..."
+    if (which stylua | is-empty) {
+        print "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"
         exit 0
-    fi
-    cd private_dot_config/nvim && stylua --check . || {
-        echo "❌ Lua files need formatting. Run 'just format-lua' to fix."
+    }
+    cd private_dot_config/nvim
+    let result = (do { stylua --check . } | complete)
+    if $result.exit_code != 0 {
+        print "❌ Lua files need formatting. Run 'just format-lua' to fix."
         exit 1
     }
 
 # Check Nix files syntax
 lint-nix:
-    #!/usr/bin/env bash
-    echo "🔍 Checking Nix files syntax..."
-    if find . -name "*.nix" -exec nix-instantiate --parse {} \; > /dev/null 2>&1; then
-        echo "✅ Nix syntax valid"
-    else
-        echo "❌ Nix syntax errors found"
+    #!/usr/bin/env nu
+    print "🔍 Checking Nix files syntax..."
+    let nix_files = (glob **/*.nix)
+    let result = ($nix_files | each {|file| do { nix-instantiate --parse $file } | complete } | all {|r| $r.exit_code == 0 })
+    if $result {
+        print "✅ Nix syntax valid"
+    } else {
+        print "❌ Nix syntax errors found"
         exit 1
-    fi
+    }
 
 # Check shell scripts with shellcheck
 lint-shell:
-    #!/usr/bin/env bash
-    echo "🔍 Checking shell scripts with shellcheck..."
-    if ! command -v shellcheck >/dev/null 2>&1; then
-        echo "⚠️  shellcheck not found. Run 'devenv shell' or 'direnv allow' to load development environment"
+    #!/usr/bin/env nu
+    print "🔍 Checking shell scripts with shellcheck..."
+    if (which shellcheck | is-empty) {
+        print "⚠️  shellcheck not found. Run 'devenv shell' or 'direnv allow' to load development environment"
         exit 0
-    fi
-    find . -name "*.sh" -type f -exec shellcheck {} \;
-    echo "✅ Shell scripts valid"
+    }
+    let sh_files = (glob **/*.sh)
+    $sh_files | each {|file| shellcheck $file }
+    print "✅ Shell scripts valid"
 
 # Format all files
 format: format-lua format-nix format-shell format-yaml format-markdown format-justfile format-others
