@@ -1,0 +1,134 @@
+# NixOS rebuild commands for multi-machine setup
+
+# Default target
+default: switch
+
+# Default host (physical T470)
+HOST := env_var_or_default("HOST", "nixos")
+
+# Local build and switch commands
+switch:
+    sudo nixos-rebuild switch --flake .#{{HOST}}
+
+test:
+    sudo nixos-rebuild test --flake .#{{HOST}}
+
+boot:
+    sudo nixos-rebuild boot --flake .#{{HOST}}
+
+build:
+    sudo nixos-rebuild build --flake .#{{HOST}}
+
+# VM-specific targets
+vm-switch:
+    sudo nixos-rebuild switch --flake .#vm-headless
+
+vm-test:
+    sudo nixos-rebuild test --flake .#vm-headless
+
+vm-build:
+    sudo nixos-rebuild build --flake .#vm-headless
+
+# Remote deployment targets
+remote-switch TARGET_HOST BUILD_HOST="":
+    #!/usr/bin/env bash
+    if [ -z "{{TARGET_HOST}}" ]; then
+        echo "Error: TARGET_HOST not set. Usage: just remote-switch TARGET_HOST=user@host"
+        exit 1
+    fi
+    nixos-rebuild switch --flake .#{{HOST}} \
+        --target-host {{TARGET_HOST}} \
+        --use-remote-sudo \
+        {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
+
+remote-test TARGET_HOST BUILD_HOST="":
+    #!/usr/bin/env bash
+    if [ -z "{{TARGET_HOST}}" ]; then
+        echo "Error: TARGET_HOST not set. Usage: just remote-test TARGET_HOST=user@host"
+        exit 1
+    fi
+    nixos-rebuild test --flake .#{{HOST}} \
+        --target-host {{TARGET_HOST}} \
+        --use-remote-sudo \
+        {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
+
+# Deploy VM configuration to remote host
+deploy-vm TARGET_HOST BUILD_HOST="":
+    #!/usr/bin/env bash
+    if [ -z "{{TARGET_HOST}}" ]; then
+        echo "Error: TARGET_HOST not set. Usage: just deploy-vm TARGET_HOST=user@host"
+        exit 1
+    fi
+    nixos-rebuild switch --flake .#vm-headless \
+        --target-host {{TARGET_HOST}} \
+        --use-remote-sudo \
+        {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
+
+# Flake management
+update:
+    nix flake update
+
+check:
+    nix flake check
+
+show:
+    nix flake show
+
+# Show available hosts
+hosts:
+    #!/usr/bin/env bash
+    echo "Available NixOS configurations:"
+    echo "  - nixos       : ThinkPad T470 (desktop)"
+    echo "  - vm-headless : Headless VM (SSH only)"
+    echo ""
+    echo "Current HOST: {{HOST}}"
+
+# Health check
+health:
+    #!/usr/bin/env bash
+    echo "🔍 NixOS Health Check for {{HOST}}"
+    echo "================================"
+    echo -n "✓ NixOS version: "; nixos-version
+    echo -n "✓ Hostname: "; hostname
+    echo -n "✓ Current generation: "; sudo nix-env --list-generations --profile /nix/var/nix/profiles/system | tail -1
+    echo -n "✓ Flake status: "; test -f flake.lock && echo "locked" || echo "⚠️  not locked"
+    echo -n "✓ Configuration syntax: "; nix-instantiate --parse configuration.nix > /dev/null 2>&1 && echo "valid" || echo "❌ invalid"
+    echo -n "✓ Flake check: "; nix flake check --no-build 2>/dev/null && echo "passed" || echo "⚠️  warnings"
+    echo -n "✓ Nix daemon: "; systemctl is-active nix-daemon.service || echo "not running"
+    echo -n "✓ Disk usage: "; du -sh /nix/store 2>/dev/null | cut -f1
+    echo ""
+
+# Help target
+help:
+    @echo "NixOS Multi-Machine Build Targets"
+    @echo "================================="
+    @echo ""
+    @echo "Local builds (default HOST=nixos):"
+    @echo "  just switch              # Build and switch to HOST configuration"
+    @echo "  just test                # Test HOST configuration"
+    @echo "  just boot                # Update boot configuration"
+    @echo "  just build               # Build without switching"
+    @echo "  just switch HOST=vm-headless  # Build vm-headless locally"
+    @echo ""
+    @echo "VM-specific shortcuts:"
+    @echo "  just vm-switch           # Build and switch to vm-headless"
+    @echo "  just vm-test             # Test vm-headless configuration"
+    @echo ""
+    @echo "Remote deployment:"
+    @echo "  just remote-switch TARGET_HOST=user@host    # Deploy HOST to remote"
+    @echo "  just deploy-vm TARGET_HOST=user@vm-ip       # Deploy VM config"
+    @echo "  just remote-test TARGET_HOST=user@host      # Test on remote"
+    @echo ""
+    @echo "Optional: BUILD_HOST=user@build-server for remote building"
+    @echo ""
+    @echo "Utilities:"
+    @echo "  just hosts               # Show available configurations"
+    @echo "  just health              # System health check"
+    @echo "  just update              # Update flake inputs"
+    @echo "  just check               # Validate flake"
+    @echo ""
+    @echo "Examples:"
+    @echo "  just switch                                  # Local T470"
+    @echo "  just vm-switch                               # Local VM config"
+    @echo "  just deploy-vm TARGET_HOST=admin@192.168.1.100"
+    @echo "  just remote-switch HOST=nixos TARGET_HOST=user@backup-t470"
