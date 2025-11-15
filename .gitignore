@@ -17,6 +17,7 @@ private_login_init.zsh
 
 # Nix store symlinks
 **/nix/store
+nixos/result
 
 # Chezmoi-specific
 dot_git
