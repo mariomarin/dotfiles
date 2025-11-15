@@ -64,30 +64,16 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";
 if (Get-Command chezmoi -ErrorAction SilentlyContinue) {
     Write-Host "📝 Next steps:" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "  1. Close and reopen PowerShell (to refresh PATH)" -ForegroundColor White
+    Write-Host "Close and reopen PowerShell to refresh PATH, then:" -ForegroundColor White
     Write-Host ""
-    Write-Host "  2. Login to Bitwarden:" -ForegroundColor White
+    Write-Host "  bw login" -ForegroundColor Yellow
+    Write-Host "  `$env:BW_SESSION = bw unlock --raw" -ForegroundColor Yellow
+    Write-Host "  chezmoi init https://github.com/mariomarin/dotfiles.git" -ForegroundColor Yellow
+    Write-Host "  chezmoi diff" -ForegroundColor Yellow
+    Write-Host "  chezmoi apply -v" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "     bw login" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "  3. Unlock Bitwarden and set session (before applying dotfiles):" -ForegroundColor White
-    Write-Host ""
-    Write-Host "     `$env:BW_SESSION = bw unlock --raw" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "  4. Initialize chezmoi with your dotfiles:" -ForegroundColor White
-    Write-Host ""
-    Write-Host "     chezmoi init https://github.com/mariomarin/dotfiles.git" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "  5. Review changes:" -ForegroundColor White
-    Write-Host ""
-    Write-Host "     chezmoi diff" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "  6. Apply dotfiles (SSH keys will be fetched from Bitwarden):" -ForegroundColor White
-    Write-Host ""
-    Write-Host "     chezmoi apply -v" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "  💡 Note: You need to set `$env:BW_SESSION before each 'chezmoi apply'" -ForegroundColor Cyan
-    Write-Host "     (devenv/direnv are not available on Windows)" -ForegroundColor Cyan
+    Write-Host "💡 Note: Set `$env:BW_SESSION before each 'chezmoi apply'" -ForegroundColor Cyan
+    Write-Host "   (devenv/direnv not available on Windows)" -ForegroundColor Cyan
     Write-Host ""
 } else {
     Write-Host "⚠️  chezmoi not found in PATH. Please restart PowerShell and try again." -ForegroundColor Yellow
