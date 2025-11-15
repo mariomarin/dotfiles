@@ -196,6 +196,56 @@ Chezmoi is configured with:
 - Auto-push enabled
 - Uses nvim for merge conflicts
 
+### Bitwarden Integration
+
+The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.) in chezmoi templates.
+
+#### Setup
+
+1. **Install Bitwarden CLI**:
+   ```bash
+   # Already included in .install/windows-setup.ps1 for Windows
+   # For Linux/NixOS, install via your package manager
+   winget install Bitwarden.CLI  # Windows
+   ```
+
+2. **Authenticate**:
+   ```bash
+   # Login to Bitwarden
+   bw login <your-email>
+
+   # Unlock vault (required before each use)
+   bw unlock
+   # Copy the export command shown and run it to set BW_SESSION
+   ```
+
+3. **Store SSH Keys in Bitwarden**:
+   - Create a "Secure Note" or "Login" item named `id-rsa`
+   - Attach both `id_ed25519` (private key) and `id_ed25519.pub` (public key) as attachments
+
+#### SSH Keys Template
+
+SSH keys are automatically fetched from Bitwarden:
+- Template location: `private_dot_ssh/private_id_ed25519.tmpl`
+- Public key: `private_dot_ssh/id_ed25519.pub.tmpl`
+- Uses `bitwardenAttachmentByRef` to fetch attachments from the "id-rsa" item
+
+When you run `chezmoi apply`, it will:
+1. Fetch the SSH keys from Bitwarden
+2. Create `~/.ssh/id_ed25519` with correct permissions (600)
+3. Create `~/.ssh/id_ed25519.pub` with correct permissions (644)
+
+#### Usage
+
+```bash
+# Ensure vault is unlocked
+bw unlock
+export BW_SESSION="your-session-key"
+
+# Apply dotfiles (will fetch secrets from Bitwarden)
+chezmoi apply -v
+```
+
 ## Development Workflow
 
 1. Make changes to files in the chezmoi source directory (`~/.local/share/chezmoi/`)

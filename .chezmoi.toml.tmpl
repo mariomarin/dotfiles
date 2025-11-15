@@ -37,14 +37,17 @@
   {{- $machineType = "wsl" -}}
 {{- end -}}
 
+[bitwarden]
+    command = "bw"
+
 [data]
     machineType = {{ $machineType | quote }}
     codespaces = {{ $codespaces }}
-    
+
     [data.machineConfig]
         hostname = {{ $hostname | quote }}
         type = {{ $machineType | quote }}
-        
+
         [data.machineConfig.features]
             desktop = {{ $isDesktop }}
             kmonad = {{ $hasKmonad }}

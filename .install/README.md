@@ -27,6 +27,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 - **chezmoi** - Dotfiles manager
 - **Bitwarden CLI** - Password manager
 - **Alacritty** - Terminal emulator
+- **Neovim** - Text editor
 
 ### After Installation
 
@@ -93,6 +94,7 @@ winget install Git.Git
 winget install twpayne.chezmoi
 winget install Bitwarden.CLI
 winget install Alacritty.Alacritty
+winget install Neovim.Neovim
 ```
 
 ### macOS (via Homebrew)

@@ -52,6 +52,7 @@ Install-WingetPackage -PackageId "Git.Git" -Name "Git"
 Install-WingetPackage -PackageId "twpayne.chezmoi" -Name "chezmoi"
 Install-WingetPackage -PackageId "Bitwarden.CLI" -Name "Bitwarden CLI"
 Install-WingetPackage -PackageId "Alacritty.Alacritty" -Name "Alacritty"
+Install-WingetPackage -PackageId "Neovim.Neovim" -Name "Neovim"
 
 Write-Host ""
 Write-Host "✨ Installation complete!" -ForegroundColor Green
