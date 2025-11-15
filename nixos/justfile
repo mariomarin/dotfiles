@@ -1,14 +1,23 @@
 # NixOS rebuild commands for multi-machine setup
 
+# OS compatibility check
+_check-os:
+    #!/usr/bin/env nu
+    if (sys | get host.name) == "Windows" {
+        print "❌ Error: NixOS commands are only available on Linux systems"
+        print "   This justfile manages NixOS system configuration and cannot run on Windows"
+        exit 1
+    }
+
 # Default target - first-time setup or switch
-default:
+default: _check-os
     @just switch
 
 # Default host (physical T470)
 HOST := env_var_or_default("HOST", "nixos")
 
 # First-time NixOS setup (use this after fresh NixOS install)
-first-time:
+first-time: _check-os
     #!/usr/bin/env bash
     echo "🚀 First-time NixOS setup..."
     echo "  This will:"
@@ -26,30 +35,30 @@ first-time:
     echo "💡 Flakes are now enabled system-wide. Future rebuilds use: just switch"
 
 # Local build and switch commands
-switch:
+switch: _check-os
     sudo nixos-rebuild switch --flake .#{{HOST}}
 
-test:
+test: _check-os
     sudo nixos-rebuild test --flake .#{{HOST}}
 
-boot:
+boot: _check-os
     sudo nixos-rebuild boot --flake .#{{HOST}}
 
-build:
+build: _check-os
     sudo nixos-rebuild build --flake .#{{HOST}}
 
 # VM-specific targets
-vm-switch:
+vm-switch: _check-os
     sudo nixos-rebuild switch --flake .#vm-headless
 
-vm-test:
+vm-test: _check-os
     sudo nixos-rebuild test --flake .#vm-headless
 
-vm-build:
+vm-build: _check-os
     sudo nixos-rebuild build --flake .#vm-headless
 
 # Remote deployment targets
-remote-switch TARGET_HOST BUILD_HOST="":
+remote-switch TARGET_HOST BUILD_HOST="": _check-os
     #!/usr/bin/env bash
     if [ -z "{{TARGET_HOST}}" ]; then
         echo "Error: TARGET_HOST not set. Usage: just remote-switch TARGET_HOST=user@host"
@@ -60,7 +69,7 @@ remote-switch TARGET_HOST BUILD_HOST="":
         --use-remote-sudo \
         {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
 
-remote-test TARGET_HOST BUILD_HOST="":
+remote-test TARGET_HOST BUILD_HOST="": _check-os
     #!/usr/bin/env bash
     if [ -z "{{TARGET_HOST}}" ]; then
         echo "Error: TARGET_HOST not set. Usage: just remote-test TARGET_HOST=user@host"
@@ -72,7 +81,7 @@ remote-test TARGET_HOST BUILD_HOST="":
         {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
 
 # Deploy VM configuration to remote host
-deploy-vm TARGET_HOST BUILD_HOST="":
+deploy-vm TARGET_HOST BUILD_HOST="": _check-os
     #!/usr/bin/env bash
     if [ -z "{{TARGET_HOST}}" ]; then
         echo "Error: TARGET_HOST not set. Usage: just deploy-vm TARGET_HOST=user@host"
@@ -84,17 +93,17 @@ deploy-vm TARGET_HOST BUILD_HOST="":
         {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
 
 # Flake management
-update:
+update: _check-os
     nix flake update
 
-check:
+check: _check-os
     nix flake check
 
-show:
+show: _check-os
     nix flake show
 
 # Show available hosts
-hosts:
+hosts: _check-os
     #!/usr/bin/env bash
     echo "Available NixOS configurations:"
     echo "  - nixos       : ThinkPad T470 (desktop)"
@@ -103,7 +112,7 @@ hosts:
     echo "Current HOST: {{HOST}}"
 
 # Health check
-health:
+health: _check-os
     #!/usr/bin/env bash
     echo "🔍 NixOS Health Check for {{HOST}}"
     echo "================================"
