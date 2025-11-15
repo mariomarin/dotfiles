@@ -322,3 +322,17 @@ wsl-start:
 
 wsl-stop:
     @just wsl/stop-nixos
+
+# nix-darwin setup (macOS only)
+darwin-first-time:
+    @just darwin/first-time
+
+darwin-switch:
+    @just darwin/switch
+
+darwin-health:
+    @just darwin/health
+
+# Convenience aliases
+
+alias darwin := darwin-switch

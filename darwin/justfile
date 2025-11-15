@@ -1,0 +1,117 @@
+# nix-darwin rebuild commands
+
+set shell := ["nu", "-c"]
+
+# OS compatibility check
+_check-os:
+    #!/usr/bin/env nu
+    if (sys | get host.name) != "Darwin" {
+        print "❌ Error: nix-darwin commands are only available on macOS"
+        print "   This justfile manages macOS system configuration via nix-darwin"
+        exit 1
+    }
+
+# Default target
+default: _check-os
+    @just switch
+
+# Default host (get from scutil)
+HOST := `scutil --get LocalHostName 2>/dev/null || echo "Marios-MacBook"`
+
+# First-time nix-darwin setup
+first-time: _check-os
+    #!/usr/bin/env nu
+    print "🚀 First-time nix-darwin setup..."
+    print "  This will install nix-darwin and apply the configuration"
+    print ""
+    print "⚠️  Note: This assumes Nix is already installed via Determinate Systems installer"
+    print ""
+    print "📦 Installing nix-darwin..."
+    # Run darwin-rebuild from nix-darwin flake (uses master/unstable)
+    sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake $"../nixos#{{HOST}}"
+    print ""
+    print "✅ nix-darwin installed!"
+    print "💡 Future rebuilds: just darwin"
+
+# Local build and switch
+switch: _check-os
+    darwin-rebuild switch --flake ../nixos#{{HOST}}
+
+test: _check-os
+    darwin-rebuild check --flake ../nixos#{{HOST}}
+
+build: _check-os
+    darwin-rebuild build --flake ../nixos#{{HOST}}
+
+# Flake management
+update: _check-os
+    #!/usr/bin/env nu
+    cd ../nixos
+    nix flake update
+
+check: _check-os
+    #!/usr/bin/env nu
+    cd ../nixos
+    nix flake check
+
+show: _check-os
+    #!/usr/bin/env nu
+    cd ../nixos
+    nix flake show
+
+# Show available hosts
+hosts: _check-os
+    #!/usr/bin/env nu
+    print "Available nix-darwin configurations:"
+    print $"  - {{HOST}} : This Mac (detected via scutil)"
+    print ""
+    print $"Current HOST: {{HOST}}"
+    print ""
+    print "To build for a different host:"
+    print "  just switch HOST=other-hostname"
+
+# Health check
+health: _check-os
+    #!/usr/bin/env nu
+    print "🔍 nix-darwin Health Check"
+    print "=========================="
+    let hostname_result = (do { scutil --get LocalHostName } | complete)
+    let hostname = if $hostname_result.exit_code == 0 { $hostname_result.stdout | str trim } else { "unknown" }
+    print $"✓ Hostname: ($hostname)"
+    let macos_result = (do { sw_vers -productVersion } | complete)
+    let macos = if $macos_result.exit_code == 0 { $macos_result.stdout | str trim } else { "unknown" }
+    print $"✓ macOS version: ($macos)"
+    let arch = (uname -m)
+    print $"✓ Architecture: ($arch)"
+    let nix_result = (do { nix --version } | complete)
+    let nix_version = if $nix_result.exit_code == 0 { $nix_result.stdout | str trim } else { "not installed" }
+    print $"✓ Nix version: ($nix_version)"
+    let darwin_rebuild_exists = (which darwin-rebuild | is-not-empty)
+    print $"✓ darwin-rebuild: (if $darwin_rebuild_exists { 'installed' } else { '❌ not installed' })"
+    let flake_exists = ("../nixos/flake.nix" | path exists)
+    print $"✓ Flake exists: (if $flake_exists { 'yes' } else { '❌ no' })"
+    let config_dir = ("/etc/nix-darwin" | path exists)
+    print $"✓ nix-darwin config: (if $config_dir { 'installed' } else { 'not installed (run: just first-time)' })"
+    print ""
+
+# Help
+help:
+    @echo "nix-darwin Build Targets"
+    @echo "======================="
+    @echo ""
+    @echo "First-time setup:"
+    @echo "  just first-time          # Install nix-darwin and apply config"
+    @echo ""
+    @echo "Regular use:"
+    @echo "  just switch              # Build and switch to configuration"
+    @echo "  just test                # Test configuration"
+    @echo "  just build               # Build without switching"
+    @echo ""
+    @echo "Utilities:"
+    @echo "  just hosts               # Show available configurations"
+    @echo "  just health              # System health check"
+    @echo "  just update              # Update flake inputs"
+    @echo "  just check               # Validate flake"
+    @echo ""
+    @echo "Current HOST: {{HOST}}"
+    @echo "Override with: just switch HOST=other-hostname"
