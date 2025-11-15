@@ -4,6 +4,7 @@
 
 # Environment and private files
 .env
+.envrc.local
 .claude
 private_init.zsh
 private_login_init.zsh

@@ -1,5 +1,32 @@
 all: chezmoi/quick-apply
 
+# Bitwarden session management
+bw-unlock:
+	@if [ ! -t 0 ]; then \
+		echo "❌ Error: This target requires interactive input (a terminal)"; \
+		echo "   Run this command directly from your terminal, not in a pipeline or script"; \
+		exit 1; \
+	fi
+	@BW_STATUS=$$(bw status 2>/dev/null | jq -r '.status' 2>/dev/null || echo "unauthenticated"); \
+	if [ "$$BW_STATUS" = "unlocked" ]; then \
+		echo "✅ Vault is already unlocked"; \
+		BW_SESSION=$$(bw unlock --raw --passwordenv BW_PASSWORD 2>/dev/null || echo ""); \
+		if [ -z "$$BW_SESSION" ]; then \
+			echo "⚠️  Could not get session token. You may need to run 'bw lock' and try again."; \
+			exit 1; \
+		fi; \
+	elif [ "$$BW_STATUS" = "locked" ]; then \
+		echo "🔓 Unlocking Bitwarden vault..."; \
+		BW_SESSION=$$(bw unlock --raw); \
+	else \
+		echo "❌ Bitwarden is not logged in. Please run 'bw login' first"; \
+		exit 1; \
+	fi && \
+	echo "export BW_SESSION=\"$$BW_SESSION\"" > .envrc.local && \
+	echo "BW_SESSION=\"$$BW_SESSION\"" > .env && \
+	echo "✅ Session saved to .env and .envrc.local" && \
+	direnv allow && \
+	echo "✅ Environment updated. Run 'direnv reload' or restart your shell to load the session."
 
 # Linting and formatting targets
 # Note: Formatting is also configured as git pre-commit hooks in devenv.nix
