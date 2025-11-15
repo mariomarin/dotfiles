@@ -100,84 +100,85 @@ lint-shell:
 
 # Format all files
 format: format-lua format-nix format-shell format-yaml format-markdown format-justfile format-others
-    @echo "✨ All formatting complete"
+    print "✨ All formatting complete"
 
 # Format Lua files with stylua
 format-lua:
-    #!/usr/bin/env bash
-    echo "📝 Formatting Lua files with stylua..."
-    if ! command -v stylua >/dev/null 2>&1; then
-        echo "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"
+    #!/usr/bin/env nu
+    print "📝 Formatting Lua files with stylua..."
+    if (which stylua | is-empty) {
+        print "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"
         exit 0
-    fi
-    cd private_dot_config/nvim && stylua .
-    echo "✅ Lua files formatted"
+    }
+    cd private_dot_config/nvim
+    stylua .
+    print "✅ Lua files formatted"
 
 # Format Nix files with nixpkgs-fmt
 format-nix:
-    #!/usr/bin/env bash
-    echo "📝 Formatting Nix files with nixpkgs-fmt..."
-    if ! command -v nixpkgs-fmt >/dev/null 2>&1; then
-        echo "⚠️  nixpkgs-fmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"
+    #!/usr/bin/env nu
+    print "📝 Formatting Nix files with nixpkgs-fmt..."
+    if (which nixpkgs-fmt | is-empty) {
+        print "⚠️  nixpkgs-fmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"
         exit 0
-    fi
-    find . -name "*.nix" -exec nixpkgs-fmt {} \;
-    echo "✅ Nix files formatted"
+    }
+    glob **/*.nix | each {|file| nixpkgs-fmt $file }
+    print "✅ Nix files formatted"
 
 # Format shell scripts with shfmt
 format-shell:
-    #!/usr/bin/env bash
-    echo "📝 Formatting shell scripts with shfmt..."
-    if ! command -v shfmt >/dev/null 2>&1; then
-        echo "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"
+    #!/usr/bin/env nu
+    print "📝 Formatting shell scripts with shfmt..."
+    if (which shfmt | is-empty) {
+        print "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"
         exit 0
-    fi
+    }
     shfmt -w -i 2 -ci -sr -kp .
-    echo "✅ Shell scripts formatted"
+    print "✅ Shell scripts formatted"
 
 # Format YAML files with yamlfmt
 format-yaml:
-    #!/usr/bin/env bash
-    echo "📝 Formatting YAML files with yamlfmt..."
-    if ! command -v yamlfmt >/dev/null 2>&1; then
-        echo "⚠️  yamlfmt not found. Run 'direnv allow' to load development environment"
+    #!/usr/bin/env nu
+    print "📝 Formatting YAML files with yamlfmt..."
+    if (which yamlfmt | is-empty) {
+        print "⚠️  yamlfmt not found. Run 'direnv allow' to load development environment"
         exit 0
-    fi
-    find . -name "*.yml" -o -name "*.yaml" | grep -v "/.git/" | grep -v "/node_modules/" | xargs -r yamlfmt
-    echo "✅ YAML files formatted"
+    }
+    glob **/*.{yml,yaml} | where {|f| $f !~ "/.git/" and $f !~ "/node_modules/" } | each {|file| yamlfmt $file }
+    print "✅ YAML files formatted"
 
 # Format Markdown files with markdownlint
 format-markdown:
-    #!/usr/bin/env bash
-    echo "📝 Formatting Markdown files with markdownlint..."
-    if ! command -v markdownlint >/dev/null 2>&1; then
-        echo "⚠️  markdownlint not found. Run 'direnv allow' to load development environment"
+    #!/usr/bin/env nu
+    print "📝 Formatting Markdown files with markdownlint..."
+    if (which markdownlint | is-empty) {
+        print "⚠️  markdownlint not found. Run 'direnv allow' to load development environment"
         exit 0
-    fi
-    markdownlint --fix "**/*.md" --ignore node_modules --ignore .git || true
-    echo "✅ Markdown files formatted"
+    }
+    do { markdownlint --fix "**/*.md" --ignore node_modules --ignore .git } | complete | ignore
+    print "✅ Markdown files formatted"
 
 # Format justfiles
 format-justfile:
-    #!/usr/bin/env bash
-    echo "📝 Formatting justfiles..."
-    if ! command -v just >/dev/null 2>&1; then
-        echo "⚠️  just not found"
+    #!/usr/bin/env nu
+    print "📝 Formatting justfiles..."
+    if (which just | is-empty) {
+        print "⚠️  just not found"
         exit 0
-    fi
-    find . -name "justfile" -type f -exec sh -c 'cd "$(dirname "{}")" && just --fmt --unstable' \;
-    echo "✅ Justfiles formatted"
+    }
+    glob **/justfile | each {|file| cd ($file | path dirname); just --fmt --unstable }
+    print "✅ Justfiles formatted"
 
 # Format JSON and TOML files with biome
 format-others:
-    #!/usr/bin/env bash
-    echo "📝 Formatting JSON and TOML files with biome..."
-    if ! command -v biome >/dev/null 2>&1; then
-        echo "⚠️  biome not found. Run 'direnv allow' to load development environment"
+    #!/usr/bin/env nu
+    print "📝 Formatting JSON and TOML files with biome..."
+    if (which biome | is-empty) {
+        print "⚠️  biome not found. Run 'direnv allow' to load development environment"
         exit 0
-    fi
+    }
     biome format --write .
-    echo "✅ JSON and TOML files formatted"
+    print "✅ JSON and TOML files formatted"
 
 # Start development shell
 dev:
