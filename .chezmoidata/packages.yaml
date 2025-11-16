@@ -12,6 +12,7 @@ packages:
             - nushell
         casks:
             - alacritty
+            - windows-app # Microsoft Windows App (Remote Desktop)
     # Windows packages via winget
     windows:
         winget:
@@ -21,3 +22,4 @@ packages:
             - casey.just
             - Nushell.Nushell
             - Alacritty.Alacritty
+            - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)
