@@ -1,14 +1,13 @@
 # Shared CLI tools for both NixOS and nix-darwin
-# This module provides essential CLI utilities that work identically on both platforms
 { pkgs, lib, ... }:
 
 {
   environment.systemPackages = with pkgs; [
     # Shell and terminal
     zsh
-    nushell # Cross-platform shell for justfile scripting
+    nushell
     tmux
-    alacritty # Terminal emulator (GUI but works on both)
+    alacritty
 
     # Editor
     neovim
@@ -16,7 +15,7 @@
     # Version control
     git
     git-lfs
-    gh # GitHub CLI
+    gh
     git-branchless
 
     # File management
@@ -36,34 +35,32 @@
     wget
 
     # Modern CLI replacements
-    bat # Better cat
-    eza # Better ls
-    delta # Better git diff
-    zoxide # Better cd
+    bat
+    eza
+    delta
+    zoxide
 
     # Development tools
-    just # Command runner
-    direnv # Environment management
+    just
+    direnv
 
     # System utilities
     htop
-    bottom # Better top
-    dua # Disk usage analyzer
-    procs # Better ps
+    bottom
+    dua
+    procs
 
     # Password management
     bitwarden-cli
-    age # Encryption
+    age
 
     # Misc
-    topgrade # Universal package updater
-    atuin # Shell history sync
+    topgrade
+    atuin
   ];
 
-  # Shell configuration (works on both platforms)
   programs.zsh.enable = true;
 
-  # Direnv for per-project environments
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
