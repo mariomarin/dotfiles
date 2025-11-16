@@ -1,6 +1,5 @@
 # Desktop-specific packages module
-# Provides GUI applications and desktop-only utilities
-# Note: CLI tools are in minimal.nix, dev tools are in development.nix
+# GUI applications and desktop utilities for NixOS
 { config, pkgs, lib, ... }:
 
 {

@@ -1,5 +1,5 @@
 # Development tools module
-# Provides languages, build tools, and development environment for coding workstations
+# Languages, build tools, and development environment
 { config, pkgs, lib, ... }:
 
 let
