@@ -10,7 +10,7 @@ Shared modules contain:
 
 - CLI tools that work identically on both platforms
 - Development toolchains (Go, Python, Rust, Node.js)
-- Cross-platform applications (editors, terminals)
+- Cross-platform GUI applications (browsers, editors, terminals)
 - Common configurations (shell, direnv, git)
 
 Platform-specific modules handle:
@@ -63,6 +63,21 @@ Development toolchains and build tools:
 
 Import the same way as cli-tools.nix.
 
+### `modules/gui-apps.nix`
+
+Cross-platform GUI applications:
+
+- Web browsers: firefox, brave
+- Terminal emulators: alacritty
+- Productivity: obsidian, bitwarden-desktop
+- Image editing: gimp
+- File sync: syncthing
+
+**Note**: This module only includes GUI apps that work well on **both** Linux and macOS. Platform-specific
+GUI apps (like Linux-only X11 tools or macOS-only .app bundles) should stay in platform-specific modules.
+
+Import the same way as cli-tools.nix.
+
 ## Usage
 
 ### In NixOS
@@ -75,6 +90,7 @@ Import the same way as cli-tools.nix.
   imports = [
     ../../common/modules/cli-tools.nix
     ../../common/modules/development.nix
+    ../../common/modules/gui-apps.nix
     # ... NixOS-specific modules
   ];
 
@@ -93,6 +109,7 @@ Import the same way as cli-tools.nix.
   imports = [
     ../../common/modules/cli-tools.nix
     ../../common/modules/development.nix
+    ../../common/modules/gui-apps.nix
     # ... darwin-specific modules
   ];
 
