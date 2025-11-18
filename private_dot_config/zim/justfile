@@ -39,6 +39,15 @@ clean: _check-os
 compile: _check-os
     zimfw compile
 
+# Clean and recompile all Zim modules
+recompile: _check-os
+    #!/usr/bin/env nu
+    print "🧹 Cleaning compiled files..."
+    zimfw clean-compiled
+    print "🔨 Recompiling modules..."
+    zimfw compile
+    print "✅ Recompilation complete"
+
 # List installed modules
 list: _check-os
     zimfw list

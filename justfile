@@ -271,6 +271,9 @@ zim-update:
 zim-health:
     @just private_dot_config/zim/health
 
+zim-recompile:
+    @just private_dot_config/zim/recompile
+
 topgrade-update:
     @just private_dot_config/topgrade/update
 
