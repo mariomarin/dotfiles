@@ -5,48 +5,36 @@
 
 set -euo pipefail
 
-echo "🚀 Running bootstrap for $(uname -s)..."
-
 case "$(uname -s)" in
   Darwin)
     # macOS bootstrap
-    echo "📦 macOS bootstrap..."
 
     # Install Nix with Determinate Systems installer (includes flakes by default)
     if ! command -v nix > /dev/null 2>&1; then
-      echo "  Installing Nix with Determinate Systems installer..."
-      echo "  This installer enables flakes by default and provides better macOS integration"
+      echo "Installing Nix with Determinate Systems installer..." >&2
+      echo "This installer enables flakes by default and provides better macOS integration" >&2
       curl -fsSL https://install.determinate.systems/nix | sh -s -- install
-      echo "  ⚠️  Please restart your shell and run 'chezmoi apply' again"
+      echo "⚠️  Please restart your shell and run 'chezmoi apply' again" >&2
       exit 0
-    else
-      echo "  ✓ Nix already installed"
     fi
 
     # Install Bitwarden CLI via Nix (avoid Homebrew dependency)
     if ! command -v bw > /dev/null 2>&1; then
-      echo "  Installing Bitwarden CLI via Nix..."
+      echo "Installing Bitwarden CLI via Nix..." >&2
       nix profile install nixpkgs#bitwarden-cli
-    else
-      echo "  ✓ Bitwarden CLI already installed"
     fi
     ;;
 
   Linux)
     # Linux/NixOS bootstrap
-    echo "📦 Linux bootstrap..."
 
     # Detect NixOS
     if [ -f /etc/os-release ] && grep -q "ID=nixos" /etc/os-release; then
-      echo "  ℹ️  NixOS detected - Bitwarden CLI should be installed via system config"
-      echo "     Add 'bitwarden-cli' to your NixOS configuration if not already present"
-
       if ! command -v bw > /dev/null 2>&1; then
-        echo "  ❌ Bitwarden CLI not found. Please add to your NixOS configuration:"
-        echo "     environment.systemPackages = [ pkgs.bitwarden-cli ];"
+        echo "❌ Bitwarden CLI not found. Please add to your NixOS configuration:" >&2
+        echo "   environment.systemPackages = [ pkgs.bitwarden-cli ];" >&2
         exit 1
       fi
-      echo "  ✓ Bitwarden CLI already installed via NixOS"
     else
       # Non-NixOS Linux: Install static binary
       if [ ! -d "$HOME/.local/bin" ]; then
@@ -55,8 +43,8 @@ case "$(uname -s)" in
 
       # Install Bitwarden CLI if not present
       if ! command -v bw > /dev/null 2>&1; then
-        echo "  Installing Bitwarden CLI (static binary)..."
-        echo "  ⚠️  Note: This will not auto-update. Consider installing via your package manager."
+        echo "Installing Bitwarden CLI (static binary)..." >&2
+        echo "⚠️  Note: This will not auto-update. Consider installing via your package manager." >&2
 
         # Detect architecture
         case "$(uname -m)" in
@@ -67,7 +55,7 @@ case "$(uname -s)" in
             ARCH="aarch64"
             ;;
           *)
-            echo "  ❌ Unsupported architecture: $(uname -m)"
+            echo "❌ Unsupported architecture: $(uname -m)" >&2
             exit 1
             ;;
         esac
@@ -76,24 +64,19 @@ case "$(uname -s)" in
         BW_VERSION="2024.12.0"
         BW_URL="https://github.com/bitwarden/clients/releases/download/cli-v${BW_VERSION}/bw-linux-${ARCH}-${BW_VERSION}.zip"
 
-        echo "    Downloading from: $BW_URL"
         curl -fsSL "$BW_URL" -o /tmp/bw.zip
         unzip -q -o /tmp/bw.zip -d "$HOME/.local/bin"
         chmod +x "$HOME/.local/bin/bw"
         rm /tmp/bw.zip
 
-        echo "  ✓ Bitwarden CLI installed to ~/.local/bin/bw"
-        echo "  💡 To update: Download latest from https://github.com/bitwarden/clients/releases"
-      else
-        echo "  ✓ Bitwarden CLI already installed"
+        echo "Bitwarden CLI installed to ~/.local/bin/bw" >&2
+        echo "To update: Download latest from https://github.com/bitwarden/clients/releases" >&2
       fi
     fi
     ;;
 
   *)
-    echo "❌ Unsupported OS: $(uname -s)"
+    echo "❌ Unsupported OS: $(uname -s)" >&2
     exit 1
     ;;
 esac
-
-echo "✅ Bootstrap complete for Unix systems"
