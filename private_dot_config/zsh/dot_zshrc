@@ -105,7 +105,6 @@ bindkey "''${key[Up]}" up-line-or-search
 
 # kubernetes
 source <(kubectl completion zsh)
-eval $(aws-sso completions --shell zsh --source)
 
 # help me to fix wrong typed commands
 eval "$(pay-respects zsh --alias)"
