@@ -31,13 +31,17 @@ _generate_container_use_completions() {
   [[ -d "${completion_dir}" ]] || mkdir -p "${completion_dir}"
 
   # Generate or update container-use completion
+  # Remove redundant compdef lines that cause errors during module load
   if [[ ! -f "${container_use_completion}" ]] || [[ "${container_use_path}" -nt "${container_use_completion}" ]]; then
-    container-use completion zsh >| "${container_use_completion}" 2> /dev/null || return 1
+    container-use completion zsh 2> /dev/null | \
+      grep -v '^compdef _container-use container-use$' >| "${container_use_completion}" || return 1
   fi
 
   # Generate or update cu completion
+  # Remove redundant compdef lines that cause errors during module load
   if [[ ! -f "${cu_completion}" ]] || [[ "${container_use_path}" -nt "${cu_completion}" ]]; then
-    container-use completion --command-name=cu zsh >| "${cu_completion}" 2> /dev/null || return 1
+    container-use completion --command-name=cu zsh 2> /dev/null | \
+      grep -v '^compdef _cu cu$' >| "${cu_completion}" || return 1
   fi
 }
 

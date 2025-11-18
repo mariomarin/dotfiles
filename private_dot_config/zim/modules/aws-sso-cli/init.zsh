@@ -33,12 +33,21 @@ _generate_aws_sso_completions() {
 
   # Regenerate completions if binary has changed (e.g., NixOS rebuild)
   if [[ ! -f "${completions_file}" ]] || [[ "${aws_sso_path}" -nt "${completions_file}" ]]; then
-    aws-sso setup completions --source >| "${completions_file}" 2> /dev/null || return 1
+    # Generate completions and remove compdef lines (compinit hasn't run yet)
+    # We'll manually register the completion later
+    aws-sso setup completions --source 2> /dev/null | \
+      grep -v '^compdef ' >| "${completions_file}" || return 1
   fi
 
-  # Source the cached completions file
+  # Source the cached completions file (without compdef lines)
   # shellcheck disable=SC1090
   source "${completions_file}"
+
+  # Manually register completion if compdef is available
+  # (it will be after the completion module loads)
+  if (( ${+functions[compdef]} )); then
+    compdef __aws_sso_profile_complete aws-sso-profile
+  fi
 }
 
 # Generate and load completions
