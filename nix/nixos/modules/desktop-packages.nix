@@ -54,6 +54,7 @@
     speechd # Common interface to speech synthesis
 
     # System utilities
+    exfatprogs # exFAT filesystem utilities
     nss # Network Security Services
     nssTools # NSS security tools
     ntfs3g # NTFS filesystem driver
@@ -63,6 +64,7 @@
     alsa-lib-with-plugins # Advanced Linux Sound Architecture libraries
     alsa-lib-with-plugins.dev # ALSA development files
     feh # Fast and light image viewer
+    mpv # Lightweight media player
     noisetorch # Real-time microphone noise suppression
     pamixer # PulseAudio command-line mixer
     pavucontrol # PulseAudio volume control GUI
