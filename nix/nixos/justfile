@@ -5,7 +5,7 @@ set shell := ["nu", "-c"]
 # OS compatibility check
 _check-os:
     #!/usr/bin/env nu
-    if (sys).host.name == "Windows" {
+    if (sys host).name == "Windows" {
         print "❌ Error: NixOS commands are only available on Linux systems"
         print "   This justfile manages NixOS system configuration and cannot run on Windows"
         exit 1
