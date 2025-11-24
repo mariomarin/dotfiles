@@ -23,3 +23,8 @@ packages:
             - Nushell.Nushell
             - Alacritty.Alacritty
             - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)
+            - Mirantis.Lens # Kubernetes Lens
+            - Devolutions.RemoteDesktopManager # Remote Desktop Manager
+            - Microsoft.AzureCLI # Azure CLI
+            - Kubernetes.kubectl # Kubernetes CLI
+            - Microsoft.Azure.Kubelogin # Azure Kubelogin
