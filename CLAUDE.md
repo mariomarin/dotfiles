@@ -147,21 +147,21 @@ The repository uses chezmoi pre-hooks for OS-specific bootstrap **before reading
 ```toml
 [hooks.read-source-state.pre]
 {{- if eq .chezmoi.os "windows" }}
-    command = ".local/share/chezmoi/.bootstrap-windows.ps1"
+    command = ".local/share/chezmoi/.install/bootstrap-windows.ps1"
 {{- else }}
-    command = ".local/share/chezmoi/.bootstrap-unix.sh"
+    command = ".local/share/chezmoi/.install/bootstrap-unix.sh"
 {{- end }}
 ```
 
 **Implementation:**
 
-**`.bootstrap-unix.sh`** - Unix/macOS/NixOS bootstrap:
+**`.install/bootstrap-unix.sh`** - Unix/macOS/NixOS bootstrap:
 
 - **macOS**: Installs Nix (Determinate Systems) → Bitwarden CLI via Nix profile
 - **NixOS**: Verifies Bitwarden CLI is installed (fails if missing - add to configuration.nix)
 - **Other Linux**: Fails with error (not supported - use NixOS or create your own config)
 
-**`.bootstrap-windows.ps1`** - Windows bootstrap:
+**`.install/bootstrap-windows.ps1`** - Windows bootstrap:
 
 - Installs Bitwarden CLI via winget (auto-updates)
 - Requires PowerShell (pre-installed on Windows)

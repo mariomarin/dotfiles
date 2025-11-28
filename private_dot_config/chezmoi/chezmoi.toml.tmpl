@@ -2,9 +2,9 @@ sourceDir = "~/.local/share/chezmoi"
 
 [hooks.read-source-state.pre]
 {{- if eq .chezmoi.os "windows" }}
-    command = ".local/share/chezmoi/.bootstrap-windows.ps1"
+    command = ".local/share/chezmoi/.install/bootstrap-windows.ps1"
 {{- else }}
-    command = ".local/share/chezmoi/.bootstrap-unix.sh"
+    command = ".local/share/chezmoi/.install/bootstrap-unix.sh"
 {{- end}}
 
 [diff]

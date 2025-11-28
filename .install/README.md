@@ -49,7 +49,7 @@ chezmoi apply -v
 
 ### What Happens Automatically (Windows)
 
-1. **Bootstrap** (`.bootstrap-windows.ps1` pre-hook):
+1. **Bootstrap** (`bootstrap-windows.ps1` pre-hook):
    - Installs Bitwarden CLI via winget
 
 2. **Declarative Packages** (`run_onchange_` scripts):
@@ -109,7 +109,7 @@ chezmoi apply -v
    - Installs ALL system packages: chezmoi, just, neovim, git, etc.
    - Enables system services
 
-2. **Bootstrap** (`.bootstrap-unix.sh` pre-hook):
+2. **Bootstrap** (`bootstrap-unix.sh` pre-hook):
    - Verifies Bitwarden CLI is available (no installation)
    - Fails if not found with helpful error message
 
@@ -151,7 +151,7 @@ sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
 
 ### What Happens Automatically (macOS)
 
-1. **Bootstrap** (`.bootstrap-unix.sh` pre-hook):
+1. **Bootstrap** (`bootstrap-unix.sh` pre-hook):
    - Installs Nix via Determinate Systems installer (flakes enabled)
    - Installs Bitwarden CLI via `nix profile install`
 
@@ -185,11 +185,9 @@ existing distribution, but this configuration is untested outside of NixOS.
 
 ```text
 .install/
-└── README.md                  # This file (installation guide)
-
-Root directory:
-├── .bootstrap-unix.sh         # Unix/macOS/Linux bootstrap (chezmoi pre-hook)
-└── .bootstrap-windows.ps1     # Windows bootstrap (chezmoi pre-hook)
+├── README.md                  # This file (installation guide)
+├── bootstrap-unix.sh          # Unix/macOS/NixOS bootstrap (chezmoi pre-hook)
+└── bootstrap-windows.ps1      # Windows bootstrap (chezmoi pre-hook)
 ```
 
 ## Bootstrap Scripts
