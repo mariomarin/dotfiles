@@ -4,157 +4,161 @@ Bootstrap scripts for setting up dotfiles on new machines.
 
 ## Bootstrap Philosophy
 
-**Bootstrap scripts install ONLY what chezmoi templates need to render:**
+**Separation of concerns:**
 
-- **Bitwarden CLI** - Required for `{{ bitwarden ... }}` template functions
-- **Nix** (macOS only) - Required for nix-darwin system management
+1. **Manual Prerequisites** (you install):
+   - Package manager (if needed)
+   - chezmoi itself
 
-**Everything else** is installed declaratively via:
+2. **Automatic Bootstrap** (chezmoi pre-hook installs):
+   - **Bitwarden CLI** - Required for `{{ bitwarden ... }}` template functions
+   - **Nix** (macOS only) - Required for nix-darwin system management
 
-- **NixOS**: `configuration.nix` and `nixos-rebuild`
-- **macOS**: nix-darwin configuration
-- **Windows**: winget packages in `.chezmoidata/packages.yaml`
+3. **Declarative Packages** (system configuration installs):
+   - **NixOS**: `configuration.nix` and `nixos-rebuild`
+   - **macOS**: nix-darwin configuration
+   - **Windows**: winget packages in `.chezmoidata/packages.yaml`
+
+Bootstrap scripts run automatically as chezmoi pre-hooks when you execute `chezmoi init` or `chezmoi apply`.
 
 ## Windows Setup
 
-### Prerequisites (Windows)
-
-Install Git and chezmoi manually:
+### Manual Prerequisites (Windows)
 
 ```powershell
-# Required to initialize dotfiles
+# Install Git and chezmoi (winget pre-installed on Windows 10/11)
 winget install Git.Git
 winget install twpayne.chezmoi
+
+# Restart PowerShell to refresh PATH
 ```
 
-### Setup Steps (Windows)
+### Automatic Bootstrap + Apply (Windows)
 
 ```powershell
-# Clone dotfiles
+# Initialize dotfiles (bootstrap auto-installs Bitwarden CLI via winget)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
-# Preview changes
-chezmoi diff
+# Login to Bitwarden
+bw login
+$env:BW_SESSION = bw unlock --raw
 
-# Apply configuration (runs .bootstrap-windows.ps1 automatically)
+# Apply configuration
 chezmoi apply -v
 ```
 
-### What Happens on Bootstrap (Windows)
+### What Happens Automatically (Windows)
 
-The `.bootstrap-windows.ps1` pre-hook installs:
+1. **Bootstrap** (`.bootstrap-windows.ps1` pre-hook):
+   - Installs Bitwarden CLI via winget
 
-- **Bitwarden CLI** via winget (for secret management in templates)
-
-Additional packages are installed via `run_onchange_` scripts based on `.chezmoidata/packages.yaml`.
+2. **Declarative Packages** (`run_onchange_` scripts):
+   - Installs packages from `.chezmoidata/packages.yaml`
+   - Includes: just, nushell, neovim, git, and more
 
 ## NixOS Setup
 
-**NixOS packages are managed declaratively** - bootstrap does minimal work.
-
-### Prerequisites (NixOS)
-
-Install Bitwarden CLI system-wide (required for chezmoi templates):
+### Manual Prerequisites (NixOS)
 
 ```bash
-# Add to your configuration.nix temporarily, or use nix-env
+# Install Bitwarden CLI (required for chezmoi templates)
 nix-env -iA nixos.bitwarden-cli
+# Or add temporarily to configuration.nix: environment.systemPackages = [ pkgs.bitwarden-cli ];
+
+# Get git and chezmoi temporarily
+nix-shell -p git chezmoi
+
+# Clone repository
+git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
+cd ~/.local/share/chezmoi/nix/nixos
 ```
 
-### Fresh NixOS Install
-
-1. Clone the repository:
-
-   ```bash
-   nix-shell -p git chezmoi
-   git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
-   ```
-
-2. Apply NixOS configuration (sets hostname and installs packages):
-
-   ```bash
-   cd ~/.local/share/chezmoi/nix/nixos
-
-   # Choose your host (this sets the hostname)
-   # dendrite - ThinkPad T470 laptop
-   sudo nixos-rebuild switch --flake .#dendrite
-
-   # mitosis - Virtual machine
-   sudo nixos-rebuild switch --flake .#mitosis
-
-   # symbiont - NixOS on WSL
-   sudo nixos-rebuild switch --flake .#symbiont
-   ```
-
-   **Important**: This sets `networking.hostName` in your NixOS configuration. The hostname change may require a
-   reboot or manual update:
-
-   ```bash
-   # Verify hostname was updated
-   hostname
-
-   # If still wrong, set it manually (or reboot)
-   sudo hostnamectl set-hostname dendrite  # or mitosis/symbiont
-   ```
-
-3. Apply dotfiles (chezmoi and just are now installed via NixOS):
-
-   **Critical**: Hostname must match your chosen config (dendrite/mitosis/symbiont) for chezmoi to work!
-
-   ```bash
-   # Verify hostname matches
-   hostname  # Should output: dendrite (or mitosis/symbiont)
-
-   chezmoi init
-   chezmoi apply -v
-
-   # Future NixOS rebuilds can use just
-   cd ~/.local/share/chezmoi/nix/nixos
-   just switch
-   ```
-
-### What Happens Automatically
-
-The `.bootstrap-unix.sh` pre-hook:
-
-- **NixOS**: Verifies Bitwarden CLI is available (no installation, just checks)
-- Exits early - all tools installed via `configuration.nix`
-
-## macOS Setup
-
-### Prerequisites (macOS)
-
-None - bootstrap installs everything needed.
-
-### Setup Steps (macOS)
+### Apply NixOS Configuration
 
 ```bash
-# Clone dotfiles
-git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
-cd ~/.local/share/chezmoi
+# Apply configuration for your host (sets hostname and installs all packages)
+sudo nixos-rebuild switch --flake .#dendrite  # or mitosis/symbiont
 
-# Apply configuration (runs .bootstrap-unix.sh automatically)
+# Verify hostname matches (critical for chezmoi)
+hostname  # Should output: dendrite (or mitosis/symbiont)
+
+# If hostname is wrong, set manually or reboot
+sudo hostnamectl set-hostname dendrite  # or mitosis/symbiont
+```
+
+### Automatic Bootstrap + Apply (NixOS)
+
+```bash
+# Initialize chezmoi (bootstrap verifies Bitwarden CLI exists)
+chezmoi init
+
+# Login to Bitwarden
+bw login
+export BW_SESSION=$(bw unlock --raw)
+
+# Apply dotfiles
 chezmoi apply -v
 ```
 
-### What Happens on Bootstrap (macOS)
+**Future updates:** `just nixos` (chezmoi and just now installed via NixOS configuration)
 
-The `.bootstrap-unix.sh` pre-hook installs:
+### What Happens Automatically (NixOS)
 
-1. **Nix** via Determinate Systems installer (flakes enabled by default)
-2. **Bitwarden CLI** via `nix profile install` (for secret management)
+1. **NixOS Configuration** (`nixos-rebuild switch`):
+   - Sets hostname via `networking.hostName`
+   - Installs ALL system packages: chezmoi, just, neovim, git, etc.
+   - Enables system services
 
-Then apply nix-darwin configuration:
+2. **Bootstrap** (`.bootstrap-unix.sh` pre-hook):
+   - Verifies Bitwarden CLI is available (no installation)
+   - Fails if not found with helpful error message
+
+## macOS Setup
+
+### Manual Prerequisites (macOS)
+
+```bash
+# Install chezmoi (choose one method)
+brew install chezmoi
+# Or without Homebrew:
+curl -sfL https://get.chezmoi.io | sh
+```
+
+### Automatic Bootstrap + Apply (macOS)
+
+```bash
+# Initialize dotfiles (bootstrap auto-installs Nix + Bitwarden CLI)
+chezmoi init https://github.com/mariomarin/dotfiles.git
+
+# Login to Bitwarden
+bw login
+export BW_SESSION=$(bw unlock --raw)
+
+# Apply dotfiles
+chezmoi apply -v
+```
+
+### Apply nix-darwin Configuration
 
 ```bash
 cd ~/.local/share/chezmoi/nix/darwin
 
-# First-time setup (installs nix-darwin)
+# First-time setup (installs nix-darwin and all packages)
 sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
-
-# Future rebuilds (just is now installed)
-just switch
 ```
+
+**Future updates:** `just darwin` (just now installed via nix-darwin)
+
+### What Happens Automatically (macOS)
+
+1. **Bootstrap** (`.bootstrap-unix.sh` pre-hook):
+   - Installs Nix via Determinate Systems installer (flakes enabled)
+   - Installs Bitwarden CLI via `nix profile install`
+
+2. **nix-darwin Configuration**:
+   - Installs ALL system packages: just, neovim, git, etc.
+   - Configures system settings
+   - Enables services
 
 ## Supported Platforms
 
@@ -190,17 +194,8 @@ Root directory:
 
 ## Bootstrap Scripts
 
-Bootstrap scripts run automatically as chezmoi pre-hooks **before** reading source state.
-
-### .bootstrap-unix.sh
-
-- **macOS**: Installs Nix (Determinate Systems) → Bitwarden CLI via Nix profile
-- **NixOS**: Verifies Bitwarden CLI exists (fails if missing - add to config)
-- **Other Linux**: Fails with error message (not supported)
-
-### .bootstrap-windows.ps1
-
-- Installs Bitwarden CLI via winget
+Bootstrap scripts are chezmoi pre-hooks that run automatically **before** reading source state when you execute
+`chezmoi init` or `chezmoi apply`. See platform-specific sections above for what each bootstrap script does.
 
 ## Troubleshooting
 
@@ -225,10 +220,10 @@ nix-env -iA nixos.bitwarden-cli
 
 ### macOS: Bootstrap fails
 
-Bootstrap requires `curl` (pre-installed on macOS). If Homebrew installation fails, install manually:
+Bootstrap requires `curl` (pre-installed on macOS). If Nix installation fails, try installing manually:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+curl -sfL https://install.determinate.systems/nix | sh -s -- install
 ```
 
 ### Other Linux: Not supported

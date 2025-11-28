@@ -19,20 +19,47 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 
 > 📖 **For detailed installation instructions and bootstrap philosophy**, see [.install/README.md](.install/README.md)
 
+### Installation Pattern
+
+All platforms follow the same pattern:
+
+1. **Manual Prerequisites** - Install chezmoi (platform-specific)
+2. **Automatic Bootstrap** - Run `chezmoi init`, bootstrap installs dependencies automatically
+3. **Apply Configuration** - Login to Bitwarden and apply dotfiles
+
 <details>
 <summary>NixOS</summary>
 
+**Manual Prerequisites:**
+
 ```bash
-# 1. Clone dotfiles
+# Get git and chezmoi temporarily
+nix-shell -p git chezmoi
+
+# Clone repository
 git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
-
-# 2. First-time NixOS setup (enables flakes and applies configuration)
-just nix/nixos/first-time
-
-# 3. Future updates
-just nixos  # Alias for nix/nixos/switch
 ```
+
+**Apply Configuration:**
+
+```bash
+# This runs nixos-rebuild which installs chezmoi, just, and all system packages
+sudo nixos-rebuild switch --flake .#dendrite  # or mitosis/symbiont
+
+# Verify hostname matches (critical for chezmoi)
+hostname
+
+# Initialize chezmoi (bootstrap verifies Bitwarden CLI)
+chezmoi init
+
+# Login to Bitwarden and apply
+bw login
+export BW_SESSION=$(bw unlock --raw)
+chezmoi apply -v
+```
+
+**Future updates:** `just nixos`
 
 See [nix/nixos/README.md](nix/nixos/README.md) for detailed setup and configuration.
 
@@ -41,23 +68,32 @@ See [nix/nixos/README.md](nix/nixos/README.md) for detailed setup and configurat
 <details>
 <summary>macOS (nix-darwin)</summary>
 
-```bash
-# 1. Install chezmoi
-nix profile install nixpkgs#chezmoi
-# Or: brew install chezmoi
+**Manual Prerequisites:**
 
-# 2. Initialize dotfiles (auto-installs Nix and Bitwarden CLI)
+```bash
+# Install chezmoi (choose one)
+brew install chezmoi
+# Or without Homebrew:
+curl -sfL https://get.chezmoi.io | sh
+```
+
+**Automatic Bootstrap + Apply:**
+
+```bash
+# Initialize dotfiles (bootstrap auto-installs Nix + Bitwarden CLI)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
-# 3. Login to Bitwarden and apply
+# Login to Bitwarden and apply
 bw login
 export BW_SESSION=$(bw unlock --raw)
 chezmoi apply
 
-# 4. Set up nix-darwin
+# Apply nix-darwin configuration
 cd ~/.local/share/chezmoi
-just nix/darwin/first-time
+sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
 ```
+
+**Future updates:** `just darwin`
 
 See [nix/darwin/README.md](nix/darwin/README.md) for detailed setup and configuration.
 
@@ -66,21 +102,29 @@ See [nix/darwin/README.md](nix/darwin/README.md) for detailed setup and configur
 <details>
 <summary>Windows</summary>
 
+**Manual Prerequisites:**
+
 ```powershell
-# 1. Install prerequisites
+# Install Git and chezmoi (winget pre-installed on Windows 10/11)
 winget install Git.Git
 winget install twpayne.chezmoi
 
-# 2. Restart PowerShell, then initialize (auto-installs Bitwarden CLI)
+# Restart PowerShell to refresh PATH
+```
+
+**Automatic Bootstrap + Apply:**
+
+```powershell
+# Initialize dotfiles (bootstrap auto-installs Bitwarden CLI)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
-# 3. Login to Bitwarden and apply
+# Login to Bitwarden and apply
 bw login
 $env:BW_SESSION = bw unlock --raw
 chezmoi apply
 ```
 
-Packages (just, nushell, neovim, etc.) install automatically via declarative package management.
+**What happens automatically:** Packages (just, nushell, neovim, etc.) install via declarative package management.
 
 </details>
 
