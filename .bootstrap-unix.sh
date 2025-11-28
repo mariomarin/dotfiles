@@ -36,15 +36,34 @@ case "$(uname -s)" in
         exit 1
       fi
     else
-      # Non-NixOS Linux: Install static binary
-      if [ ! -d "$HOME/.local/bin" ]; then
-        mkdir -p "$HOME/.local/bin"
-      fi
-
-      # Install Bitwarden CLI if not present
+      # Non-NixOS Linux: Prefer system package manager
       if ! command -v bw > /dev/null 2>&1; then
-        echo "Installing Bitwarden CLI (static binary)..." >&2
-        echo "⚠️  Note: This will not auto-update. Consider installing via your package manager." >&2
+        echo "⚠️  Bitwarden CLI not found" >&2
+        echo "" >&2
+        echo "RECOMMENDED: Install via your package manager for auto-updates:" >&2
+        echo "" >&2
+
+        # Detect distro and suggest package manager
+        if command -v apt > /dev/null 2>&1; then
+          echo "  # Debian/Ubuntu (via Snap)" >&2
+          echo "  sudo snap install bw" >&2
+        elif command -v dnf > /dev/null 2>&1; then
+          echo "  # Fedora/RHEL (via Flatpak)" >&2
+          echo "  flatpak install flathub com.bitwarden.desktop" >&2
+        elif command -v pacman > /dev/null 2>&1; then
+          echo "  # Arch Linux (via AUR)" >&2
+          echo "  yay -S bitwarden-cli" >&2
+        fi
+
+        echo "" >&2
+        echo "FALLBACK: Installing static binary to ~/.local/bin/bw (manual updates required)" >&2
+        echo "         Press Ctrl+C to cancel and install via package manager instead" >&2
+        sleep 3
+
+        # Create directory
+        if [ ! -d "$HOME/.local/bin" ]; then
+          mkdir -p "$HOME/.local/bin"
+        fi
 
         # Detect architecture
         case "$(uname -m)" in
@@ -60,17 +79,28 @@ case "$(uname -s)" in
             ;;
         esac
 
-        # Download and install
-        BW_VERSION="2024.12.0"
+        # Fetch latest version from GitHub API
+        echo "Fetching latest version..." >&2
+        BW_VERSION=$(curl -fsSL https://api.github.com/repos/bitwarden/clients/releases/latest | grep '"tag_name"' | sed -E 's/.*"cli-v([^"]+)".*/\1/')
+
+        if [ -z "$BW_VERSION" ]; then
+          echo "❌ Failed to fetch latest version. Using fallback: 2024.12.0" >&2
+          BW_VERSION="2024.12.0"
+        else
+          echo "Latest version: $BW_VERSION" >&2
+        fi
+
         BW_URL="https://github.com/bitwarden/clients/releases/download/cli-v${BW_VERSION}/bw-linux-${ARCH}-${BW_VERSION}.zip"
 
+        # Download and install
+        echo "Downloading from $BW_URL..." >&2
         curl -fsSL "$BW_URL" -o /tmp/bw.zip
         unzip -q -o /tmp/bw.zip -d "$HOME/.local/bin"
         chmod +x "$HOME/.local/bin/bw"
         rm /tmp/bw.zip
 
-        echo "Bitwarden CLI installed to ~/.local/bin/bw" >&2
-        echo "To update: Download latest from https://github.com/bitwarden/clients/releases" >&2
+        echo "✅ Bitwarden CLI $BW_VERSION installed to ~/.local/bin/bw" >&2
+        echo "⚠️  To update: Re-run chezmoi apply or install via package manager" >&2
       fi
     fi
     ;;
