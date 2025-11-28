@@ -17,6 +17,8 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 
 ## Quick Start
 
+> 📖 **For detailed installation instructions and bootstrap philosophy**, see [.install/README.md](.install/README.md)
+
 <details>
 <summary>NixOS</summary>
 

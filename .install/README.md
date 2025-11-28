@@ -70,11 +70,12 @@ nix-env -iA nixos.bitwarden-cli
    git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
    ```
 
-2. Apply NixOS configuration (choose your host):
+2. Apply NixOS configuration (sets hostname and installs packages):
 
    ```bash
    cd ~/.local/share/chezmoi/nix/nixos
 
+   # Choose your host (this sets the hostname)
    # dendrite - ThinkPad T470 laptop
    sudo nixos-rebuild switch --flake .#dendrite
 
@@ -85,9 +86,25 @@ nix-env -iA nixos.bitwarden-cli
    sudo nixos-rebuild switch --flake .#symbiont
    ```
 
-3. Apply dotfiles (chezmoi and just are now installed via NixOS):
+   **Important**: This sets `networking.hostName` in your NixOS configuration. The hostname change may require a
+   reboot or manual update:
 
    ```bash
+   # Verify hostname was updated
+   hostname
+
+   # If still wrong, set it manually (or reboot)
+   sudo hostnamectl set-hostname dendrite  # or mitosis/symbiont
+   ```
+
+3. Apply dotfiles (chezmoi and just are now installed via NixOS):
+
+   **Critical**: Hostname must match your chosen config (dendrite/mitosis/symbiont) for chezmoi to work!
+
+   ```bash
+   # Verify hostname matches
+   hostname  # Should output: dendrite (or mitosis/symbiont)
+
    chezmoi init
    chezmoi apply -v
 
