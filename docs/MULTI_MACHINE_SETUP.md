@@ -1,14 +1,27 @@
 # Multi-Machine Configuration Guide
 
-This repository supports managing configurations for multiple machines with different capabilities using both
-Chezmoi and NixOS flakes.
+This repository supports managing configurations for multiple machines with different capabilities using Chezmoi
+and platform-specific configuration tools (NixOS flakes, nix-darwin, winget).
+
+## Naming Convention
+
+All hosts use biology-themed names:
+
+| Host | Type | Platform | Description |
+|------|------|----------|-------------|
+| **dendrite** | Laptop | NixOS | ThinkPad T470 portable workstation (branches like dendrites) |
+| **mitosis** | VM | NixOS | Virtual machine for testing/replication (cell division) |
+| **symbiont** | WSL | NixOS | NixOS on WSL (two systems coexisting) |
+| **malus** | Desktop | macOS | macOS workstation (apple genus) |
+| **prion** | Desktop | Windows | Native Windows workstation (self-replicating protein) |
+| **spore** | Cloud | Windows | M365 DevBox cloud environment (dormant cell ready to grow) |
 
 ## Overview
 
 The setup distinguishes between:
 
-1. **Physical laptop (T470)**: Full desktop environment, audio, bluetooth, physical keyboard
-2. **Headless VMs**: SSH-only access, no GUI, minimal services
+1. **Desktop systems**: Full GUI, audio, bluetooth (dendrite, malus, prion)
+2. **Headless systems**: SSH/CLI-only, no GUI (mitosis, symbiont, spore)
 
 ## Chezmoi Configuration
 
@@ -19,19 +32,29 @@ Chezmoi automatically detects machine type based on hostname:
 ```yaml
 # .chezmoidata/machines.yaml
 machines:
-  t470:
+  dendrite:
     type: laptop
-    hostname: nixos  # Your T470's hostname
+    hostname: dendrite
+    platform: nixos
     features:
       desktop: true
       kmonad: true
-      
-  vm-headless:
+
+  mitosis:
     type: server
-    hostname_pattern: "vm-*"  # Matches vm-dev, vm-prod, etc.
+    hostname: mitosis
+    platform: nixos
     features:
       desktop: false
       kmonad: false
+
+  symbiont:
+    type: wsl
+    hostname: symbiont
+    platform: nixos-wsl
+    features:
+      desktop: false
+      wsl: true
 ```
 
 ### Conditional File Management
@@ -65,82 +88,84 @@ chezmoi execute-template '{{ .machineConfig.features | toJson }}'
 ### Flake Structure
 
 ```text
-nixos/
-├── flake.nix              # Multi-host flake definition
-├── configuration.nix      # Common configuration
-├── hardware-configuration.nix  # T470 hardware (symlink on VMs)
-├── hosts/
-│   ├── t470/
-│   │   └── configuration.nix  # Desktop-specific
-│   └── vm/
-│       └── configuration.nix  # VM-specific
-└── modules/
-    ├── desktop.nix        # Conditional desktop module
-    └── services/
-        └── kmonad.nix     # Only enabled on physical machines
+nix/
+├── nixos/                 # NixOS configurations (Linux)
+│   ├── flake.nix          # Multi-host flake definition
+│   ├── configuration.nix  # Common configuration
+│   ├── hosts/
+│   │   ├── dendrite/      # ThinkPad T470 laptop
+│   │   ├── mitosis/       # Virtual machine
+│   │   └── symbiont/      # NixOS on WSL
+│   └── modules/           # Shared NixOS modules
+├── darwin/                # nix-darwin configurations (macOS)
+│   ├── hosts/
+│   │   └── malus/         # macOS workstation (planned)
+│   └── modules/           # Shared darwin modules
+└── windows/               # Windows configuration docs
+    └── hosts/
+        ├── prion/         # Native Windows (planned)
+        └── spore/         # M365 DevBox (planned)
 ```
 
 ### Building for Different Hosts
 
-Using make targets (recommended):
+Using just (recommended):
 
 ```bash
 # From repository root
-make nixos                      # Build T470 configuration (default)
-make vm-switch                  # Build VM configuration locally
-make vm-test                    # Test VM config without switching
+just nixos                      # Build current host's configuration
 
-# Or from nixos directory
-cd nixos
-make switch                     # Build default (T470)
-make HOST=vm-headless switch    # Build VM config
-make vm/switch                  # Shortcut for VM
-make hosts                      # Show available configurations
+# From nix/nixos directory
+cd nix/nixos
+just switch                     # Build default (dendrite)
+just switch HOST=mitosis        # Build mitosis config
+just vm-switch                  # Shortcut for mitosis
+just hosts                      # Show available configurations
 ```
 
 Using nixos-rebuild directly:
 
 ```bash
-# Build T470 configuration
-sudo nixos-rebuild switch --flake .#nixos
+# Build dendrite configuration
+sudo nixos-rebuild switch --flake .#dendrite
 
-# Build VM configuration
-sudo nixos-rebuild switch --flake .#vm-headless
+# Build mitosis configuration
+sudo nixos-rebuild switch --flake .#mitosis
+
+# Build symbiont (WSL) configuration
+sudo nixos-rebuild switch --flake .#symbiont
 
 # Test without switching
-sudo nixos-rebuild test --flake .#vm-headless
+sudo nixos-rebuild test --flake .#mitosis
 ```
 
 ### Deploying to Remote VM
 
-Using make targets:
+Using just:
 
 ```bash
-# From repository root
-make deploy-vm TARGET_HOST=user@vm-hostname
-
-# From nixos directory
-cd nixos
-make deploy-vm TARGET_HOST=user@192.168.1.100
-make remote/switch HOST=vm-headless TARGET_HOST=user@host
-make remote/test TARGET_HOST=user@host    # Test first
+# From nix/nixos directory
+cd nix/nixos
+just deploy-vm TARGET_HOST=user@vm-hostname
+just remote-switch TARGET_HOST=user@192.168.1.100 HOST=mitosis
+just remote-test TARGET_HOST=user@host    # Test first
 
 # Build on remote server (faster for slow upload)
-make deploy-vm TARGET_HOST=user@vm BUILD_HOST=user@vm
+just remote-switch TARGET_HOST=user@vm BUILD_HOST=user@vm
 ```
 
 Manual deployment:
 
 ```bash
 # Build locally and deploy to remote
-nixos-rebuild switch --flake .#vm-headless \
+nixos-rebuild switch --flake .#mitosis \
   --target-host user@vm-hostname \
   --use-remote-sudo
 
 # Or copy flake to VM and build there
-rsync -avz nixos/ user@vm-hostname:~/nixos/
+rsync -avz nix/nixos/ user@vm-hostname:~/nixos/
 ssh user@vm-hostname
-cd nixos && sudo nixos-rebuild switch --flake .#vm-headless
+cd nixos && sudo nixos-rebuild switch --flake .#mitosis
 ```
 
 ## Adding a New Machine
@@ -162,16 +187,23 @@ machines:
 
 ### 2. Create NixOS Host Configuration
 
-Create `nixos/hosts/my-server/configuration.nix`:
+Create `nix/nixos/hosts/myhost/configuration.nix`:
 
 ```nix
 { config, pkgs, lib, ... }:
 {
-  networking.hostName = "my-server";
-  
-  # Disable desktop
+  imports = [
+    ../../common.nix
+  ];
+
+  networking.hostName = "myhost";
+
+  # Disable desktop for headless
   custom.desktop.enable = false;
-  
+
+  # Enable minimal packages
+  custom.minimal.enable = true;
+
   # Server-specific configuration
   services.nginx.enable = true;
   # ...
@@ -180,18 +212,21 @@ Create `nixos/hosts/my-server/configuration.nix`:
 
 ### 3. Add to Flake
 
-Update `nixos/flake.nix`:
+Update `nix/nixos/flake.nix`:
 
 ```nix
 nixosConfigurations = {
-  # ... existing configs ...
-  
-  my-server = mkSystem {
-    hostname = "my-server";
+  dendrite = { ... };
+  mitosis = { ... };
+  symbiont = { ... };
+
+  # New host
+  myhost = mkSystem {
+    hostname = "myhost";
     system = "x86_64-linux";
     modules = [
       ./configuration.nix
-      ./hosts/my-server/configuration.nix
+      ./hosts/myhost/configuration.nix
     ];
   };
 };
@@ -210,15 +245,15 @@ cd dotfiles
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply
 
 # Deploy NixOS config
-cd ~/.local/share/chezmoi/nixos
-sudo nixos-rebuild switch --flake .#my-server
+cd ~/.local/share/chezmoi/nix/nixos
+sudo nixos-rebuild switch --flake .#myhost
 ```
 
 ## Machine-Specific Configurations
 
-### Desktop (T470)
+### dendrite (Desktop Laptop)
 
-- Full GNOME/Hyprland/LeftWM desktop
+- Full GNOME/LeftWM desktop environment
 - Audio (PipeWire)
 - Bluetooth
 - KMonad keyboard remapping
@@ -226,7 +261,7 @@ sudo nixos-rebuild switch --flake .#my-server
 - Power management (TLP)
 - Desktop applications
 
-### Headless VM
+### mitosis (Headless VM)
 
 - SSH only (no password auth)
 - Minimal packages
@@ -235,18 +270,27 @@ sudo nixos-rebuild switch --flake .#my-server
 - Console on serial port
 - Firewall (SSH only by default)
 
+### symbiont (WSL)
+
+- NixOS on Windows Subsystem for Linux
+- CLI-only (no GUI)
+- Docker for containers
+- Windows interop enabled
+- Per-project devenv.nix
+
 ## Conditional Service Management
 
 Services are conditionally enabled based on machine type:
 
-| Service | T470 | VM | Controlled By |
-| --- | --- | --- | --- |
-| Desktop Environment | ✓ | ✗ | `custom.desktop.enable` |
-| KMonad | ✓ | ✗ | Host config |
-| SSH Server | ✓ | ✓ | Always enabled |
-| Audio (PipeWire) | ✓ | ✗ | Host config |
-| Bluetooth | ✓ | ✗ | Host config |
-| Syncthing | ✓ | ✓ | User preference |
+| Service | dendrite | mitosis | symbiont | Controlled By |
+|---------|----------|---------|----------|---------------|
+| Desktop Environment | ✓ | ✗ | ✗ | `custom.desktop.enable` |
+| KMonad | ✓ | ✗ | ✗ | Host config |
+| SSH Server | ✓ | ✓ | ✓ | Always enabled |
+| Audio (PipeWire) | ✓ | ✗ | ✗ | Host config |
+| Bluetooth | ✓ | ✗ | ✗ | Host config |
+| Docker | ✗ | ✓ | ✓ | Host config |
+| Syncthing | ✓ | ✓ | Optional | User preference |
 
 ## Troubleshooting
 
@@ -273,7 +317,7 @@ nix flake check
 nix flake show
 
 # Build specific host
-nix build .#nixosConfigurations.vm-headless.config.system.build.toplevel
+nix build .#nixosConfigurations.mitosis.config.system.build.toplevel
 ```
 
 ### VM-Specific Issues
