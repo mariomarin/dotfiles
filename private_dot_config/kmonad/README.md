@@ -4,48 +4,22 @@ Advanced keyboard remapping with Carabiner-style keymaps and Space Cadet keyboar
 
 ## Features
 
-### Primary Remappings
+- **Tap-Hold Modifiers**: Caps Lock as Control/Escape, Tab as Tab/Hyper
+- **Space Cadet Shifts**: Parentheses on tap, Shift on hold
+- **Navigation Layer**: Vim-style arrow keys on home row (hold Right Alt)
+- **Ergonomic Design**: Reduce hand movement and finger strain
+- **Optional Home Row Mods**: Can be enabled for additional ergonomics
 
-| Physical Key | Mapped To | Description |
-| --- | --- | --- |
-| Caps Lock | Control/Escape | Tap for Escape, hold for Control |
-| Tab | Tab/Hyper | Tap for Tab, hold for Hyper (Ctrl+Meta+Alt) |
-| Left Ctrl | {/Ctrl | Tap for {, hold for Control |
-| Right Ctrl | }/Ctrl | Tap for }, hold for Control |
-| Left Shift | (/Shift | Tap for (, hold for Shift |
-| Right Shift | )/Shift | Tap for ), hold for Shift |
-| Left Alt | </Alt | Tap for <, hold for Alt (preserves international input) |
-| Right Alt | >/Navigation | Tap for >, hold for Navigation layer |
+## Keybindings
 
-### Navigation Layer (Hold Right Alt)
+For a complete list of keybindings and layer configurations, see **[KEYBINDINGS.md](KEYBINDINGS.md)**.
 
-| Key | Action | Description |
-| --- | --- | --- |
-| `h` | Left Arrow | Vim-style left |
-| `j` | Down Arrow | Vim-style down |
-| `k` | Up Arrow | Vim-style up |
-| `l` | Right Arrow | Vim-style right |
-| `y` | Home | Beginning of line |
-| `u` | Page Down | Scroll down |
-| `i` | Page Up | Scroll up |
-| `o` | End | End of line |
+**Quick reference**:
 
-### Optional Features (Commented Out)
-
-#### Home Row Modifiers
-
-Provides ergonomic access to modifiers without leaving home position:
-
-| Key | Tap | Hold |
-| --- | --- | --- |
-| `a` | a | Left Meta (Windows key) |
-| `s` | s | Left Alt |
-| `d` | d | Left Shift |
-| `f` | f | Left Control |
-| `j` | j | Right Control |
-| `k` | k | Right Shift |
-| `l` | l | Right Alt |
-| `;` | ; | Right Meta |
+- **Caps Lock**: Tap for Escape, hold for Control
+- **Tab**: Tap for Tab, hold for Hyper (Ctrl+Meta+Alt)
+- **Right Alt + hjkl**: Vim-style navigation
+- **Shift keys**: Tap for parentheses, hold for Shift
 
 ## Installation
 
@@ -151,8 +125,10 @@ ls -la /dev/input/by-path/ | grep kbd
 
 2. Check for syntax errors in the `.kbd` file
 
-## Resources
+## Related Documentation
 
-- [KMonad Documentation](https://github.com/kmonad/kmonad)
-- [KMonad Tutorial](https://github.com/kmonad/kmonad/blob/master/keymap/tutorial.kbd)
-- [Carabiner (macOS inspiration)](https://github.com/tekezo/Karabiner-Elements)
+- [KEYBINDINGS.md](KEYBINDINGS.md) - Complete keybinding reference
+- [CLAUDE.md](CLAUDE.md) - AI guidance for KMonad configuration
+- [KMonad Documentation](https://github.com/kmonad/kmonad) - Official documentation
+- [KMonad Tutorial](https://github.com/kmonad/kmonad/blob/master/keymap/tutorial.kbd) - Tutorial config
+- [Karabiner Elements](https://github.com/tekezo/Karabiner-Elements) - macOS inspiration
