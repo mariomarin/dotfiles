@@ -83,7 +83,7 @@ Import the same way as cli-tools.nix.
 ### In NixOS
 
 ```nix
-# nix/nixos/hosts/t470/configuration.nix
+# nix/nixos/hosts/dendrite/configuration.nix
 { config, pkgs, ... }:
 
 {

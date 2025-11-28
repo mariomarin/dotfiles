@@ -60,16 +60,16 @@
     in
     {
       nixosConfigurations = {
-        # Physical ThinkPad T470 with full desktop
-        nixos = mkSystem {
-          hostname = "nixos";
+        # dendrite - ThinkPad T470 portable workstation
+        dendrite = mkSystem {
+          hostname = "dendrite";
           system = "x86_64-linux";
           modules = [
             # Main configuration
             ./configuration.nix
 
             # Host-specific configuration
-            ./hosts/t470/configuration.nix
+            ./hosts/dendrite/configuration.nix
 
             # Hardware configuration for ThinkPad T470
             nixos-hardware.nixosModules.lenovo-thinkpad-t470s

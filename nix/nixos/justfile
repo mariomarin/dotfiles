@@ -15,8 +15,8 @@ _check-os:
 default: _check-os
     @just switch
 
-# Default host (physical T470)
-HOST := env_var_or_default("HOST", "nixos")
+# Default host (dendrite - portable workstation)
+HOST := env_var_or_default("HOST", "dendrite")
 
 # First-time NixOS setup (use this after fresh NixOS install)
 first-time: _check-os
@@ -98,7 +98,7 @@ show: _check-os
 hosts: _check-os
     #!/usr/bin/env nu
     print "Available NixOS configurations:"
-    print "  - nixos       : ThinkPad T470 (desktop)"
+    print "  - dendrite    : ThinkPad T470 portable workstation"
     print "  - vm-headless : Headless VM (SSH only)"
     print ""
     print $"Current HOST: {{HOST}}"
@@ -163,7 +163,7 @@ help:
     @echo "  just check               # Validate flake"
     @echo ""
     @echo "Examples:"
-    @echo "  just switch                                  # Local T470"
+    @echo "  just switch                                  # Local dendrite"
     @echo "  just vm-switch                               # Local VM config"
     @echo "  just deploy-vm TARGET_HOST=admin@192.168.1.100"
-    @echo "  just remote-switch HOST=nixos TARGET_HOST=user@backup-t470"
+    @echo "  just remote-switch HOST=dendrite TARGET_HOST=user@backup-dendrite"

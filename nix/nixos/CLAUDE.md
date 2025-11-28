@@ -12,7 +12,7 @@ nixos/
 ├── common.nix                   # Universal settings for all hosts
 ├── configuration.nix            # Module imports
 ├── hosts/                       # Host-specific configurations
-│   ├── t470/                    # ThinkPad T470 (desktop)
+│   ├── dendrite/                # dendrite - ThinkPad T470 portable workstation
 │   ├── vm/                      # Virtual machine
 │   └── wsl/                     # WSL (headless)
 └── modules/                     # Modular configuration

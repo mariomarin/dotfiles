@@ -18,7 +18,7 @@ make switch
 
 The configuration supports three host types:
 
-- **t470**: Desktop workstation (ThinkPad T470) with GNOME/LeftWM
+- **dendrite**: ThinkPad T470 portable workstation with GNOME/LeftWM
 - **wsl**: Headless WSL environment for development
 - **vm**: Virtual machine for testing
 
@@ -103,7 +103,7 @@ Then:
 
 ## Host Configurations
 
-### t470 (Desktop)
+### dendrite (ThinkPad T470 Portable Workstation)
 
 - Modules: minimal, development, desktop
 - Desktop: LeftWM tiling window manager
@@ -150,7 +150,7 @@ inputs:
   - home-manager
 
 outputs:
-  - nixos-t470: Desktop configuration
+  - dendrite: ThinkPad T470 portable workstation
   - nixos-wsl: WSL configuration
   - nixos-vm: VM configuration
 ```

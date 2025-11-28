@@ -1,4 +1,4 @@
-# ThinkPad T470 specific configuration
+# ThinkPad T470 (dendrite) - portable workstation
 { config, pkgs, lib, ... }:
 
 {
@@ -8,7 +8,7 @@
   ];
 
   # Set hostname
-  networking.hostName = "nixos";
+  networking.hostName = "dendrite";
 
   # Enable minimal system packages with modern CLI tools
   custom.minimal = {
