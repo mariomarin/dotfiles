@@ -8,8 +8,8 @@ Declarative NixOS configuration managed with chezmoi, supporting multiple hosts 
 # Rebuild system configuration
 sudo nixos-rebuild switch --flake .#$(hostname)
 
-# Or use the Makefile
-make switch
+# Or use justfile
+just switch
 ```
 
 ## Architecture

@@ -53,9 +53,9 @@ The `../flake.nix` should contain both `nixosConfigurations` and `darwinConfigur
 
     # macOS configurations
     darwinConfigurations = {
-      "Marios-MacBook" = nix-darwin.lib.darwinSystem {
-        system = "aarch64-darwin";  # or x86_64-darwin
-        modules = [ ../darwin/hosts/macbook/configuration.nix ];
+      malus = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";  # or x86_64-darwin for Intel
+        modules = [ ../darwin/hosts/malus/configuration.nix ];
         specialArgs = { inherit inputs; };
       };
     };
@@ -71,7 +71,7 @@ darwin/
 ├── README.md               # User-facing documentation
 ├── justfile                # Darwin rebuild commands
 ├── hosts/                  # Host-specific configurations
-│   └── macbook/
+│   └── malus/              # macOS configuration (planned)
 │       ├── README.md       # Host-specific docs
 │       └── configuration.nix
 └── modules/                # Reusable darwin modules

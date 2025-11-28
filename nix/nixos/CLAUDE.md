@@ -76,7 +76,7 @@ See [README.md](README.md#adding-packages) for module selection guide. Then:
 
 1. Edit the appropriate module file
 2. Add package to `environment.systemPackages`
-3. Rebuild with `sudo nixos-rebuild switch` or `make`
+3. Rebuild with `sudo nixos-rebuild switch` or `just switch`
 
 ### Enabling Services
 

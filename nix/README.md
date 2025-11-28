@@ -31,6 +31,23 @@ All platforms share a single `flake.nix` that defines:
 
 This allows sharing common modules and maintaining consistent package versions across platforms.
 
+## Host Configurations
+
+### NixOS Hosts (Linux)
+
+- **dendrite**: ThinkPad T470 portable workstation with GNOME/LeftWM
+- **mitosis**: Virtual machine for testing and replication
+- **symbiont**: NixOS on WSL (two systems coexisting) for development
+
+### Darwin Hosts (macOS)
+
+- **malus**: macOS configuration (planned) - biology theme: Malus (apple genus)
+
+### Future Hosts
+
+- **prion**: Windows configuration (planned)
+- **spore**: O365 devbox configuration (planned)
+
 ## Platform-Specific Documentation
 
 - **NixOS**: See [nixos/README.md](nixos/README.md) for Linux system management

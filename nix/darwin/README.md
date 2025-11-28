@@ -23,9 +23,9 @@ This darwin configuration integrates with the existing NixOS flake in `../nixos/
 
     # Add darwin configurations
     darwinConfigurations = {
-      "Marios-MacBook" = nix-darwin.lib.darwinSystem {
+      malus = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";  # or x86_64-darwin for Intel
-        modules = [ ../darwin/hosts/macbook/configuration.nix ];
+        modules = [ ../darwin/hosts/malus/configuration.nix ];
         specialArgs = { inherit inputs; };
       };
     };
@@ -71,7 +71,8 @@ darwin/
 ├── README.md               # This file
 ├── justfile                # Darwin rebuild commands
 ├── hosts/                  # Host-specific configurations
-│   └── macbook/            # MacBook configuration
+│   └── malus/              # macOS configuration (planned)
+│       ├── README.md       # Host-specific documentation
 │       └── configuration.nix
 └── modules/                # Reusable darwin modules
     ├── packages.nix        # System packages
