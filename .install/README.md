@@ -170,9 +170,12 @@ This configuration **only supports**:
 
 - **Option 1**: Install NixOS directly (recommended)
 - **Option 2**: Use NixOS via WSL on Windows (see symbiont host)
-- **Option 3**: Create your own dotfiles configuration for your distro
+- **Option 3**: Install Nix via [Determinate Systems installer](https://github.com/DeterminateSystems/nix-installer)
+  (untested - may work for package management)
+- **Option 4**: Create your own dotfiles configuration for your distro
 
-The bootstrap script will fail on non-NixOS Linux systems.
+The bootstrap script will fail on non-NixOS Linux systems. Option 3 may allow you to use Nix package management on your
+existing distribution, but this configuration is untested outside of NixOS.
 
 ## Repository Structure
 
