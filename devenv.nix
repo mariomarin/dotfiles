@@ -85,6 +85,16 @@
         ];
       };
 
+      # Nushell syntax checking
+      nushell-check = {
+        enable = true;
+        name = "nushell-check";
+        entry = "nu --ide-check 0";
+        files = "\\.nu$";
+        language = "system";
+        pass_filenames = true;
+      };
+
       # TOML formatting with taplo
       taplo = {
         enable = true;

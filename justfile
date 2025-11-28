@@ -7,55 +7,20 @@ default: chezmoi-quick-apply
 
 # Bitwarden session management
 bw-unlock:
-    #!/usr/bin/env nu
-    let bw_status = try {
-        bw status | from json | get status
-    } catch {
-        "unauthenticated"
-    }
-    let bw_session = if $bw_status == "unlocked" {
-        print "✅ Vault is already unlocked"
-        let result = (bw unlock --raw --passwordenv BW_PASSWORD | complete)
-        let session = $result.stdout | str trim
-        if ($session | is-empty) {
-            print "⚠️  Could not get session token. You may need to run 'bw lock' and try again."
-            exit 1
-        }
-        $session
-    } else if $bw_status == "locked" {
-        print "🔓 Unlocking Bitwarden vault..."
-        bw unlock --raw | str trim
-    } else {
-        print "❌ Bitwarden is not logged in. Please run 'bw login' first"
-        exit 1
-    }
-    $"export BW_SESSION=\"($bw_session)\"" | save -f .envrc.local
-    $"BW_SESSION=\"($bw_session)\"" | save -f .env
-    print "✅ Session saved to .env and .envrc.local"
-    print "💡 Run 'just bw-reload' to reload direnv and load the session"
+    nu .scripts/bw-unlock.nu
 
 # Direnv management (convenience wrapper)
 
 # Note: Named bw-reload for workflow clarity, but this is a general direnv command
 bw-reload:
-    #!/usr/bin/env nu
-    print "🔄 Reloading direnv environment..."
-    direnv allow
-    direnv reload
-    print "✅ Environment reloaded"
-    if ($env.BW_SESSION? | default "" | is-not-empty) {
-        print "✅ BW_SESSION is loaded"
-    } else {
-        print "⚠️  BW_SESSION not found in environment"
-        print "   You may need to restart your shell or run: source .envrc.local"
-    }
+    nu .scripts/bw-reload.nu
 
 # Linting and formatting targets
 # Note: Formatting is also configured as git pre-commit hooks in devenv.nix
 # These targets are for manual formatting outside of git workflow
 
 # Run all linting checks
-lint: lint-lua lint-nix lint-shell
+lint: lint-lua lint-nix lint-nu lint-shell
     print "✅ All linting checks passed"
 
 # Check Lua files with stylua
@@ -83,6 +48,28 @@ lint-nix:
         print "✅ Nix syntax valid"
     } else {
         print "❌ Nix syntax errors found"
+        exit 1
+    }
+
+# Check Nushell scripts syntax
+lint-nu:
+    #!/usr/bin/env nu
+    print "🔍 Checking Nushell scripts syntax..."
+    let nu_files = (glob .scripts/**/*.nu)
+    if ($nu_files | is-empty) {
+        print "✅ No Nushell scripts to check"
+        exit 0
+    }
+    let results = ($nu_files | each {|file|
+        let check = (nu --ide-check 0 $file | complete)
+        {file: $file, exit_code: $check.exit_code}
+    })
+    let failed = ($results | where exit_code != 0)
+    if ($failed | is-empty) {
+        print $"✅ All ($nu_files | length) Nushell scripts are valid"
+    } else {
+        print $"❌ ($failed | length) Nushell script\(s\) have syntax errors:"
+        $failed | each {|f| print $"   ($f.file)" }
         exit 1
     }
 
