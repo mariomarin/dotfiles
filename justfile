@@ -7,13 +7,13 @@ default: chezmoi-quick-apply
 
 # Bitwarden session management
 bw-unlock:
-    nu .scripts/bw-unlock.nu
+    nu .scripts/bw/unlock.nu
 
 # Direnv management (convenience wrapper)
 
 # Note: Named bw-reload for workflow clarity, but this is a general direnv command
 bw-reload:
-    nu .scripts/bw-reload.nu
+    nu .scripts/bw/reload.nu
 
 # Linting and formatting targets
 # Note: Formatting is also configured as git pre-commit hooks in devenv.nix
@@ -25,65 +25,19 @@ lint: lint-lua lint-nix lint-nu lint-shell
 
 # Check Lua files with stylua
 lint-lua:
-    #!/usr/bin/env nu
-    print "🔍 Checking Lua files with stylua..."
-    if (which stylua | is-empty) {
-        print "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"
-        exit 0
-    }
-    cd private_dot_config/nvim
-    let result = (do { stylua --check . } | complete)
-    if $result.exit_code != 0 {
-        print "❌ Lua files need formatting. Run 'just format-lua' to fix."
-        exit 1
-    }
+    nu .scripts/lint/lua.nu
 
 # Check Nix files syntax
 lint-nix:
-    #!/usr/bin/env nu
-    print "🔍 Checking Nix files syntax..."
-    let nix_files = (glob **/*.nix)
-    let result = ($nix_files | each {|file| do { nix-instantiate --parse $file } | complete } | all {|r| $r.exit_code == 0 })
-    if $result {
-        print "✅ Nix syntax valid"
-    } else {
-        print "❌ Nix syntax errors found"
-        exit 1
-    }
+    nu .scripts/lint/nix.nu
 
 # Check Nushell scripts syntax
 lint-nu:
-    #!/usr/bin/env nu
-    print "🔍 Checking Nushell scripts syntax..."
-    let nu_files = (glob .scripts/**/*.nu)
-    if ($nu_files | is-empty) {
-        print "✅ No Nushell scripts to check"
-        exit 0
-    }
-    let results = ($nu_files | each {|file|
-        let check = (nu --ide-check 0 $file | complete)
-        {file: $file, exit_code: $check.exit_code}
-    })
-    let failed = ($results | where exit_code != 0)
-    if ($failed | is-empty) {
-        print $"✅ All ($nu_files | length) Nushell scripts are valid"
-    } else {
-        print $"❌ ($failed | length) Nushell script\(s\) have syntax errors:"
-        $failed | each {|f| print $"   ($f.file)" }
-        exit 1
-    }
+    nu .scripts/lint/nu.nu
 
 # Check shell scripts with shellcheck
 lint-shell:
-    #!/usr/bin/env nu
-    print "🔍 Checking shell scripts with shellcheck..."
-    if (which shellcheck | is-empty) {
-        print "⚠️  shellcheck not found. Run 'devenv shell' or 'direnv allow' to load development environment"
-        exit 0
-    }
-    let sh_files = (glob **/*.sh)
-    $sh_files | each {|file| shellcheck $file }
-    print "✅ Shell scripts valid"
+    nu .scripts/lint/shell.nu
 
 # Format all files
 format: format-lua format-nix format-shell format-yaml format-markdown format-justfile format-others
@@ -91,87 +45,35 @@ format: format-lua format-nix format-shell format-yaml format-markdown format-ju
 
 # Format Lua files with stylua
 format-lua:
-    #!/usr/bin/env nu
-    print "📝 Formatting Lua files with stylua..."
-    if (which stylua | is-empty) {
-        print "⚠️  stylua not found. Run 'devenv shell' or 'direnv allow' to load development environment"
-        exit 0
-    }
-    cd private_dot_config/nvim
-    stylua .
-    print "✅ Lua files formatted"
+    nu .scripts/format/lua.nu
 
 # Format Nix files with nixpkgs-fmt
 format-nix:
-    #!/usr/bin/env nu
-    print "📝 Formatting Nix files with nixpkgs-fmt..."
-    if (which nixpkgs-fmt | is-empty) {
-        print "⚠️  nixpkgs-fmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"
-        exit 0
-    }
-    glob **/*.nix | each {|file| nixpkgs-fmt $file }
-    print "✅ Nix files formatted"
+    nu .scripts/format/nix.nu
 
 # Format shell scripts with shfmt
 format-shell:
-    #!/usr/bin/env nu
-    print "📝 Formatting shell scripts with shfmt..."
-    if (which shfmt | is-empty) {
-        print "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"
-        exit 0
-    }
-    shfmt -w -i 2 -ci -sr -kp .
-    print "✅ Shell scripts formatted"
+    nu .scripts/format/shell.nu
 
 # Format YAML files with yamlfmt
 format-yaml:
-    #!/usr/bin/env nu
-    print "📝 Formatting YAML files with yamlfmt..."
-    if (which yamlfmt | is-empty) {
-        print "⚠️  yamlfmt not found. Run 'direnv allow' to load development environment"
-        exit 0
-    }
-    glob **/*.{yml,yaml} | where {|f| $f !~ "/.git/" and $f !~ "/node_modules/" } | each {|file| yamlfmt $file }
-    print "✅ YAML files formatted"
+    nu .scripts/format/yaml.nu
 
 # Format Markdown files with markdownlint
 format-markdown:
-    #!/usr/bin/env nu
-    print "📝 Formatting Markdown files with markdownlint..."
-    if (which markdownlint | is-empty) {
-        print "⚠️  markdownlint not found. Run 'direnv allow' to load development environment"
-        exit 0
-    }
-    do { markdownlint --fix "**/*.md" --ignore node_modules --ignore .git } | complete | ignore
-    print "✅ Markdown files formatted"
+    nu .scripts/format/markdown.nu
 
 # Format justfiles
 format-justfile:
-    #!/usr/bin/env nu
-    print "📝 Formatting justfiles..."
-    if (which just | is-empty) {
-        print "⚠️  just not found"
-        exit 0
-    }
-    glob **/justfile | each {|file| cd ($file | path dirname); just --fmt --unstable }
-    print "✅ Justfiles formatted"
+    nu .scripts/format/justfile.nu
 
 # Format JSON and TOML files with biome
 format-others:
-    #!/usr/bin/env nu
-    print "📝 Formatting JSON and TOML files with biome..."
-    if (which biome | is-empty) {
-        print "⚠️  biome not found. Run 'direnv allow' to load development environment"
-        exit 0
-    }
-    biome format --write .
-    print "✅ JSON and TOML files formatted"
+    nu .scripts/format/others.nu
 
 # Start development shell
 dev:
-    #!/usr/bin/env nu
-    print "🚀 Starting development shell..."
-    devenv shell
+    nu .scripts/dev.nu
 
 # Run all checks
 check: lint
@@ -184,42 +86,11 @@ health: health-summary
 
 # System health summary
 health-summary:
-    #!/usr/bin/env nu
-    print "🏥 System Health Summary"
-    print "========================"
-    print ""
-    print "🔍 Quick Status:"
-    let nixos_result = (do { nixos-version } | complete)
-    let nixos = if $nixos_result.exit_code == 0 { $nixos_result.stdout | lines | first | split row ' ' | first 2 | str join ' ' } else { '❌ not available' }
-    let chezmoi_result = (do { chezmoi --version } | complete)
-    let chezmoi = if $chezmoi_result.exit_code == 0 { $chezmoi_result.stdout | lines | first | split row ',' | first } else { '❌ not installed' }
-    let nvim_result = (do { nvim --version } | complete)
-    let nvim = if $nvim_result.exit_code == 0 { $nvim_result.stdout | lines | first } else { '❌ not installed' }
-    let tmux_result = (do { tmux -V } | complete)
-    let tmux = if $tmux_result.exit_code == 0 { $tmux_result.stdout | str trim } else { '❌ not installed' }
-    let zsh_result = (do { zsh --version } | complete)
-    let zsh = if $zsh_result.exit_code == 0 { $zsh_result.stdout | lines | first } else { '❌ not installed' }
-    print $"  NixOS:   ($nixos)"
-    print $"  Chezmoi: ($chezmoi)"
-    print $"  Neovim:  ($nvim)"
-    print $"  Tmux:    ($tmux)"
-    print $"  Zsh:     ($zsh)"
+    nu .scripts/health/summary.nu
 
 # Full system health check
 health-all:
-    #!/usr/bin/env nu
-    print "🏥 Full System Health Check"
-    print "==========================="
-    print ""
-    do { just nixos-health } | complete | ignore
-    print ""
-    do { just chezmoi-health } | complete | ignore
-    print ""
-    do { just nvim-health } | complete | ignore
-    print ""
-    do { just tmux-health } | complete | ignore
-    print ""
-    do { just zim-health } | complete | ignore
+    nu .scripts/health/all.nu
 
 # Pass-through targets to subdirectories
 nixos-switch:
