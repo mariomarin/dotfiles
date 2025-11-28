@@ -8,11 +8,6 @@ default: chezmoi-quick-apply
 # Bitwarden session management
 bw-unlock:
     #!/usr/bin/env nu
-    if not $nu.is-interactive {
-        print "❌ Error: This target requires interactive input (a terminal)"
-        print "   Run this command directly from your terminal, not in a pipeline or script"
-        exit 1
-    }
     let bw_status = (do { bw status | from json | get status } | complete | get stdout | str trim | default "unauthenticated")
     let bw_session = if $bw_status == "unlocked" {
         print "✅ Vault is already unlocked"
