@@ -1,4 +1,4 @@
-# WSL-specific NixOS configuration
+# symbiont - NixOS on WSL (two systems coexisting)
 # Minimal, headless configuration for development via browser/SSH
 { config, pkgs, lib, ... }:
 
@@ -7,8 +7,8 @@
     ../../common.nix # Universal NixOS settings
   ];
 
-  # Set hostname - can be customized per WSL instance
-  networking.hostName = "nixos-wsl";
+  # Set hostname
+  networking.hostName = "symbiont";
 
   # Enable WSL support
   custom.wsl = {

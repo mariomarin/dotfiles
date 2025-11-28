@@ -14,7 +14,7 @@ nixos/
 ├── hosts/                       # Host-specific configurations
 │   ├── dendrite/                # dendrite - ThinkPad T470 portable workstation
 │   ├── mitosis/                 # mitosis - Virtual machine for testing and replication
-│   └── wsl/                     # WSL (headless)
+│   └── symbiont/                # symbiont - NixOS on WSL (two systems coexisting)
 └── modules/                     # Modular configuration
     ├── minimal.nix              # Essential CLI tools for all hosts
     ├── development.nix          # Development tools and environment
@@ -164,7 +164,7 @@ This repository supports NixOS on Windows Subsystem for Linux (WSL2) via the Nix
 
 ### WSL Configuration
 
-- **Host**: `nixos-wsl`
+- **Host**: `symbiont`
 - **Type**: Headless, CLI-only (no GUI)
 - **Use Case**: Development via browser (MS DevBox) or SSH
 - **Philosophy**: Minimal system packages, per-project tooling via `devenv.nix`
@@ -192,10 +192,10 @@ This repository supports NixOS on Windows Subsystem for Linux (WSL2) via the Nix
 ```bash
 # From any NixOS system (test build)
 cd nixos
-nix build .#nixosConfigurations.nixos-wsl.config.system.build.toplevel
+nix build .#nixosConfigurations.symbiont.config.system.build.toplevel
 
 # On WSL (apply configuration)
-sudo nixos-rebuild switch --flake /etc/nixos#nixos-wsl
+sudo nixos-rebuild switch --flake /etc/nixos#symbiont
 
 # Update flake inputs
 nix flake update
@@ -228,7 +228,7 @@ direnv allow
 - No NetworkManager (uses WSL networking)
 - No GUI (pure CLI/TUI workflow)
 
-For detailed WSL documentation, see [hosts/wsl/README.md](hosts/wsl/README.md).
+For detailed WSL documentation, see [hosts/symbiont/README.md](hosts/symbiont/README.md).
 
 ## Important Notes
 

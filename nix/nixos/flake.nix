@@ -92,9 +92,9 @@
           ];
         };
 
-        # WSL configuration (headless, CLI-only)
-        nixos-wsl = mkSystem {
-          hostname = "nixos-wsl";
+        # symbiont - NixOS on WSL (two systems coexisting)
+        symbiont = mkSystem {
+          hostname = "symbiont";
           system = "x86_64-linux";
           modules = [
             # NixOS-WSL base module
@@ -104,7 +104,7 @@
             ./configuration.nix
 
             # WSL-specific configuration
-            ./hosts/wsl/configuration.nix
+            ./hosts/symbiont/configuration.nix
           ];
         };
       };

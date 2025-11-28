@@ -74,7 +74,7 @@ sudo cp -r /tmp/dotfiles/nixos /etc/nixos
 ```bash
 # Build and switch to new configuration
 cd /etc/nixos
-sudo nixos-rebuild switch --flake .#nixos-wsl
+sudo nixos-rebuild switch --flake .#symbiont
 ```
 
 ## Daily Usage
@@ -82,7 +82,7 @@ sudo nixos-rebuild switch --flake .#nixos-wsl
 ### Rebuild Configuration
 
 ```bash
-sudo nixos-rebuild switch --flake /etc/nixos#nixos-wsl
+sudo nixos-rebuild switch --flake /etc/nixos#symbiont
 ```
 
 ### Access Windows Filesystem
@@ -175,7 +175,7 @@ Everything else comes from per-project `devenv.nix`.
 ## Configuration Structure
 
 ```text
-nixos/hosts/wsl/
+nixos/hosts/symbiont/
 ├── configuration.nix    # WSL-specific settings
 └── README.md           # This file
 
@@ -246,7 +246,7 @@ journalctl -xe
 nix flake check /etc/nixos
 
 # Try build without switch
-sudo nixos-rebuild build --flake /etc/nixos#nixos-wsl
+sudo nixos-rebuild build --flake /etc/nixos#symbiont
 
 # View build log
 nix log /nix/store/...

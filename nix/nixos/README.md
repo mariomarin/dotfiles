@@ -20,7 +20,7 @@ The configuration supports three host types:
 
 - **dendrite**: ThinkPad T470 portable workstation with GNOME/LeftWM
 - **mitosis**: Virtual machine for testing and replication
-- **wsl**: Headless WSL environment for development
+- **symbiont**: NixOS on WSL (two systems coexisting) for development
 
 ### Package Organization
 
@@ -109,7 +109,7 @@ Then:
 - Desktop: LeftWM tiling window manager
 - Features: Full development environment with GUI tools
 
-### wsl (Headless)
+### symbiont (Headless)
 
 - Modules: minimal, development, wsl
 - Purpose: Development via browser (MS DevBox)
@@ -152,7 +152,7 @@ inputs:
 outputs:
   - dendrite: ThinkPad T470 portable workstation
   - mitosis: Virtual machine for testing and replication
-  - nixos-wsl: WSL configuration
+  - symbiont: NixOS on WSL (two systems coexisting)
 ```
 
 ## Best Practices
