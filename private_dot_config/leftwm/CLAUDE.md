@@ -67,7 +67,7 @@ The `custom` theme is designed to work with systemd services:
 
 ## Key Bindings
 
-See [README.md](README.md) for complete keybinding reference. Mod key is Super/Windows key (Mod4).
+See [KEYBINDINGS.md](KEYBINDINGS.md) for complete keybinding reference. Mod key is Super/Windows key (Mod4).
 
 ## Integration with Other Components
 
@@ -137,6 +137,8 @@ systemctl --user start wallpaper-rotation.service
 
 ## Related Documentation
 
+- [KEYBINDINGS.md](KEYBINDINGS.md) - Complete keybinding reference
+- [README.md](README.md) - Configuration overview
 - [Root CLAUDE.md](../../CLAUDE.md) - Repository overview
 - [Polybar CLAUDE.md](../polybar/CLAUDE.md) - Status bar configuration
 - [LeftWM Documentation](https://github.com/leftwm/leftwm/wiki)

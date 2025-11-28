@@ -116,6 +116,7 @@ Special handling for NixOS systems:
 
 ## Related Documentation
 
-- [Root AGENTS.md](../../AGENTS.md)
+- [KEYBINDINGS.md](KEYBINDINGS.md) - Complete keybinding reference
+- [Root CLAUDE.md](../../CLAUDE.md) - Repository overview
 - [LazyVim Documentation](https://www.lazyvim.org/)
 - [Neovim Documentation](https://neovim.io/doc/)

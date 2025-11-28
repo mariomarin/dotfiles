@@ -20,7 +20,7 @@ private_dot_config/kmonad/
 
 ## Key Mappings
 
-See [README.md](README.md) for complete key mapping reference and optional features.
+See [KEYBINDINGS.md](KEYBINDINGS.md) for complete key mapping reference and optional features.
 
 ## NixOS Integration
 
@@ -61,8 +61,10 @@ journalctl -u kmonad-laptop -f
 - Disable conflicting services (e.g., interception-tools)
 - Device paths may vary between systems
 
-## Resources
+## Related Documentation
 
-- [KMonad Documentation](https://github.com/kmonad/kmonad)
+- [KEYBINDINGS.md](KEYBINDINGS.md) - Complete keybinding reference
+- [README.md](README.md) - Configuration overview and installation
+- [KMonad Documentation](https://github.com/kmonad/kmonad) - Official documentation
 - [Keyboard Layout Reference](https://github.com/kmonad/kmonad/blob/master/doc/quick-reference.md)
 - [Example Configurations](https://github.com/kmonad/kmonad/tree/master/keymap)

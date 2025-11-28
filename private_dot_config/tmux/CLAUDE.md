@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with the tmux configurat
 
 **When making ANY changes to tmux keybindings or settings:**
 
-1. **ALWAYS** update the [README.md](./README.md) keybindings documentation
+1. **ALWAYS** update the [KEYBINDINGS.md](./KEYBINDINGS.md) keybindings documentation
 2. **ALWAYS** check for duplicate or conflicting keybindings
 3. **ALWAYS** document plugin-specific keybindings
 4. **NEVER** leave undocumented keybindings
@@ -86,7 +86,7 @@ Currently using **aserowy/tmux.nvim** for seamless integration:
 ### Adding a New Keybinding
 
 1. Add binding to appropriate file in `mappings/`
-2. **UPDATE README.md** with the new keybinding
+2. **UPDATE KEYBINDINGS.md** with the new keybinding
 3. Check for conflicts with existing bindings
 4. Test the binding
 
@@ -94,19 +94,19 @@ Currently using **aserowy/tmux.nvim** for seamless integration:
 
 1. Add to `.chezmoiexternal.toml` in plugins directory
 2. Add configuration to `plugins.tmux`
-3. **UPDATE README.md** with plugin keybindings
+3. **UPDATE KEYBINDINGS.md** with plugin keybindings
 4. Run `chezmoi apply` to fetch plugin
 
 ### Changing Existing Bindings
 
 1. Make the change in the appropriate file
-2. **UPDATE README.md** immediately
+2. **UPDATE KEYBINDINGS.md** immediately
 3. Check for conflicts or duplicates
 4. Update conflict section if needed
 
 ## Documentation Standards
 
-The README.md must include:
+The KEYBINDINGS.md must include:
 
 1. **Complete keybinding list** organized by category
 2. **Plugin-specific keybindings** for each plugin
@@ -114,11 +114,18 @@ The README.md must include:
 4. **Default bindings** that plugins provide
 5. **Clear descriptions** for each binding
 
+The README.md should:
+
+1. Provide overview of features and configuration
+2. Link to KEYBINDINGS.md for complete keybinding reference
+3. List plugins and their purposes
+4. Document integration with other tools (Neovim, etc.)
+
 ## Testing Checklist
 
 Before committing tmux changes:
 
-- [ ] All keybindings documented in README.md
+- [ ] All keybindings documented in KEYBINDINGS.md
 - [ ] No undocumented plugin bindings
 - [ ] Conflicts clearly marked
 - [ ] Tested all modified bindings
@@ -137,5 +144,6 @@ Watch out for these common conflicts:
 
 - Always preserve user preferences when resolving conflicts
 - Document WHY a conflict was resolved in a particular way
-- Keep the README.md as the single source of truth for keybindings
+- Keep KEYBINDINGS.md as the single source of truth for keybindings
+- README.md should provide overview and link to KEYBINDINGS.md
 - Test integration with Neovim after navigation changes
