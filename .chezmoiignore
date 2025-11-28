@@ -12,7 +12,6 @@ nixos
 nixos/**
 shell.nix
 devenv.nix
-biome.json
 chezmoi
 chezmoi/**
 Makefile
@@ -28,4 +27,3 @@ devenv.lock
 devenv.yaml
 .claude
 .claude/**
-TODO_NEXT_TIME.md
