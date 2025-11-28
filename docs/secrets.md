@@ -48,7 +48,7 @@ $env:BW_SESSION = bw unlock --raw
 ```bash
 # Encode your SSH keys and create the item
 bw get template item | jq \
-  '.type = 5 | .name = "id-rsa" | .sshKey = {
+  '.type = 5 | .name = "id_ed25519" | .sshKey = {
     "privateKey": "'$(cat ~/.ssh/id_ed25519)'",
     "publicKey": "'$(cat ~/.ssh/id_ed25519.pub)'"
   }' | bw encode | bw create item
@@ -59,7 +59,7 @@ bw get template item | jq \
 1. Open your Bitwarden web vault
 2. Click "New Item"
 3. Select item type: **SSH Key**
-4. Name: `id-rsa` (or your preferred name)
+4. Name: `id_ed25519` (or your preferred name)
 5. Paste your private key in the "Private Key" field
 6. Paste your public key in the "Public Key" field
 7. Save the item
@@ -70,10 +70,10 @@ Chezmoi templates can reference Bitwarden items using the `bitwarden` function:
 
 ```go-template
 {{- /* SSH private key */ -}}
-{{ (bitwarden "item" "id-rsa").sshKey.privateKey }}
+{{ (bitwarden "item" "id_ed25519").sshKey.privateKey }}
 
 {{- /* SSH public key */ -}}
-{{ (bitwarden "item" "id-rsa").sshKey.publicKey }}
+{{ (bitwarden "item" "id_ed25519").sshKey.publicKey }}
 ```
 
 ## Workflow

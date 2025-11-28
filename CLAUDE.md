@@ -193,7 +193,7 @@ The repository uses chezmoi pre-hooks for OS-specific bootstrap **before reading
 
 | Tool | Location | Reason |
 |------|----------|--------|
-| Bitwarden CLI | Bootstrap | Templates use `{{ bitwarden "id-rsa" }}` |
+| Bitwarden CLI | Bootstrap | Templates use `{{ bitwarden "id_ed25519" }}` |
 | jq | Bootstrap | Templates might parse JSON data |
 | Homebrew (macOS) | Bootstrap | Needed to install other bootstrap tools |
 | Nix (macOS) | Bootstrap | Required for nix-darwin system management |
@@ -362,8 +362,8 @@ The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.)
 
 **SSH Key Templates:**
 
-- `private_dot_ssh/private_id_ed25519.tmpl` - Uses `{{ (bitwarden "item" "id-rsa").sshKey.privateKey }}`
-- `private_dot_ssh/id_ed25519.pub.tmpl` - Uses `{{ (bitwarden "item" "id-rsa").sshKey.publicKey }}`
+- `private_dot_ssh/private_id_ed25519.tmpl` - Uses `{{ (bitwarden "item" "id_ed25519").sshKey.privateKey }}`
+- `private_dot_ssh/id_ed25519.pub.tmpl` - Uses `{{ (bitwarden "item" "id_ed25519").sshKey.publicKey }}`
 
 **SSH Key Item Type (type 5) structure:**
 
