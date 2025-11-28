@@ -13,7 +13,7 @@ nixos/
 ├── configuration.nix            # Module imports
 ├── hosts/                       # Host-specific configurations
 │   ├── dendrite/                # dendrite - ThinkPad T470 portable workstation
-│   ├── vm/                      # Virtual machine
+│   ├── mitosis/                 # mitosis - Virtual machine for testing and replication
 │   └── wsl/                     # WSL (headless)
 └── modules/                     # Modular configuration
     ├── minimal.nix              # Essential CLI tools for all hosts

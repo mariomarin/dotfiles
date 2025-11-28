@@ -19,8 +19,8 @@ make switch
 The configuration supports three host types:
 
 - **dendrite**: ThinkPad T470 portable workstation with GNOME/LeftWM
+- **mitosis**: Virtual machine for testing and replication
 - **wsl**: Headless WSL environment for development
-- **vm**: Virtual machine for testing
 
 ### Package Organization
 
@@ -115,11 +115,11 @@ Then:
 - Purpose: Development via browser (MS DevBox)
 - Features: CLI-only, Docker enabled, per-project devenv.nix
 
-### vm (Virtual Machine)
+### mitosis (Virtual Machine)
 
 - Modules: minimal
-- Purpose: Testing and experimentation
-- Features: Minimal footprint
+- Purpose: Testing, replication, and experimentation
+- Features: Minimal footprint, SSH-only access
 
 ## Module System
 
@@ -151,8 +151,8 @@ inputs:
 
 outputs:
   - dendrite: ThinkPad T470 portable workstation
+  - mitosis: Virtual machine for testing and replication
   - nixos-wsl: WSL configuration
-  - nixos-vm: VM configuration
 ```
 
 ## Best Practices

@@ -79,16 +79,16 @@
           ];
         };
 
-        # Headless VM configuration
-        vm-headless = mkSystem {
-          hostname = "vm-headless";
+        # mitosis - Virtual machine for testing and replication
+        mitosis = mkSystem {
+          hostname = "mitosis";
           system = "x86_64-linux";
           modules = [
             # Main configuration (shared)
             ./configuration.nix
 
             # VM-specific configuration
-            ./hosts/vm/configuration.nix
+            ./hosts/mitosis/configuration.nix
           ];
         };
 

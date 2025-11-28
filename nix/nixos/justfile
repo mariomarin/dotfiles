@@ -47,13 +47,13 @@ build: _check-os
 
 # VM-specific targets
 vm-switch: _check-os
-    sudo nixos-rebuild switch --flake .#vm-headless
+    sudo nixos-rebuild switch --flake .#mitosis
 
 vm-test: _check-os
-    sudo nixos-rebuild test --flake .#vm-headless
+    sudo nixos-rebuild test --flake .#mitosis
 
 vm-build: _check-os
-    sudo nixos-rebuild build --flake .#vm-headless
+    sudo nixos-rebuild build --flake .#mitosis
 
 # Remote deployment targets
 remote-switch TARGET_HOST BUILD_HOST="": _check-os
@@ -82,7 +82,7 @@ deploy-vm TARGET_HOST BUILD_HOST="": _check-os
         exit 1
     }
     let build_host_flag = if ("{{BUILD_HOST}}" | is-not-empty) { ["--build-host" "{{BUILD_HOST}}"] } else { [] }
-    nixos-rebuild switch --flake $".#vm-headless" --target-host {{TARGET_HOST}} --use-remote-sudo ...$build_host_flag
+    nixos-rebuild switch --flake $".#mitosis" --target-host {{TARGET_HOST}} --use-remote-sudo ...$build_host_flag
 
 # Flake management
 update: _check-os
@@ -99,7 +99,7 @@ hosts: _check-os
     #!/usr/bin/env nu
     print "Available NixOS configurations:"
     print "  - dendrite    : ThinkPad T470 portable workstation"
-    print "  - vm-headless : Headless VM (SSH only)"
+    print "  - mitosis     : Virtual machine for testing and replication"
     print ""
     print $"Current HOST: {{HOST}}"
 
@@ -143,11 +143,11 @@ help:
     @echo "  just test                # Test HOST configuration"
     @echo "  just boot                # Update boot configuration"
     @echo "  just build               # Build without switching"
-    @echo "  just switch HOST=vm-headless  # Build vm-headless locally"
+    @echo "  just switch HOST=mitosis  # Build mitosis locally"
     @echo ""
     @echo "VM-specific shortcuts:"
-    @echo "  just vm-switch           # Build and switch to vm-headless"
-    @echo "  just vm-test             # Test vm-headless configuration"
+    @echo "  just vm-switch           # Build and switch to mitosis"
+    @echo "  just vm-test             # Test mitosis configuration"
     @echo ""
     @echo "Remote deployment:"
     @echo "  just remote-switch TARGET_HOST=user@host    # Deploy HOST to remote"

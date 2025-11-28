@@ -1,4 +1,4 @@
-# Headless VM configuration (SSH-only)
+# mitosis - Virtual machine for testing and replication
 { config, pkgs, lib, ... }:
 
 {
@@ -6,8 +6,8 @@
     ../../common.nix # Universal NixOS settings
   ];
 
-  # Set hostname (will be overridden by VM provisioning usually)
-  networking.hostName = "vm-headless";
+  # Set hostname
+  networking.hostName = "mitosis";
 
   # VM-specific hardware configuration
   boot.loader.grub.device = "/dev/vda"; # Common for VMs
