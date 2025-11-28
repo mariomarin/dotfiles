@@ -8,14 +8,17 @@ let bw_status = try {
 }
 
 let bw_session = if $bw_status == "unlocked" {
-    print "✅ Vault is already unlocked"
-    let result = (bw unlock --raw --passwordenv BW_PASSWORD | complete)
-    let session = $result.stdout | str trim
-    if ($session | is-empty) {
-        print "⚠️  Could not get session token. You may need to run 'bw lock' and try again."
-        exit 1
+    # Vault is already unlocked, check if we have a session token
+    let current_session = ($env.BW_SESSION? | default "")
+    if ($current_session | is-not-empty) {
+        print "✅ Vault is already unlocked, using existing session"
+        $current_session
+    } else {
+        # No session in environment, lock and unlock to get a fresh one
+        print "🔒 Vault is unlocked but no session found, getting fresh session..."
+        bw lock | ignore
+        bw unlock --raw | str trim
     }
-    $session
 } else if $bw_status == "locked" {
     print "🔓 Unlocking Bitwarden vault..."
     bw unlock --raw | str trim
