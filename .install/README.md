@@ -66,6 +66,9 @@ winget install twpayne.chezmoi
 # Initialize dotfiles (bootstrap auto-installs Bitwarden CLI via winget)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
+# ⚠️  IMPORTANT: Restart PowerShell after first init to load bw command
+# Close and reopen PowerShell, then continue:
+
 # Login to Bitwarden
 bw login
 $env:BW_SESSION = bw unlock --raw
