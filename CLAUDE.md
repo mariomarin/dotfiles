@@ -155,11 +155,11 @@ The repository uses chezmoi pre-hooks for OS-specific bootstrap **before reading
 
 **Implementation:**
 
-**`.bootstrap-unix.sh`** - Unix/macOS/Linux bootstrap:
+**`.bootstrap-unix.sh`** - Unix/macOS/NixOS bootstrap:
 
 - **macOS**: Installs Nix (Determinate Systems) → Bitwarden CLI via Nix profile
-- **NixOS**: Detects NixOS and requires system-installed bitwarden-cli (no download, just verification)
-- **Other Linux**: Suggests package manager install → Fallback: downloads latest static binary to ~/.local/bin
+- **NixOS**: Verifies Bitwarden CLI is installed (fails if missing - add to configuration.nix)
+- **Other Linux**: Fails with error (not supported - use NixOS or create your own config)
 
 **`.bootstrap-windows.ps1`** - Windows bootstrap:
 

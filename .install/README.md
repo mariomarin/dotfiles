@@ -7,13 +7,13 @@ Bootstrap scripts for setting up dotfiles on new machines.
 **Bootstrap scripts install ONLY what chezmoi templates need to render:**
 
 - **Bitwarden CLI** - Required for `{{ bitwarden ... }}` template functions
-- Platform-specific package managers (Homebrew on macOS, Nix for nix-darwin)
+- **Nix** (macOS only) - Required for nix-darwin system management
 
 **Everything else** is installed declaratively via:
 
-- NixOS: `configuration.nix` and `nixos-rebuild`
-- macOS: nix-darwin or Homebrew packages in `.chezmoidata/packages.yaml`
-- Windows: winget packages in `.chezmoidata/packages.yaml`
+- **NixOS**: `configuration.nix` and `nixos-rebuild`
+- **macOS**: nix-darwin configuration
+- **Windows**: winget packages in `.chezmoidata/packages.yaml`
 
 ## Windows Setup
 
@@ -139,46 +139,23 @@ sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
 just switch
 ```
 
-## Other Linux (Non-NixOS)
+## Supported Platforms
 
-### Recommended: Install Bitwarden CLI via Package Manager
+This configuration **only supports**:
 
-**Preferred approach** for automatic updates:
+- ✅ **NixOS** (Linux with declarative system management)
+- ✅ **macOS** (via nix-darwin)
+- ✅ **Windows** (via winget)
 
-```bash
-# Debian/Ubuntu (via Snap)
-sudo snap install bw
+### Other Linux Distributions
 
-# Fedora/RHEL (via Flatpak)
-flatpak install flathub com.bitwarden.desktop
+❌ **Not supported**. If you're on Debian, Ubuntu, Arch, Fedora, etc.:
 
-# Arch Linux (via AUR)
-yay -S bitwarden-cli
-```
+- **Option 1**: Install NixOS directly (recommended)
+- **Option 2**: Use NixOS via WSL on Windows (see symbiont host)
+- **Option 3**: Create your own dotfiles configuration for your distro
 
-### Setup Steps (Other Linux)
-
-```bash
-# Install chezmoi first
-sh -c "$(curl -fsLS get.chezmoi.io)"
-
-# Clone dotfiles
-chezmoi init https://github.com/mariomarin/dotfiles.git
-
-# Apply configuration
-chezmoi apply -v
-```
-
-### What Happens on Bootstrap (Other Linux)
-
-The `.bootstrap-unix.sh` pre-hook:
-
-1. **Checks** if Bitwarden CLI is already installed (system-wide)
-2. **Suggests** package manager installation (preferred)
-3. **Fallback**: Downloads latest version to `~/.local/bin` if not found
-4. **Warns** about manual updates needed for static binary
-
-To update static binary: Re-run `chezmoi apply` or install via package manager.
+The bootstrap script will fail on non-NixOS Linux systems.
 
 ## Repository Structure
 
@@ -199,10 +176,7 @@ Bootstrap scripts run automatically as chezmoi pre-hooks **before** reading sour
 
 - **macOS**: Installs Nix (Determinate Systems) → Bitwarden CLI via Nix profile
 - **NixOS**: Verifies Bitwarden CLI exists (fails if missing - add to config)
-- **Other Linux**:
-  1. Checks if `bw` command exists (system-wide or ~/.local/bin)
-  2. Suggests distro-specific package manager installation
-  3. Fallback: Downloads latest version to ~/.local/bin (fetches from GitHub API)
+- **Other Linux**: Fails with error message (not supported)
 
 ### .bootstrap-windows.ps1
 
@@ -237,13 +211,13 @@ Bootstrap requires `curl` (pre-installed on macOS). If Homebrew installation fai
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### Other Linux: Binary not found after bootstrap
+### Other Linux: Not supported
 
-Ensure `~/.local/bin` is in your PATH:
+This configuration only supports NixOS on Linux. For other distributions:
 
-```bash
-export PATH="$HOME/.local/bin:$PATH"
-```
+- Install NixOS directly, or
+- Use NixOS via WSL on Windows, or
+- Create your own dotfiles configuration
 
 ## Security Note
 
