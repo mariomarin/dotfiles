@@ -46,10 +46,10 @@ This allows sharing common modules and maintaining consistent package versions a
 
 - **malus**: macOS configuration (planned) - biology theme: Malus (apple genus)
 
-### Future Hosts
+### Windows Hosts
 
-- **prion**: Windows configuration (planned)
-- **spore**: O365 devbox configuration (planned)
+- **prion**: Native Windows workstation (planned)
+- **spore**: Microsoft 365 DevBox cloud Windows environment (planned)
 
 ## Platform-Specific Documentation
 

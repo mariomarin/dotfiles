@@ -44,6 +44,11 @@ This approach:
 Native Windows workstation using winget/scoop for package management. See [hosts/prion/README.md](hosts/prion/README.md)
 for details.
 
+### spore (Planned)
+
+Microsoft 365 DevBox cloud-based Windows development environment. See [hosts/spore/README.md](hosts/spore/README.md)
+for details.
+
 ## Package Management
 
 Packages are defined declaratively in `.chezmoidata/packages.yaml`:
