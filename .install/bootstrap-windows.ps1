@@ -18,6 +18,8 @@ if (-not (Get-Command bw -ErrorAction SilentlyContinue)) {
     winget install --id Bitwarden.CLI --exact --silent --accept-package-agreements --accept-source-agreements
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  ✓ Bitwarden CLI installed" -ForegroundColor Green
+        Write-Host "  ⚠️  Please restart PowerShell to use 'bw' command" -ForegroundColor Yellow
+        Write-Host "      Or run: refreshenv (if you have Chocolatey)" -ForegroundColor Yellow
     } else {
         Write-Host "  ❌ Failed to install Bitwarden CLI" -ForegroundColor Red
         exit 1
