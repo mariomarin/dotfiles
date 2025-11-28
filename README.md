@@ -105,12 +105,18 @@ See [nix/darwin/README.md](nix/darwin/README.md) for detailed setup and configur
 **Manual Prerequisites:**
 
 ```powershell
-# Install Git and chezmoi (winget pre-installed on Windows 10/11)
+# Check if winget is available, install from Microsoft Store if needed
+winget --version
+
+# Install Git and chezmoi
 winget install Git.Git
 winget install twpayne.chezmoi
 
 # Restart PowerShell to refresh PATH
 ```
+
+> **Note:** If `winget` is not found, install "App Installer" from Microsoft Store or see
+> [.install/README.md](.install/README.md) for alternatives.
 
 **Automatic Bootstrap + Apply:**
 

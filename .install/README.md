@@ -25,13 +25,37 @@ Bootstrap scripts run automatically as chezmoi pre-hooks when you execute `chezm
 
 ### Manual Prerequisites (Windows)
 
+#### Step 1: Install winget (if not available)
+
 ```powershell
-# Install Git and chezmoi (winget pre-installed on Windows 10/11)
+# Check if winget is available
+winget --version
+```
+
+If winget is not found, install **App Installer** from Microsoft Store:
+
+- Open Microsoft Store app
+- Search for "App Installer"
+- Click Install
+- Restart PowerShell after installation
+
+**Alternative if Microsoft Store is unavailable:**
+Download and install manually from [GitHub](https://github.com/microsoft/winget-cli/releases)
+
+#### Step 2: Install Git and chezmoi
+
+```powershell
+# Install Git and chezmoi using winget
 winget install Git.Git
 winget install twpayne.chezmoi
 
 # Restart PowerShell to refresh PATH
 ```
+
+**Alternative manual installation:**
+
+- Git: Download from [git-scm.com](https://git-scm.com/download/win)
+- chezmoi: Download from [GitHub releases](https://github.com/twpayne/chezmoi/releases)
 
 ### Automatic Bootstrap + Apply (Windows)
 
@@ -205,7 +229,25 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 
 ### Windows: winget not found
 
-Install "App Installer" from Microsoft Store.
+#### Solution 1: Install App Installer (Recommended)
+
+1. Open Microsoft Store app
+2. Search for "App Installer"
+3. Click Install
+4. Restart PowerShell
+
+#### Solution 2: Manual winget installation
+
+Download from [microsoft/winget-cli releases](https://github.com/microsoft/winget-cli/releases)
+and install the `.msixbundle` file.
+
+#### Solution 3: Install Git and chezmoi manually
+
+- Git: Download installer from [git-scm.com](https://git-scm.com/download/win)
+- chezmoi: Download from [twpayne/chezmoi releases](https://github.com/twpayne/chezmoi/releases)
+
+After manual installation, you can still use the bootstrap to install Bitwarden CLI and other
+packages.
 
 ### NixOS: Bootstrap fails "bitwarden-cli not found"
 
