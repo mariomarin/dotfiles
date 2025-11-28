@@ -23,6 +23,9 @@ Bootstrap scripts run automatically as chezmoi pre-hooks when you execute `chezm
 
 ## Windows Setup
 
+**IMPORTANT:** winget is required for Windows setup. If you encounter issues with winget not being found,
+see [Windows: winget not found](#windows-winget-not-found) troubleshooting section.
+
 ### Manual Prerequisites (Windows)
 
 #### Step 1: Install winget (if not available)
@@ -248,6 +251,34 @@ and install the `.msixbundle` file.
 
 After manual installation, you can still use the bootstrap to install Bitwarden CLI and other
 packages.
+
+#### Solution 4: Fix PATH for wrong user profile
+
+If winget is installed but not found, the issue may be that PATH contains WindowsApps folders
+for the wrong user profile instead of the current user.
+
+```powershell
+# Step 1: Register the App Installer package
+Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
+
+# Step 2: Check if winget.exe exists in current user's WindowsApps
+Test-Path $env:LOCALAPPDATA\Microsoft\WindowsApps\winget.exe
+
+# Step 3: Add WindowsApps folder to PATH permanently (User environment)
+[Environment]::SetEnvironmentVariable(
+    "PATH",
+    [Environment]::GetEnvironmentVariable("PATH", "User") + ";$env:LOCALAPPDATA\Microsoft\WindowsApps",
+    "User"
+)
+
+# Step 4: Add to current session so it works immediately
+$env:PATH += ";$env:LOCALAPPDATA\Microsoft\WindowsApps"
+
+# Step 5: Verify winget works
+winget --version
+```
+
+If package registration fails, download and install manually from <https://aka.ms/getwinget>
 
 ### NixOS: Bootstrap fails "bitwarden-cli not found"
 
