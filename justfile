@@ -8,7 +8,7 @@ default: chezmoi-quick-apply
 # Bitwarden session management
 bw-unlock:
     #!/usr/bin/env nu
-    if not (term is-terminal) {
+    if not $nu.is-interactive {
         print "❌ Error: This target requires interactive input (a terminal)"
         print "   Run this command directly from your terminal, not in a pipeline or script"
         exit 1
