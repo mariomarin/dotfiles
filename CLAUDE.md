@@ -245,16 +245,16 @@ automatically detects and updates:
 
 ```bash
 # Update everything (system packages, plugins, tools)
-make update
+just update
 
 # Update only plugins (vim, tmux)
-make update-plugins
+just update-plugins
 
 # Update only system packages (nixos, nix)
-make update-system
+just update-system
 
 # Quick apply without running topgrade
-make quick-apply
+just quick-apply
 ```
 
 ## Common Commands
@@ -277,7 +277,7 @@ just format             # Format all files
 just lint               # Run all linting checks
 ```
 
-**Note:** The repository uses `justfile` for task automation. Component-specific Makefiles remain for specialized operations.
+**Note:** The repository uses `justfile` for task automation across all components.
 
 ## Component-Specific Documentation
 
@@ -408,7 +408,7 @@ This repository uses `devenv.nix` for development tools. Use `make format` and `
    - Fast, incremental
    - Pre-commit hooks
 
-2. **`Makefile` format targets** (lines 4-62) - Manual formatting
+2. **`justfile` format targets** - Manual formatting
    - Runs on **entire repository**
    - For manual use outside git workflow
    - Useful for batch formatting
@@ -418,7 +418,7 @@ This repository uses `devenv.nix` for development tools. Use `make format` and `
 Example - if changing shfmt arguments:
 
 - `devenv.nix` line 74: `entry = lib.mkForce "shfmt -w -i 2 -ci -sr -kp";`
-- `Makefile` line 43: `@shfmt -w -i 2 -ci -sr -kp .`
+- `justfile`: `@shfmt -w -i 2 -ci -sr -kp .`
 
 **Formatters to keep in sync**:
 
@@ -459,7 +459,7 @@ Run `chezmoi apply` after system updates to fix any broken symlinks.
 ## Important Notes
 
 - This repository manages system configurations - be careful when applying changes
-- The Makefile provides convenient targets for common operations
+- The justfile provides convenient targets for common operations
 - External tools (tmux plugins, etc.) are synced separately from chezmoi apply
 - Chezmoi scripts in `.chezmoiscripts/` run automatically during `chezmoi apply`
 

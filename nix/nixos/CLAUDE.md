@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with the NixOS configura
 
 ```text
 nixos/
-├── Makefile                     # NixOS rebuild commands
+├── justfile                     # NixOS rebuild commands
 ├── flake.nix                    # Nix flakes configuration
 ├── flake.lock                   # Locked flake dependencies
 ├── common.nix                   # Universal settings for all hosts
@@ -131,7 +131,7 @@ See [README.md](README.md#adding-packages) for module selection guide. Then:
 
 ## NixOS Commands
 
-See [README.md](README.md#common-operations) for common NixOS commands and Makefile targets.
+See [README.md](README.md#common-operations) for common NixOS commands and justfile targets.
 
 ## Flake Configuration
 
