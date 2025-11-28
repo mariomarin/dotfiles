@@ -14,12 +14,15 @@ nix/
 │   ├── justfile
 │   ├── hosts/          # Per-host configurations
 │   └── modules/        # Reusable NixOS modules
-└── darwin/             # nix-darwin configurations (macOS)
+├── darwin/             # nix-darwin configurations (macOS)
+│   ├── README.md
+│   ├── CLAUDE.md
+│   ├── justfile
+│   ├── hosts/          # Per-host configurations
+│   └── modules/        # Reusable darwin modules
+└── windows/            # Windows configuration docs (not Nix-based)
     ├── README.md
-    ├── CLAUDE.md
-    ├── justfile
-    ├── hosts/          # Per-host configurations
-    └── modules/        # Reusable darwin modules
+    └── hosts/          # Host-specific documentation
 ```
 
 ## Unified Flake
