@@ -8,10 +8,15 @@ default: chezmoi-quick-apply
 # Bitwarden session management
 bw-unlock:
     #!/usr/bin/env nu
-    let bw_status = (do { bw status | from json | get status } | complete | get stdout | str trim | default "unauthenticated")
+    let bw_status = try {
+        bw status | from json | get status
+    } catch {
+        "unauthenticated"
+    }
     let bw_session = if $bw_status == "unlocked" {
         print "✅ Vault is already unlocked"
-        let session = (do { bw unlock --raw --passwordenv BW_PASSWORD } | complete | get stdout | str trim)
+        let result = (bw unlock --raw --passwordenv BW_PASSWORD | complete)
+        let session = $result.stdout | str trim
         if ($session | is-empty) {
             print "⚠️  Could not get session token. You may need to run 'bw lock' and try again."
             exit 1
@@ -19,7 +24,7 @@ bw-unlock:
         $session
     } else if $bw_status == "locked" {
         print "🔓 Unlocking Bitwarden vault..."
-        (bw unlock --raw | str trim)
+        bw unlock --raw | str trim
     } else {
         print "❌ Bitwarden is not logged in. Please run 'bw login' first"
         exit 1
