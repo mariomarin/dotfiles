@@ -19,16 +19,6 @@
   # No desktop environment - pure CLI
   custom.desktop.enable = lib.mkForce false;
 
-  # Disable desktop-specific services
-  services.kmonad.enable = lib.mkForce false;
-  programs.kdeconnect.enable = lib.mkForce false;
-  hardware.bluetooth.enable = lib.mkForce false;
-  services.blueman.enable = lib.mkForce false;
-
-  # No audio - use Windows audio
-  services.pipewire.enable = lib.mkForce false;
-  hardware.pulseaudio.enable = lib.mkForce false;
-
   # Enable minimal system packages with modern CLI tools
   # Per-project tools should come from devenv.nix
   custom.minimal = {
