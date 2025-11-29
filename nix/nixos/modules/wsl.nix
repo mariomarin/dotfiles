@@ -18,16 +18,19 @@ in
 
   config = lib.mkMerge [
     # Only configure wsl options if the nixos-wsl module is available
-    (lib.mkIf (cfg.enable && hasWslModule) {
-      # Enable WSL integration
-      wsl = {
-        enable = true;
-        defaultUser = "mario";
+    (lib.mkIf (cfg.enable && hasWslModule) (
+      # Use optionalAttrs to only include wsl options if module exists
+      lib.optionalAttrs hasWslModule {
+        # Enable WSL integration
+        wsl = {
+          enable = true;
+          defaultUser = "mario";
 
-        # Use systemd as init (NixOS-WSL supports this)
-        useWindowsDriver = true;
-      };
-    })
+          # Use systemd as init (NixOS-WSL supports this)
+          useWindowsDriver = true;
+        };
+      }
+    ))
 
     (lib.mkIf cfg.enable {
 
@@ -54,9 +57,9 @@ in
       services.xserver.enable = lib.mkForce false;
       services.displayManager.enable = lib.mkForce false;
 
-      # No audio (use Windows audio)
-      hardware.pulseaudio.enable = lib.mkForce false;
-      services.pipewire.enable = lib.mkForce false;
+      # No audio (use Windows audio) - use mkDefault to avoid conflicts
+      hardware.pulseaudio.enable = lib.mkDefault false;
+      services.pipewire.enable = lib.mkDefault false;
 
       # WSL-specific packages (minimal)
       environment.systemPackages = with pkgs; [
