@@ -16,7 +16,7 @@ check-wsl:
 install-wsl:
     nu wsl.nu install-wsl
 
-# Import NixOS into WSL (requires nixos-wsl.tar.gz from chezmoi apply)
+# Import NixOS into WSL (requires nixos.wsl from chezmoi apply)
 import-nixos:
     nu wsl.nu import-nixos
 

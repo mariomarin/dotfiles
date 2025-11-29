@@ -60,9 +60,9 @@ def "main import-nixos" [] {
 
     print "📦 Importing NixOS into WSL..."
 
-    if not ("nixos-wsl.tar.gz" | path exists) {
-        print "❌ nixos-wsl.tar.gz not found"
-        print "   Run: nu wsl.nu download-nixos"
+    if not ("nixos.wsl" | path exists) {
+        print "❌ nixos.wsl not found"
+        print "   Run 'chezmoi apply' from parent directory to download it"
         exit 1
     }
 
@@ -70,7 +70,7 @@ def "main import-nixos" [] {
     print $"📂 Installation path: ($nixos_path)"
 
     # Import NixOS distribution
-    wsl --import NixOS $nixos_path nixos-wsl.tar.gz --version 2
+    wsl --import NixOS $nixos_path nixos.wsl --version 2
 
     print "✅ NixOS imported successfully"
     print "💡 Next steps:"
@@ -218,8 +218,8 @@ def "main setup" [] {
     # Step 2: Check for NixOS tarball
     print ""
     print "Step 2: Checking for NixOS-WSL tarball..."
-    if not ("nixos-wsl.tar.gz" | path exists) {
-        print "❌ nixos-wsl.tar.gz not found"
+    if not ("nixos.wsl" | path exists) {
+        print "❌ nixos.wsl not found"
         print ""
         print "The tarball is downloaded automatically by chezmoi."
         print "Please run 'chezmoi apply' from the parent directory first:"
@@ -230,7 +230,7 @@ def "main setup" [] {
         print "  just setup"
         exit 1
     }
-    print "✅ nixos-wsl.tar.gz found"
+    print "✅ nixos.wsl found"
 
     # Step 3: Import NixOS
     print ""
@@ -265,7 +265,7 @@ def "main help" [] {
     print "Usage: nu wsl.nu <command>"
     print ""
     print "Prerequisites:"
-    print "  Run 'chezmoi apply' first to download nixos-wsl.tar.gz"
+    print "  Run 'chezmoi apply' first to download nixos.wsl"
     print ""
     print "Commands:"
     print "  check-wsl        Check if WSL2 is installed"
@@ -283,7 +283,7 @@ def "main help" [] {
     print "  setup            Complete automated setup"
     print "  help             Show this help message"
     print ""
-    print "Note: The NixOS-WSL tarball is downloaded automatically by chezmoi"
+    print "Note: The NixOS-WSL file (nixos.wsl) is downloaded automatically by chezmoi"
     print "      when you run 'chezmoi apply' on Windows systems."
 }
 
