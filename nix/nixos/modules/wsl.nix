@@ -25,7 +25,7 @@ in
         defaultUser = "mario";
 
         # Windows interop - run .exe files from WSL
-        interop.enable = cfg.windowsInterop;
+        interop = cfg.windowsInterop;
 
         # WSL-specific mounts
         wslConf = {
