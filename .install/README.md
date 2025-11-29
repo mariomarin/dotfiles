@@ -238,10 +238,15 @@ chezmoi apply -v
 ### Manual Prerequisites (macOS)
 
 ```bash
-# Install chezmoi (choose one method)
-brew install chezmoi
-# Or without Homebrew:
-curl -sfL https://get.chezmoi.io | sh
+# Install Nix (if not already installed)
+curl -sfL https://install.determinate.systems/nix | sh -s -- install
+
+# Clone dotfiles
+git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
+cd ~/.local/share/chezmoi
+
+# Enter bootstrap shell (provides nushell, bitwarden-cli, git, chezmoi)
+nix-shell .install/shell.nix
 ```
 
 ### Setup (macOS)
@@ -266,11 +271,13 @@ EOF
 
 - **malus** - macOS desktop/laptop
 
-### Automatic Bootstrap + Apply (macOS)
+### Apply Configuration (macOS)
 
 ```bash
-# Initialize dotfiles (bootstrap auto-installs Nix + Bitwarden CLI)
-chezmoi init https://github.com/mariomarin/dotfiles.git
+# From within the nix-shell environment
+
+# Initialize chezmoi
+chezmoi init
 
 # Login to Bitwarden
 bw login
@@ -278,28 +285,21 @@ export BW_SESSION=$(bw unlock --raw)
 
 # Apply dotfiles
 chezmoi apply -v
-```
 
-### Apply nix-darwin Configuration
-
-```bash
-cd ~/.local/share/chezmoi/nix/darwin
-
-# First-time setup (installs nix-darwin and all packages)
+# Apply nix-darwin configuration (installs chezmoi, just, and all packages permanently)
 sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
 ```
 
 **Future updates:** `just darwin` (just now installed via nix-darwin)
 
-### What Happens Automatically (macOS)
+### What Happens (macOS)
 
-1. **Bootstrap** (`bootstrap-unix.sh` pre-hook):
-   - Installs Nix via Determinate Systems installer (flakes enabled)
-   - Installs Nushell via `nix profile install`
-   - Installs Bitwarden CLI via `nix profile install`
+1. **Bootstrap Shell** (`.install/shell.nix`):
+   - Provides temporary environment with: nushell, bitwarden-cli, git, chezmoi
+   - No permanent installations to user profile
 
 2. **nix-darwin Configuration**:
-   - Installs ALL system packages: just, neovim, git, etc.
+   - Installs ALL system packages permanently: just, neovim, git, etc.
    - Configures system settings
    - Enables services
 

@@ -9,25 +9,37 @@ case "$(uname -s)" in
   Darwin)
     # macOS bootstrap
 
-    # Install Nix with Determinate Systems installer (includes flakes by default)
+    # Verify Nix is installed
     if ! command -v nix > /dev/null 2>&1; then
-      echo "Installing Nix with Determinate Systems installer..." >&2
-      echo "This installer enables flakes by default and provides better macOS integration" >&2
-      curl -fsSL https://install.determinate.systems/nix | sh -s -- install
-      echo "⚠️  Please restart your shell and run 'chezmoi apply' again" >&2
-      exit 0
+      echo "❌ Nix not found. Please install Nix first:" >&2
+      echo "" >&2
+      echo "   curl -sfL https://install.determinate.systems/nix | sh -s -- install" >&2
+      echo "" >&2
+      echo "   Then clone dotfiles and use the bootstrap shell:" >&2
+      echo "   git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi" >&2
+      echo "   cd ~/.local/share/chezmoi" >&2
+      echo "   nix-shell .install/shell.nix" >&2
+      exit 1
     fi
 
-    # Install Nushell via Nix
+    # Verify Nushell is available
     if ! command -v nu > /dev/null 2>&1; then
-      echo "Installing Nushell via Nix..." >&2
-      nix profile install nixpkgs#nushell
+      echo "❌ Nushell not found. Bootstrap requires Nushell and Bitwarden CLI." >&2
+      echo "" >&2
+      echo "   Use bootstrap shell (recommended):" >&2
+      echo "   cd ~/.local/share/chezmoi" >&2
+      echo "   nix-shell .install/shell.nix" >&2
+      exit 1
     fi
 
-    # Install Bitwarden CLI via Nix (avoid Homebrew dependency)
+    # Verify Bitwarden CLI is available
     if ! command -v bw > /dev/null 2>&1; then
-      echo "Installing Bitwarden CLI via Nix..." >&2
-      nix profile install nixpkgs#bitwarden-cli
+      echo "❌ Bitwarden CLI not found. Bootstrap requires Nushell and Bitwarden CLI." >&2
+      echo "" >&2
+      echo "   Use bootstrap shell (recommended):" >&2
+      echo "   cd ~/.local/share/chezmoi" >&2
+      echo "   nix-shell .install/shell.nix" >&2
+      exit 1
     fi
     ;;
 
