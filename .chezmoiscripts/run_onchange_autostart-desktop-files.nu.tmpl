@@ -1,0 +1,112 @@
+#!/usr/bin/env nu
+# Manage desktop autostart files as symlinks to Nix store packages
+# Similar to the syncthing systemd unit approach
+# Only runs on Linux desktop machines
+
+{{- if and (eq .chezmoi.os "linux") .machineConfig.features.desktop }}
+
+{{ $autostartDir := joinPath .chezmoi.homeDir ".config/autostart" -}}
+{{ $applicationsDir := "/run/current-system/sw/share/applications" -}}
+
+# Create autostart directory if it doesn't exist
+mkdir {{ $autostartDir | quote }}
+
+# Function to create autostart symlink with optional modifications
+def create_autostart_link [source_file: string, target_name: string, add_delay: int = 0] {
+    let target_file = {{ $autostartDir | quote }} ++ "/" ++ $target_name
+
+    if not ($source_file | path exists) {
+        print $"Warning: Desktop file not found: ($source_file)"
+        return
+    }
+
+    # Resolve the symlink to get the actual Nix store path
+    let resolved_path = try {
+        readlink -f $source_file | str trim
+    } catch {
+        ""
+    }
+
+    if ($resolved_path | is-empty) or not ($resolved_path | path exists) {
+        print $"Error: Could not resolve ($source_file) to a valid file"
+        return
+    }
+
+    # For desktop files that need modifications (like adding delays),
+    # we'll create a modified copy instead of a direct symlink
+    if $add_delay > 0 {
+        print $"Creating modified autostart file: ($target_name) \(with ($add_delay)s delay\)"
+        # Create a modified version with autostart-specific entries
+        let content = (open $resolved_path | lines | where {|line| not ($line | str starts-with "X-GNOME-Autostart-")} | str join "\n")
+        $"($content)\nX-GNOME-Autostart-enabled=true\nX-GNOME-Autostart-Delay=($add_delay)" | save -f $target_file
+    } else {
+        # Create direct symlink for unmodified files
+        print $"Creating autostart symlink: ($target_name) -> ($resolved_path)"
+        rm -f $target_file
+        ln -sf $resolved_path $target_file
+    }
+}
+
+# CopyQ - with 2 second delay
+{{ if stat (joinPath $applicationsDir "com.github.hluk.copyq.desktop") }}
+create_autostart_link {{ joinPath $applicationsDir "com.github.hluk.copyq.desktop" | quote }} "copyq.desktop" 2
+{{ else }}
+print "CopyQ desktop file not found - skipping"
+{{ end }}
+
+# Firefox - with 5 second delay
+{{ if stat (joinPath $applicationsDir "firefox.desktop") }}
+create_autostart_link {{ joinPath $applicationsDir "firefox.desktop" | quote }} "firefox.desktop" 5
+{{ else }}
+print "Firefox desktop file not found - skipping"
+{{ end }}
+
+# Xfce4 Power Manager - no delay needed
+{{ if stat (joinPath $applicationsDir "xfce4-power-manager.desktop") }}
+create_autostart_link {{ joinPath $applicationsDir "xfce4-power-manager.desktop" | quote }} "xfce4-power-manager.desktop" 0
+{{ else }}
+# If system desktop file doesn't exist, create a custom one
+print "Creating custom xfce4-power-manager autostart file"
+"[Desktop Entry]
+Type=Application
+Name=Xfce Power Manager
+Comment=Power management for the Xfce desktop
+Icon=xfce4-power-manager-settings
+Exec=xfce4-power-manager --daemon
+Hidden=false
+Terminal=false
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+" | save -f {{ joinPath $autostartDir "xfce4-power-manager.desktop" | quote }}
+{{ end }}
+
+# Alacritty with tmux - custom autostart entry
+print "Creating alacritty-tmux autostart file"
+"[Desktop Entry]
+Type=Application
+Name=Alacritty Terminal (tmux)
+Comment=Start Alacritty terminal with tmux session
+Icon=Alacritty
+Exec=alacritty -e zsh -c \"sesh last || tmux new-session -A -s main\"
+Terminal=false
+Hidden=false
+Categories=System;TerminalEmulator;
+StartupNotify=true
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=3
+" | save -f {{ joinPath $autostartDir "alacritty-tmux.desktop" | quote }}
+
+# KDE Connect - for non-Plasma desktops
+{{ if stat (joinPath $applicationsDir "org.kde.kdeconnect.nonplasma.desktop") }}
+create_autostart_link {{ joinPath $applicationsDir "org.kde.kdeconnect.nonplasma.desktop" | quote }} "kdeconnect-indicator.desktop" 5
+{{ else }}
+print "KDE Connect indicator desktop file not found - skipping"
+{{ end }}
+
+# Remove obsolete autostart files
+print "Removing obsolete autostart files..."
+rm -f {{ joinPath $autostartDir "ssh-agent.desktop" | quote }}
+
+print "Autostart configuration complete"
+
+{{- end }}

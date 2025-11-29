@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/env nu
+# Setup syncthing systemd user service
+# Only runs on Linux (NixOS)
 
 # From: https://nixos.org/manual/nixos/stable/index.html#sect-nixos-systemd-nixos
 # User systemd services on the other hand, should be treated differently.
@@ -6,36 +8,37 @@
 # using systemd.packages will make you able to start the service via
 # systemctl --user start, but it won't start automatically on login.
 
+{{- if eq .chezmoi.os "linux" }}
+
 {{ $serviceName := "syncthing.service" -}}
 {{ $runDir := "/run/current-system/sw/lib/systemd/user" -}}
 {{ $runFile := joinPath $runDir $serviceName -}}
 {{ $serviceDir := joinPath .chezmoi.homeDir ".config/systemd/user" -}}
 {{ $serviceFile := joinPath $serviceDir $serviceName -}}
 {{ $targetDir := joinPath .chezmoi.homeDir ".config/systemd/user/default.target.wants" -}}
-{{ $targetFile := joinPath $targetDir $serviceName -}}
 
 # Check if the service file exists in the system
 {{ if not (stat $runFile) }}
-echo "Warning: Syncthing systemd unit not found at {{ $runFile }}"
-echo "Make sure syncthing is installed in your NixOS system configuration"
+print "Warning: Syncthing systemd unit not found at {{ $runFile }}"
+print "Make sure syncthing is installed in your NixOS system configuration"
 exit 0
 {{ end }}
 
 # Resolve the symlink to get the actual Nix store path
-resolved_path=$(readlink -f {{ $runFile }})
-if [ -z "$resolved_path" ] || [ ! -f "$resolved_path" ]; then
-    echo "Error: Could not resolve {{ $runFile }} to a valid file"
+let resolved_path = (readlink -f {{ $runFile | quote }} | str trim)
+if ($resolved_path | is-empty) or not ({{ $runFile | quote }} | path exists) {
+    print "Error: Could not resolve {{ $runFile }} to a valid file"
     exit 1
-fi
+}
 
 # Function to setup the symlink and enable service
-setup_syncthing_service() {
-    echo "$1"
-    echo "Linking to: $resolved_path"
-    mkdir -p {{ $serviceDir }}
-    mkdir -p {{ $targetDir }}
-    rm -f {{ $serviceFile }}
-    ln -sf "$resolved_path" {{ $serviceFile }}
+def setup_syncthing_service [message: string] {
+    print $message
+    print $"Linking to: ($resolved_path)"
+    mkdir {{ $serviceDir | quote }}
+    mkdir {{ $targetDir | quote }}
+    rm -f {{ $serviceFile | quote }}
+    ln -sf $resolved_path {{ $serviceFile | quote }}
     systemctl --user daemon-reload
     systemctl --user enable {{ $serviceName }}
 }
@@ -47,7 +50,14 @@ exit 0
 {{ end }}
 
 # Check if the symlink target has changed (e.g., Nix store path updated)
-current_target=$(readlink {{ $serviceFile }} || echo "")
-if [ "$current_target" != "$resolved_path" ]; then
+let current_target = try {
+    readlink {{ $serviceFile | quote }} | str trim
+} catch {
+    ""
+}
+
+if $current_target != $resolved_path {
     setup_syncthing_service "Updating syncthing systemd user service symlink (Nix store path changed)..."
-fi
+}
+
+{{- end }}
