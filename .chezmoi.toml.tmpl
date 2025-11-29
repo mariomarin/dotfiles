@@ -1,23 +1,30 @@
 {{- /* Interactive hostname selection on first init */ -}}
 {{- $hostname := "" -}}
-{{- $hostnames := list
-  "dendrite (NixOS Laptop - ThinkPad T470)"
-  "mitosis (NixOS VM - headless server)"
-  "symbiont (NixOS WSL - headless)"
-  "malus (macOS Desktop)"
-  "prion (Windows Desktop - native workstation)"
-  "spore (Windows Cloud - M365 DevBox)"
-  "other (Custom hostname)"
--}}
 
-{{- $selectedHost := promptMultichoiceOnce . "hostname" "Select your machine hostname" $hostnames -}}
-
-{{- /* Extract hostname from selection (format: "hostname (description)") */ -}}
-{{- if contains $selectedHost "other" -}}
-  {{- $hostname = promptStringOnce . "customHostname" "Enter custom hostname" .chezmoi.hostname -}}
+{{- /* Check if hostname was already provided via flag or previous config */ -}}
+{{- if hasKey . "hostname" -}}
+  {{- $hostname = .hostname -}}
 {{- else -}}
-  {{- $parts := splitList " " $selectedHost -}}
-  {{- $hostname = index $parts 0 -}}
+  {{- /* Show interactive prompt if not already set */ -}}
+  {{- $hostnames := list
+    "dendrite (NixOS Laptop - ThinkPad T470)"
+    "mitosis (NixOS VM - headless server)"
+    "symbiont (NixOS WSL - headless)"
+    "malus (macOS Desktop)"
+    "prion (Windows Desktop - native workstation)"
+    "spore (Windows Cloud - M365 DevBox)"
+    "other (Custom hostname)"
+  -}}
+
+  {{- $selectedHost := promptMultichoiceOnce . "hostname" "Select your machine hostname" $hostnames -}}
+
+  {{- /* Extract hostname from selection (format: "hostname (description)") */ -}}
+  {{- if contains $selectedHost "other" -}}
+    {{- $hostname = promptStringOnce . "customHostname" "Enter custom hostname" .chezmoi.hostname -}}
+  {{- else -}}
+    {{- $parts := splitList " " $selectedHost -}}
+    {{- $hostname = index $parts 0 -}}
+  {{- end -}}
 {{- end -}}
 
 {{- /* Detect environment */ -}}
