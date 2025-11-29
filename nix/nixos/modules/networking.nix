@@ -4,7 +4,7 @@
   # Networking configuration - only for non-WSL systems
   # WSL uses Windows networking stack
   # Note: hostname is set in host-specific configuration
-  config = lib.mkIf (!config.custom.wsl.enable or false) {
+  config = lib.mkIf (!config.wsl.enable or false) {
     networking = {
       nameservers = [ "127.0.0.1" "::1" ];
       networkmanager.enable = true;
