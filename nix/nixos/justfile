@@ -15,8 +15,8 @@ _check-os:
 default: _check-os
     @just switch
 
-# Default host (dendrite - portable workstation)
-HOST := env_var_or_default("HOST", "dendrite")
+# Auto-detect hostname or use HOST environment variable
+HOST := env_var_or_default("HOST", `hostname`)
 
 # First-time NixOS setup (use this after fresh NixOS install)
 first-time: _check-os
