@@ -5,7 +5,7 @@ set shell := ["nu", "-c"]
 # OS compatibility check
 _check-os:
     #!/usr/bin/env nu
-    if (sys | get host.name) == "Windows" {
+    if (sys).host.name == "Windows" {
         print "❌ Error: Tmux is only available on Unix-like systems (Linux, macOS)"
         print "   Windows does not support tmux. Consider using Windows Terminal with WSL instead."
         exit 1
