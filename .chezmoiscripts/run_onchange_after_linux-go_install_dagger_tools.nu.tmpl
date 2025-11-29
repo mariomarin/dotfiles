@@ -10,4 +10,9 @@ print $"Installing container-use@($container_use_version) from source..."
 go install $"github.com/dagger/container-use/cmd/container-use@($container_use_version)"
 
 print "container-use installed successfully"
-container-use version | ignore
+
+# Verify installation using full path
+let go_bin = $"($env.HOME)/go/bin"
+with-env {PATH: ($env.PATH | prepend $go_bin)} {
+    container-use version | ignore
+}
