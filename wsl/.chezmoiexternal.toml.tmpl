@@ -1,0 +1,9 @@
+{{- if eq .chezmoi.os "windows" -}}
+# NixOS-WSL tarball for WSL setup
+# Downloaded automatically on Windows systems
+
+["nixos-wsl.tar.gz"]
+    type = "file"
+    url = "https://github.com/nix-community/NixOS-WSL/releases/latest/download/nixos-wsl.tar.gz"
+    refreshPeriod = "720h"  # Refresh every 30 days
+{{- end -}}

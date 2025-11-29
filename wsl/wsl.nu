@@ -47,46 +47,6 @@ def "main install-wsl" [] {
     print "   After restart, run: nu wsl.nu check-wsl"
 }
 
-# Download latest NixOS-WSL tarball
-def "main download-nixos" [] {
-    check-os
-    # Check if already downloaded
-    if ("nixos-wsl.tar.gz" | path exists) {
-        print "✅ nixos-wsl.tar.gz already exists"
-        print "💡 To re-download, delete the file first: rm nixos-wsl.tar.gz"
-        exit 0
-    }
-
-    print "📥 Downloading latest NixOS-WSL..."
-
-    # Fetch latest release info from GitHub
-    let release_url = "https://api.github.com/repos/nix-community/NixOS-WSL/releases/latest"
-    let release_info = (http get $release_url)
-    let version = $release_info.tag_name
-
-    # Find the tar.gz asset (might have different naming)
-    let assets = ($release_info.assets | where name =~ "tar.gz")
-    if ($assets | is-empty) {
-        print "❌ No tar.gz asset found in latest release"
-        print "Available assets:"
-        $release_info.assets | select name browser_download_url | print
-        exit 1
-    }
-
-    let download_url = ($assets | first | get browser_download_url)
-
-    print $"📦 Latest version: ($version)"
-    print $"🔗 Download URL: ($download_url)"
-    print ""
-
-    # Download to current directory
-    print "⏬ Downloading..."
-    http get $download_url | save nixos-wsl.tar.gz
-
-    print "✅ Downloaded nixos-wsl.tar.gz"
-    print "💡 Next step: nu wsl.nu import-nixos"
-}
-
 # Import NixOS into WSL
 def "main import-nixos" [] {
     check-os
@@ -235,9 +195,10 @@ def "main setup" [] {
     print ""
     print "This will:"
     print "  1. Check/Install WSL2"
-    print "  2. Download NixOS-WSL"
-    print "  3. Import NixOS into WSL"
-    print "  4. Set NixOS as default"
+    print "  2. Import NixOS into WSL (tarball downloaded via chezmoi)"
+    print "  3. Set NixOS as default"
+    print ""
+    print "⚠️  Note: Run 'chezmoi apply' first to download nixos-wsl.tar.gz"
     print ""
     print "Press Ctrl+C to cancel, or Enter to continue..."
     input
@@ -254,14 +215,22 @@ def "main setup" [] {
     }
     print "✅ WSL2 is installed"
 
-    # Step 2: Download NixOS
+    # Step 2: Check for NixOS tarball
     print ""
-    print "Step 2: Downloading NixOS-WSL..."
+    print "Step 2: Checking for NixOS-WSL tarball..."
     if not ("nixos-wsl.tar.gz" | path exists) {
-        main download-nixos
-    } else {
-        print "✅ nixos-wsl.tar.gz already downloaded"
+        print "❌ nixos-wsl.tar.gz not found"
+        print ""
+        print "The tarball is downloaded automatically by chezmoi."
+        print "Please run 'chezmoi apply' from the parent directory first:"
+        print ""
+        print "  cd .."
+        print "  chezmoi apply"
+        print "  cd wsl"
+        print "  just setup"
+        exit 1
     }
+    print "✅ nixos-wsl.tar.gz found"
 
     # Step 3: Import NixOS
     print ""
@@ -295,10 +264,12 @@ def "main help" [] {
     print ""
     print "Usage: nu wsl.nu <command>"
     print ""
+    print "Prerequisites:"
+    print "  Run 'chezmoi apply' first to download nixos-wsl.tar.gz"
+    print ""
     print "Commands:"
     print "  check-wsl        Check if WSL2 is installed"
     print "  install-wsl      Install WSL2 (requires Admin)"
-    print "  download-nixos   Download latest NixOS-WSL tarball"
     print "  import-nixos     Import NixOS into WSL"
     print "  start-nixos      Start NixOS WSL instance"
     print "  list-distros     List installed WSL distributions"
@@ -311,6 +282,9 @@ def "main help" [] {
     print "  health           Health check for WSL setup"
     print "  setup            Complete automated setup"
     print "  help             Show this help message"
+    print ""
+    print "Note: The NixOS-WSL tarball is downloaded automatically by chezmoi"
+    print "      when you run 'chezmoi apply' on Windows systems."
 }
 
 def main [] {
