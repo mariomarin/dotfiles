@@ -97,8 +97,8 @@
           hostname = "symbiont";
           system = "x86_64-linux";
           modules = [
-            # NixOS-WSL base module
-            nixos-wsl.nixosModules.wsl
+            # NixOS-WSL base module (provides wsl.* options)
+            nixos-wsl.nixosModules.default
 
             # Main configuration (shared)
             ./configuration.nix

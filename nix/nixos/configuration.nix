@@ -9,7 +9,6 @@
     ./modules/boot.nix
     ./modules/networking.nix
     ./modules/locale.nix
-    ./modules/wsl.nix
     ./modules/minimal.nix
     ./modules/development.nix
     ./modules/desktop.nix

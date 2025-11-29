@@ -10,14 +10,22 @@
   # Set hostname
   networking.hostName = "symbiont";
 
-  # Enable WSL support
-  custom.wsl = {
+  # Enable WSL support (nixos-wsl module provides these options)
+  wsl = {
     enable = true;
-    windowsInterop = true; # Allow running Windows executables
+    defaultUser = "mario";
+    useWindowsDriver = true;
   };
 
   # No desktop environment - pure CLI
   custom.desktop.enable = lib.mkForce false;
+
+  # Disable incompatible services for WSL
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+  boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
+  services.xserver.enable = lib.mkForce false;
+  hardware.pulseaudio.enable = lib.mkForce false;
+  services.pipewire.enable = lib.mkForce false;
 
   # Enable minimal system packages with modern CLI tools
   # Per-project tools should come from devenv.nix
