@@ -1,5 +1,10 @@
 sourceDir = "~/.local/share/chezmoi"
 
+{{- if eq .chezmoi.os "windows" }}
+[cd]
+command = "pwsh"
+{{- end }}
+
 [hooks.read-source-state.pre]
 {{- if eq .chezmoi.os "windows" }}
     command = "pwsh"
