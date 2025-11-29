@@ -63,7 +63,17 @@ def "main download-nixos" [] {
     let release_url = "https://api.github.com/repos/nix-community/NixOS-WSL/releases/latest"
     let release_info = (http get $release_url)
     let version = $release_info.tag_name
-    let download_url = ($release_info.assets | where name =~ "nixos-wsl.tar.gz" | first | get browser_download_url)
+
+    # Find the tar.gz asset (might have different naming)
+    let assets = ($release_info.assets | where name =~ "tar.gz")
+    if ($assets | is-empty) {
+        print "❌ No tar.gz asset found in latest release"
+        print "Available assets:"
+        $release_info.assets | select name browser_download_url | print
+        exit 1
+    }
+
+    let download_url = ($assets | first | get browser_download_url)
 
     print $"📦 Latest version: ($version)"
     print $"🔗 Download URL: ($download_url)"
