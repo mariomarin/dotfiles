@@ -18,6 +18,12 @@ case "$(uname -s)" in
       exit 0
     fi
 
+    # Install Nushell via Nix
+    if ! command -v nu > /dev/null 2>&1; then
+      echo "Installing Nushell via Nix..." >&2
+      nix profile install nixpkgs#nushell
+    fi
+
     # Install Bitwarden CLI via Nix (avoid Homebrew dependency)
     if ! command -v bw > /dev/null 2>&1; then
       echo "Installing Bitwarden CLI via Nix..." >&2
@@ -32,6 +38,16 @@ case "$(uname -s)" in
     if [ ! -f /etc/os-release ] || ! grep -q "ID=nixos" /etc/os-release; then
       echo "❌ This configuration only supports NixOS on Linux" >&2
       echo "   For other distributions, consider using NixOS or WSL with NixOS" >&2
+      exit 1
+    fi
+
+    # Verify Nushell is installed
+    if ! command -v nu > /dev/null 2>&1; then
+      echo "❌ Nushell not found. Please add to your NixOS configuration:" >&2
+      echo "   environment.systemPackages = [ pkgs.nushell ];" >&2
+      echo "" >&2
+      echo "   Or install temporarily:" >&2
+      echo "   nix-env -iA nixos.nushell" >&2
       exit 1
     fi
 
