@@ -10,7 +10,7 @@ print "Setting up autorandr..."
 if (which autorandr | is-not-empty) {
     # Save current configuration as 'default'
     let current = (autorandr | complete)
-    if ($current.stdout | str contains "default (current)" | not) {
+    if not ($current.stdout | str contains "default (current)") {
         print "Saving current display configuration as 'default' profile..."
         autorandr --save default | ignore
     }
