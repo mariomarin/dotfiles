@@ -27,7 +27,6 @@
 
   # Disable audio (WSL uses Windows audio)
   sound.enable = lib.mkForce false;
-  hardware.pulseaudio.enable = lib.mkForce false;
 
   # Enable minimal system packages with modern CLI tools
   # Per-project tools should come from devenv.nix
