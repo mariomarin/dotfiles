@@ -121,10 +121,13 @@ winget install twpayne.chezmoi
 **Automatic Bootstrap + Apply:**
 
 ```powershell
-# Initialize dotfiles (bootstrap auto-installs winget + Bitwarden CLI + Nushell)
+# Step 1: Initialize dotfiles (bootstrap auto-installs winget + Bitwarden CLI + Nushell)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
-# Login to Bitwarden and apply
+# Step 2: If Nushell was just installed, restart PowerShell
+# (Only needed on first run - the bootstrap will warn you if this is required)
+
+# Step 3: Login to Bitwarden and apply
 bw login
 $env:BW_SESSION = bw unlock --raw
 chezmoi apply
@@ -134,7 +137,11 @@ chezmoi apply
 
 - winget registration and PATH setup (if not found)
 - Nushell and Bitwarden CLI installation
+- PATH refresh (commands available immediately if possible)
 - Declarative package installation (just, neovim, direnv, etc.)
+
+> **Note:** If the bootstrap installs Nushell for the first time, you may need to restart PowerShell
+> before running `chezmoi apply`. The bootstrap will detect this and warn you.
 
 </details>
 

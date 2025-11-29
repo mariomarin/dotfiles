@@ -45,6 +45,11 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     Write-Host "✓ winget $version already available" -ForegroundColor Green
 }
 
+# Function to refresh PATH in current session
+function Refresh-Path {
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+}
+
 # Install Nushell
 Write-Host "📦 Checking Nushell..." -ForegroundColor White
 if (-not (Get-Command nu -ErrorAction SilentlyContinue)) {
@@ -52,6 +57,17 @@ if (-not (Get-Command nu -ErrorAction SilentlyContinue)) {
     winget install --id Nushell.Nushell --exact --silent --accept-package-agreements --accept-source-agreements
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  ✓ Nushell installed" -ForegroundColor Green
+
+        # Refresh PATH to make nu available immediately
+        Refresh-Path
+
+        # Verify nu is now available
+        if (Get-Command nu -ErrorAction SilentlyContinue) {
+            Write-Host "  ✓ nu command is ready" -ForegroundColor Green
+        } else {
+            Write-Host "  ⚠️  nu installed but not in PATH yet" -ForegroundColor Yellow
+            Write-Host "  Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
+        }
     } else {
         Write-Host "  ❌ Failed to install Nushell" -ForegroundColor Red
         exit 1
@@ -67,6 +83,17 @@ if (-not (Get-Command bw -ErrorAction SilentlyContinue)) {
     winget install --id Bitwarden.CLI --exact --silent --accept-package-agreements --accept-source-agreements
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  ✓ Bitwarden CLI installed" -ForegroundColor Green
+
+        # Refresh PATH to make bw available immediately
+        Refresh-Path
+
+        # Verify bw is now available
+        if (Get-Command bw -ErrorAction SilentlyContinue) {
+            Write-Host "  ✓ bw command is ready" -ForegroundColor Green
+        } else {
+            Write-Host "  ⚠️  bw installed but not in PATH yet" -ForegroundColor Yellow
+            Write-Host "  Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
+        }
     } else {
         Write-Host "  ❌ Failed to install Bitwarden CLI" -ForegroundColor Red
         exit 1
@@ -75,5 +102,20 @@ if (-not (Get-Command bw -ErrorAction SilentlyContinue)) {
     Write-Host "  ✓ Bitwarden CLI already installed" -ForegroundColor Green
 }
 
+Write-Host "" -ForegroundColor White
 Write-Host "✅ Bootstrap complete for Windows" -ForegroundColor Green
-Write-Host "⚠️  Please restart PowerShell to use new commands (nu, bw)" -ForegroundColor Yellow
+
+# Final check - warn if commands still not available
+$needsRestart = $false
+if (-not (Get-Command nu -ErrorAction SilentlyContinue)) {
+    $needsRestart = $true
+}
+if (-not (Get-Command bw -ErrorAction SilentlyContinue)) {
+    $needsRestart = $true
+}
+
+if ($needsRestart) {
+    Write-Host "" -ForegroundColor White
+    Write-Host "⚠️  IMPORTANT: Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
+    Write-Host "   Newly installed commands (nu, bw) require a fresh PowerShell session" -ForegroundColor Yellow
+}

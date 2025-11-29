@@ -58,7 +58,8 @@ winget install twpayne.chezmoi
 # Initialize dotfiles (bootstrap auto-installs winget, Nushell, and Bitwarden CLI)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
-# ⚠️  IMPORTANT: Restart PowerShell after first init to load bw command
+# ⚠️  IMPORTANT: If this is your first run and Nushell was just installed,
+#              restart PowerShell before continuing (the bootstrap will warn you)
 # Close and reopen PowerShell, then continue:
 
 # Login to Bitwarden
