@@ -19,7 +19,7 @@ packages:
             - Git.Git
             - Neovim.Neovim
             - direnv.direnv
-            - casey.just
+            - Casey.Just
             - Nushell.Nushell
             - Alacritty.Alacritty
             - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)
