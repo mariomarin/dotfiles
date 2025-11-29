@@ -23,8 +23,11 @@ Bootstrap scripts run automatically as chezmoi pre-hooks when you execute `chezm
 
 ## Windows Setup
 
-**IMPORTANT:** winget is required for Windows setup. If you encounter issues with winget not being found,
-see [Windows: winget not found](#windows-winget-not-found) troubleshooting section.
+**IMPORTANT:**
+
+- **Use PowerShell** (not cmd.exe) for all Windows commands
+- winget is required for Windows setup. If you encounter issues with winget not being found,
+  see [Windows: winget not found](#windows-winget-not-found) troubleshooting section.
 
 ### Manual Prerequisites (Windows)
 
@@ -71,9 +74,27 @@ chezmoi init https://github.com/mariomarin/dotfiles.git
 
 # Login to Bitwarden
 bw login
+
+# Unlock and set session (PowerShell syntax)
 $env:BW_SESSION = bw unlock --raw
 
 # Apply configuration
+chezmoi apply -v
+```
+
+**If using cmd.exe instead of PowerShell:**
+
+```cmd
+REM Login to Bitwarden
+bw login
+
+REM Unlock vault (copy the output token)
+bw unlock --raw
+
+REM Set session (paste the token from above)
+set BW_SESSION=your-session-token-here
+
+REM Apply configuration
 chezmoi apply -v
 ```
 
