@@ -28,6 +28,7 @@ in
       upterm # Secure terminal sharing
       viddy # Modern watch command with diff highlighting
       bash # Bourne Again Shell
+      nushell # Modern shell with structured data support (used by chezmoi scripts)
 
       # File utilities
       file # Determine file types
