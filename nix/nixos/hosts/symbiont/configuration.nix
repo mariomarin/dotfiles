@@ -76,12 +76,6 @@
   # WSL-specific optimizations
   boot.tmp.cleanOnBoot = true;
 
-  # Use systemd-resolved (works better in WSL than dnscrypt)
-  services.resolved = {
-    enable = true;
-    dnssec = "false"; # Can cause issues in WSL
-  };
-
   # Disable printing and other desktop services
   services.avahi.enable = lib.mkForce false;
   services.printing.enable = lib.mkForce false;
