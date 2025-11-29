@@ -4,7 +4,7 @@
 
 # Check if running on Windows
 def check-os [] {
-    if (sys).host.name != "Windows" {
+    if $nu.os-info.name != "windows" {
         print "❌ Error: WSL setup commands are only for Windows"
         print "   These commands help set up NixOS on WSL2 from Windows"
         exit 1

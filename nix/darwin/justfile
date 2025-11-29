@@ -5,7 +5,7 @@ set shell := ["nu", "-c"]
 # OS compatibility check
 _check-os:
     #!/usr/bin/env nu
-    if (sys).host.name != "Darwin" {
+    if $nu.os-info.name != "macos" {
         print "❌ Error: nix-darwin commands are only available on macOS"
         print "   This justfile manages macOS system configuration via nix-darwin"
         exit 1

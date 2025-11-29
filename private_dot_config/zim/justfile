@@ -5,7 +5,7 @@ set shell := ["nu", "-c"]
 # OS compatibility check
 _check-os:
     #!/usr/bin/env nu
-    if (sys).host.name == "Windows" {
+    if $nu.os-info.name == "windows" {
         print "❌ Error: Zim (Zsh framework) is only available on Unix-like systems"
         print "   Windows does not support Zsh natively. Consider using WSL for Zsh."
         exit 1
