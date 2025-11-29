@@ -1,0 +1,13 @@
+#!/usr/bin/env nu
+# Install container-use from source
+# This script runs when the containerUse version in .chezmoidata.toml changes
+
+let container_use_version = "{{ .versions.containerUse }}"
+
+print $"Installing container-use@($container_use_version) from source..."
+
+# Use go install to build and install the binary
+go install $"github.com/dagger/container-use/cmd/container-use@($container_use_version)"
+
+print "container-use installed successfully"
+container-use version | ignore

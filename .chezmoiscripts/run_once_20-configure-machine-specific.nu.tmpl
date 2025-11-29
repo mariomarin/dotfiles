@@ -1,0 +1,52 @@
+#!/usr/bin/env nu
+# Configure machine-specific settings based on detected machine type
+# Only runs on Linux
+
+{{- if eq .chezmoi.os "linux" }}
+
+let machine_type = "{{ .machineType }}"
+let is_desktop = {{ .machineConfig.features.desktop }}
+
+print $"Configuring for machine type: ($machine_type)"
+
+# Desktop-specific configuration
+if $is_desktop {
+    print "Setting up desktop environment..."
+
+    # Ensure XDG directories exist
+    mkdir ~/.config/autostart
+    mkdir ~/.local/share/applications
+    mkdir ~/Pictures/Wallpapers
+
+    # Set default applications for GUI
+    if (which xdg-mime | is-not-empty) {
+        xdg-mime default firefox.desktop x-scheme-handler/http
+        xdg-mime default firefox.desktop x-scheme-handler/https
+        xdg-mime default org.gnome.Nautilus.desktop inode/directory
+    }
+} else {
+    print "Headless machine detected, skipping desktop setup"
+
+    # Remove desktop-specific directories if they exist
+    rm -rf ~/.config/autostart
+    rm -rf ~/.local/share/applications
+}
+
+# SSH key setup for servers
+if ($machine_type == "vm-headless") or ("{{ .machineConfig.type }}" == "server") {
+    print "Setting up SSH for server..."
+
+    # Ensure SSH directory has correct permissions
+    mkdir ~/.ssh
+    chmod 700 ~/.ssh
+
+    # Create authorized_keys if it doesn't exist
+    touch ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/authorized_keys
+
+    print "Remember to add your SSH public key to ~/.ssh/authorized_keys"
+}
+
+print "Machine-specific configuration complete"
+
+{{- end }}
