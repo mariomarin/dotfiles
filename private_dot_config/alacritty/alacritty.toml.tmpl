@@ -8,6 +8,13 @@ import = [
     "~/.config/alacritty/themes/themes/ayu_light.toml"
 ]
 
+{{- if eq .chezmoi.os "windows" }}
+# Windows-specific: Launch WSL NixOS by default
+[shell]
+program = "wsl.exe"
+args = ["-d", "NixOS"]
+{{- end }}
+
 # Instead of using: `alacritty --print-events`
 # https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping
 # Open a terminal without Tmux, and get the key you want with the command:
