@@ -2,7 +2,7 @@
 
 {
   # Boot configuration - only for non-WSL systems
-  config = lib.mkIf (!config.custom.wsl.enable or false) {
+  config = lib.mkIf (!config.wsl.enable or false) {
     # Bootloader
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
