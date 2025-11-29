@@ -18,7 +18,7 @@ in
 
   config = lib.mkMerge [
     # Only configure wsl options if the nixos-wsl module is available
-    (lib.mkIf (cfg.enable && hasWslModule) (lib.optionalAttrs hasWslModule {
+    (lib.mkIf (cfg.enable && hasWslModule) {
       # Enable WSL integration
       wsl = {
         enable = true;
@@ -27,7 +27,7 @@ in
         # Use systemd as init (NixOS-WSL supports this)
         useWindowsDriver = true;
       };
-    }))
+    })
 
     (lib.mkIf cfg.enable {
 
