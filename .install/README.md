@@ -101,23 +101,46 @@ chezmoi apply -v
 ### What Happens Automatically (Windows)
 
 1. **Bootstrap** (`bootstrap-windows.ps1` pre-hook):
+   - Installs Nushell via winget
    - Installs Bitwarden CLI via winget
 
-2. **Declarative Packages** (`run_onchange_` scripts):
+2. **Declarative Packages** (`run_onchange_install-packages.nu` script):
    - Installs packages from `.chezmoidata/packages.yaml`
-   - Includes: just, nushell, neovim, git, and more
+   - Includes: just, neovim, git, and more
 
 ## NixOS Setup
 
 ### Manual Prerequisites (NixOS)
 
-```bash
-# Install Bitwarden CLI (required for chezmoi templates)
-nix-env -iA nixos.bitwarden-cli
-# Or add temporarily to configuration.nix: environment.systemPackages = [ pkgs.bitwarden-cli ];
+#### Option 1: Use bootstrap shell (Recommended for first-time setup)
 
-# Get git and chezmoi temporarily
-nix-shell -p git chezmoi
+```bash
+# Clone repository
+nix-shell -p git --run "git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi"
+
+# Enter bootstrap environment (provides nushell, bitwarden-cli, git, chezmoi)
+cd ~/.local/share/chezmoi
+nix-shell .install/shell.nix
+```
+
+#### Option 2: Install system-wide (Recommended for permanent setup)
+
+Add to `/etc/nixos/configuration.nix`:
+
+```nix
+environment.systemPackages = with pkgs; [
+  nushell
+  bitwarden-cli
+  git
+  chezmoi
+];
+```
+
+Then apply:
+
+```bash
+# Rebuild NixOS configuration
+sudo nixos-rebuild switch
 
 # Clone repository
 git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
@@ -161,8 +184,9 @@ chezmoi apply -v
    - Enables system services
 
 2. **Bootstrap** (`bootstrap-unix.sh` pre-hook):
-   - Verifies Bitwarden CLI is available (no installation)
-   - Fails if not found with helpful error message
+   - Verifies Nushell and Bitwarden CLI are available
+   - If missing, suggests using `.install/shell.nix` or adding to system packages
+   - No automatic installation (packages managed by NixOS configuration)
 
 ## macOS Setup
 
@@ -204,6 +228,7 @@ sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
 
 1. **Bootstrap** (`bootstrap-unix.sh` pre-hook):
    - Installs Nix via Determinate Systems installer (flakes enabled)
+   - Installs Nushell via `nix profile install`
    - Installs Bitwarden CLI via `nix profile install`
 
 2. **nix-darwin Configuration**:
