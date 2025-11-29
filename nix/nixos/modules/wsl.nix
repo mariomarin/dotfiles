@@ -24,18 +24,8 @@ in
         enable = true;
         defaultUser = "mario";
 
-        # Windows interop - run .exe files from WSL
-        interop = cfg.windowsInterop;
-
-        # WSL-specific mounts
-        wslConf = {
-          automount.root = "/mnt";
-          network.generateHosts = true;
-          network.generateResolvConf = true;
-        };
-
         # Use systemd as init (NixOS-WSL supports this)
-        nativeSystemd = true;
+        useWindowsDriver = true;
       };
     }))
 
