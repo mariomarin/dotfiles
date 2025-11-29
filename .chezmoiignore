@@ -43,6 +43,12 @@ devenv.yaml
 .chezmoiscripts/linux-*
 {{ end }}
 
+# Unix-only configurations (ignore on Windows)
+{{ if eq .chezmoi.os "windows" }}
+.config/zim
+.config/zim/**
+{{ end }}
+
 # Desktop-specific scripts (ignore on headless/server machines)
 {{ if not .machineConfig.features.desktop }}
 .chezmoiscripts/linux-30-*
