@@ -6,7 +6,6 @@ set shell := ["nu", "-c"]
 
 # OS compatibility check - only run on Windows
 _check-os:
-    #!/usr/bin/env nu
     if (sys | get host.name) != "Windows" {
         print "❌ Error: WSL setup commands are only for Windows"
         print "   These commands help set up NixOS on WSL2 from Windows"
@@ -19,7 +18,6 @@ default:
 
 # Check if WSL2 is installed
 check-wsl: _check-os
-    #!/usr/bin/env nu
     print "🔍 Checking WSL2 installation..."
     let result = (do { wsl --version } | complete)
     if $result.exit_code != 0 {
@@ -32,8 +30,7 @@ check-wsl: _check-os
 
 # Install WSL2 (requires Administrator privileges)
 install-wsl: _check-os
-    #!/usr/bin/env nu
-    # Check if WSL is already installed
+# Check if WSL is already installed
     let wsl_installed = (do { wsl --version } | complete | get exit_code) == 0
     if $wsl_installed {
         print "✅ WSL2 is already installed"
@@ -53,8 +50,7 @@ install-wsl: _check-os
 
 # Download latest NixOS-WSL tarball
 download-nixos: _check-os
-    #!/usr/bin/env nu
-    # Check if already downloaded
+# Check if already downloaded
     if ("nixos-wsl.tar.gz" | path exists) {
         print "✅ nixos-wsl.tar.gz already exists"
         print "💡 To re-download, delete the file first: rm nixos-wsl.tar.gz"
@@ -82,8 +78,7 @@ download-nixos: _check-os
 
 # Import NixOS into WSL
 import-nixos: _check-os
-    #!/usr/bin/env nu
-    # Check if NixOS is already imported
+# Check if NixOS is already imported
     let nixos_exists = (wsl --list --quiet | lines | any {|line| $line =~ "NixOS" })
     if $nixos_exists {
         print "✅ NixOS is already imported in WSL"
@@ -112,35 +107,30 @@ import-nixos: _check-os
 
 # Start NixOS WSL instance
 start-nixos: _check-os
-    #!/usr/bin/env nu
-    print "🚀 Starting NixOS WSL..."
+print "🚀 Starting NixOS WSL..."
     wsl -d NixOS
 
 # List installed WSL distributions
 list-distros: _check-os
-    #!/usr/bin/env nu
-    print "📋 Installed WSL distributions:"
+print "📋 Installed WSL distributions:"
     wsl --list --verbose
 
 # Set NixOS as default WSL distribution
 set-default: _check-os
-    #!/usr/bin/env nu
-    print "⚙️  Setting NixOS as default WSL distribution..."
+print "⚙️  Setting NixOS as default WSL distribution..."
     wsl --set-default NixOS
     print "✅ NixOS is now the default WSL distribution"
     print "💡 You can now use 'wsl' to start NixOS directly"
 
 # Stop NixOS WSL instance
 stop-nixos: _check-os
-    #!/usr/bin/env nu
-    print "🛑 Stopping NixOS WSL..."
+print "🛑 Stopping NixOS WSL..."
     wsl --terminate NixOS
     print "✅ NixOS WSL stopped"
 
 # Unregister/remove NixOS from WSL
 uninstall-nixos: _check-os
-    #!/usr/bin/env nu
-    print "⚠️  WARNING: This will remove NixOS and all its data!"
+print "⚠️  WARNING: This will remove NixOS and all its data!"
     print "Press Ctrl+C to cancel, or Enter to continue..."
     input
 
@@ -152,19 +142,16 @@ uninstall-nixos: _check-os
 
 # Run a command in NixOS WSL
 run COMMAND: _check-os
-    #!/usr/bin/env nu
-    wsl -d NixOS --exec {{COMMAND}}
+wsl -d NixOS --exec {{COMMAND}}
 
 # Open NixOS WSL in Windows Terminal
 terminal: _check-os
-    #!/usr/bin/env nu
-    print "🖥️  Opening NixOS in Windows Terminal..."
+print "🖥️  Opening NixOS in Windows Terminal..."
     wt -w 0 new-tab -p "NixOS"
 
 # Show WSL system information
 info: _check-os
-    #!/usr/bin/env nu
-    print "ℹ️  WSL System Information"
+print "ℹ️  WSL System Information"
     print "========================="
     print ""
     wsl --status
@@ -174,8 +161,7 @@ info: _check-os
 
 # Health check for WSL setup
 health: _check-os
-    #!/usr/bin/env nu
-    print "🏥 WSL NixOS Health Check"
+print "🏥 WSL NixOS Health Check"
     print "========================="
     print ""
 
@@ -210,8 +196,7 @@ health: _check-os
 
 # Complete WSL NixOS setup (one-command install)
 setup: _check-os
-    #!/usr/bin/env nu
-    print "🚀 Complete WSL NixOS Setup"
+print "🚀 Complete WSL NixOS Setup"
     print "==========================="
     print ""
     print "This will:"
