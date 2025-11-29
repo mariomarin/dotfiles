@@ -1,0 +1,28 @@
+#!/usr/bin/env nu
+# Download NixOS-WSL tarball for WSL setup
+# hash: {{ gitHubLatestRelease "nix-community/NixOS-WSL" | toJson }}
+
+{{- $nixosWslRelease := gitHubLatestRelease "nix-community/NixOS-WSL" -}}
+{{- $version := $nixosWslRelease.TagName -}}
+
+print "📥 Downloading NixOS-WSL {{ $version }}..."
+
+let wsl_dir = ("{{ .chezmoi.sourceDir }}" | path join "wsl")
+let target_file = ($wsl_dir | path join "nixos.wsl")
+
+# Check if already downloaded
+if ($target_file | path exists) {
+    print $"✅ nixos.wsl already exists in ($wsl_dir)"
+    exit 0
+}
+
+print $"📂 Target: ($target_file)"
+
+# Download the file
+let url = "https://github.com/nix-community/NixOS-WSL/releases/download/{{ $version }}/nixos.wsl"
+print $"🔗 URL: ($url)"
+
+http get $url | save $target_file
+
+print "✅ Downloaded nixos.wsl"
+print $"💡 File saved to: ($target_file)"
