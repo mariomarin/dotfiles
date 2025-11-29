@@ -1,69 +1,62 @@
 # WSL NixOS Setup and Management
 # This justfile helps Windows users set up and manage NixOS on WSL2
 
-# Set default shell to nushell for cross-platform scripting
-set shell := ["nu", "-c"]
-
-# OS compatibility check - only run on Windows
-_check-os:
-    nu scripts/check-os.nu
-
 # Default: show help
 default:
-    @just --list
+    @nu wsl.nu help
 
 # Check if WSL2 is installed
-check-wsl: _check-os
-    nu scripts/check-wsl.nu
+check-wsl:
+    nu wsl.nu check-wsl
 
 # Install WSL2 (requires Administrator privileges)
-install-wsl: _check-os
-    nu scripts/install-wsl.nu
+install-wsl:
+    nu wsl.nu install-wsl
 
 # Download latest NixOS-WSL tarball
-download-nixos: _check-os
-    nu scripts/download-nixos.nu
+download-nixos:
+    nu wsl.nu download-nixos
 
 # Import NixOS into WSL
-import-nixos: _check-os
-    nu scripts/import-nixos.nu
+import-nixos:
+    nu wsl.nu import-nixos
 
 # Start NixOS WSL instance
-start-nixos: _check-os
-    nu scripts/start-nixos.nu
+start-nixos:
+    nu wsl.nu start-nixos
 
 # List installed WSL distributions
-list-distros: _check-os
-    nu scripts/list-distros.nu
+list-distros:
+    nu wsl.nu list-distros
 
 # Set NixOS as default WSL distribution
-set-default: _check-os
-    nu scripts/set-default.nu
+set-default:
+    nu wsl.nu set-default
 
 # Stop NixOS WSL instance
-stop-nixos: _check-os
-    nu scripts/stop-nixos.nu
+stop-nixos:
+    nu wsl.nu stop-nixos
 
 # Unregister/remove NixOS from WSL
-uninstall-nixos: _check-os
-    nu scripts/uninstall-nixos.nu
+uninstall-nixos:
+    nu wsl.nu uninstall-nixos
 
 # Run a command in NixOS WSL
-run COMMAND: _check-os
-    wsl -d NixOS --exec {{COMMAND}}
+run COMMAND:
+    nu wsl.nu run {{COMMAND}}
 
 # Open NixOS WSL in Windows Terminal
-terminal: _check-os
-    nu scripts/terminal.nu
+terminal:
+    nu wsl.nu terminal
 
 # Show WSL system information
-info: _check-os
-    nu scripts/info.nu
+info:
+    nu wsl.nu info
 
 # Health check for WSL setup
-health: _check-os
-    nu scripts/health.nu
+health:
+    nu wsl.nu health
 
 # Complete WSL NixOS setup (one-command install)
-setup: _check-os
-    nu scripts/setup.nu
+setup:
+    nu wsl.nu setup
