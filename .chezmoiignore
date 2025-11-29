@@ -47,6 +47,14 @@ devenv.yaml
 {{ if eq .chezmoi.os "windows" }}
 .config/zim
 .config/zim/**
+.config/tmux
+.config/tmux/**
+{{ end }}
+
+# macOS-only configurations (ignore on non-macOS)
+{{ if ne .chezmoi.os "darwin" }}
+nix/darwin
+nix/darwin/**
 {{ end }}
 
 # Desktop-specific scripts (ignore on headless/server machines)

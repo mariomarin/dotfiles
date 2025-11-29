@@ -2,36 +2,27 @@
 
 set shell := ["nu", "-c"]
 
-# OS compatibility check
-_check-os:
-    #!/usr/bin/env nu
-    if $nu.os-info.name == "windows" {
-        print "❌ Error: Tmux is only available on Unix-like systems (Linux, macOS)"
-        print "   Windows does not support tmux. Consider using Windows Terminal with WSL instead."
-        exit 1
-    }
-
 # Default: reload config
-default: _check-os reload
+default: reload
 
 # Reload tmux configuration
-reload: _check-os
+reload:
     tmux source-file ~/.config/tmux/tmux.conf ; tmux display-message "Config reloaded!"
 
 # Install TPM plugins
-plugins-install: _check-os
+plugins-install:
     ~/.local/share/tmux/plugins/tpm/bin/install_plugins
 
 # Update TPM plugins
-plugins-update: _check-os
+plugins-update:
     ~/.local/share/tmux/plugins/tpm/bin/update_plugins all
 
 # Clean unused plugins
-plugins-clean: _check-os
+plugins-clean:
     ~/.local/share/tmux/plugins/tpm/bin/clean_plugins
 
 # Show tmux status
-status: _check-os
+status:
     #!/usr/bin/env nu
     let sessions = (do { tmux list-sessions } | complete)
     if $sessions.exit_code != 0 {
@@ -43,11 +34,11 @@ status: _check-os
     }
 
 # Kill tmux server
-kill-server: _check-os
+kill-server:
     tmux kill-server
 
 # Health check
-health: _check-os
+health:
     #!/usr/bin/env nu
     print "🔍 Tmux Health Check"
     print "=================="

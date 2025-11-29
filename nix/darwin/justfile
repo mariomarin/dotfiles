@@ -2,24 +2,15 @@
 
 set shell := ["nu", "-c"]
 
-# OS compatibility check
-_check-os:
-    #!/usr/bin/env nu
-    if $nu.os-info.name != "macos" {
-        print "❌ Error: nix-darwin commands are only available on macOS"
-        print "   This justfile manages macOS system configuration via nix-darwin"
-        exit 1
-    }
-
 # Default target
-default: _check-os
+default:
     @just switch
 
 # Default host (get from scutil)
 HOST := `scutil --get LocalHostName 2>/dev/null || echo "Marios-MacBook"`
 
 # First-time nix-darwin setup
-first-time: _check-os
+first-time:
     #!/usr/bin/env nu
     print "🚀 First-time nix-darwin setup..."
     print "  This will install nix-darwin and apply the configuration"
@@ -34,33 +25,33 @@ first-time: _check-os
     print "💡 Future rebuilds: just darwin"
 
 # Local build and switch
-switch: _check-os
+switch:
     darwin-rebuild switch --flake ..#{{HOST}}
 
-test: _check-os
+test:
     darwin-rebuild check --flake ..#{{HOST}}
 
-build: _check-os
+build:
     darwin-rebuild build --flake ..#{{HOST}}
 
 # Flake management
-update: _check-os
+update:
     #!/usr/bin/env nu
     cd ..
     nix flake update
 
-check: _check-os
+check:
     #!/usr/bin/env nu
     cd ..
     nix flake check
 
-show: _check-os
+show:
     #!/usr/bin/env nu
     cd ..
     nix flake show
 
 # Show available hosts
-hosts: _check-os
+hosts:
     #!/usr/bin/env nu
     print "Available nix-darwin configurations:"
     print $"  - {{HOST}} : This Mac (detected via scutil)"
@@ -71,7 +62,7 @@ hosts: _check-os
     print "  just switch HOST=other-hostname"
 
 # Health check
-health: _check-os
+health:
     #!/usr/bin/env nu
     print "🔍 nix-darwin Health Check"
     print "=========================="
