@@ -7,13 +7,13 @@ default: chezmoi-quick-apply
 
 # Bitwarden session management
 bw-unlock:
-    nu .scripts/bw/unlock.nu
+    nu .scripts/bw.nu unlock
 
 # Direnv management (convenience wrapper)
 
 # Note: Named bw-reload for workflow clarity, but this is a general direnv command
 bw-reload:
-    nu .scripts/bw/reload.nu
+    nu .scripts/bw.nu reload
 
 # Linting and formatting targets
 # Note: Formatting is also configured as git pre-commit hooks in devenv.nix
@@ -25,19 +25,19 @@ lint: lint-lua lint-nix lint-nu lint-shell
 
 # Check Lua files with stylua
 lint-lua:
-    nu .scripts/lint/lua.nu
+    nu .scripts/lint.nu lua
 
 # Check Nix files syntax
 lint-nix:
-    nu .scripts/lint/nix.nu
+    nu .scripts/lint.nu nix
 
 # Check Nushell scripts syntax
 lint-nu:
-    nu .scripts/lint/nu.nu
+    nu .scripts/lint.nu nu
 
 # Check shell scripts with shellcheck
 lint-shell:
-    nu .scripts/lint/shell.nu
+    nu .scripts/lint.nu shell
 
 # Format all files
 format: format-lua format-nix format-shell format-yaml format-markdown format-justfile format-others
@@ -45,31 +45,31 @@ format: format-lua format-nix format-shell format-yaml format-markdown format-ju
 
 # Format Lua files with stylua
 format-lua:
-    nu .scripts/format/lua.nu
+    nu .scripts/format.nu lua
 
 # Format Nix files with nixpkgs-fmt
 format-nix:
-    nu .scripts/format/nix.nu
+    nu .scripts/format.nu nix
 
 # Format shell scripts with shfmt
 format-shell:
-    nu .scripts/format/shell.nu
+    nu .scripts/format.nu shell
 
 # Format YAML files with yamlfmt
 format-yaml:
-    nu .scripts/format/yaml.nu
+    nu .scripts/format.nu yaml
 
 # Format Markdown files with markdownlint
 format-markdown:
-    nu .scripts/format/markdown.nu
+    nu .scripts/format.nu markdown
 
 # Format justfiles
 format-justfile:
-    nu .scripts/format/justfile.nu
+    nu .scripts/format.nu justfile
 
 # Format JSON and TOML files with biome
 format-others:
-    nu .scripts/format/others.nu
+    nu .scripts/format.nu others
 
 # Start development shell
 dev:
@@ -86,11 +86,11 @@ health: health-summary
 
 # System health summary
 health-summary:
-    nu .scripts/health/summary.nu
+    nu .scripts/health.nu summary
 
 # Full system health check
 health-all:
-    nu .scripts/health/all.nu
+    nu .scripts/health.nu all
 
 # Pass-through targets to subdirectories
 nixos-switch:
