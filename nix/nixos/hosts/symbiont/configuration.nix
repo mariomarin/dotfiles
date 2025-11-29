@@ -24,6 +24,7 @@
   boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
   services.xserver.enable = lib.mkForce false;
+  services.resolved.enable = lib.mkForce false; # WSL manages resolv.conf
 
   # Enable minimal system packages with modern CLI tools
   # Per-project tools should come from devenv.nix
