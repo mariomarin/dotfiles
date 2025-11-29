@@ -1,6 +1,9 @@
 # WSL NixOS Setup and Management
 # This justfile helps Windows users set up and manage NixOS on WSL2
 
+# Set shell to PowerShell on Windows
+set shell := ["powershell.exe", "-NoLogo", "-Command"]
+
 # Default: show help
 default:
     @nu wsl.nu help
