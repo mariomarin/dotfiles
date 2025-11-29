@@ -44,6 +44,30 @@ git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
 ```
 
+**Setup:**
+
+Before initializing chezmoi, create a minimal configuration file:
+
+```bash
+# 1. Create config directory
+mkdir -p ~/.config/chezmoi
+
+# 2. Create minimal config file
+cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
+[bitwarden]
+command = "bw"
+
+[data]
+hostname = "dendrite"
+EOF
+```
+
+**Available hostnames:**
+
+- **dendrite** - Main desktop (GUI, full features)
+- **mitosis** - Secondary desktop (GUI, full features)
+- **symbiont** - Laptop/portable (GUI, full features)
+
 **Apply Configuration:**
 
 ```bash
@@ -79,6 +103,28 @@ brew install chezmoi
 # Or without Homebrew:
 curl -sfL https://get.chezmoi.io | sh
 ```
+
+**Setup:**
+
+Before initializing chezmoi, create a minimal configuration file:
+
+```bash
+# 1. Create config directory
+mkdir -p ~/.config/chezmoi
+
+# 2. Create minimal config file
+cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
+[bitwarden]
+command = "bw"
+
+[data]
+hostname = "malus"
+EOF
+```
+
+**Available hostnames:**
+
+- **malus** - macOS desktop/laptop
 
 **Automatic Bootstrap + Apply:**
 
