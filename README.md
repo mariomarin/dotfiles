@@ -33,15 +33,10 @@ All platforms follow the same pattern:
 **Manual Prerequisites:**
 
 ```bash
-# Option 1: Use bootstrap shell (provides nushell, bitwarden-cli, git, chezmoi)
+# Use bootstrap shell (provides nushell, bitwarden-cli, git, chezmoi)
 nix-shell -p git --run "git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi"
 cd ~/.local/share/chezmoi
 nix-shell .install/shell.nix
-
-# Option 2: Get git and chezmoi temporarily
-nix-shell -p git chezmoi
-git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
-cd ~/.local/share/chezmoi
 ```
 
 **Setup:**
