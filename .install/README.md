@@ -59,11 +59,16 @@ iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
 ### Automatic Bootstrap + Apply (Windows)
 
 ```powershell
-# Initialize dotfiles (you'll be prompted to select hostname)
+# Option 1: Interactive prompt (may not work in all PowerShell environments)
 chezmoi init https://github.com/mariomarin/dotfiles.git
+
+# Option 2: Use command-line flag (recommended - more reliable)
+chezmoi init --promptMultichoice hostname=prion https://github.com/mariomarin/dotfiles.git
+
+# Option 3: Set hostname manually first (see troubleshooting below)
 ```
 
-**During initialization, select your hostname:**
+**During initialization (Option 1), you'll see:**
 
 ```text
 Select your machine hostname:
@@ -302,6 +307,50 @@ Bootstrap scripts are chezmoi pre-hooks that run automatically **before** readin
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
 ```
+
+### Windows: Hostname prompt doesn't appear
+
+If the interactive hostname prompt doesn't show during `chezmoi init`, use one of these methods:
+
+#### Method 1: Command-line flag (recommended)
+
+```powershell
+# For native Windows desktop
+chezmoi init --promptMultichoice hostname=prion https://github.com/mariomarin/dotfiles.git
+
+# For cloud/DevBox environment
+chezmoi init --promptMultichoice hostname=spore https://github.com/mariomarin/dotfiles.git
+```
+
+#### Method 2: Manual config file
+
+Create `~/.config/chezmoi/chezmoi.toml` with:
+
+```toml
+[data.hostname]
+    hostname = "prion"
+
+[data.customHostname]
+    customHostname = "prion"
+```
+
+Then run `chezmoi init`:
+
+```powershell
+mkdir -Force ~/.config/chezmoi
+notepad ~/.config/chezmoi/chezmoi.toml
+# Paste the config above, save, and exit
+chezmoi init https://github.com/mariomarin/dotfiles.git
+```
+
+#### Method 3: Use --promptDefaults for testing
+
+```powershell
+# This will use default values without prompting (useful for testing)
+chezmoi init --promptDefaults https://github.com/mariomarin/dotfiles.git
+```
+
+> **Note:** After setting the hostname using any method, it's saved permanently and won't prompt again.
 
 ### Windows: winget not found
 

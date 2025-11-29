@@ -121,11 +121,14 @@ iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
 **Setup:**
 
 ```powershell
-# Initialize dotfiles - you'll be prompted to select your machine hostname
+# Option 1: Interactive prompt (may not work in all PowerShell environments)
 chezmoi init https://github.com/mariomarin/dotfiles.git
+
+# Option 2: Use command-line flag (recommended for Windows)
+chezmoi init --promptMultichoice hostname=prion https://github.com/mariomarin/dotfiles.git
 ```
 
-During initialization, you'll see an **interactive prompt** to select your hostname:
+**If using the interactive prompt**, you'll see:
 
 ```text
 Select your machine hostname:
@@ -144,6 +147,23 @@ Choose:
 
 - **prion** (option 5) - Native Windows desktop with GUI, full features
 - **spore** (option 6) - Cloud/DevBox environment, headless, minimal setup
+
+**If the interactive prompt doesn't work:**
+
+```powershell
+# Use command-line flag method instead
+chezmoi init --promptMultichoice hostname=prion https://github.com/mariomarin/dotfiles.git
+```
+
+Or set manually by creating `~/.config/chezmoi/chezmoi.toml`:
+
+```toml
+[data.hostname]
+    hostname = "prion"
+
+[data.customHostname]
+    customHostname = "prion"
+```
 
 **Continue setup:**
 
