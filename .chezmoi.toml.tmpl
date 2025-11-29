@@ -1,26 +1,5 @@
-{{- /* Interactive hostname selection on first init */ -}}
-{{- $hostname := "" -}}
-
-{{- /* Check if hostname was already provided via flag or previous config */ -}}
-{{- if hasKey . "hostname" -}}
-  {{- $hostname = .hostname -}}
-{{- else -}}
-  {{- /* Show interactive prompt if not already set */ -}}
-  {{- $hostnames := list
-    "dendrite (NixOS Laptop - ThinkPad T470)"
-    "mitosis (NixOS VM - headless server)"
-    "symbiont (NixOS WSL - headless)"
-    "malus (macOS Desktop)"
-    "prion (Windows Desktop - native workstation)"
-    "spore (Windows Cloud - M365 DevBox)"
-  -}}
-
-  {{- $selectedHost := promptMultichoiceOnce . "hostname" "Select your machine hostname" $hostnames -}}
-
-  {{- /* Extract hostname from selection (format: "hostname (description)") */ -}}
-  {{- $parts := splitList " " $selectedHost -}}
-  {{- $hostname = index $parts 0 -}}
-{{- end -}}
+{{- /* Get hostname from config (must be set manually before init) */ -}}
+{{- $hostname := .hostname | default .chezmoi.hostname -}}
 
 {{- /* Detect environment */ -}}
 {{- $codespaces := env "CODESPACES" | not | not -}}

@@ -96,21 +96,25 @@ configurations across different machines.
 
 ## Machine Configuration and Hostname Selection
 
-### Interactive Hostname Selection
+### Manual Hostname Configuration
 
-**CRITICAL**: On first `chezmoi init`, users are prompted to select their machine hostname. This determines:
+**CRITICAL**: Before running `chezmoi init`, users must create a minimal config file with their hostname. This determines:
 
 - Which configuration files are applied (desktop vs headless)
 - Which scripts run (via `.chezmoiignore` patterns)
 - Machine-specific features (audio, bluetooth, kmonad, etc.)
 
-**Implementation:** `.chezmoi.toml.tmpl` uses `promptMultichoiceOnce`:
+**Implementation:** Users create `~/.config/chezmoi/chezmoi.toml` manually:
 
 ```toml
-{{- $selectedHost := promptMultichoiceOnce . "hostname" "Select your machine hostname" $hostnames $hostDescriptions -}}
+[bitwarden]
+command = "bw"
+
+[data]
+hostname = "prion"  # or spore, dendrite, mitosis, etc.
 ```
 
-**Available Hostnames** (defined in `.chezmoidata/machines.yaml`):
+**Available Hostnames:**
 
 | Hostname | Platform | Type | Description |
 |----------|----------|------|-------------|
@@ -120,14 +124,13 @@ configurations across different machines.
 | **malus** | macOS | Desktop | macOS workstation |
 | **prion** | Windows | Desktop | Native Windows workstation with GUI |
 | **spore** | Windows | Cloud | M365 DevBox environment (headless, minimal) |
-| **other** | Custom | Any | User provides custom hostname (requires manual config) |
 
 ### How It Works
 
-1. **First run**: User runs `chezmoi init`, sees interactive prompt
-2. **Selection**: User chooses hostname from list or enters custom name
-3. **Storage**: Choice saved to `~/.config/chezmoi/chezmoi.toml`
-4. **Subsequent runs**: Prompt never appears again (uses saved value)
+1. **Setup**: User creates `~/.config/chezmoi/chezmoi.toml` with hostname
+2. **Init**: User runs `chezmoi init` (reads hostname from config)
+3. **Template processing**: `.chezmoi.toml.tmpl` reads hostname via `{{ .hostname | default .chezmoi.hostname }}`
+4. **Application**: chezmoi applies appropriate configs based on hostname
 
 ### Machine Detection Logic (`.chezmoi.toml.tmpl`)
 

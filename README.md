@@ -121,48 +121,27 @@ iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
 **Setup:**
 
 ```powershell
-# Option 1: Interactive prompt (may not work in all PowerShell environments)
-chezmoi init https://github.com/mariomarin/dotfiles.git
+# 1. Create config directory
+mkdir -Force ~/.config/chezmoi
 
-# Option 2: Use command-line flag (recommended for Windows)
-chezmoi init --promptMultichoice hostname=prion https://github.com/mariomarin/dotfiles.git
+# 2. Create minimal config file
+@"
+[bitwarden]
+command = "bw"
+
+[data]
+hostname = "prion"
+"@ | Set-Content ~/.config/chezmoi/chezmoi.toml
 ```
 
-**If using the interactive prompt**, you'll see:
+**Available hostnames:**
 
-```text
-Select your machine hostname:
-  1. dendrite - NixOS Laptop
-  2. mitosis - NixOS VM
-  3. symbiont - NixOS WSL
-  4. malus - macOS Desktop
-  5. prion - Windows Desktop (native Windows workstation with GUI)
-  6. spore - Windows Cloud (M365 DevBox, headless environment)
-  7. other - Custom hostname
-
-Choose:
-```
-
-**For Windows, select:**
-
-- **prion** (option 5) - Native Windows desktop with GUI, full features
-- **spore** (option 6) - Cloud/DevBox environment, headless, minimal setup
-
-**If the interactive prompt doesn't work:**
+- **prion** - Native Windows desktop (GUI, full features)
+- **spore** - M365 DevBox/cloud (headless, minimal setup)
 
 ```powershell
-# Use command-line flag method instead
-chezmoi init --promptMultichoice hostname=prion https://github.com/mariomarin/dotfiles.git
-```
-
-Or set manually by creating `~/.config/chezmoi/chezmoi.toml`:
-
-```toml
-[data.hostname]
-    hostname = "prion"
-
-[data.customHostname]
-    customHostname = "prion"
+# 3. Initialize dotfiles
+chezmoi init https://github.com/mariomarin/dotfiles.git
 ```
 
 **Continue setup:**

@@ -56,38 +56,33 @@ iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
 
 > **Note:** The bootstrap script will auto-install winget, Nushell, and Bitwarden CLI on first run.
 
-### Automatic Bootstrap + Apply (Windows)
+### Setup (Windows)
+
+Before initializing chezmoi, create a minimal configuration file:
 
 ```powershell
-# Option 1: Interactive prompt (may not work in all PowerShell environments)
+# 1. Create config directory
+mkdir -Force ~/.config/chezmoi
+
+# 2. Create minimal config file
+@"
+[bitwarden]
+command = "bw"
+
+[data]
+hostname = "prion"
+"@ | Set-Content ~/.config/chezmoi/chezmoi.toml
+```
+
+**Available hostnames:**
+
+- **prion** - Native Windows desktop (GUI, full features)
+- **spore** - M365 DevBox/cloud (headless, minimal setup)
+
+```powershell
+# 3. Initialize dotfiles
 chezmoi init https://github.com/mariomarin/dotfiles.git
-
-# Option 2: Use command-line flag (recommended - more reliable)
-chezmoi init --promptMultichoice hostname=prion https://github.com/mariomarin/dotfiles.git
-
-# Option 3: Set hostname manually first (see troubleshooting below)
 ```
-
-**During initialization (Option 1), you'll see:**
-
-```text
-Select your machine hostname:
-  1. dendrite - NixOS Laptop
-  2. mitosis - NixOS VM
-  3. symbiont - NixOS WSL
-  4. malus - macOS Desktop
-  5. prion - Windows Desktop (native Windows workstation with GUI)
-  6. spore - Windows Cloud (M365 DevBox, headless environment)
-  7. other - Custom hostname
-
-Choose: 5
-```
-
-**For Windows:**
-
-- Select **5 (prion)** for native Windows desktop with full GUI features
-- Select **6 (spore)** for cloud/DevBox environments (headless, minimal)
-- Select **7 (other)** if you need a custom hostname
 
 **Continue with setup:**
 
@@ -104,9 +99,6 @@ $env:BW_SESSION = bw unlock --raw
 # Apply configuration
 chezmoi apply -v
 ```
-
-> **Note:** The hostname prompt only appears on first `chezmoi init`. Your selection is saved
-> to `~/.config/chezmoi/chezmoi.toml` and won't be prompted again.
 
 **If using cmd.exe instead of PowerShell:**
 
@@ -307,50 +299,6 @@ Bootstrap scripts are chezmoi pre-hooks that run automatically **before** readin
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
 ```
-
-### Windows: Hostname prompt doesn't appear
-
-If the interactive hostname prompt doesn't show during `chezmoi init`, use one of these methods:
-
-#### Method 1: Command-line flag (recommended)
-
-```powershell
-# For native Windows desktop
-chezmoi init --promptMultichoice hostname=prion https://github.com/mariomarin/dotfiles.git
-
-# For cloud/DevBox environment
-chezmoi init --promptMultichoice hostname=spore https://github.com/mariomarin/dotfiles.git
-```
-
-#### Method 2: Manual config file
-
-Create `~/.config/chezmoi/chezmoi.toml` with:
-
-```toml
-[data.hostname]
-    hostname = "prion"
-
-[data.customHostname]
-    customHostname = "prion"
-```
-
-Then run `chezmoi init`:
-
-```powershell
-mkdir -Force ~/.config/chezmoi
-notepad ~/.config/chezmoi/chezmoi.toml
-# Paste the config above, save, and exit
-chezmoi init https://github.com/mariomarin/dotfiles.git
-```
-
-#### Method 3: Use --promptDefaults for testing
-
-```powershell
-# This will use default values without prompting (useful for testing)
-chezmoi init --promptDefaults https://github.com/mariomarin/dotfiles.git
-```
-
-> **Note:** After setting the hostname using any method, it's saved permanently and won't prompt again.
 
 ### Windows: winget not found
 
