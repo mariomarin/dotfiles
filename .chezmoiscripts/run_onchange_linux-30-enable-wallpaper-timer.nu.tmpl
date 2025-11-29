@@ -1,8 +1,5 @@
 #!/usr/bin/env nu
-# Enable wallpaper rotation timer on desktop machines
-# Only runs on Linux desktop machines
-
-{{- if and (eq .chezmoi.os "linux") .machineConfig.features.desktop }}
+# Enable wallpaper rotation timer on desktop machines (Linux desktop)
 
 print "Enabling wallpaper rotation timer..."
 
@@ -16,7 +13,3 @@ systemctl --user start wallpaper-rotation.timer
 print "✓ Wallpaper rotation timer enabled (changes every 30 minutes)"
 print "  - Timer status: systemctl --user status wallpaper-rotation.timer"
 print "  - Manual rotation: systemctl --user start wallpaper-rotation.service"
-
-{{- else }}
-# Skipped on non-desktop machines or non-Linux OS
-{{- end }}

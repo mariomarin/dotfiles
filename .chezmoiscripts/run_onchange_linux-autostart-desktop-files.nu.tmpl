@@ -1,9 +1,6 @@
 #!/usr/bin/env nu
-# Manage desktop autostart files as symlinks to Nix store packages
+# Manage desktop autostart files as symlinks to Nix store packages (Linux desktop)
 # Similar to the syncthing systemd unit approach
-# Only runs on Linux desktop machines
-
-{{- if and (eq .chezmoi.os "linux") .machineConfig.features.desktop }}
 
 {{ $autostartDir := joinPath .chezmoi.homeDir ".config/autostart" -}}
 {{ $applicationsDir := "/run/current-system/sw/share/applications" -}}
@@ -46,13 +43,6 @@ def create_autostart_link [source_file: string, target_name: string, add_delay: 
         ln -sf $resolved_path $target_file
     }
 }
-
-# CopyQ - with 2 second delay
-{{ if stat (joinPath $applicationsDir "com.github.hluk.copyq.desktop") }}
-create_autostart_link {{ joinPath $applicationsDir "com.github.hluk.copyq.desktop" | quote }} "copyq.desktop" 2
-{{ else }}
-print "CopyQ desktop file not found - skipping"
-{{ end }}
 
 # Firefox - with 5 second delay
 {{ if stat (joinPath $applicationsDir "firefox.desktop") }}
@@ -108,5 +98,3 @@ print "Removing obsolete autostart files..."
 rm -f {{ joinPath $autostartDir "ssh-agent.desktop" | quote }}
 
 print "Autostart configuration complete"
-
-{{- end }}

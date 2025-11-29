@@ -1,8 +1,5 @@
 #!/usr/bin/env nu
-# Enable systemd user services
-# Only runs on Linux
-
-{{- if eq .chezmoi.os "linux" }}
+# Enable systemd user services (Linux)
 
 # Enable and start battery monitor service if the script and service file exist
 let battery_script = ("~/.config/polybar/battery-combined-udev.sh" | path expand)
@@ -16,5 +13,3 @@ if ($battery_script | path exists) and (ls -l $battery_script | get 0.mode | str
 } else {
     print "Battery script or service file not found - skipping service enablement"
 }
-
-{{- end }}

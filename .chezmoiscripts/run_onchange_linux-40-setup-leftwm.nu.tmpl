@@ -1,8 +1,5 @@
 #!/usr/bin/env nu
-# Setup LeftWM theme and enable services
-# Only runs on Linux desktop machines
-
-{{- if and (eq .chezmoi.os "linux") .machineConfig.features.desktop }}
+# Setup LeftWM theme and enable services (Linux desktop)
 
 print "Setting up LeftWM custom theme..."
 
@@ -20,5 +17,3 @@ systemctl --user enable picom.service
 systemctl --user enable polybar.service
 
 print "✓ LeftWM theme and services configured"
-
-{{- end }}

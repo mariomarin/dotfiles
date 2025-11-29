@@ -1,8 +1,5 @@
 #!/usr/bin/env nu
-# Setup autorandr for automatic display configuration
-# Only runs on Linux desktop machines
-
-{{- if and (eq .chezmoi.os "linux") .machineConfig.features.desktop }}
+# Setup autorandr for automatic display configuration (Linux desktop)
 
 print "Setting up autorandr..."
 
@@ -25,5 +22,3 @@ if (which autorandr | is-not-empty) {
 } else {
     print "⚠️  autorandr not found, skipping setup"
 }
-
-{{- end }}

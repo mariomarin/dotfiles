@@ -1,8 +1,5 @@
 #!/usr/bin/env nu
-# Configure machine-specific settings based on detected machine type
-# Only runs on Linux
-
-{{- if eq .chezmoi.os "linux" }}
+# Configure machine-specific settings based on detected machine type (Linux)
 
 let machine_type = "{{ .machineType }}"
 let is_desktop = {{ .machineConfig.features.desktop }}
@@ -48,5 +45,3 @@ if ($machine_type == "vm-headless") or ("{{ .machineConfig.type }}" == "server")
 }
 
 print "Machine-specific configuration complete"
-
-{{- end }}

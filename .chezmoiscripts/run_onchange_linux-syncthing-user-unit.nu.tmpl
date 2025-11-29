@@ -1,14 +1,11 @@
 #!/usr/bin/env nu
-# Setup syncthing systemd user service
-# Only runs on Linux (NixOS)
+# Setup syncthing systemd user service (Linux/NixOS)
 
 # From: https://nixos.org/manual/nixos/stable/index.html#sect-nixos-systemd-nixos
 # User systemd services on the other hand, should be treated differently.
 # Given a package that has a systemd unit file at #pkg-out#/lib/systemd/user/,
 # using systemd.packages will make you able to start the service via
 # systemctl --user start, but it won't start automatically on login.
-
-{{- if eq .chezmoi.os "linux" }}
 
 {{ $serviceName := "syncthing.service" -}}
 {{ $runDir := "/run/current-system/sw/lib/systemd/user" -}}
@@ -59,5 +56,3 @@ let current_target = try {
 if $current_target != $resolved_path {
     setup_syncthing_service "Updating syncthing systemd user service symlink (Nix store path changed)..."
 }
-
-{{- end }}
