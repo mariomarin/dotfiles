@@ -1,6 +1,26 @@
+{{- /* Interactive hostname selection on first init */ -}}
+{{- $hostname := "" -}}
+{{- $hostnames := list "dendrite" "mitosis" "symbiont" "malus" "prion" "spore" "other" -}}
+{{- $hostDescriptions := dict
+  "dendrite" "NixOS Laptop - ThinkPad T470 (desktop with KMonad)"
+  "mitosis" "NixOS VM - Testing/replication (headless server)"
+  "symbiont" "NixOS WSL - Windows Subsystem for Linux (headless)"
+  "malus" "macOS Desktop - macOS workstation"
+  "prion" "Windows Desktop - Native Windows workstation"
+  "spore" "Windows Cloud - M365 DevBox environment (headless)"
+  "other" "Custom hostname (manual configuration required)"
+-}}
+
+{{- $selectedHost := promptMultichoiceOnce . "hostname" "Select your machine hostname" $hostnames $hostDescriptions -}}
+
+{{- if eq $selectedHost "other" -}}
+  {{- $hostname = promptStringOnce . "customHostname" "Enter custom hostname" .chezmoi.hostname -}}
+{{- else -}}
+  {{- $hostname = $selectedHost -}}
+{{- end -}}
+
 {{- /* Detect environment */ -}}
 {{- $codespaces := env "CODESPACES" | not | not -}}
-{{- $hostname := .chezmoi.hostname -}}
 {{- $isServer := false -}}
 {{- $isDesktop := false -}}
 {{- $hasKmonad := false -}}

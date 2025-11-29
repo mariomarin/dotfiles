@@ -31,36 +31,64 @@ Bootstrap scripts run automatically as chezmoi pre-hooks when you execute `chezm
 
 ### Manual Prerequisites (Windows)
 
-> **Note:** winget is now auto-installed by the bootstrap script if missing. You can skip Step 1
-> if you plan to let the bootstrap handle it.
+Since winget may not be available on a fresh Windows install, use these prerequisite-free installers:
 
-#### Step 1: Install Git and chezmoi
+#### Step 1: Install Git
+
+**Option 1:** Download installer from [git-scm.com](https://git-scm.com/download/win)
+
+**Option 2:** If winget is available: `winget install Git.Git`
+
+#### Step 2: Install chezmoi
 
 ```powershell
-# Install Git and chezmoi using winget (auto-installs during bootstrap if missing)
-winget install Git.Git
-winget install twpayne.chezmoi
-
-# Restart PowerShell to refresh PATH
+# PowerShell one-liner (no prerequisites needed)
+iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
 ```
 
-**Alternative if you prefer manual installation:**
+**Alternative:** Download from [chezmoi releases](https://github.com/twpayne/chezmoi/releases)
 
-- Git: Download from [git-scm.com](https://git-scm.com/download/win)
-- chezmoi: Download from [GitHub releases](https://github.com/twpayne/chezmoi/releases)
+#### Step 3: Restart PowerShell
 
-> If `winget` is not found and you want to install it before running the bootstrap, see the
-> [Windows: winget not found](#windows-winget-not-found) section for manual installation options.
+```powershell
+# Close and reopen PowerShell to refresh PATH
+```
+
+> **Note:** The bootstrap script will auto-install winget, Nushell, and Bitwarden CLI on first run.
 
 ### Automatic Bootstrap + Apply (Windows)
 
 ```powershell
-# Initialize dotfiles (bootstrap auto-installs winget, Nushell, and Bitwarden CLI)
+# Initialize dotfiles (you'll be prompted to select hostname)
 chezmoi init https://github.com/mariomarin/dotfiles.git
+```
 
-# ⚠️  IMPORTANT: If this is your first run and Nushell was just installed,
-#              restart PowerShell before continuing (the bootstrap will warn you)
-# Close and reopen PowerShell, then continue:
+**During initialization, select your hostname:**
+
+```text
+Select your machine hostname:
+  1. dendrite - NixOS Laptop
+  2. mitosis - NixOS VM
+  3. symbiont - NixOS WSL
+  4. malus - macOS Desktop
+  5. prion - Windows Desktop (native Windows workstation with GUI)
+  6. spore - Windows Cloud (M365 DevBox, headless environment)
+  7. other - Custom hostname
+
+Choose: 5
+```
+
+**For Windows:**
+
+- Select **5 (prion)** for native Windows desktop with full GUI features
+- Select **6 (spore)** for cloud/DevBox environments (headless, minimal)
+- Select **7 (other)** if you need a custom hostname
+
+**Continue with setup:**
+
+```powershell
+# ⚠️  IMPORTANT: If Nushell was just installed, restart PowerShell before continuing
+#              (the bootstrap will warn you if this is required)
 
 # Login to Bitwarden
 bw login
@@ -71,6 +99,9 @@ $env:BW_SESSION = bw unlock --raw
 # Apply configuration
 chezmoi apply -v
 ```
+
+> **Note:** The hostname prompt only appears on first `chezmoi init`. Your selection is saved
+> to `~/.config/chezmoi/chezmoi.toml` and won't be prompted again.
 
 **If using cmd.exe instead of PowerShell:**
 

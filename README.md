@@ -105,29 +105,53 @@ See [nix/darwin/README.md](nix/darwin/README.md) for detailed setup and configur
 <details>
 <summary>Windows</summary>
 
-**Manual Prerequisites:**
+**Prerequisites:**
 
 ```powershell
-# Install Git and chezmoi (winget auto-installs during bootstrap if missing)
-winget install Git.Git
-winget install twpayne.chezmoi
+# 1. Install Git (if not already installed)
+# Download and run installer from: https://git-scm.com/download/win
+# Or use winget if available: winget install Git.Git
 
-# Restart PowerShell to refresh PATH
+# 2. Install chezmoi via PowerShell one-liner
+iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
+
+# 3. Restart PowerShell to refresh PATH
 ```
 
-> **Note:** If `winget` is not found, the bootstrap script will automatically register/install it.
-> If automatic installation fails, see [.install/README.md](.install/README.md) for alternative setup methods.
-
-**Automatic Bootstrap + Apply:**
+**Setup:**
 
 ```powershell
-# Step 1: Initialize dotfiles (bootstrap auto-installs winget + Bitwarden CLI + Nushell)
+# Initialize dotfiles - you'll be prompted to select your machine hostname
 chezmoi init https://github.com/mariomarin/dotfiles.git
+```
 
-# Step 2: If Nushell was just installed, restart PowerShell
-# (Only needed on first run - the bootstrap will warn you if this is required)
+During initialization, you'll see an **interactive prompt** to select your hostname:
 
-# Step 3: Login to Bitwarden and apply
+```text
+Select your machine hostname:
+  1. dendrite - NixOS Laptop
+  2. mitosis - NixOS VM
+  3. symbiont - NixOS WSL
+  4. malus - macOS Desktop
+  5. prion - Windows Desktop (native Windows workstation with GUI)
+  6. spore - Windows Cloud (M365 DevBox, headless environment)
+  7. other - Custom hostname
+
+Choose:
+```
+
+**For Windows, select:**
+
+- **prion** (option 5) - Native Windows desktop with GUI, full features
+- **spore** (option 6) - Cloud/DevBox environment, headless, minimal setup
+
+**Continue setup:**
+
+```powershell
+# If Nushell was just installed, restart PowerShell
+# (The bootstrap will warn you if this is required)
+
+# Login to Bitwarden and apply
 bw login
 $env:BW_SESSION = bw unlock --raw
 chezmoi apply
@@ -135,13 +159,13 @@ chezmoi apply
 
 **What happens automatically:**
 
+- Interactive hostname selection (first run only)
 - winget registration and PATH setup (if not found)
 - Nushell and Bitwarden CLI installation
-- PATH refresh (commands available immediately if possible)
 - Declarative package installation (just, neovim, direnv, etc.)
 
-> **Note:** If the bootstrap installs Nushell for the first time, you may need to restart PowerShell
-> before running `chezmoi apply`. The bootstrap will detect this and warn you.
+> **Note:** Hostname is selected once during first init and saved to `~/.config/chezmoi/chezmoi.toml`.
+> The bootstrap will auto-install winget, Nushell, and Bitwarden CLI on first run.
 
 </details>
 

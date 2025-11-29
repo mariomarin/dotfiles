@@ -94,6 +94,90 @@ set -euo pipefail  # Exit on error, undefined vars, pipe failures
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system
 configurations across different machines.
 
+## Machine Configuration and Hostname Selection
+
+### Interactive Hostname Selection
+
+**CRITICAL**: On first `chezmoi init`, users are prompted to select their machine hostname. This determines:
+
+- Which configuration files are applied (desktop vs headless)
+- Which scripts run (via `.chezmoiignore` patterns)
+- Machine-specific features (audio, bluetooth, kmonad, etc.)
+
+**Implementation:** `.chezmoi.toml.tmpl` uses `promptMultichoiceOnce`:
+
+```toml
+{{- $selectedHost := promptMultichoiceOnce . "hostname" "Select your machine hostname" $hostnames $hostDescriptions -}}
+```
+
+**Available Hostnames** (defined in `.chezmoidata/machines.yaml`):
+
+| Hostname | Platform | Type | Description |
+|----------|----------|------|-------------|
+| **dendrite** | NixOS | Laptop | ThinkPad T470 portable workstation (desktop with KMonad) |
+| **mitosis** | NixOS | VM | Virtual machine for testing (headless server) |
+| **symbiont** | NixOS-WSL | WSL | NixOS on Windows Subsystem for Linux (headless) |
+| **malus** | macOS | Desktop | macOS workstation |
+| **prion** | Windows | Desktop | Native Windows workstation with GUI |
+| **spore** | Windows | Cloud | M365 DevBox environment (headless, minimal) |
+| **other** | Custom | Any | User provides custom hostname (requires manual config) |
+
+### How It Works
+
+1. **First run**: User runs `chezmoi init`, sees interactive prompt
+2. **Selection**: User chooses hostname from list or enters custom name
+3. **Storage**: Choice saved to `~/.config/chezmoi/chezmoi.toml`
+4. **Subsequent runs**: Prompt never appears again (uses saved value)
+
+### Machine Detection Logic (`.chezmoi.toml.tmpl`)
+
+After hostname is selected/loaded:
+
+```toml
+{{- if eq $hostname "nixos" -}}
+  {{- $isDesktop = true -}}
+  {{- $hasKmonad = true -}}
+{{- else if hasPrefix "vm-" $hostname -}}
+  {{- $isServer = true -}}
+{{- else -}}
+  {{- /* Default to desktop for unknown hosts */ -}}
+  {{- $isDesktop = true -}}
+{{- end -}}
+```
+
+**Available template variables:**
+
+- `{{ .machineConfig.hostname }}` - Selected hostname
+- `{{ .machineConfig.type }}` - Machine type (laptop/server/wsl/desktop/cloud)
+- `{{ .machineConfig.features.desktop }}` - Boolean: has GUI
+- `{{ .machineConfig.features.kmonad }}` - Boolean: uses KMonad
+- `{{ .machineConfig.features.audio }}` - Boolean: has audio
+- `{{ .machineConfig.features.bluetooth }}` - Boolean: has bluetooth
+
+### For AI: Important Notes
+
+1. **ALWAYS check `.chezmoidata/machines.yaml`** for current hostname list
+2. **Never assume** hostname - it's user-selected during first init
+3. **Test commands** to check current machine config:
+   - `chezmoi data | grep -A10 machineConfig`
+   - `chezmoi execute-template '{{ .machineConfig.hostname }}'`
+4. **Script filtering** happens via `.chezmoiignore` based on `machineConfig.features`
+5. **Adding new hosts**: Update `.chezmoidata/machines.yaml` AND the prompt in `.chezmoi.toml.tmpl`
+
+### Troubleshooting
+
+**User reports wrong configuration applied:**
+
+1. Check selected hostname: `chezmoi data | grep hostname`
+2. Check if it matches expected machine in `machines.yaml`
+3. If wrong, user must re-init or edit `~/.config/chezmoi/chezmoi.toml` manually
+
+**Bootstrap didn't run:**
+
+- Check that `hooks.read-source-state.pre` is configured in `chezmoi.toml.tmpl`
+- Verify hostname was selected (prompt should show during `chezmoi init`)
+- Bootstrap should run BEFORE templates are evaluated
+
 ## Bootstrap Architecture
 
 Understanding the bootstrap process is critical for maintaining this repository. Chezmoi executes setup in a
