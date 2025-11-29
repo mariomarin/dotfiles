@@ -192,23 +192,12 @@ EOF
 - **mitosis** - Secondary desktop (GUI, full features)
 - **symbiont** - Laptop/portable (GUI, full features)
 
-### Apply NixOS Configuration
+### Apply Configuration (NixOS)
 
 ```bash
-# Apply configuration for your host (sets hostname and installs all packages)
-sudo nixos-rebuild switch --flake .#dendrite  # or mitosis/symbiont
+# From within the nix-shell environment
 
-# Verify hostname matches (critical for chezmoi)
-hostname  # Should output: dendrite (or mitosis/symbiont)
-
-# If hostname is wrong, set manually or reboot
-sudo hostnamectl set-hostname dendrite  # or mitosis/symbiont
-```
-
-### Automatic Bootstrap + Apply (NixOS)
-
-```bash
-# Initialize chezmoi (bootstrap verifies Bitwarden CLI exists)
+# Initialize chezmoi
 chezmoi init
 
 # Login to Bitwarden
@@ -217,6 +206,12 @@ export BW_SESSION=$(bw unlock --raw)
 
 # Apply dotfiles
 chezmoi apply -v
+
+# Apply NixOS configuration (sets hostname and installs chezmoi, just, and all packages permanently)
+sudo nixos-rebuild switch --flake ~/.local/share/chezmoi/nix/nixos#dendrite  # or mitosis/symbiont
+
+# Verify hostname was set correctly
+hostname  # Should output: dendrite (or mitosis/symbiont)
 ```
 
 **Future updates:** `just nixos` (chezmoi and just now installed via NixOS configuration)

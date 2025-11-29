@@ -66,19 +66,21 @@ EOF
 **Apply Configuration:**
 
 ```bash
-# This runs nixos-rebuild which installs chezmoi, just, and all system packages
-sudo nixos-rebuild switch --flake .#dendrite  # or mitosis/symbiont
+# From within the nix-shell environment
 
-# Verify hostname matches (critical for chezmoi)
-hostname
-
-# Initialize chezmoi (bootstrap verifies Bitwarden CLI)
+# Initialize chezmoi
 chezmoi init
 
 # Login to Bitwarden and apply
 bw login
 export BW_SESSION=$(bw unlock --raw)
 chezmoi apply -v
+
+# Apply NixOS configuration (sets hostname and installs chezmoi, just, and all packages permanently)
+sudo nixos-rebuild switch --flake ~/.local/share/chezmoi/nix/nixos#dendrite  # or mitosis/symbiont
+
+# Verify hostname was set correctly
+hostname  # Should output: dendrite (or mitosis/symbiont)
 ```
 
 **Future updates:** `just nixos`
