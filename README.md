@@ -57,11 +57,7 @@ hostname = "dendrite"
 EOF
 ```
 
-**Available hostnames:**
-
-- **dendrite** - Main desktop (GUI, full features)
-- **mitosis** - Secondary desktop (GUI, full features)
-- **symbiont** - Laptop/portable (GUI, full features)
+> **Note:** Replace `"dendrite"` with your machine's hostname. Available machines are defined in [.chezmoidata/machines.yaml](.chezmoidata/machines.yaml)
 
 **Apply Configuration:**
 
@@ -124,9 +120,7 @@ hostname = "malus"
 EOF
 ```
 
-**Available hostnames:**
-
-- **malus** - macOS desktop/laptop
+> **Note:** Replace `"malus"` with your machine's hostname. Available machines are defined in [.chezmoidata/machines.yaml](.chezmoidata/machines.yaml)
 
 **Apply Configuration:**
 
@@ -183,10 +177,7 @@ hostname = "prion"
 "@ | Set-Content ~/.config/chezmoi/chezmoi.toml
 ```
 
-**Available hostnames:**
-
-- **prion** - Native Windows desktop (GUI, full features)
-- **spore** - M365 DevBox/cloud (headless, minimal setup)
+> **Note:** Replace `"prion"` with your machine's hostname. Available machines are defined in `.chezmoidata/machines.yaml`
 
 ```powershell
 # 3. Initialize dotfiles
