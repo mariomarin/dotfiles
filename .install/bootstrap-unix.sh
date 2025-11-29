@@ -43,21 +43,29 @@ case "$(uname -s)" in
 
     # Verify Nushell is installed
     if ! command -v nu > /dev/null 2>&1; then
-      echo "❌ Nushell not found. Please add to your NixOS configuration:" >&2
-      echo "   environment.systemPackages = [ pkgs.nushell ];" >&2
+      echo "❌ Nushell not found. Bootstrap requires Nushell and Bitwarden CLI." >&2
       echo "" >&2
-      echo "   Or install temporarily:" >&2
-      echo "   nix-env -iA nixos.nushell" >&2
+      echo "   Option 1 - Use bootstrap shell (recommended for first-time setup):" >&2
+      echo "   cd ~/.local/share/chezmoi" >&2
+      echo "   nix-shell .install/shell.nix" >&2
+      echo "" >&2
+      echo "   Option 2 - Add to your NixOS configuration permanently:" >&2
+      echo "   environment.systemPackages = [ pkgs.nushell pkgs.bitwarden-cli ];" >&2
+      echo "   sudo nixos-rebuild switch" >&2
       exit 1
     fi
 
     # Verify Bitwarden CLI is installed
     if ! command -v bw > /dev/null 2>&1; then
-      echo "❌ Bitwarden CLI not found. Please add to your NixOS configuration:" >&2
-      echo "   environment.systemPackages = [ pkgs.bitwarden-cli ];" >&2
+      echo "❌ Bitwarden CLI not found. Bootstrap requires Nushell and Bitwarden CLI." >&2
       echo "" >&2
-      echo "   Or install temporarily:" >&2
-      echo "   nix-env -iA nixos.bitwarden-cli" >&2
+      echo "   Option 1 - Use bootstrap shell (recommended for first-time setup):" >&2
+      echo "   cd ~/.local/share/chezmoi" >&2
+      echo "   nix-shell .install/shell.nix" >&2
+      echo "" >&2
+      echo "   Option 2 - Add to your NixOS configuration permanently:" >&2
+      echo "   environment.systemPackages = [ pkgs.nushell pkgs.bitwarden-cli ];" >&2
+      echo "   sudo nixos-rebuild switch" >&2
       exit 1
     fi
     ;;
