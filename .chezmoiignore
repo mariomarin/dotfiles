@@ -8,6 +8,8 @@ Session.vim
 .config/systemd/user/syncthing.service
 
 # Development and repository files (not dotfiles)
+nix
+nix/**
 nixos
 nixos/**
 shell.nix
