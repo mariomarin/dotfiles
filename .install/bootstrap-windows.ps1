@@ -5,10 +5,78 @@
 
 Write-Host "🚀 Running Windows bootstrap..." -ForegroundColor Cyan
 
-# Check if winget is available
+# Function to install/register winget
+function Install-Winget {
+    Write-Host "📦 Setting up winget..." -ForegroundColor Yellow
+
+    # Step 1: Register the App Installer package
+    try {
+        Write-Host "  Registering App Installer package..." -ForegroundColor White
+        Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe -ErrorAction Stop
+        Write-Host "  ✓ App Installer registered" -ForegroundColor Green
+    } catch {
+        Write-Host "  ⚠️  Could not register App Installer: $_" -ForegroundColor Yellow
+        Write-Host "  Attempting to download winget manually..." -ForegroundColor Yellow
+
+        # Try to download and install from aka.ms
+        try {
+            $tempFile = Join-Path $env:TEMP "Microsoft.DesktopAppInstaller.msixbundle"
+            Write-Host "  Downloading winget installer..." -ForegroundColor White
+            Invoke-WebRequest -Uri "https://aka.ms/getwinget" -OutFile $tempFile -UseBasicParsing
+            Add-AppxPackage -Path $tempFile
+            Remove-Item $tempFile
+            Write-Host "  ✓ winget installed" -ForegroundColor Green
+        } catch {
+            Write-Host "  ❌ Failed to install winget automatically" -ForegroundColor Red
+            Write-Host "  Please install App Installer from Microsoft Store manually" -ForegroundColor Red
+            Write-Host "  URL: https://aka.ms/getwinget" -ForegroundColor Yellow
+            exit 1
+        }
+    }
+
+    # Step 2: Add WindowsApps to PATH if needed
+    $windowsAppsPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps"
+
+    # Check if winget.exe exists
+    if (-not (Test-Path "$windowsAppsPath\winget.exe")) {
+        Write-Host "  ❌ winget.exe not found in $windowsAppsPath" -ForegroundColor Red
+        Write-Host "  Please restart PowerShell and try again" -ForegroundColor Yellow
+        exit 1
+    }
+
+    # Add to PATH permanently if not already there
+    $userPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+    if ($userPath -notlike "*$windowsAppsPath*") {
+        Write-Host "  Adding WindowsApps to PATH..." -ForegroundColor White
+        [Environment]::SetEnvironmentVariable(
+            "PATH",
+            "$userPath;$windowsAppsPath",
+            "User"
+        )
+        Write-Host "  ✓ PATH updated" -ForegroundColor Green
+    }
+
+    # Add to current session
+    if ($env:PATH -notlike "*$windowsAppsPath*") {
+        $env:PATH += ";$windowsAppsPath"
+    }
+
+    # Verify winget works
+    try {
+        $version = winget --version
+        Write-Host "  ✓ winget $version is ready" -ForegroundColor Green
+    } catch {
+        Write-Host "  ❌ winget not responding. Please restart PowerShell." -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Check if winget is available, install if not
 if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    Write-Host "❌ winget not found. Please install App Installer from Microsoft Store." -ForegroundColor Red
-    exit 1
+    Install-Winget
+} else {
+    $version = winget --version
+    Write-Host "✓ winget $version already available" -ForegroundColor Green
 }
 
 # Install Nushell

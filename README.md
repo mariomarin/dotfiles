@@ -108,23 +108,20 @@ See [nix/darwin/README.md](nix/darwin/README.md) for detailed setup and configur
 **Manual Prerequisites:**
 
 ```powershell
-# Check if winget is available, install from Microsoft Store if needed
-winget --version
-
-# Install Git and chezmoi
+# Install Git and chezmoi (winget auto-installs during bootstrap if missing)
 winget install Git.Git
 winget install twpayne.chezmoi
 
 # Restart PowerShell to refresh PATH
 ```
 
-> **Note:** If `winget` is not found, install "App Installer" from Microsoft Store or see
-> [.install/README.md](.install/README.md) for alternatives.
+> **Note:** If `winget` is not found, the bootstrap script will automatically register/install it.
+> If automatic installation fails, see [.install/README.md](.install/README.md) for alternative setup methods.
 
 **Automatic Bootstrap + Apply:**
 
 ```powershell
-# Initialize dotfiles (bootstrap auto-installs Bitwarden CLI)
+# Initialize dotfiles (bootstrap auto-installs winget + Bitwarden CLI + Nushell)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
 # Login to Bitwarden and apply
@@ -133,7 +130,11 @@ $env:BW_SESSION = bw unlock --raw
 chezmoi apply
 ```
 
-**What happens automatically:** Packages (just, nushell, neovim, etc.) install via declarative package management.
+**What happens automatically:**
+
+- winget registration and PATH setup (if not found)
+- Nushell and Bitwarden CLI installation
+- Declarative package installation (just, neovim, direnv, etc.)
 
 </details>
 

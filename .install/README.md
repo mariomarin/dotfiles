@@ -31,42 +31,31 @@ Bootstrap scripts run automatically as chezmoi pre-hooks when you execute `chezm
 
 ### Manual Prerequisites (Windows)
 
-#### Step 1: Install winget (if not available)
+> **Note:** winget is now auto-installed by the bootstrap script if missing. You can skip Step 1
+> if you plan to let the bootstrap handle it.
+
+#### Step 1: Install Git and chezmoi
 
 ```powershell
-# Check if winget is available
-winget --version
-```
-
-If winget is not found, install **App Installer** from Microsoft Store:
-
-- Open Microsoft Store app
-- Search for "App Installer"
-- Click Install
-- Restart PowerShell after installation
-
-**Alternative if Microsoft Store is unavailable:**
-Download and install manually from [GitHub](https://github.com/microsoft/winget-cli/releases)
-
-#### Step 2: Install Git and chezmoi
-
-```powershell
-# Install Git and chezmoi using winget
+# Install Git and chezmoi using winget (auto-installs during bootstrap if missing)
 winget install Git.Git
 winget install twpayne.chezmoi
 
 # Restart PowerShell to refresh PATH
 ```
 
-**Alternative manual installation:**
+**Alternative if you prefer manual installation:**
 
 - Git: Download from [git-scm.com](https://git-scm.com/download/win)
 - chezmoi: Download from [GitHub releases](https://github.com/twpayne/chezmoi/releases)
 
+> If `winget` is not found and you want to install it before running the bootstrap, see the
+> [Windows: winget not found](#windows-winget-not-found) section for manual installation options.
+
 ### Automatic Bootstrap + Apply (Windows)
 
 ```powershell
-# Initialize dotfiles (bootstrap auto-installs Bitwarden CLI via winget)
+# Initialize dotfiles (bootstrap auto-installs winget, Nushell, and Bitwarden CLI)
 chezmoi init https://github.com/mariomarin/dotfiles.git
 
 # ⚠️  IMPORTANT: Restart PowerShell after first init to load bw command
@@ -101,10 +90,12 @@ chezmoi apply -v
 ### What Happens Automatically (Windows)
 
 1. **Bootstrap** (`bootstrap-windows.ps1` pre-hook):
+   - Registers/installs winget if not found
+   - Adds winget to PATH
    - Installs Nushell via winget
    - Installs Bitwarden CLI via winget
 
-2. **Declarative Packages** (`run_onchange_install-packages.nu` script):
+2. **Declarative Packages** (`run_onchange_windows-install-packages.nu` script):
    - Installs packages from `.chezmoidata/packages.yaml`
    - Includes: just, neovim, git, and more
 
@@ -281,53 +272,64 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 
 ### Windows: winget not found
 
-#### Solution 1: Install App Installer (Recommended)
+> **Note:** The bootstrap script now automatically registers/installs winget. If automatic setup fails,
+> try the manual solutions below.
+
+#### What the bootstrap does automatically
+
+The bootstrap script attempts to:
+
+1. Register App Installer package using `Add-AppxPackage -RegisterByFamilyName`
+2. If registration fails, download and install from `https://aka.ms/getwinget`
+3. Add `%LOCALAPPDATA%\Microsoft\WindowsApps` to PATH
+4. Verify winget is working
+
+If automatic setup fails, try these solutions:
+
+#### Solution 1: Use winget-install script (Recommended)
+
+The [asheroto/winget-install](https://github.com/asheroto/winget-install) script handles all edge cases:
+
+```powershell
+# Run the winget-install script
+irm https://get.winget.run | iex
+```
+
+This script:
+
+- Checks for winget and installs if missing
+- Handles dependencies (VCLibs, UI.Xaml)
+- Fixes PATH issues automatically
+- Works without Microsoft Store access
+
+See [winget-install documentation](https://github.com/asheroto/winget-install#setup) for details.
+
+#### Solution 2: Install App Installer from Microsoft Store
 
 1. Open Microsoft Store app
 2. Search for "App Installer"
 3. Click Install
 4. Restart PowerShell
 
-#### Solution 2: Manual winget installation
+#### Solution 3: Manual winget installation
 
 Download from [microsoft/winget-cli releases](https://github.com/microsoft/winget-cli/releases)
-and install the `.msixbundle` file.
+and install the `.msixbundle` file, or use:
 
-#### Solution 3: Install Git and chezmoi manually
+```powershell
+# Download and install from aka.ms
+$tempFile = Join-Path $env:TEMP "Microsoft.DesktopAppInstaller.msixbundle"
+Invoke-WebRequest -Uri "https://aka.ms/getwinget" -OutFile $tempFile -UseBasicParsing
+Add-AppxPackage -Path $tempFile
+Remove-Item $tempFile
+```
+
+#### Solution 4: Install Git and chezmoi manually (without winget)
 
 - Git: Download installer from [git-scm.com](https://git-scm.com/download/win)
 - chezmoi: Download from [twpayne/chezmoi releases](https://github.com/twpayne/chezmoi/releases)
 
-After manual installation, you can still use the bootstrap to install Bitwarden CLI and other
-packages.
-
-#### Solution 4: Fix PATH for wrong user profile
-
-If winget is installed but not found, the issue may be that PATH contains WindowsApps folders
-for the wrong user profile instead of the current user.
-
-```powershell
-# Step 1: Register the App Installer package
-Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
-
-# Step 2: Check if winget.exe exists in current user's WindowsApps
-Test-Path $env:LOCALAPPDATA\Microsoft\WindowsApps\winget.exe
-
-# Step 3: Add WindowsApps folder to PATH permanently (User environment)
-[Environment]::SetEnvironmentVariable(
-    "PATH",
-    [Environment]::GetEnvironmentVariable("PATH", "User") + ";$env:LOCALAPPDATA\Microsoft\WindowsApps",
-    "User"
-)
-
-# Step 4: Add to current session so it works immediately
-$env:PATH += ";$env:LOCALAPPDATA\Microsoft\WindowsApps"
-
-# Step 5: Verify winget works
-winget --version
-```
-
-If package registration fails, download and install manually from <https://aka.ms/getwinget>
+After manual installation, the bootstrap will still attempt to setup winget for package management.
 
 ### NixOS: Bootstrap fails "bitwarden-cli not found"
 
