@@ -272,64 +272,59 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 
 ### Windows: winget not found
 
-> **Note:** The bootstrap script now automatically registers/installs winget. If automatic setup fails,
-> try the manual solutions below.
+> **Note:** The bootstrap script now automatically installs winget using the
+> [asheroto/winget-install](https://github.com/asheroto/winget-install) script. This handles all edge cases
+> including dependencies, PATH setup, and different Windows versions.
 
 #### What the bootstrap does automatically
 
-The bootstrap script attempts to:
+The bootstrap script uses a two-tier approach:
 
-1. Register App Installer package using `Add-AppxPackage -RegisterByFamilyName`
-2. If registration fails, download and install from `https://aka.ms/getwinget`
-3. Add `%LOCALAPPDATA%\Microsoft\WindowsApps` to PATH
-4. Verify winget is working
+**Primary method** - winget-install script:
 
-If automatic setup fails, try these solutions:
+- Installs required dependencies (VCLibs, UI.Xaml)
+- Handles different Windows versions (10/11, Server 2019, Server Core)
+- Uses literal `%LOCALAPPDATA%` in PATH (prevents issues with profile changes)
+- Works without Microsoft Store access
 
-#### Solution 1: Use winget-install script (Recommended)
+**Fallback method** - Simple registration:
 
-The [asheroto/winget-install](https://github.com/asheroto/winget-install) script handles all edge cases:
+- Registers App Installer package via `Add-AppxPackage -RegisterByFamilyName`
+- Adds `%LOCALAPPDATA%\Microsoft\WindowsApps` to PATH (literal, not resolved)
+- Refreshes PATH in current session
+
+If both methods fail, the bootstrap provides manual installation options.
+
+#### Manual installation (if bootstrap fails)
+
+If the automatic setup fails, you can install winget manually:
+
+##### Option 1: Run winget-install directly (Recommended)
 
 ```powershell
-# Run the winget-install script
 irm https://get.winget.run | iex
 ```
 
-This script:
-
-- Checks for winget and installs if missing
-- Handles dependencies (VCLibs, UI.Xaml)
-- Fixes PATH issues automatically
-- Works without Microsoft Store access
-
-See [winget-install documentation](https://github.com/asheroto/winget-install#setup) for details.
-
-#### Solution 2: Install App Installer from Microsoft Store
+##### Option 2: Install from Microsoft Store
 
 1. Open Microsoft Store app
 2. Search for "App Installer"
 3. Click Install
 4. Restart PowerShell
 
-#### Solution 3: Manual winget installation
+##### Option 3: Download manually
 
-Download from [microsoft/winget-cli releases](https://github.com/microsoft/winget-cli/releases)
-and install the `.msixbundle` file, or use:
+Download the latest `.msixbundle` from:
 
-```powershell
-# Download and install from aka.ms
-$tempFile = Join-Path $env:TEMP "Microsoft.DesktopAppInstaller.msixbundle"
-Invoke-WebRequest -Uri "https://aka.ms/getwinget" -OutFile $tempFile -UseBasicParsing
-Add-AppxPackage -Path $tempFile
-Remove-Item $tempFile
-```
+- Official Microsoft: <https://aka.ms/getwinget>
+- GitHub releases: <https://github.com/microsoft/winget-cli/releases>
 
-#### Solution 4: Install Git and chezmoi manually (without winget)
+##### Option 4: Install Git and chezmoi without winget
 
-- Git: Download installer from [git-scm.com](https://git-scm.com/download/win)
-- chezmoi: Download from [twpayne/chezmoi releases](https://github.com/twpayne/chezmoi/releases)
+- Git: <https://git-scm.com/download/win>
+- chezmoi: <https://github.com/twpayne/chezmoi/releases>
 
-After manual installation, the bootstrap will still attempt to setup winget for package management.
+Then run `chezmoi init` - the bootstrap will install winget for package management.
 
 ### NixOS: Bootstrap fails "bitwarden-cli not found"
 

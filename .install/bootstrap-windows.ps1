@@ -5,69 +5,67 @@
 
 Write-Host "🚀 Running Windows bootstrap..." -ForegroundColor Cyan
 
-# Function to install/register winget
+# Function to install winget using the winget-install script
 function Install-Winget {
     Write-Host "📦 Setting up winget..." -ForegroundColor Yellow
 
-    # Step 1: Register the App Installer package
     try {
-        Write-Host "  Registering App Installer package..." -ForegroundColor White
-        Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe -ErrorAction Stop
-        Write-Host "  ✓ App Installer registered" -ForegroundColor Green
-    } catch {
-        Write-Host "  ⚠️  Could not register App Installer: $_" -ForegroundColor Yellow
-        Write-Host "  Attempting to download winget manually..." -ForegroundColor Yellow
+        # Use the community-maintained winget-install script
+        # This handles all edge cases: dependencies, PATH, different Windows versions
+        Write-Host "  Running winget-install script..." -ForegroundColor White
+        & ([scriptblock]::Create((irm https://get.winget.run))) -Force -ErrorAction Stop
+        Write-Host "  ✓ winget installed successfully" -ForegroundColor Green
 
-        # Try to download and install from aka.ms
+        # Refresh PATH in current session
+        $env:PATH = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+
+        # Verify winget works
+        $version = winget --version 2>$null
+        if ($version) {
+            Write-Host "  ✓ winget $version is ready" -ForegroundColor Green
+        } else {
+            throw "winget not responding after installation"
+        }
+    } catch {
+        Write-Host "  ⚠️  winget-install script failed: $_" -ForegroundColor Yellow
+        Write-Host "  Attempting simple fallback method..." -ForegroundColor Yellow
+
+        # Fallback: Simple registration method
         try {
-            $tempFile = Join-Path $env:TEMP "Microsoft.DesktopAppInstaller.msixbundle"
-            Write-Host "  Downloading winget installer..." -ForegroundColor White
-            Invoke-WebRequest -Uri "https://aka.ms/getwinget" -OutFile $tempFile -UseBasicParsing
-            Add-AppxPackage -Path $tempFile
-            Remove-Item $tempFile
-            Write-Host "  ✓ winget installed" -ForegroundColor Green
+            Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe -ErrorAction Stop
+            Write-Host "  ✓ App Installer registered" -ForegroundColor Green
+
+            # Add to PATH with literal %LOCALAPPDATA% to prevent profile-specific issues
+            $userPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+            if ($userPath -notlike "*%LOCALAPPDATA%\Microsoft\WindowsApps*") {
+                Write-Host "  Adding WindowsApps to PATH..." -ForegroundColor White
+                [Environment]::SetEnvironmentVariable(
+                    "PATH",
+                    "$userPath;%LOCALAPPDATA%\Microsoft\WindowsApps",
+                    "User"
+                )
+            }
+
+            # Refresh PATH in current session
+            $env:PATH = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+
+            # Verify
+            $version = winget --version 2>$null
+            if ($version) {
+                Write-Host "  ✓ winget $version is ready" -ForegroundColor Green
+            } else {
+                throw "winget not available after registration"
+            }
         } catch {
-            Write-Host "  ❌ Failed to install winget automatically" -ForegroundColor Red
-            Write-Host "  Please install App Installer from Microsoft Store manually" -ForegroundColor Red
-            Write-Host "  URL: https://aka.ms/getwinget" -ForegroundColor Yellow
+            Write-Host "  ❌ Failed to setup winget automatically" -ForegroundColor Red
+            Write-Host "" -ForegroundColor White
+            Write-Host "  Please install winget manually using one of these methods:" -ForegroundColor Yellow
+            Write-Host "  1. Install App Installer from Microsoft Store" -ForegroundColor White
+            Write-Host "  2. Download from: https://aka.ms/getwinget" -ForegroundColor White
+            Write-Host "  3. Run: irm https://get.winget.run | iex" -ForegroundColor White
+            Write-Host "" -ForegroundColor White
             exit 1
         }
-    }
-
-    # Step 2: Add WindowsApps to PATH if needed
-    $windowsAppsPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps"
-
-    # Check if winget.exe exists
-    if (-not (Test-Path "$windowsAppsPath\winget.exe")) {
-        Write-Host "  ❌ winget.exe not found in $windowsAppsPath" -ForegroundColor Red
-        Write-Host "  Please restart PowerShell and try again" -ForegroundColor Yellow
-        exit 1
-    }
-
-    # Add to PATH permanently if not already there
-    $userPath = [Environment]::GetEnvironmentVariable("PATH", "User")
-    if ($userPath -notlike "*$windowsAppsPath*") {
-        Write-Host "  Adding WindowsApps to PATH..." -ForegroundColor White
-        [Environment]::SetEnvironmentVariable(
-            "PATH",
-            "$userPath;$windowsAppsPath",
-            "User"
-        )
-        Write-Host "  ✓ PATH updated" -ForegroundColor Green
-    }
-
-    # Add to current session
-    if ($env:PATH -notlike "*$windowsAppsPath*") {
-        $env:PATH += ";$windowsAppsPath"
-    }
-
-    # Verify winget works
-    try {
-        $version = winget --version
-        Write-Host "  ✓ winget $version is ready" -ForegroundColor Green
-    } catch {
-        Write-Host "  ❌ winget not responding. Please restart PowerShell." -ForegroundColor Red
-        exit 1
     }
 }
 
