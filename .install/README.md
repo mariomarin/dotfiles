@@ -90,8 +90,9 @@ chezmoi apply -v
 ### What Happens Automatically (Windows)
 
 1. **Bootstrap** (`bootstrap-windows.ps1` pre-hook):
-   - Registers/installs winget if not found
-   - Adds winget to PATH
+   - Installs/registers winget via [winget-install script](https://github.com/asheroto/winget-install) (if not found)
+   - Installs winget dependencies (VCLibs, UI.Xaml)
+   - Configures PATH with literal `%LOCALAPPDATA%`
    - Installs Nushell via winget
    - Installs Bitwarden CLI via winget
 
@@ -278,22 +279,17 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 
 #### What the bootstrap does automatically
 
-The bootstrap script uses a two-tier approach:
+The bootstrap script uses the [asheroto/winget-install](https://github.com/asheroto/winget-install) script:
 
-**Primary method** - winget-install script:
-
+- Detects if winget is already installed (checks multiple locations)
 - Installs required dependencies (VCLibs, UI.Xaml)
+- Registers App Installer package
 - Handles different Windows versions (10/11, Server 2019, Server Core)
 - Uses literal `%LOCALAPPDATA%` in PATH (prevents issues with profile changes)
 - Works without Microsoft Store access
-
-**Fallback method** - Simple registration:
-
-- Registers App Installer package via `Add-AppxPackage -RegisterByFamilyName`
-- Adds `%LOCALAPPDATA%\Microsoft\WindowsApps` to PATH (literal, not resolved)
 - Refreshes PATH in current session
 
-If both methods fail, the bootstrap provides manual installation options.
+If installation fails, the bootstrap provides manual installation options.
 
 #### Manual installation (if bootstrap fails)
 
