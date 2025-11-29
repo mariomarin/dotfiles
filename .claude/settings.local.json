@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(mv:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(rm:*)",
+      "Bash(systemctl:*)",
+      "Bash(journalctl:*)",
+      "Bash(tmux ls:*)",
+      "Bash(echo $ZIM_HOME)",
+      "Bash(chezmoi diff:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(cat:*)",
+      "Bash(chezmoi apply:*)",
+      "Bash(/home/mario/.local/npm/bin/gt demo pull-request)"
+    ],
+    "deny": []
+  }
+}
