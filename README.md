@@ -213,12 +213,12 @@ chezmoi apply
 **What happens automatically:**
 
 - Interactive hostname selection (first run only)
-- Bootstrap installs: `just`, `devenv`, Nushell, and Bitwarden CLI
+- Bootstrap installs: `just`, Nushell, and Bitwarden CLI
 - Declarative package installation via winget (Git, Neovim, Alacritty, etc.)
-- Bitwarden session token preserved in devenv
 
 > **Note:** Hostname is selected once during first init and saved to `~/.config/chezmoi/chezmoi.toml`.
 > Bootstrap scripts handle dependency installation automatically on first `chezmoi init`.
+> For development environments, use `devenv` in WSL (not available on native Windows).
 
 </details>
 
