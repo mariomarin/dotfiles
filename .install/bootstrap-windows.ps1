@@ -12,6 +12,7 @@ Write-Host "🚀 Running Windows bootstrap..." -ForegroundColor Cyan
 
 # Packages to install via winget
 $packages = @(
+    @{ Id = "twpayne.chezmoi"; Command = "chezmoi"; DisplayName = "chezmoi" },
     @{ Id = "Nushell.Nushell"; Command = "nu"; DisplayName = "Nushell" },
     @{ Id = "Bitwarden.CLI"; Command = "bw"; DisplayName = "Bitwarden CLI" },
     @{ Id = "Casey.Just"; Command = "just"; DisplayName = "Just" }
