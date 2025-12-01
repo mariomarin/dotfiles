@@ -33,8 +33,11 @@ cd ~/.local/share/chezmoi
 # Enter nix-shell (provides all tools: chezmoi, just, yq, bw)
 nix-shell .install/shell.nix
 
-# Set hostname and initialize
-export HOSTNAME=malus  # See .chezmoidata/machines.yaml for available machines
+# List available machines and set hostname
+yq '.machines | keys | .[]' .chezmoidata/machines.yaml
+export HOSTNAME=malus
+
+# Initialize dotfiles
 chezmoi init --apply
 ```
 
@@ -48,8 +51,11 @@ cd ~/.local/share/chezmoi
 # Enter nix-shell (provides all tools: chezmoi, just, yq, bw)
 nix-shell .install/shell.nix
 
-# Set hostname and initialize
-export HOSTNAME=dendrite  # See .chezmoidata/machines.yaml for available machines
+# List available machines and set hostname
+yq '.machines | keys | .[]' .chezmoidata/machines.yaml
+export HOSTNAME=dendrite
+
+# Initialize dotfiles
 chezmoi init --apply
 ```
 
@@ -63,8 +69,11 @@ iwr -useb https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bo
 git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
 
-# Set hostname and initialize
-$env:HOSTNAME = "prion"  # See .chezmoidata/machines.yaml for available machines
+# List available machines and set hostname
+yq '.machines | keys | .[]' .chezmoidata/machines.yaml
+$env:HOSTNAME = "prion"
+
+# Initialize dotfiles
 chezmoi init --apply
 ```
 
