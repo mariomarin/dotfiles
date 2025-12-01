@@ -15,7 +15,8 @@ $packages = @(
     @{ Id = "twpayne.chezmoi"; Command = "chezmoi"; DisplayName = "chezmoi" },
     @{ Id = "Nushell.Nushell"; Command = "nu"; DisplayName = "Nushell" },
     @{ Id = "Bitwarden.CLI"; Command = "bw"; DisplayName = "Bitwarden CLI" },
-    @{ Id = "Casey.Just"; Command = "just"; DisplayName = "Just" }
+    @{ Id = "Casey.Just"; Command = "just"; DisplayName = "Just" },
+    @{ Id = "mikefarah.yq"; Command = "yq"; DisplayName = "yq (YAML processor)" }
 )
 
 #endregion
@@ -179,5 +180,13 @@ if ($needsRestart) {
     Write-Host "⚠️  IMPORTANT: Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
     Write-Host "   Newly installed commands require a fresh PowerShell session" -ForegroundColor Yellow
 }
+
+# Remind user about HOSTNAME requirement
+Write-Host "" -ForegroundColor White
+Write-Host "📝 Next Steps:" -ForegroundColor Cyan
+Write-Host "   1. Set HOSTNAME environment variable before running chezmoi:" -ForegroundColor White
+Write-Host "      `$env:HOSTNAME = 'prion'  # Choose: dendrite, malus, prion, symbiont, mitosis, spore" -ForegroundColor Gray
+Write-Host "   2. Clone dotfiles and run chezmoi init --apply" -ForegroundColor White
+Write-Host "" -ForegroundColor White
 
 #endregion

@@ -7,19 +7,24 @@ Bootstrap scripts for setting up dotfiles on new machines.
 **Separation of concerns:**
 
 1. **Manual Prerequisites** (you install):
-   - Package manager (if needed)
-   - chezmoi itself
+   - **Nix** (macOS/Linux) - Package manager for development tools
+   - **Git** (Windows only) - For cloning repository
 
-2. **Automatic Bootstrap** (chezmoi pre-hook installs):
-   - **Bitwarden CLI** - Required for `{{ bitwarden ... }}` template functions
-   - **Nix** (macOS only) - Required for nix-darwin system management
+2. **Bootstrap Environment** (nix-shell provides on Unix):
+   - chezmoi, just, yq, Bitwarden CLI, Nushell, devenv, git
+   - All dependencies in one isolated environment via `.install/shell.nix`
 
-3. **Declarative Packages** (system configuration installs):
+3. **Windows Bootstrap** (script installs via winget):
+   - chezmoi, just, yq, Bitwarden CLI, Nushell
+   - Auto-installs winget if not present
+
+4. **System Packages** (managed by system configuration):
    - **NixOS**: `configuration.nix` and `nixos-rebuild`
    - **macOS**: nix-darwin configuration
    - **Windows**: winget packages in `.chezmoidata/packages.yaml`
 
-Bootstrap scripts run automatically as chezmoi pre-hooks when you execute `chezmoi init` or `chezmoi apply`.
+**Key concept**: Unix uses nix-shell for reproducible bootstrap environment. Windows uses winget for
+declarative package installation.
 
 ## Windows Setup
 

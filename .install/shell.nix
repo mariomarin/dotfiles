@@ -15,6 +15,7 @@ pkgs.mkShell {
     # Useful for initial setup
     git
     chezmoi
+    yq-go # YAML processor for validation scripts
   ];
 
   shellHook = ''
