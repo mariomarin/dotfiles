@@ -3,10 +3,57 @@
 # Chezmoi pre-hook: Runs before reading source state
 # NOTE: This is NOT a template - must handle setup itself
 
+[CmdletBinding()]
+param()
+
 Write-Host "🚀 Running Windows bootstrap..." -ForegroundColor Cyan
 
-# Function to install winget using the winget-install script
+#region Configuration
+
+# Packages to install via winget
+$packages = @(
+    @{ Id = "Nushell.Nushell"; Command = "nu"; DisplayName = "Nushell" },
+    @{ Id = "Bitwarden.CLI"; Command = "bw"; DisplayName = "Bitwarden CLI" },
+    @{ Id = "Casey.Just"; Command = "just"; DisplayName = "Just" }
+)
+
+#endregion
+
+#region Helper Functions
+
+# Function to refresh PATH in current session
+function Update-SessionPath {
+    <#
+    .SYNOPSIS
+    Refreshes the PATH environment variable in the current session.
+    #>
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+}
+
+# Function to test if a command exists
+function Test-CommandExists {
+    <#
+    .SYNOPSIS
+    Tests if a command is available in the current session.
+
+    .PARAMETER CommandName
+    The name of the command to test.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$CommandName
+    )
+
+    return [bool](Get-Command $CommandName -ErrorAction SilentlyContinue)
+}
+
+# Function to install winget
 function Install-Winget {
+    <#
+    .SYNOPSIS
+    Installs or updates winget package manager.
+    #>
     Write-Host "📦 Setting up winget..." -ForegroundColor Yellow
 
     try {
@@ -16,7 +63,7 @@ function Install-Winget {
         & ([scriptblock]::Create((irm https://get.winget.run))) -Force -ErrorAction Stop
 
         # Refresh PATH in current session to pick up winget
-        $env:PATH = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+        Update-SessionPath
 
         # Verify winget works
         $version = winget --version 2>$null
@@ -37,109 +84,99 @@ function Install-Winget {
     }
 }
 
+# Function to install a package via winget
+function Install-WingetPackage {
+    <#
+    .SYNOPSIS
+    Installs a package using winget if not already installed.
+
+    .PARAMETER PackageId
+    The winget package ID.
+
+    .PARAMETER CommandName
+    The command name to check if the package is already installed.
+
+    .PARAMETER DisplayName
+    The friendly name to display in output messages.
+
+    .RETURNS
+    Boolean indicating if a restart is needed for PATH updates.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$PackageId,
+
+        [Parameter(Mandatory)]
+        [string]$CommandName,
+
+        [Parameter(Mandatory)]
+        [string]$DisplayName
+    )
+
+    Write-Host "📦 Checking $DisplayName..." -ForegroundColor White
+
+    if (Test-CommandExists -CommandName $CommandName) {
+        Write-Host "  ✓ $DisplayName already installed" -ForegroundColor Green
+        return $false
+    }
+
+    try {
+        Write-Host "  Installing $DisplayName..." -ForegroundColor Yellow
+        winget install --id $PackageId --exact --silent --accept-package-agreements --accept-source-agreements
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  ✓ $DisplayName installed" -ForegroundColor Green
+
+            # Refresh PATH to make command available immediately
+            Update-SessionPath
+
+            # Verify command is now available
+            if (Test-CommandExists -CommandName $CommandName) {
+                Write-Host "  ✓ $CommandName command is ready" -ForegroundColor Green
+                return $false
+            } else {
+                Write-Host "  ⚠️  $CommandName installed but not in PATH yet" -ForegroundColor Yellow
+                return $true  # Restart needed
+            }
+        } else {
+            throw "winget install failed with exit code $LASTEXITCODE"
+        }
+    } catch {
+        Write-Host "  ❌ Failed to install $DisplayName: $_" -ForegroundColor Red
+        exit 1
+    }
+}
+
+#endregion
+
+#region Main Script
+
 # Check if winget is available, install if not
-if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+if (-not (Test-CommandExists -CommandName "winget")) {
     Install-Winget
 } else {
     $version = winget --version
     Write-Host "✓ winget $version already available" -ForegroundColor Green
 }
 
-# Function to refresh PATH in current session
-function Refresh-Path {
-    $env:PATH = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-}
-
-# Install Nushell
-Write-Host "📦 Checking Nushell..." -ForegroundColor White
-if (-not (Get-Command nu -ErrorAction SilentlyContinue)) {
-    Write-Host "  Installing Nushell..." -ForegroundColor Yellow
-    winget install --id Nushell.Nushell --exact --silent --accept-package-agreements --accept-source-agreements
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "  ✓ Nushell installed" -ForegroundColor Green
-
-        # Refresh PATH to make nu available immediately
-        Refresh-Path
-
-        # Verify nu is now available
-        if (Get-Command nu -ErrorAction SilentlyContinue) {
-            Write-Host "  ✓ nu command is ready" -ForegroundColor Green
-        } else {
-            Write-Host "  ⚠️  nu installed but not in PATH yet" -ForegroundColor Yellow
-            Write-Host "  Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
-        }
-    } else {
-        Write-Host "  ❌ Failed to install Nushell" -ForegroundColor Red
-        exit 1
+# Install packages
+$needsRestart = $false
+foreach ($package in $packages) {
+    $restartNeeded = Install-WingetPackage -PackageId $package.Id -CommandName $package.Command -DisplayName $package.DisplayName
+    if ($restartNeeded) {
+        $needsRestart = $true
     }
-} else {
-    Write-Host "  ✓ Nushell already installed" -ForegroundColor Green
-}
-
-# Install Bitwarden CLI
-Write-Host "📦 Checking Bitwarden CLI..." -ForegroundColor White
-if (-not (Get-Command bw -ErrorAction SilentlyContinue)) {
-    Write-Host "  Installing Bitwarden CLI..." -ForegroundColor Yellow
-    winget install --id Bitwarden.CLI --exact --silent --accept-package-agreements --accept-source-agreements
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "  ✓ Bitwarden CLI installed" -ForegroundColor Green
-
-        # Refresh PATH to make bw available immediately
-        Refresh-Path
-
-        # Verify bw is now available
-        if (Get-Command bw -ErrorAction SilentlyContinue) {
-            Write-Host "  ✓ bw command is ready" -ForegroundColor Green
-        } else {
-            Write-Host "  ⚠️  bw installed but not in PATH yet" -ForegroundColor Yellow
-            Write-Host "  Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
-        }
-    } else {
-        Write-Host "  ❌ Failed to install Bitwarden CLI" -ForegroundColor Red
-        exit 1
-    }
-} else {
-    Write-Host "  ✓ Bitwarden CLI already installed" -ForegroundColor Green
-}
-
-# Install Just (task runner)
-Write-Host "📦 Checking Just..." -ForegroundColor White
-if (-not (Get-Command just -ErrorAction SilentlyContinue)) {
-    Write-Host "  Installing Just..." -ForegroundColor Yellow
-    winget install --id Casey.Just --exact --silent --accept-package-agreements --accept-source-agreements
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "  ✓ Just installed" -ForegroundColor Green
-        Refresh-Path
-        if (Get-Command just -ErrorAction SilentlyContinue) {
-            Write-Host "  ✓ just command is ready" -ForegroundColor Green
-        } else {
-            Write-Host "  ⚠️  just installed but not in PATH yet" -ForegroundColor Yellow
-        }
-    } else {
-        Write-Host "  ❌ Failed to install Just" -ForegroundColor Red
-        exit 1
-    }
-} else {
-    Write-Host "  ✓ Just already installed" -ForegroundColor Green
 }
 
 Write-Host "" -ForegroundColor White
 Write-Host "✅ Bootstrap complete for Windows" -ForegroundColor Green
 
-# Final check - warn if commands still not available
-$needsRestart = $false
-if (-not (Get-Command nu -ErrorAction SilentlyContinue)) {
-    $needsRestart = $true
-}
-if (-not (Get-Command bw -ErrorAction SilentlyContinue)) {
-    $needsRestart = $true
-}
-if (-not (Get-Command just -ErrorAction SilentlyContinue)) {
-    $needsRestart = $true
-}
-
+# Final warning if restart needed
 if ($needsRestart) {
     Write-Host "" -ForegroundColor White
     Write-Host "⚠️  IMPORTANT: Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
-    Write-Host "   Newly installed commands (nu, bw, just) require a fresh PowerShell session" -ForegroundColor Yellow
+    Write-Host "   Newly installed commands require a fresh PowerShell session" -ForegroundColor Yellow
 }
+
+#endregion
