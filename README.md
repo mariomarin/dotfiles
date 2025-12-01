@@ -18,61 +18,61 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 
 ## Quick Start
 
-### Prerequisites
-
-**macOS/Linux:**
-
-- Nix package manager (install if not present):
-
-  ```bash
-  curl -sfL https://install.determinate.systems/nix | sh -s -- install
-  ```
-
-**Windows:**
-
-- PowerShell (pre-installed on Windows)
-
 ### Installation
 
-#### Step 1: Clone repository
+**macOS:**
 
 ```bash
+# Install Nix (if not present)
+curl -sfL https://install.determinate.systems/nix | sh -s -- install
+
+# Clone and setup
 git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
-```
 
-#### Step 2: Platform-specific setup
-
-**Unix (macOS/Linux):**
-
-```bash
-# Enter nix-shell (provides all dependencies: chezmoi, just, yq, bw, etc.)
+# Enter nix-shell (provides all tools: chezmoi, just, yq, bw)
 nix-shell .install/shell.nix
 
-# Set hostname (required - choose from: dendrite, malus, prion, symbiont, mitosis, spore)
-export HOSTNAME=dendrite  # Replace with your machine name
-
-# Initialize dotfiles
+# Set hostname and initialize
+export HOSTNAME=malus  # See .chezmoidata/machines.yaml for available machines
 chezmoi init --apply
+```
 
-# Unlock Bitwarden for secrets
-bw login
-just bw-unlock  # Saves session to .env.local
-just apply      # Apply all configurations with secrets
+**NixOS/Linux:**
+
+```bash
+# Clone and setup
+git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
+cd ~/.local/share/chezmoi
+
+# Enter nix-shell (provides all tools: chezmoi, just, yq, bw)
+nix-shell .install/shell.nix
+
+# Set hostname and initialize
+export HOSTNAME=dendrite  # See .chezmoidata/machines.yaml for available machines
+chezmoi init --apply
 ```
 
 **Windows:**
 
 ```powershell
-# Install dependencies (chezmoi, just, yq, bw, nushell)
-.install/bootstrap-windows.ps1
+# Bootstrap (installs chezmoi, just, yq, bw, nushell via winget)
+iwr -useb https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-windows.ps1 | iex
 
-# Set hostname (required - choose from: dendrite, malus, prion, symbiont, mitosis, spore)
-$env:HOSTNAME = "prion"  # Replace with your machine name
+# Clone repository
+git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
+cd ~/.local/share/chezmoi
 
-# Initialize dotfiles
+# Set hostname and initialize
+$env:HOSTNAME = "prion"  # See .chezmoidata/machines.yaml for available machines
 chezmoi init --apply
+```
 
+### After Installation
+
+**All platforms:**
+
+```bash
 # Unlock Bitwarden for secrets
 bw login
 just bw-unlock  # Saves session to .env.local
