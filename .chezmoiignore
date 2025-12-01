@@ -43,6 +43,13 @@ devenv.yaml
 .chezmoiscripts/linux-*
 {{ end }}
 
+# Platform-specific validation scripts
+{{ if eq .chezmoi.os "windows" }}
+.chezmoiscripts/run_before_00-validate-hostname.sh.tmpl
+{{ else }}
+.chezmoiscripts/run_before_00-validate-hostname.ps1.tmpl
+{{ end }}
+
 # Unix-only configurations (ignore on Windows)
 {{ if eq .chezmoi.os "windows" }}
 .config/zim
