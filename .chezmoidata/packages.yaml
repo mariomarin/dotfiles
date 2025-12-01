@@ -1,18 +1,8 @@
 # Declarative package management for chezmoi
 # Packages defined here are installed via run_onchange_ scripts
-# NixOS packages are managed via system configuration (not here)
+# NixOS packages are managed via NixOS modules (nix/nixos/modules/*.nix)
+# macOS packages are managed via nix-darwin modules (nix/darwin/modules/*.nix)
 packages:
-    # macOS packages via homebrew
-    darwin:
-        brews:
-            - git
-            - neovim
-            - direnv
-            - just
-            - nushell
-        casks:
-            - alacritty
-            - windows-app # Microsoft Windows App (Remote Desktop)
     # Windows packages via winget
     windows:
         winget:
