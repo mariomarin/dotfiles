@@ -56,6 +56,23 @@ devenv.yaml
 .config/zim/**
 .config/tmux
 .config/tmux/**
+.config/zsh
+.config/zsh/**
+.config/autorandr
+.config/autorandr/**
+.config/kmonad
+.config/kmonad/**
+.config/leftwm
+.config/leftwm/**
+.config/picom
+.config/picom/**
+.config/polybar
+.config/polybar/**
+.config/rofi
+.config/rofi/**
+.config/systemd
+.config/systemd/**
+.config/mimeapps.list
 {{ end }}
 
 # macOS-only configurations (ignore on non-macOS)
