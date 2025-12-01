@@ -145,7 +145,7 @@ function Install-WingetPackage {
             throw "winget install failed with exit code $LASTEXITCODE"
         }
     } catch {
-        Write-Host "  ❌ Failed to install $DisplayName: $_" -ForegroundColor Red
+        Write-Host "  ❌ Failed to install $($DisplayName): $_" -ForegroundColor Red
         exit 1
     }
 }
@@ -205,7 +205,7 @@ if (-not $env:HOSTNAME) {
     $hostname = Read-Host "`nEnter hostname for this machine"
     $env:HOSTNAME = $hostname
 }
-Write-Host "✅ Using hostname: $env:HOSTNAME" -ForegroundColor Green
+Write-Host "✅ Using hostname: $($env:HOSTNAME)" -ForegroundColor Green
 
 # Initialize chezmoi
 Write-Host "" -ForegroundColor Cyan
