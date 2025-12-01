@@ -102,6 +102,48 @@ if (-not (Get-Command bw -ErrorAction SilentlyContinue)) {
     Write-Host "  ✓ Bitwarden CLI already installed" -ForegroundColor Green
 }
 
+# Install Just (task runner)
+Write-Host "📦 Checking Just..." -ForegroundColor White
+if (-not (Get-Command just -ErrorAction SilentlyContinue)) {
+    Write-Host "  Installing Just..." -ForegroundColor Yellow
+    winget install --id Casey.Just --exact --silent --accept-package-agreements --accept-source-agreements
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  ✓ Just installed" -ForegroundColor Green
+        Refresh-Path
+        if (Get-Command just -ErrorAction SilentlyContinue) {
+            Write-Host "  ✓ just command is ready" -ForegroundColor Green
+        } else {
+            Write-Host "  ⚠️  just installed but not in PATH yet" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "  ❌ Failed to install Just" -ForegroundColor Red
+        exit 1
+    }
+} else {
+    Write-Host "  ✓ Just already installed" -ForegroundColor Green
+}
+
+# Install Devenv (development environment manager)
+Write-Host "📦 Checking Devenv..." -ForegroundColor White
+if (-not (Get-Command devenv -ErrorAction SilentlyContinue)) {
+    Write-Host "  Installing Devenv..." -ForegroundColor Yellow
+    winget install --id cachix.devenv --exact --silent --accept-package-agreements --accept-source-agreements
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  ✓ Devenv installed" -ForegroundColor Green
+        Refresh-Path
+        if (Get-Command devenv -ErrorAction SilentlyContinue) {
+            Write-Host "  ✓ devenv command is ready" -ForegroundColor Green
+        } else {
+            Write-Host "  ⚠️  devenv installed but not in PATH yet" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "  ❌ Failed to install Devenv" -ForegroundColor Red
+        exit 1
+    }
+} else {
+    Write-Host "  ✓ Devenv already installed" -ForegroundColor Green
+}
+
 Write-Host "" -ForegroundColor White
 Write-Host "✅ Bootstrap complete for Windows" -ForegroundColor Green
 
@@ -113,9 +155,15 @@ if (-not (Get-Command nu -ErrorAction SilentlyContinue)) {
 if (-not (Get-Command bw -ErrorAction SilentlyContinue)) {
     $needsRestart = $true
 }
+if (-not (Get-Command just -ErrorAction SilentlyContinue)) {
+    $needsRestart = $true
+}
+if (-not (Get-Command devenv -ErrorAction SilentlyContinue)) {
+    $needsRestart = $true
+}
 
 if ($needsRestart) {
     Write-Host "" -ForegroundColor White
     Write-Host "⚠️  IMPORTANT: Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
-    Write-Host "   Newly installed commands (nu, bw) require a fresh PowerShell session" -ForegroundColor Yellow
+    Write-Host "   Newly installed commands (nu, bw, just, devenv) require a fresh PowerShell session" -ForegroundColor Yellow
 }
