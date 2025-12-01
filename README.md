@@ -144,7 +144,7 @@ export BW_SESSION=$(bw unlock --raw)
 chezmoi apply
 
 # Apply nix-darwin configuration (installs all packages via Nix)
-sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
+just darwin-first-time  # Auto-detects hostname via scutil
 ```
 
 **What nix-darwin manages:**
@@ -153,7 +153,7 @@ sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
 - GUI applications from nixpkgs (Alacritty, Firefox, etc.)
 - Homebrew casks only for apps not in nixpkgs (see [nix/darwin/README.md](nix/darwin/README.md))
 
-**Future updates:** `just darwin`
+**Future updates:** `just darwin` (auto-detects hostname)
 
 See [nix/darwin/README.md](nix/darwin/README.md) for detailed setup and configuration.
 
