@@ -29,13 +29,13 @@ def "main unlock" [] {
         exit 1
     }
 
-    $"export BW_SESSION=\"($bw_session)\"" | save -f .envrc.local
-    $"BW_SESSION=\"($bw_session)\"" | save -f .env
-    print "✅ Session saved to .env and .envrc.local"
-    print "💡 Run 'nu bw.nu reload' or 'just bw-reload' to reload direnv and load the session"
+    $"BW_SESSION=($bw_session)" | save -f .env.local
+    print "✅ Session saved to .env.local"
+    print "💡 Run 'nu bw.nu reload' or 'just bw-reload' to reload direnv"
+    print "💡 Just targets automatically load BW_SESSION from .env.local"
 }
 
-# Reload direnv environment (loads BW_SESSION from .envrc.local)
+# Reload direnv environment (loads BW_SESSION from .env.local)
 def "main reload" [] {
     print "🔄 Reloading direnv environment..."
     direnv allow
@@ -43,9 +43,24 @@ def "main reload" [] {
     print "✅ Environment reloaded"
     if ($env.BW_SESSION? | default "" | is-not-empty) {
         print "✅ BW_SESSION is loaded"
+
+        # Verify session is still valid
+        let status = try {
+            bw status | from json | get status
+        } catch {
+            "error"
+        }
+
+        if $status == "unlocked" {
+            print "✅ Session is valid and vault is unlocked"
+        } else if $status == "locked" {
+            print "⚠️  Session expired or vault is locked - run 'just bw-unlock'"
+        } else {
+            print "⚠️  Session invalid - run 'just bw-unlock' to get a fresh session"
+        }
     } else {
         print "⚠️  BW_SESSION not found in environment"
-        print "   You may need to restart your shell or run: source .envrc.local"
+        print "   Run 'just bw-unlock' to unlock vault and save session"
     }
 }
 

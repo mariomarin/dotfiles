@@ -2,6 +2,11 @@
 
 set shell := ["nu", "-c"]
 
+# Auto-load environment variables from .env and .env.local
+# This makes BW_SESSION available to all just targets
+
+set dotenv-load := true
+
 # Default recipe (runs when you type `just`)
 default: chezmoi-quick-apply
 
