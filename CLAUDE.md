@@ -56,6 +56,36 @@ When a template fails to render:
    - Undefined variables
    - Incorrect spacing around template directives
 
+### Managing Directories with User Content
+
+**Prefer `.keep` files and `.chezmoiignore` over shell scripts for directory creation:**
+
+```bash
+# ✅ Good - declarative approach
+# 1. Create directory in source with .keep file
+mkdir -p $(chezmoi source-path)/Pictures/Wallpapers
+touch $(chezmoi source-path)/Pictures/Wallpapers/.keep
+
+# 2. Add to .chezmoiignore to ignore contents
+Pictures/Wallpapers/**
+!Pictures/Wallpapers/.keep
+
+# ❌ Avoid - imperative script approach
+mkdir ~/Pictures/Wallpapers  # in run_once script
+```
+
+**When to use this pattern:**
+
+- User-managed directories (wallpapers, downloads, custom apps)
+- Directories that should exist but contents vary by machine
+- XDG directories like `~/.config/autostart`, `~/.local/share/applications`
+
+**Benefits:**
+
+- Declarative and version controlled
+- No need for shell scripts
+- Clearer intent - directory structure is part of dotfiles
+
 ### Troubleshooting Ghost Scripts
 
 If chezmoi complains about a non-existent script (e.g., "install-container-use.sh"):
@@ -88,6 +118,10 @@ set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
 # Script content here
 ```
+
+### Script Code Style
+
+**Prefer early returns over nested conditionals** to reduce nesting and improve readability.
 
 ## Repository Overview
 
@@ -520,6 +554,9 @@ Example - if changing shfmt arguments:
 
 ## Development Standards
 
+### Commit Practices
+
+- **Make small, focused commits frequently** - Don't batch multiple unrelated changes
 - Follow conventional commit format with **SHORT** titles and descriptions
 - Keep commit messages concise: title under 50 chars, description under 72 chars per line
 - Use format: `type: brief description`
@@ -527,6 +564,7 @@ Example - if changing shfmt arguments:
   - `fix: resolve tmux keybinding conflict`
   - `feat: add tmux.nvim for better integration`
   - `docs: update tmux keybindings README`
+  - `refactor: remove .tmpl from non-template scripts`
 
 ## User Services Management
 
