@@ -1,8 +1,6 @@
 # Chezmoi operations
 
 set shell := ["nu", "-c"]
-set dotenv-filename := ".env.local"
-set dotenv-load
 
 # Default target
 default: apply
