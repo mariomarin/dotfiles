@@ -64,3 +64,11 @@ nix/darwin/**
 .chezmoiscripts/linux-50-*
 .chezmoiscripts/linux-autostart-*
 {{ end }}
+
+# User-managed directory contents (keep directory structure, ignore contents)
+.config/autostart/**
+!.config/autostart/.keep
+.local/share/applications/**
+!.local/share/applications/.keep
+Pictures/Wallpapers/**
+!Pictures/Wallpapers/.keep

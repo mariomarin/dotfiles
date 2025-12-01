@@ -1,0 +1,27 @@
+[Default Applications]
+# Web browsers
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+text/html=firefox.desktop
+
+# Images
+image/jpeg=feh.desktop
+image/png=feh.desktop
+image/gif=feh.desktop
+image/webp=feh.desktop
+image/svg+xml=feh.desktop
+
+# PDF and documents
+application/pdf=org.pwmt.zathura.desktop
+
+# Text files
+text/plain=nvim.desktop
+
+[Added Associations]
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+image/jpeg=feh.desktop
+image/png=feh.desktop
+image/gif=feh.desktop
+application/pdf=org.pwmt.zathura.desktop
+text/plain=nvim.desktop
