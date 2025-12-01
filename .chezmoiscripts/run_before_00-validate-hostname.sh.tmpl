@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Validate HOSTNAME environment variable
+# This runs BEFORE any files are applied
+
+set -euo pipefail
+
+# Check if HOSTNAME is set
+if [ -z "${HOSTNAME:-}" ]; then
+    echo "❌ HOSTNAME environment variable not set" >&2
+    echo "" >&2
+    echo "Set it before running chezmoi:" >&2
+    echo "  export HOSTNAME=dendrite  # Choose from available machines below" >&2
+    echo "" >&2
+    echo "Available machines:" >&2
+    if command -v yq >/dev/null 2>&1; then
+        yq '.machines | keys | .[]' "{{ .chezmoi.sourceDir }}/.chezmoidata/machines.yaml" 2>/dev/null || echo "  (error reading machines.yaml)"
+    else
+        echo "  (install yq to see list - available in bootstrap shell)"
+    fi
+    echo "" >&2
+    exit 1
+fi
+
+# Check if hostname exists in machines.yaml
+if command -v yq >/dev/null 2>&1; then
+    if ! yq -e ".machines.\"$HOSTNAME\"" "{{ .chezmoi.sourceDir }}/.chezmoidata/machines.yaml" >/dev/null 2>&1; then
+        echo "⚠️  Warning: HOSTNAME '$HOSTNAME' not found in machines.yaml" >&2
+        echo "" >&2
+        echo "Available machines:" >&2
+        yq '.machines | keys | .[]' "{{ .chezmoi.sourceDir }}/.chezmoidata/machines.yaml" >&2
+        echo "" >&2
+        echo "Continuing with default configuration..." >&2
+        echo "" >&2
+    else
+        echo "✅ Using machine configuration: $HOSTNAME"
+    fi
+else
+    echo "✅ Using HOSTNAME: $HOSTNAME (install yq for validation)"
+fi
