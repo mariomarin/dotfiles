@@ -1,18 +1,12 @@
-{{- if or .machineConfig.features.desktop (eq .chezmoi.os "windows") -}}
+{{- if .machineConfig.features.desktop -}}
 [window]
-{{- if .machineConfig.features.desktop }}
 opacity = 0.97
 blur = true
-{{- else }}
-decorations = "full"
-{{- end }}
 
-{{- if .machineConfig.features.desktop }}
 [general]
 import = [
     "~/.config/alacritty/themes/themes/ayu_light.toml"
 ]
-{{- end }}
 
 {{- if eq .chezmoi.os "windows" }}
 # Windows-specific: Launch WSL NixOS with login shell

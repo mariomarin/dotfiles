@@ -79,7 +79,7 @@ machines:
         platform: windows
         hostname: spore
         features:
-            desktop: false # Browser-based RDP access
+            desktop: true # Full Windows desktop via browser RDP
             audio: false
             bluetooth: false
             x11: false
