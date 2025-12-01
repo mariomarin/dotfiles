@@ -18,45 +18,59 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 
 ## Quick Start
 
-### One-Line Installation
+### Prerequisites
+
+**macOS/Linux:**
+
+- Nix package manager (install if not present):
+
+  ```bash
+  curl -sfL https://install.determinate.systems/nix | sh -s -- install
+  ```
+
+**Windows:**
+
+- PowerShell (pre-installed on Windows)
+
+### Installation
+
+#### Step 1: Clone repository
+
+```bash
+git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
+cd ~/.local/share/chezmoi
+```
+
+#### Step 2: Platform-specific setup
 
 **Unix (macOS/Linux):**
 
 ```bash
-curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh | bash
+# Enter nix-shell (provides all dependencies: chezmoi, just, yq, bw, etc.)
+nix-shell .install/shell.nix
+
+# Set hostname (required - choose from: dendrite, malus, prion, symbiont, mitosis, spore)
+export HOSTNAME=dendrite  # Replace with your machine name
+
+# Initialize dotfiles
+chezmoi init --apply
+
+# Unlock Bitwarden for secrets
+bw login
+just bw-unlock  # Saves session to .env.local
+just apply      # Apply all configurations with secrets
 ```
 
 **Windows:**
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-windows.ps1 | iex
-```
+# Install dependencies (chezmoi, just, yq, bw, nushell)
+.install/bootstrap-windows.ps1
 
-### What Bootstrap Does
+# Set hostname (required - choose from: dendrite, malus, prion, symbiont, mitosis, spore)
+$env:HOSTNAME = "prion"  # Replace with your machine name
 
-**macOS/Linux:**
-
-- Installs Nix (if not present) via Determinate Systems installer
-- Verifies Nushell and Bitwarden CLI are available
-
-**Windows:**
-
-- Installs winget (if not present)
-- Installs: chezmoi, Nushell, Bitwarden CLI, Just
-
-### After Bootstrap
-
-**All Platforms:**
-
-```bash
-# Clone dotfiles
-git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
-cd ~/.local/share/chezmoi
-
-# For macOS/Linux: Enter nix-shell (provides chezmoi + all bootstrap tools)
-nix-shell .install/shell.nix  # Windows: skip this step
-
-# Initialize dotfiles (will prompt for hostname on first run)
+# Initialize dotfiles
 chezmoi init --apply
 
 # Unlock Bitwarden for secrets

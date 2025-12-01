@@ -46,7 +46,7 @@ systemd.user.services."service-name" = {
 
 **Drawbacks:**
 
-- ❌ Requires root/sudo to modify (`nixos-rebuild`)
+- ❌ Requires system rebuild to modify (`just nixos`)
 - ❌ Services are system-wide, not user-specific
 - ❌ Harder to test changes quickly
 - ❌ Can't reference user-specific paths directly

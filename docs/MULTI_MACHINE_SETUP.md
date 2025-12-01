@@ -27,7 +27,15 @@ The setup distinguishes between:
 
 ### Machine Detection
 
-Chezmoi automatically detects machine type based on hostname:
+Chezmoi detects machine type from the `HOSTNAME` environment variable, which must be set before running
+`chezmoi init` or `chezmoi apply`:
+
+```bash
+# Set hostname (required before running chezmoi)
+export HOSTNAME=dendrite  # Choose from: dendrite, malus, prion, symbiont, mitosis, spore
+```
+
+Machine configurations are defined in `.chezmoidata/machines.yaml`:
 
 ```yaml
 # .chezmoidata/machines.yaml
@@ -56,6 +64,9 @@ machines:
       desktop: false
       wsl: true
 ```
+
+**Important**: The `HOSTNAME` environment variable takes precedence over the system hostname. This allows
+consistent configuration across different environments (e.g., WSL where system hostname might differ).
 
 ### Conditional File Management
 
@@ -123,7 +134,7 @@ just vm-switch                  # Shortcut for mitosis
 just hosts                      # Show available configurations
 ```
 
-Using nixos-rebuild directly:
+Using nixos-rebuild directly (not recommended - use just instead):
 
 ```bash
 # Build dendrite configuration
@@ -138,6 +149,8 @@ sudo nixos-rebuild switch --flake .#symbiont
 # Test without switching
 sudo nixos-rebuild test --flake .#mitosis
 ```
+
+**Recommended**: Use `just` commands which handle hostnames automatically and provide better UX.
 
 ### Deploying to Remote VM
 
@@ -154,7 +167,7 @@ just remote-test TARGET_HOST=user@host    # Test first
 just remote-switch TARGET_HOST=user@vm BUILD_HOST=user@vm
 ```
 
-Manual deployment:
+Manual deployment (not recommended - use just instead):
 
 ```bash
 # Build locally and deploy to remote
@@ -165,8 +178,10 @@ nixos-rebuild switch --flake .#mitosis \
 # Or copy flake to VM and build there
 rsync -avz nix/nixos/ user@vm-hostname:~/nixos/
 ssh user@vm-hostname
-cd nixos && sudo nixos-rebuild switch --flake .#mitosis
+cd nixos && just nixos
 ```
+
+**Recommended**: Use `just deploy-vm` or `just vm-switch` for better workflow.
 
 ## Adding a New Machine
 
@@ -237,16 +252,30 @@ nixosConfigurations = {
 On the new machine:
 
 ```bash
+# Run bootstrap script (installs dependencies)
+curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh | bash
+
 # Clone dotfiles
-git clone https://github.com/yourusername/dotfiles.git
-cd dotfiles
+git clone https://github.com/yourusername/dotfiles.git ~/.local/share/chezmoi
+cd ~/.local/share/chezmoi
+
+# Enter nix-shell (provides chezmoi and tools)
+nix-shell .install/shell.nix
+
+# Set hostname (required)
+export HOSTNAME=myhost
 
 # Initialize chezmoi
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply
+chezmoi init --apply
+
+# Unlock Bitwarden and apply with secrets
+bw login
+just bw-unlock
+just apply
 
 # Deploy NixOS config
-cd ~/.local/share/chezmoi/nix/nixos
-sudo nixos-rebuild switch --flake .#myhost
+cd nix/nixos
+just switch HOST=myhost
 ```
 
 ## Machine-Specific Configurations
@@ -297,10 +326,16 @@ Services are conditionally enabled based on machine type:
 ### Chezmoi Not Detecting Machine Type
 
 ```bash
-# Check hostname
-hostname
+# Check HOSTNAME environment variable
+echo $HOSTNAME
+
+# If not set, export it
+export HOSTNAME=dendrite  # Choose your machine name
 
 # Verify machine data
+chezmoi data | jq .machineConfig
+
+# Check available machines
 chezmoi data | jq .machines
 
 # Force re-read of templates
@@ -316,7 +351,10 @@ nix flake check
 # Show available configurations
 nix flake show
 
-# Build specific host
+# Try building with just first
+cd nix/nixos && just nixos
+
+# Debug build specific host (advanced)
 nix build .#nixosConfigurations.mitosis.config.system.build.toplevel
 ```
 

@@ -197,7 +197,7 @@ wsl = {
 };
 ```
 
-Then apply: `sudo nixos-rebuild switch --flake .#nixos-wsl`
+Then apply: `just nixos` (or from chezmoi root: `just nixos`)
 
 **Why not chezmoi?**
 
@@ -221,8 +221,14 @@ wsl -d NixOS
 After modifying NixOS configuration (WSL side):
 
 ```bash
-# Inside NixOS WSL
+# Inside NixOS WSL (recommended)
 cd ~/.local/share/chezmoi
+just nixos
+
+# Or from repository root
+just nixos
+
+# Advanced: Direct rebuild (not recommended)
 sudo nixos-rebuild switch --flake .#nixos-wsl
 ```
 

@@ -76,7 +76,7 @@ See [README.md](README.md#adding-packages) for module selection guide. Then:
 
 1. Edit the appropriate module file
 2. Add package to `environment.systemPackages`
-3. Rebuild with `sudo nixos-rebuild switch` or `just switch`
+3. Rebuild with `just nixos` (or from root: `just nixos`)
 
 ### Enabling Services
 
@@ -190,12 +190,15 @@ This repository supports NixOS on Windows Subsystem for Linux (WSL2) via the Nix
 ### Building WSL Configuration
 
 ```bash
-# From any NixOS system (test build)
+# On WSL (apply configuration) - recommended
+just nixos
+
+# Or from repository root
+just nixos
+
+# Test build from any NixOS system (advanced)
 cd nixos
 nix build .#nixosConfigurations.symbiont.config.system.build.toplevel
-
-# On WSL (apply configuration)
-sudo nixos-rebuild switch --flake /etc/nixos#symbiont
 
 # Update flake inputs
 nix flake update
@@ -310,7 +313,7 @@ The session startup command should start it with SSH support, but fails if daemo
    programs.ssh.startAgent = true;  # was false
    ```
 
-   Then rebuild: `sudo nixos-rebuild switch`
+   Then rebuild: `just nixos`
 
 #### Environment Variables
 

@@ -5,11 +5,14 @@ Declarative NixOS configuration managed with chezmoi, supporting multiple hosts 
 ## Quick Start
 
 ```bash
-# Rebuild system configuration
-sudo nixos-rebuild switch --flake .#$(hostname)
+# Rebuild system configuration (recommended)
+just nixos
 
-# Or use justfile
-just switch
+# Or from repository root
+just nixos
+
+# Advanced: Direct nixos-rebuild (not recommended)
+sudo nixos-rebuild switch --flake .#$(hostname)
 ```
 
 ## Architecture
@@ -99,7 +102,7 @@ Then:
 
 1. Edit the appropriate module file
 2. Add package to `environment.systemPackages`
-3. Rebuild: `sudo nixos-rebuild switch`
+3. Rebuild: `just nixos` (or `just nixos` from repository root)
 
 ## Host Configurations
 
@@ -185,23 +188,28 @@ outputs:
 ## Common Operations
 
 ```bash
-# Switch to new configuration
-sudo nixos-rebuild switch
+# Switch to new configuration (recommended)
+just nixos
 
-# Test without activation
-sudo nixos-rebuild test
+# From repository root
+just nixos
 
-# Build without activation
-sudo nixos-rebuild build
+# Test without activation (VM)
+just vm-test
 
 # Update flake inputs
 nix flake update
 
-# Check what will change
+# Check configuration
 nix flake check
 
 # Apply chezmoi changes
-chezmoi apply -v
+just apply
+
+# Advanced: Direct nixos-rebuild (not recommended)
+sudo nixos-rebuild switch  # Use 'just nixos' instead
+sudo nixos-rebuild test    # Use 'just vm-test' instead
+sudo nixos-rebuild build   # Use 'just nixos' instead
 ```
 
 ## Troubleshooting
