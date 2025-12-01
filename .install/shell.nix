@@ -8,6 +8,10 @@ pkgs.mkShell {
     nushell
     bitwarden-cli
 
+    # Task runner and development environment
+    just
+    devenv
+
     # Useful for initial setup
     git
     chezmoi
@@ -18,6 +22,8 @@ pkgs.mkShell {
     echo "   Nushell: $(nu --version)"
     echo "   Bitwarden CLI: $(bw --version)"
     echo "   Chezmoi: $(chezmoi --version)"
+    echo "   Just: $(just --version)"
+    echo "   Devenv: $(devenv version)"
     echo ""
     echo "You can now run: chezmoi init https://github.com/mariomarin/dotfiles.git"
   '';
