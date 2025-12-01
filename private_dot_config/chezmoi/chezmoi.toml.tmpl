@@ -30,15 +30,15 @@ autoCommit = false
 autoPush = false
 
 [data]
-    machineType = {{ .machineType | quote }}
-    codespaces = {{ .codespaces }}
-    
-    [data.machineConfig]
-        hostname = {{ .machineConfig.hostname | quote }}
-        type = {{ .machineConfig.type | quote }}
-        
-        [data.machineConfig.features]
-            desktop = {{ .machineConfig.features.desktop }}
-            kmonad = {{ .machineConfig.features.kmonad }}
-            audio = {{ .machineConfig.features.audio }}
-            bluetooth = {{ .machineConfig.features.bluetooth }}
+machineType = {{ .machineType | quote }}
+codespaces = {{ .codespaces }}
+
+[data.machineConfig]
+hostname = {{ .machineConfig.hostname | quote }}
+type = {{ .machineConfig.type | quote }}
+
+[data.machineConfig.features]
+desktop = {{ .machineConfig.features.desktop }}
+kmonad = {{ .machineConfig.features.kmonad }}
+audio = {{ .machineConfig.features.audio }}
+bluetooth = {{ .machineConfig.features.bluetooth }}

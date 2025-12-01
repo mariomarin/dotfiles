@@ -18,224 +18,93 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 
 ## Quick Start
 
-> 📖 **For detailed installation instructions and bootstrap philosophy**, see [.install/README.md](.install/README.md)
+### One-Line Installation
 
-### Installation Pattern
-
-All platforms follow the same pattern:
-
-1. **Manual Prerequisites** - Install chezmoi (platform-specific)
-2. **Automatic Bootstrap** - Run `chezmoi init`, bootstrap installs dependencies automatically
-3. **Apply Configuration** - Login to Bitwarden and apply dotfiles
-
-<details>
-<summary>NixOS</summary>
-
-**Manual Prerequisites:**
+**Unix (macOS/Linux):**
 
 ```bash
-# Use bootstrap shell (provides nushell, bitwarden-cli, git, chezmoi)
-nix-shell -p git --run "git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi"
-cd ~/.local/share/chezmoi
-nix-shell .install/shell.nix
+curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh | bash
 ```
 
-**Setup:**
+**Windows:**
 
-Before initializing chezmoi, create a minimal configuration file:
-
-```bash
-# 1. Create config directory
-mkdir -p ~/.config/chezmoi
-
-# 2. Create minimal config file
-cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
-[bitwarden]
-command = "bw"
-
-[data]
-hostname = "dendrite"
-EOF
+```powershell
+iwr -useb https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-windows.ps1 | iex
 ```
 
-> **Note:** Replace `"dendrite"` with your machine's hostname. Available machines are defined in [.chezmoidata/machines.yaml](.chezmoidata/machines.yaml)
+### What Bootstrap Does
 
-**Apply Configuration:**
+**macOS/Linux:**
 
-```bash
-# From within the nix-shell environment
+- Installs Nix (if not present) via Determinate Systems installer
+- Verifies Nushell and Bitwarden CLI are available
 
-# Initialize chezmoi
-chezmoi init
+**Windows:**
 
-# Login to Bitwarden and apply
-bw login
-export BW_SESSION=$(bw unlock --raw)
-chezmoi apply -v
+- Installs winget (if not present)
+- Installs: chezmoi, Nushell, Bitwarden CLI, Just
 
-# Apply NixOS configuration (sets hostname and installs all packages via NixOS)
-cd nix/nixos
-just switch  # Auto-detects hostname, or use: just switch HOST=dendrite
+### After Bootstrap
 
-# Verify hostname was set correctly
-hostname  # Should output: dendrite (or mitosis/symbiont)
-```
-
-**What NixOS configuration manages:**
-
-- All system packages (minimal tools, development tools, desktop apps)
-- System services (Docker, SSH, etc.)
-- Boot configuration, networking, security settings
-
-**Future updates:** `just nixos` (auto-detects hostname)
-
-See [nix/nixos/README.md](nix/nixos/README.md) for detailed setup and configuration.
-
-</details>
-
-<details>
-<summary>macOS (nix-darwin)</summary>
-
-**Manual Prerequisites:**
+**All Platforms:**
 
 ```bash
-# Install Nix (if not already installed)
-curl -sfL https://install.determinate.systems/nix | sh -s -- install
-
 # Clone dotfiles
 git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
 
-# Enter bootstrap shell (provides nushell, bitwarden-cli, git, chezmoi)
-nix-shell .install/shell.nix
-```
+# For macOS/Linux: Enter nix-shell (provides chezmoi + all bootstrap tools)
+nix-shell .install/shell.nix  # Windows: skip this step
 
-**Setup:**
+# Initialize dotfiles (will prompt for hostname on first run)
+chezmoi init --apply
 
-Before initializing chezmoi, create a minimal configuration file:
-
-```bash
-# 1. Create config directory
-mkdir -p ~/.config/chezmoi
-
-# 2. Create minimal config file
-cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
-[bitwarden]
-command = "bw"
-
-[data]
-hostname = "malus"
-EOF
-```
-
-> **Note:** Replace `"malus"` with your machine's hostname. Available machines are defined in [.chezmoidata/machines.yaml](.chezmoidata/machines.yaml)
-
-**Apply Configuration:**
-
-```bash
-# From within the nix-shell environment
-
-# Initialize chezmoi
-chezmoi init
-
-# Login to Bitwarden and apply
+# Unlock Bitwarden for secrets
 bw login
-export BW_SESSION=$(bw unlock --raw)
-chezmoi apply
+just bw-unlock  # Saves session to .env.local
+just apply      # Apply all configurations with secrets
+```
 
-# Apply nix-darwin configuration (installs all packages via Nix)
+**NixOS/Darwin System Configuration:**
+
+```bash
+# NixOS: Apply system configuration
+cd nix/nixos && just switch  # Auto-detects hostname
+
+# macOS: Apply nix-darwin configuration
 just darwin-first-time  # Auto-detects hostname via scutil
 ```
 
-**What nix-darwin manages:**
+### Platform-Specific Details
 
-- All CLI tools (git, neovim, tmux, just, devenv, etc.)
-- GUI applications from nixpkgs (Alacritty, Firefox, etc.)
-- Homebrew casks only for apps not in nixpkgs (see [nix/darwin/README.md](nix/darwin/README.md))
+<details>
+<summary>💡 NixOS</summary>
 
-**Future updates:** `just darwin` (auto-detects hostname)
-
-See [nix/darwin/README.md](nix/darwin/README.md) for detailed setup and configuration.
+**System manages:** All packages, services, boot, networking
+**Update:** `just nixos`
+**Docs:** [nix/nixos/README.md](nix/nixos/README.md)
 
 </details>
 
 <details>
-<summary>Windows</summary>
+<summary>💡 macOS (nix-darwin)</summary>
 
-**Prerequisites:**
-
-```powershell
-# 1. Install Git (if not already installed)
-# Download and run installer from: https://git-scm.com/download/win
-# Or use winget if available: winget install Git.Git
-
-# 2. Install chezmoi via PowerShell one-liner
-iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
-
-# 3. Restart PowerShell to refresh PATH
-```
-
-**Setup:**
-
-```powershell
-# 1. Create config directory
-mkdir -Force ~/.config/chezmoi
-
-# 2. Create minimal config file
-@"
-[bitwarden]
-command = "bw"
-
-[data]
-hostname = "prion"
-"@ | Set-Content ~/.config/chezmoi/chezmoi.toml
-```
-
-> **Note:** Replace `"prion"` with your machine's hostname. Available machines are defined in `.chezmoidata/machines.yaml`
-
-```powershell
-# 3. Initialize dotfiles
-chezmoi init https://github.com/mariomarin/dotfiles.git
-```
-
-**Continue setup:**
-
-```powershell
-# If Nushell was just installed, restart PowerShell
-# (The bootstrap will warn you if this is required)
-
-# Login to Bitwarden and apply
-bw login
-$env:BW_SESSION = bw unlock --raw
-chezmoi apply
-```
-
-**What happens automatically:**
-
-- Interactive hostname selection (first run only)
-- Bootstrap installs: `just`, Nushell, and Bitwarden CLI
-- Declarative package installation via winget (Git, Neovim, Alacritty, etc.)
-
-> **Note:** Hostname is selected once during first init and saved to `~/.config/chezmoi/chezmoi.toml`.
-> Bootstrap scripts handle dependency installation automatically on first `chezmoi init`.
-> For development environments, use `devenv` in WSL (not available on native Windows).
+**System manages:** CLI tools, GUI apps (nixpkgs), Homebrew casks (apps not in nixpkgs)
+**Update:** `just darwin`
+**Docs:** [nix/darwin/README.md](nix/darwin/README.md)
 
 </details>
 
 <details>
-<summary>WSL (NixOS on Windows)</summary>
+<summary>💡 Windows</summary>
 
-For a full NixOS experience on Windows via WSL2:
-
-```powershell
-# After setting up Windows dotfiles above
-cd $env:USERPROFILE\.local\share\chezmoi\wsl
-just setup
-```
-
-See [wsl/README.md](wsl/README.md) for detailed WSL setup.
+**Packages:** Managed via winget (`.chezmoidata/packages.yaml`)
+**Development:** Use WSL with NixOS for devenv
+**WSL Setup:** [wsl/README.md](wsl/README.md)
 
 </details>
+
+> 📖 **Detailed installation guide:** [.install/README.md](.install/README.md)
 
 ## Repository Structure
 

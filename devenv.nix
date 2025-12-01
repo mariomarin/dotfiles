@@ -45,10 +45,11 @@
   git-hooks = {
     hooks = {
       # Post-commit hook to run just (applies chezmoi changes)
+      # Just automatically loads .env.local via 'set dotenv-load'
       post-commit = {
         enable = true;
         name = "Apply changes with just";
-        entry = lib.mkForce "bash -c 'if [ -f .envrc.local ]; then source .envrc.local; fi && just'";
+        entry = lib.mkForce "just";
         language = "system";
         pass_filenames = false;
         always_run = true;

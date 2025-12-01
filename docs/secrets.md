@@ -118,10 +118,11 @@ PowerShell workflow above instead of `make` commands.
 
 ### Session Management
 
-- `make bw-unlock` unlocks the vault and saves the session token to `.envrc.local` (git-ignored)
-- `make bw-reload` reloads direnv, which sources `.envrc.local` and loads the `BW_SESSION` environment variable
+- `just bw-unlock` unlocks the vault and saves the session token to `.env.local` (git-ignored)
+- `just bw-reload` reloads direnv and validates the session (checks if vault is still unlocked)
 - The session persists until you run `bw lock` or `bw logout` (no automatic expiration)
-- Note: `bw-reload` is a general direnv reload command, not Bitwarden-specific
+- Session validation helps detect expired or locked sessions
+- **Auto-loading**: `justfile` automatically loads `.env.local` for all commands via `set dotenv-load`
 
 ### Template Processing
 
@@ -131,7 +132,7 @@ PowerShell workflow above instead of `make` commands.
 
 ### Security Considerations
 
-- The `BW_SESSION` token is stored in `.envrc.local`, which is git-ignored
+- The `BW_SESSION` token is stored in `.env.local`, which is git-ignored (standard convention)
 - Session tokens expire when you lock or logout from Bitwarden
 - SSH keys and other secrets are only stored in your Bitwarden vault, not in the git repository
 - Chezmoi's auto-commit feature will not commit the generated files containing secrets (they're in your home directory,

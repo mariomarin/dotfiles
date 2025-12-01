@@ -460,12 +460,13 @@ The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.)
 
 **Session Management:**
 
-- `make bw-unlock` - Unlocks vault, saves session to `.env` and `.envrc.local`
-- `make bw-reload` - General direnv reload (happens to load BW_SESSION from `.envrc.local`)
-- `.envrc` sources `.envrc.local` to load `BW_SESSION`
-- Post-commit hook sources `.envrc.local` before running `chezmoi apply`
+- `just bw-unlock` - Unlocks vault, saves session to `.env.local`
+- `just bw-reload` - Reloads direnv (loads BW_SESSION from `.env.local` and validates session)
+- `.envrc` uses `dotenv_if_exists` to load `.env.local`
+- `justfile` uses `set dotenv-load` to auto-load `.env.local` in all targets
+- Post-commit hook sources environment before running `chezmoi apply`
 - Session persists until `bw lock` or `bw logout` (no auto-expiration)
-- Note: `bw-reload` is not BW-specific, it's a convenience wrapper for `direnv allow && direnv reload`
+- Session validation runs during reload to detect expired sessions
 
 **For detailed user documentation, see README.md "Bitwarden Integration" section.**
 
