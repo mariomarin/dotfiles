@@ -18,74 +18,34 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 
 ## Quick Start
 
-### Installation
+### One-Line Installation
 
-**macOS:**
-
-```bash
-# Install Nix (if not present)
-curl -sfL https://install.determinate.systems/nix | sh -s -- install
-
-# Clone and setup
-git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
-cd ~/.local/share/chezmoi
-
-# Enter nix-shell (provides all tools: chezmoi, just, yq, bw)
-nix-shell .install/shell.nix
-
-# List available machines and set hostname
-yq '.machines | keys | .[]' .chezmoidata/machines.yaml
-export HOSTNAME=malus
-
-# Initialize dotfiles
-chezmoi init --apply
-```
-
-**NixOS/Linux:**
+**macOS/NixOS:**
 
 ```bash
-# Clone and setup
-git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
-cd ~/.local/share/chezmoi
-
-# Enter nix-shell (provides all tools: chezmoi, just, yq, bw)
-nix-shell .install/shell.nix
-
-# List available machines and set hostname
-yq '.machines | keys | .[]' .chezmoidata/machines.yaml
-export HOSTNAME=dendrite
-
-# Initialize dotfiles
-chezmoi init --apply
+curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh | sh
 ```
 
 **Windows:**
 
 ```powershell
-# Bootstrap (installs chezmoi, just, yq, bw, nushell via winget)
 iwr -useb https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-windows.ps1 | iex
-
-# Clone repository
-git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
-cd ~/.local/share/chezmoi
-
-# List available machines and set hostname
-yq '.machines | keys | .[]' .chezmoidata/machines.yaml
-$env:HOSTNAME = "prion"
-
-# Initialize dotfiles
-chezmoi init --apply
 ```
+
+The bootstrap script will:
+
+- Install Nix package manager (macOS only, if not present)
+- Clone the repository
+- Enter nix-shell environment (Unix) or install tools via winget (Windows)
+- Setup Bitwarden and unlock vault
+- Prompt for hostname selection
+- Initialize chezmoi
 
 ### After Installation
 
-**All platforms:**
-
 ```bash
-# Unlock Bitwarden for secrets
-bw login
-just bw-unlock  # Saves session to .env.local
-just apply      # Apply all configurations with secrets
+cd ~/.local/share/chezmoi
+just apply      # Apply all configurations
 ```
 
 **NixOS/Darwin System Configuration:**

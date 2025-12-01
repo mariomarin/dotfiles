@@ -1,75 +1,104 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Bootstrap script for Unix-like systems (macOS, Linux)
-# Chezmoi pre-hook: Runs before reading source state
-# NOTE: This is NOT a template - must handle OS detection itself
+# Run via: curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh | sh
 
-set -euo pipefail
+set -eu
 
 # Helper functions
 error() {
-  echo "" >&2
-  echo "❌ $1" >&2
+  _msg="$1"
   shift
-  for line in "$@"; do
-    echo "   $line" >&2
+  printf "\n❌ %s\n" "$_msg" >&2
+  for _line in "$@"; do
+    printf "   %s\n" "$_line" >&2
   done
-  echo "" >&2
+  printf "\n" >&2
   exit 1
 }
 
-run_nix_shell() {
-  local script_dir
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+info() { printf "ℹ️  %s\n" "$1" >&2; }
+success() { printf "✅ %s\n" "$1" >&2; }
+step() { printf "\n==> %s\n" "$1" >&2; }
 
-  echo "" >&2
-  echo "📝 Entering nix-shell with all dependencies..." >&2
-  echo "" >&2
-
-  # If running as pre-hook, just verify tools are available
-  # Otherwise, exec into nix-shell
-  if [ -n "${CHEZMOI_SOURCE_DIR:-}" ]; then
-    # Running as chezmoi pre-hook - verify we have required tools
-    if ! nix-shell "$script_dir/shell.nix" --run "command -v bw && command -v yq && command -v chezmoi" > /dev/null 2>&1; then
-      error "Required tools not available in nix-shell" \
-        "This is unexpected - please report this issue"
-    fi
-    echo "✅ All required tools available via nix-shell" >&2
-  else
-    # Running directly - enter nix-shell
-    exec nix-shell "$script_dir/shell.nix"
-  fi
-}
-
-echo "🚀 Running Unix bootstrap..." >&2
+# Main bootstrap
+printf "🚀 Dotfiles Bootstrap for Unix\n\n" >&2
 
 case "$(uname -s)" in
   Darwin)
-    # macOS - verify Nix is installed
+    step "Install Nix"
     if ! command -v nix > /dev/null 2>&1; then
-      error "Nix not found. Install Nix first:" \
-        "" \
-        "curl -sfL https://install.determinate.systems/nix | sh -s -- install" \
-        "" \
-        "Then run this script again:" \
-        "./.install/bootstrap-unix.sh"
-    fi
+      printf "Installing Nix package manager...\n"
+      curl -sfL https://install.determinate.systems/nix | sh -s -- install
 
-    echo "✅ Nix is installed" >&2
-    run_nix_shell
+      # Source nix profile to make nix available in current shell
+      if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        # shellcheck source=/dev/null
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      fi
+
+      success "Nix installed"
+    else
+      success "Nix already installed"
+    fi
     ;;
 
   Linux)
-    # NixOS-only - verify we're on NixOS
+    step "Verify NixOS"
     if [ ! -f /etc/os-release ] || ! grep -q "ID=nixos" /etc/os-release; then
       error "This configuration only supports NixOS on Linux" \
-        "For other distributions, consider using NixOS or WSL with NixOS"
+        "For other distributions, use NixOS or WSL with NixOS"
     fi
-
-    echo "✅ NixOS detected" >&2
-    run_nix_shell
+    success "NixOS detected"
     ;;
 
   *)
     error "Unsupported OS: $(uname -s)"
     ;;
 esac
+
+# Clone repository if needed
+step "Clone dotfiles repository"
+if [ -d "$HOME/.local/share/chezmoi/.git" ]; then
+  info "Repository already exists"
+else
+  git clone https://github.com/mariomarin/dotfiles.git "$HOME/.local/share/chezmoi"
+  success "Repository cloned"
+fi
+
+# Enter nix-shell and run remaining setup
+step "Enter nix-shell environment"
+cd "$HOME/.local/share/chezmoi"
+# shellcheck disable=SC2016
+nix-shell .install/shell.nix --run '
+  set -eu
+
+  printf "\n==> Setup Bitwarden\n"
+  if ! bw login --check >/dev/null 2>&1; then
+    printf "⚠️  Please login to Bitwarden:\n"
+    bw login
+  fi
+
+  printf "Unlocking vault...\n"
+  just bw-unlock
+
+  printf "\n==> Initialize chezmoi\n"
+
+  # Check if HOSTNAME is set
+  if [ -z "${HOSTNAME:-}" ]; then
+    printf "Available machines:\n"
+    yq ".machines | keys | .[]" .chezmoidata/machines.yaml
+    printf "\nEnter hostname for this machine: "
+    read -r HOSTNAME
+    export HOSTNAME
+  fi
+
+  printf "✅ Using hostname: %s\n" "$HOSTNAME"
+  chezmoi init --force
+
+  printf "\n✅ Bootstrap complete!\n"
+  printf "\nNext steps:\n"
+  printf "  cd ~/.local/share/chezmoi\n"
+  printf "  just apply\n"
+  printf "\nTo enter nix-shell environment:\n"
+  printf "  nix-shell .install/shell.nix\n"
+'
