@@ -186,8 +186,8 @@ if ($needsRestart) {
 # Clone repository
 Write-Host "" -ForegroundColor Cyan
 Write-Host "==> Clone dotfiles repository" -ForegroundColor Cyan
-$chezmoiPath = "$env:USERPROFILE\.local\share\chezmoi"
-if (Test-Path "$chezmoiPath\.git") {
+$chezmoiPath = "$env:USERPROFILE/.local/share/chezmoi"
+if (Test-Path "$chezmoiPath/.git") {
     Write-Host "ℹ️  Repository already exists" -ForegroundColor White
 } else {
     git clone https://github.com/mariomarin/dotfiles.git $chezmoiPath
