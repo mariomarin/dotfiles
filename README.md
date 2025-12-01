@@ -8,10 +8,11 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 ## Features
 
 - **Cross-platform**: NixOS, macOS (nix-darwin), Windows, and WSL
-- **Declarative packages**: Managed via Nix on Unix systems, winget on Windows
+- **Declarative packages**: NixOS system config, nix-darwin for macOS, winget for Windows
+- **Nix-based bootstrap**: Automated dependency installation via nix-shell on first run
 - **Secrets management**: SSH keys and tokens securely stored in Bitwarden
 - **Templating**: Dynamic configuration based on OS, architecture, and custom data
-- **Auto-sync**: Changes automatically committed and pushed to git
+- **Development environments**: Per-project tooling via devenv.nix
 - **Modular configuration**: Organized structure under `private_dot_config/` and nix modules
 - **LazyVim**: Pre-configured Neovim with language support and AI integration
 
@@ -72,15 +73,21 @@ bw login
 export BW_SESSION=$(bw unlock --raw)
 chezmoi apply -v
 
-# Apply NixOS configuration (sets hostname and installs chezmoi, just, and all packages permanently)
+# Apply NixOS configuration (sets hostname and installs all packages via NixOS)
 cd nix/nixos
-sudo nixos-rebuild switch --flake .#dendrite  # or .#mitosis, .#symbiont
+just switch  # Auto-detects hostname, or use: just switch HOST=dendrite
 
 # Verify hostname was set correctly
 hostname  # Should output: dendrite (or mitosis/symbiont)
 ```
 
-**Future updates:** `just nixos`
+**What NixOS configuration manages:**
+
+- All system packages (minimal tools, development tools, desktop apps)
+- System services (Docker, SSH, etc.)
+- Boot configuration, networking, security settings
+
+**Future updates:** `just nixos` (auto-detects hostname)
 
 See [nix/nixos/README.md](nix/nixos/README.md) for detailed setup and configuration.
 
@@ -136,9 +143,15 @@ bw login
 export BW_SESSION=$(bw unlock --raw)
 chezmoi apply
 
-# Apply nix-darwin configuration (installs chezmoi, just, and all packages permanently)
+# Apply nix-darwin configuration (installs all packages via Nix)
 sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
 ```
+
+**What nix-darwin manages:**
+
+- All CLI tools (git, neovim, tmux, just, devenv, etc.)
+- GUI applications from nixpkgs (Alacritty, Firefox, etc.)
+- Homebrew casks only for apps not in nixpkgs (see [nix/darwin/README.md](nix/darwin/README.md))
 
 **Future updates:** `just darwin`
 
@@ -200,12 +213,12 @@ chezmoi apply
 **What happens automatically:**
 
 - Interactive hostname selection (first run only)
-- winget registration and PATH setup (if not found)
-- Nushell and Bitwarden CLI installation
-- Declarative package installation (just, neovim, direnv, etc.)
+- Bootstrap installs: `just`, `devenv`, Nushell, and Bitwarden CLI
+- Declarative package installation via winget (Git, Neovim, Alacritty, etc.)
+- Bitwarden session token preserved in devenv
 
 > **Note:** Hostname is selected once during first init and saved to `~/.config/chezmoi/chezmoi.toml`.
-> The bootstrap will auto-install winget, Nushell, and Bitwarden CLI on first run.
+> Bootstrap scripts handle dependency installation automatically on first `chezmoi init`.
 
 </details>
 
@@ -298,17 +311,23 @@ just lint           # Run linting checks
 
 Fork this repository and make it yours. Key files to modify:
 
-- `nix/nixos/configuration.nix` or `nix/darwin/configuration.nix` - System configuration
-- `.chezmoidata/packages.yaml` - Declarative package lists (Windows only; Nix elsewhere)
+**Package Management:**
+
+- **NixOS**: `nix/nixos/modules/*.nix` - All packages via NixOS modules
+- **macOS**: `nix/darwin/modules/*.nix` - All packages via nix-darwin
+- **Windows**: `.chezmoidata/packages.yaml` - Declarative winget packages only
+
+**Configuration Files:**
+
 - `private_dot_config/nvim/` - Neovim configuration
 - `private_dot_config/tmux/` - Tmux configuration
 - `private_dot_config/zsh/` - Zsh configuration
 
-Remove personal identifiers:
+**Remove personal identifiers:**
 
 - Git configuration files
 - SSH keys in Bitwarden templates
-- Machine-specific settings
+- Machine-specific settings in `.chezmoidata/machines.yaml`
 
 ## Credits
 
