@@ -172,21 +172,65 @@ foreach ($package in $packages) {
 }
 
 Write-Host "" -ForegroundColor White
-Write-Host "✅ Bootstrap complete for Windows" -ForegroundColor Green
+Write-Host "✅ Tools installed" -ForegroundColor Green
 
-# Final warning if restart needed
+# If restart needed, stop here
 if ($needsRestart) {
     Write-Host "" -ForegroundColor White
-    Write-Host "⚠️  IMPORTANT: Please restart PowerShell before running 'chezmoi apply'" -ForegroundColor Yellow
+    Write-Host "⚠️  IMPORTANT: Please restart PowerShell and run this script again" -ForegroundColor Yellow
     Write-Host "   Newly installed commands require a fresh PowerShell session" -ForegroundColor Yellow
+    Write-Host "" -ForegroundColor White
+    exit 0
 }
 
-# Remind user about HOSTNAME requirement
+# Clone repository
+Write-Host "" -ForegroundColor Cyan
+Write-Host "==> Clone dotfiles repository" -ForegroundColor Cyan
+$chezmoiPath = "$env:USERPROFILE\.local\share\chezmoi"
+if (Test-Path "$chezmoiPath\.git") {
+    Write-Host "ℹ️  Repository already exists" -ForegroundColor White
+} else {
+    git clone https://github.com/mariomarin/dotfiles.git $chezmoiPath
+    Write-Host "✅ Repository cloned" -ForegroundColor Green
+}
+
+# Set hostname
+Write-Host "" -ForegroundColor Cyan
+Write-Host "==> Set hostname" -ForegroundColor Cyan
+if (-not $env:HOSTNAME) {
+    Write-Host "Available machines:" -ForegroundColor White
+    Push-Location $chezmoiPath
+    yq '.machines | keys | .[]' .chezmoidata/machines.yaml
+    Pop-Location
+    $hostname = Read-Host "`nEnter hostname for this machine"
+    $env:HOSTNAME = $hostname
+}
+Write-Host "✅ Using hostname: $env:HOSTNAME" -ForegroundColor Green
+
+# Initialize chezmoi
+Write-Host "" -ForegroundColor Cyan
+Write-Host "==> Initialize chezmoi" -ForegroundColor Cyan
+Push-Location $chezmoiPath
+chezmoi init --force
+Write-Host "✅ Chezmoi initialized" -ForegroundColor Green
+
+# Setup Bitwarden
+Write-Host "" -ForegroundColor Cyan
+Write-Host "==> Setup Bitwarden" -ForegroundColor Cyan
+if (!(bw login --check 2>$null)) {
+    Write-Host "⚠️  Please login to Bitwarden:" -ForegroundColor Yellow
+    bw login
+}
+Write-Host "Unlocking vault..." -ForegroundColor White
+just bw-unlock
+
+Write-Host "" -ForegroundColor Green
+Write-Host "✅ Bootstrap complete!" -ForegroundColor Green
 Write-Host "" -ForegroundColor White
-Write-Host "📝 Next Steps:" -ForegroundColor Cyan
-Write-Host "   1. Set HOSTNAME environment variable before running chezmoi:" -ForegroundColor White
-Write-Host "      `$env:HOSTNAME = 'prion'  # Choose: dendrite, malus, prion, symbiont, mitosis, spore" -ForegroundColor Gray
-Write-Host "   2. Clone dotfiles and run chezmoi init --apply" -ForegroundColor White
+Write-Host "Next steps:" -ForegroundColor Cyan
+Write-Host "  cd ~/.local/share/chezmoi" -ForegroundColor White
+Write-Host "  just apply" -ForegroundColor White
 Write-Host "" -ForegroundColor White
+Pop-Location
 
 #endregion
