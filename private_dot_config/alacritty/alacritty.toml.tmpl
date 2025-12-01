@@ -1,18 +1,24 @@
-{{- if .machineConfig.features.desktop -}}
+{{- if or .machineConfig.features.desktop (eq .chezmoi.os "windows") -}}
 [window]
+{{- if .machineConfig.features.desktop }}
 opacity = 0.97
 blur = true
+{{- else }}
+decorations = "full"
+{{- end }}
 
+{{- if .machineConfig.features.desktop }}
 [general]
 import = [
     "~/.config/alacritty/themes/themes/ayu_light.toml"
 ]
+{{- end }}
 
 {{- if eq .chezmoi.os "windows" }}
-# Windows-specific: Launch WSL NixOS by default
+# Windows-specific: Launch WSL NixOS with login shell
 [shell]
 program = "wsl.exe"
-args = ["-d", "NixOS"]
+args = ["-d", "NixOS", "--", "zsh", "-l"]
 {{- end }}
 
 # Instead of using: `alacritty --print-events`
