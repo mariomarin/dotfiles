@@ -20,6 +20,20 @@ bw-unlock:
 bw-reload:
     nu .scripts/bw.nu reload
 
+# Krew plugin management
+
+# Sync krew plugins from Krewfile
+krew-sync:
+    nu .scripts/krew.nu sync
+
+# List installed krew plugins
+krew-list:
+    nu .scripts/krew.nu list
+
+# Install a krew plugin and add to Krewfile
+krew-install PLUGIN:
+    nu .scripts/krew.nu install {{ PLUGIN }}
+
 # Linting and formatting targets
 # Note: Formatting is also configured as git pre-commit hooks in devenv.nix
 # These targets are for manual formatting outside of git workflow

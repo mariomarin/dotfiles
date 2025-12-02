@@ -1,0 +1,19 @@
+# Krewfile - Declarative kubectl plugin management
+# Run: krewfile or krew install $(cat ~/.krewfile | grep -v '^#' | grep -v '^$')
+
+# Context and namespace management
+ctx
+ns
+
+# Resource exploration and debugging
+neat
+stern
+tree
+
+# Security and policy
+rbac-lookup
+access-matrix
+
+# Resource management
+resource-capacity
+node-shell
