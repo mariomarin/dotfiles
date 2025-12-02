@@ -1,4 +1,4 @@
-{{- if and (eq .chezmoi.os "windows") (.machineConfig.features.desktop) -}}
+{{- if and (eq .chezmoi.os "windows") (.machineConfig.features.desktop) (ne .chezmoi.hostname "spore") -}}
 [window]
 opacity = 0.97
 blur = true
