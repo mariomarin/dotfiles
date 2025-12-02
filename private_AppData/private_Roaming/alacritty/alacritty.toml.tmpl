@@ -8,10 +8,10 @@ import = [
     "{{ .chezmoi.homeDir }}/.config/alacritty/themes/themes/ayu_light.toml"
 ]
 
-# Windows-specific: Launch WSL NixOS with login shell
+# Windows-specific: Launch WSL NixOS with interactive login shell
 [terminal.shell]
 program = "wsl.exe"
-args = ["-d", "NixOS", "--", "zsh", "-l"]
+args = ["-d", "NixOS", "--", "zsh", "-l", "-i"]
 
 # Instead of using: `alacritty --print-events`
 # https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping
