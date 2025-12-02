@@ -44,6 +44,10 @@
     just
     direnv
 
+    # Kubernetes tools
+    krew
+    kubelogin
+
     # System utilities
     htop
     bottom
