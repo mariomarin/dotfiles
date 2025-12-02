@@ -25,7 +25,7 @@ in
       gitFull # Git version control system with all features
       tmux
       sesh # Smart session manager for tmux
-      upterm # Secure terminal sharing
+      upterm # Secure terminal sharing (SSH-based)
       viddy # Modern watch command with diff highlighting
       bash # Bourne Again Shell
       nushell # Modern shell with structured data support (used by chezmoi scripts)
