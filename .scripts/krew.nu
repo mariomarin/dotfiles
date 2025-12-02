@@ -15,7 +15,7 @@ def "main sync" [] {
         return
     }
 
-    let krewfile = $"($env.HOME)/.krewfile"
+    let krewfile = $"($nu.home-path)/.krewfile"
     if not ($krewfile | path exists) {
         print $"❌ Krewfile not found at ($krewfile)"
         return
@@ -50,7 +50,7 @@ def "main install" [plugin: string] {
     print $"📦 Installing ($plugin)..."
     krew install $plugin
 
-    let krewfile = $"($env.HOME)/.krewfile"
+    let krewfile = $"($nu.home-path)/.krewfile"
     print $"📝 Adding ($plugin) to ($krewfile)..."
     $plugin | save --append $krewfile
 
