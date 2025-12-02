@@ -7,6 +7,9 @@ blur = true
 import = [
     "{{ .chezmoi.homeDir }}/.config/alacritty/themes/themes/ayu_light.toml"
 ]
+# Use GLES renderer for better compatibility with software rendering (Dev Box, VMs)
+# ANGLE translates OpenGL to DirectX, avoiding native OpenGL driver issues
+renderer = "gles"
 
 # Windows-specific: Launch WSL NixOS with interactive login shell
 [terminal.shell]
