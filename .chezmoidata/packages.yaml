@@ -19,7 +19,7 @@ packages:
             - junegunn.fzf
             - BurntSushi.ripgrep.MSVC # rg
             - sharkdp.fd # fd
-            - stedolan.jq
+            - jqlang.jq
             # Modern CLI replacements
             - sharkdp.bat
             - eza-community.eza
