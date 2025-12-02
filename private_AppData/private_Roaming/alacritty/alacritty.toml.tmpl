@@ -7,10 +7,12 @@ blur = true
 import = [
     "{{ .chezmoi.homeDir }}/.config/alacritty/themes/themes/ayu_light.toml"
 ]
+
 {{- if eq .chezmoi.hostname "spore" }}
-# Use GLES renderer for Dev Box cloud environment (software rendering)
-# ANGLE translates OpenGL to DirectX, avoiding native OpenGL driver issues
-renderer = "gles"
+# Force software rendering for Dev Box cloud environment
+# This avoids OpenGL driver issues with virtualized graphics
+[env]
+LIBGL_ALWAYS_SOFTWARE = "1"
 {{- end }}
 
 # Windows-specific: Launch WSL NixOS with interactive login shell
