@@ -88,5 +88,8 @@ export ZVM_CLIPBOARD_PROVIDER='xsel'
 # export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 export DOCKER_BUILDKIT=1
 
+# upterm - use WebSocket for better firewall compatibility
+export UPTERM_SERVER=wss://uptermd.upterm.dev
+
 # zim
 : ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}
