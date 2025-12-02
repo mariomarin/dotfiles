@@ -8,6 +8,10 @@
 [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/zsh-vi-mode-config.zsh" ]] && \
   source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/zsh-vi-mode-config.zsh"
 
+# Load upterm configuration (sets UPTERM_SERVER for WebSocket protocol)
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/upterm-config.zsh" ]] && \
+  source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/upterm-config.zsh"
+
 # aliases {{{
 
 # vim
