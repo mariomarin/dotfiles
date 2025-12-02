@@ -20,3 +20,4 @@ packages:
             - Microsoft.Azure.Kubelogin # Azure Kubelogin
             - Kubernetes.krew # Kubectl plugin manager
             - ahmetb.kubectx # kubectx/kubens (ctx/ns alternative for Windows)
+            - topgrade-rs.topgrade # Universal update tool
