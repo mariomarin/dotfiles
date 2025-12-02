@@ -5,6 +5,7 @@
 {
   imports = [
     ../../../common/modules/cli-tools.nix # Shared CLI tools with NixOS
+    ../../modules/packages.nix # GUI apps from nixpkgs
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
   ];
 
