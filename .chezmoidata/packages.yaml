@@ -9,6 +9,7 @@ packages:
             # Shell and terminal
             - JanDeDobbeleer.OhMyPosh # PowerShell prompt framework
             - Nushell.Nushell
+            - Alacritty.Alacritty
             # Editor
             - Neovim.Neovim
             # Version control
