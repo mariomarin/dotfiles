@@ -7,14 +7,11 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 
 ## Features
 
-- **Cross-platform**: NixOS, macOS (nix-darwin), Windows, and WSL
-- **Declarative packages**: NixOS system config, nix-darwin for macOS, winget for Windows
-- **Nix-based bootstrap**: Automated dependency installation via nix-shell on first run
-- **Secrets management**: SSH keys and tokens securely stored in Bitwarden
-- **Templating**: Dynamic configuration based on OS, architecture, and custom data
-- **Development environments**: Per-project tooling via devenv.nix
-- **Modular configuration**: Organized structure under `private_dot_config/` and nix modules
-- **LazyVim**: Pre-configured Neovim with language support and AI integration
+- **Cross-platform**: NixOS, macOS (nix-darwin), Windows, WSL
+- **Declarative packages**: NixOS/nix-darwin system configs, winget for Windows
+- **Secrets management**: Bitwarden integration for SSH keys and tokens
+- **Shell frameworks**: Zim for Zsh (Unix), Oh My Posh for PowerShell (Windows)
+- **Development environments**: Per-project devenv.nix, LazyVim Neovim setup
 
 ## Quick Start
 

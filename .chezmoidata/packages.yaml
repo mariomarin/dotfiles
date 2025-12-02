@@ -6,18 +6,37 @@ packages:
     # Windows packages via winget
     windows:
         winget:
-            - Git.Git
-            - Neovim.Neovim
-            - direnv.direnv
-            - Casey.Just
+            # Shell and terminal
+            - JanDeDobbeleer.OhMyPosh # PowerShell prompt framework
             - Nushell.Nushell
-            - Alacritty.Alacritty
+            # Editor
+            - Neovim.Neovim
+            # Version control
+            - Git.Git
+            - GitHub.cli # gh
+            # Search and text processing
+            - junegunn.fzf
+            - BurntSushi.ripgrep.MSVC # rg
+            - sharkdp.fd # fd
+            - stedolan.jq
+            # Modern CLI replacements
+            - sharkdp.bat
+            - eza-community.eza
+            - dandavison.delta
+            - ajeetdsouza.zoxide
+            # Development tools
+            - Casey.Just
+            - direnv.direnv
+            # Kubernetes tools
+            - Kubernetes.kubectl
+            - Microsoft.Azure.Kubelogin
+            - Kubernetes.krew
+            - ahmetb.kubectx
+            # System utilities
+            - topgrade-rs.topgrade
+            - Atuin.Atuin
+            # GUI applications
             - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)
             - Mirantis.Lens # Kubernetes Lens
-            - Devolutions.RemoteDesktopManager # Remote Desktop Manager
-            - Microsoft.AzureCLI # Azure CLI
-            - Kubernetes.kubectl # Kubernetes CLI
-            - Microsoft.Azure.Kubelogin # Azure Kubelogin
-            - Kubernetes.krew # Kubectl plugin manager
-            - ahmetb.kubectx # kubectx/kubens (ctx/ns alternative for Windows)
-            - topgrade-rs.topgrade # Universal update tool
+            - Devolutions.RemoteDesktopManager
+            - Microsoft.AzureCLI
