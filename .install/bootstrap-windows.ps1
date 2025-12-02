@@ -19,7 +19,8 @@ $packages = @(
     @{ Id = "MikeFarah.yq"; Command = "yq"; DisplayName = "yq (YAML processor)" },
     @{ Id = "topgrade-rs.topgrade"; Command = "topgrade"; DisplayName = "Topgrade" },
     @{ Id = "Kubernetes.krew"; Command = "kubectl-krew"; DisplayName = "Krew" },
-    @{ Id = "Microsoft.Azure.Kubelogin"; Command = "kubelogin"; DisplayName = "Azure Kubelogin" }
+    @{ Id = "Microsoft.Azure.Kubelogin"; Command = "kubelogin"; DisplayName = "Azure Kubelogin" },
+    @{ Id = "ahmetb.kubectx"; Command = "kubectx"; DisplayName = "kubectx/kubens" }
 )
 
 #endregion

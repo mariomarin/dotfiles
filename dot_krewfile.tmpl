@@ -1,0 +1,25 @@
+# Krewfile - Declarative kubectl plugin management
+# Topgrade automatically updates krew plugins when you run: topgrade or just update
+# To install plugins from this file: just krew-sync
+
+{{- if ne .chezmoi.os "windows" }}
+# Context and namespace management (not available on Windows)
+# Use kubectx/kubens from winget instead: winget install ahmetb.kubectx
+ctx
+ns
+
+{{- end }}
+# Resource exploration and debugging
+neat
+stern
+tree
+
+# Security and policy
+rbac-lookup
+access-matrix
+
+# Resource management
+resource-capacity
+{{- if ne .chezmoi.os "windows" }}
+node-shell
+{{- end }}
