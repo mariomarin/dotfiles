@@ -18,3 +18,5 @@ packages:
             - Microsoft.AzureCLI # Azure CLI
             - Kubernetes.kubectl # Kubernetes CLI
             - Microsoft.Azure.Kubelogin # Azure Kubelogin
+            - Kubernetes.krew # Kubectl plugin manager
+            - ahmetb.kubectx # kubectx/kubens (ctx/ns alternative for Windows)

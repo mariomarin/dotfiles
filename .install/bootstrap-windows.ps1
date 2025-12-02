@@ -17,10 +17,7 @@ $packages = @(
     @{ Id = "Bitwarden.CLI"; Command = "bw"; DisplayName = "Bitwarden CLI" },
     @{ Id = "Casey.Just"; Command = "just"; DisplayName = "Just" },
     @{ Id = "MikeFarah.yq"; Command = "yq"; DisplayName = "yq (YAML processor)" },
-    @{ Id = "topgrade-rs.topgrade"; Command = "topgrade"; DisplayName = "Topgrade" },
-    @{ Id = "Kubernetes.krew"; Command = "kubectl-krew"; DisplayName = "Krew" },
-    @{ Id = "Microsoft.Azure.Kubelogin"; Command = "kubelogin"; DisplayName = "Azure Kubelogin" },
-    @{ Id = "ahmetb.kubectx"; Command = "kubectx"; DisplayName = "kubectx/kubens" }
+    @{ Id = "topgrade-rs.topgrade"; Command = "topgrade"; DisplayName = "Topgrade" }
 )
 
 #endregion
