@@ -35,7 +35,6 @@ packages:
             - ahmetb.kubectx
             # System utilities
             - topgrade-rs.topgrade
-            - Atuin.Atuin
             # GUI applications
             - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)
             - Mirantis.Lens # Kubernetes Lens
