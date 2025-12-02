@@ -1,13 +1,17 @@
-{{- if and (ne .chezmoi.os "windows") (.machineConfig.features.desktop) -}}
+{{- if and (eq .chezmoi.os "windows") (.machineConfig.features.desktop) -}}
 [window]
 opacity = 0.97
 blur = true
 
 [general]
 import = [
-    "~/.config/alacritty/themes/themes/ayu_light.toml"
+    "{{ .chezmoi.homeDir }}/.config/alacritty/themes/themes/ayu_light.toml"
 ]
 
+# Windows-specific: Launch WSL NixOS with login shell
+[shell]
+program = "wsl.exe"
+args = ["-d", "NixOS", "--", "zsh", "-l"]
 
 # Instead of using: `alacritty --print-events`
 # https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping
