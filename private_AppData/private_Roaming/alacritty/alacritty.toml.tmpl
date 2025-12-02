@@ -9,7 +9,7 @@ import = [
 ]
 
 # Windows-specific: Launch WSL NixOS with login shell
-[shell]
+[terminal.shell]
 program = "wsl.exe"
 args = ["-d", "NixOS", "--", "zsh", "-l"]
 
