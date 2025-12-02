@@ -4,22 +4,22 @@
 
 {{- if ne .chezmoi.os "windows" }}
 # Context and namespace management (not available on Windows)
-# Use kubectx/kubens from winget instead: winget install ahmetb.kubectx
+# Use kubectx/kubens from packages.yaml instead
 ctx
 ns
 
-{{- end }}
 # Resource exploration and debugging
 neat
+node-shell
+
+{{- end }}
+# Resource exploration and debugging (cross-platform)
 stern
 tree
 
-# Security and policy
+# Security and policy (cross-platform)
 rbac-lookup
 access-matrix
 
-# Resource management
+# Resource management (cross-platform)
 resource-capacity
-{{- if ne .chezmoi.os "windows" }}
-node-shell
-{{- end }}
