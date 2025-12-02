@@ -1,0 +1,109 @@
+# Topgrade configuration
+# Updates all system packages and plugins in one command
+
+[misc]
+# Don't update these - handled separately or not needed
+disable = [
+{{- if ne .chezmoi.os "windows" }}
+  "system",     # System update (NixOS uses flakes, not channels)
+{{- end }}
+  "containers", # Docker/Podman containers
+  "firmware",   # Firmware updates (handle manually)
+  "restarts",   # Don't auto-restart services
+  "vscode",     # VSCode extensions (using Neovim instead)
+  "poetry",     # Poetry packages (not using)
+  "yarn",       # Yarn global packages (using pnpm instead)
+{{- if ne .chezmoi.os "windows" }}
+  "rustup",     # Rustup (managed by Nix on NixOS)
+  "bun",        # Bun (managed by NixOS)
+{{- end }}
+]
+
+# Don't retry failed steps automatically
+no_retry = false
+
+# Run inside tmux if available
+run_in_tmux = false
+
+# Assume yes for all prompts
+assume_yes = false
+
+# Cleanup after updates
+cleanup = true
+
+# Custom commands to run at specific times
+[pre_commands]
+# Commands to run before updates
+
+{{- if ne .chezmoi.os "windows" }}
+
+[commands]
+# Update tmux plugins via TPM
+"Tmux Plugins" = "~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
+# Update NixOS with flakes
+"NixOS Flake" = "cd $(chezmoi source-path) && just nixos"
+
+[post_commands]
+# Add and commit updated lock files to chezmoi after updates
+"Commit Neovim plugin updates" = """
+if [ -f ~/.config/nvim/lazy-lock.json ]; then
+    chezmoi add ~/.config/nvim/lazy-lock.json && \
+    cd $(chezmoi source-path) && \
+    if git diff --staged --name-only private_dot_config/nvim/lazy-lock.json | grep -q . || git diff --name-only private_dot_config/nvim/lazy-lock.json | grep -q .; then
+        git add private_dot_config/nvim/lazy-lock.json && \
+        git commit -m 'chore(nvim): update lazy-lock.json' || true
+    fi
+fi
+"""
+{{- end }}
+
+[git]
+# Pull git repositories
+pull_predefined = false
+
+# Arguments for git pull
+arguments = "--rebase --autostash"
+
+{{- if eq .chezmoi.os "linux" }}
+
+[linux]
+# NixOS configuration
+nix_arguments = "--flake"
+nix_env_arguments = "--prebuilt-only"
+
+# Update package managers
+apt_arguments = "--only-upgrade"
+dnf_arguments = "--refresh"
+{{- end }}
+
+{{- if eq .chezmoi.os "windows" }}
+
+[windows]
+# Accept all prompts
+accept_all_windows_updates = true
+# Don't reboot automatically
+wsl_update_pre_release = false
+# Enable winget updates
+enable_winget = true
+{{- end }}
+
+[vim]
+# Force update vim plugins
+force_plug_update = false
+
+[npm]
+# NPM configuration
+# Note: use_pnpm was removed in newer versions, pnpm is auto-detected
+
+[python]
+# Enable pip updates
+enable_pip_review = true
+enable_pip_review_local = false
+enable_pipupgrade = false
+
+# [tmux] section has been removed as it's not a valid topgrade section
+# Tmux plugin updates are now handled differently in newer topgrade versions
+
+[distrobox]
+# Update distrobox containers
+use_root = false

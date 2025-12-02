@@ -16,7 +16,8 @@ $packages = @(
     @{ Id = "Nushell.Nushell"; Command = "nu"; DisplayName = "Nushell" },
     @{ Id = "Bitwarden.CLI"; Command = "bw"; DisplayName = "Bitwarden CLI" },
     @{ Id = "Casey.Just"; Command = "just"; DisplayName = "Just" },
-    @{ Id = "MikeFarah.yq"; Command = "yq"; DisplayName = "yq (YAML processor)" }
+    @{ Id = "MikeFarah.yq"; Command = "yq"; DisplayName = "yq (YAML processor)" },
+    @{ Id = "topgrade-rs.topgrade"; Command = "topgrade"; DisplayName = "Topgrade" }
 )
 
 #endregion

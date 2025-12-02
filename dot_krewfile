@@ -1,5 +1,6 @@
 # Krewfile - Declarative kubectl plugin management
-# Run: krewfile or krew install $(cat ~/.krewfile | grep -v '^#' | grep -v '^$')
+# Topgrade automatically updates krew plugins when you run: topgrade or just update
+# To install plugins from this file: just krew-sync
 
 # Context and namespace management
 ctx
