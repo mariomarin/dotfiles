@@ -34,7 +34,7 @@ def "main sync" [] {
     # Install each plugin
     for plugin in $plugins {
         print $"  Installing ($plugin)..."
-        kubectl krew install $plugin
+        krew install $plugin
     }
 
     print "✅ Krew plugins synced"
@@ -42,13 +42,13 @@ def "main sync" [] {
 
 # List installed krew plugins
 def "main list" [] {
-    kubectl krew list
+    krew list
 }
 
 # Install a plugin and add to Krewfile
 def "main install" [plugin: string] {
     print $"📦 Installing ($plugin)..."
-    kubectl krew install $plugin
+    krew install $plugin
 
     let krewfile = $"($env.HOME)/.krewfile"
     print $"📝 Adding ($plugin) to ($krewfile)..."
