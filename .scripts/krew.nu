@@ -10,7 +10,7 @@ def main [] {
 def "main sync" [] {
     print "🔄 Syncing krew plugins from ~/.krewfile..."
 
-    if not (which krew | is-empty) {
+    if (which krew | is-empty) {
         print "❌ krew not found. Install with: kubectl krew install krew"
         return
     }
