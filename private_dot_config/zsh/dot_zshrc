@@ -109,3 +109,17 @@ source <(kubectl completion zsh)
 # help me to fix wrong typed commands
 eval "$(pay-respects zsh --alias)"
 
+# Cloudflare Tunnel SSH helper
+# Set CLOUDFLARE_TUNNEL_HOST to your tunnel URL, then run cf-ssh
+cf-ssh() {
+  if [ -z "$CLOUDFLARE_TUNNEL_HOST" ]; then
+    echo "Error: CLOUDFLARE_TUNNEL_HOST not set"
+    echo "Usage: export CLOUDFLARE_TUNNEL_HOST=beatles-separate-athletes-fantastic.trycloudflare.com"
+    echo "       cf-ssh [user@]host"
+    return 1
+  fi
+
+  local target="${1:-$USER@localhost}"
+  ssh -o ProxyCommand="cloudflared access tcp --hostname $CLOUDFLARE_TUNNEL_HOST" "$target"
+}
+
