@@ -14,8 +14,3 @@ bitbucketCli = "v0.16.0" # Bitbucket CLI
 module = "github.com/dagger/container-use/cmd/container-use"
 version = "d03dc1c"
 binary = "container-use"
-
-[[goTools]]
-module = "bitbucket.org/gildas_cherruel/bb"
-version = "v0.16.0"
-binary = "bb"
