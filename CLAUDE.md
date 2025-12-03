@@ -552,6 +552,23 @@ Example - if changing shfmt arguments:
 - yamlfmt (YAML files)
 - markdownlint (Markdown files)
 
+### Claude Code Integration
+
+The repository uses devenv.sh's Claude Code integration for safety and workflow enhancement:
+
+**Command Validation (PreToolUse Hook):**
+
+- Blocks dangerous commands before execution
+- Configured in `devenv.nix` under `claude.code.hooks.PreToolUse.Bash`
+- Protected commands:
+  - `chezmoi purge` - Would delete entire chezmoi source directory
+  - `chezmoi state reset` - Would cause chezmoi to lose track of all managed files
+  - Direct deletion of state files (`chezmoistate.boltdb`, `.chezmoidata.db`)
+- Provides helpful error messages with safe alternatives
+- Example: Suggests `chezmoi state delete-bucket --bucket=scriptState` instead of full reset
+
+This integration ensures AI assistants can't accidentally execute destructive commands.
+
 ## Development Standards
 
 ### Commit Practices
