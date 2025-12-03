@@ -1,0 +1,18 @@
+#!/usr/bin/env nu
+# Install Go tools from source
+# This script runs when goTools entries in .chezmoidata.toml change
+
+{{- range .goTools }}
+print "Installing {{ .binary }}@{{ .version }} from source..."
+go install "{{ .module }}@{{ .version }}"
+{{- end }}
+
+# Verify installations using full path
+let go_bin = $"($env.USERPROFILE)\\go\\bin"
+with-env {PATH: ($env.PATH | prepend $go_bin)} {
+{{- range .goTools }}
+    {{ .binary }} version | ignore
+{{- end }}
+}
+
+print "✅ All Go tools installed successfully"
