@@ -3,6 +3,7 @@
 # This script runs when bitbucketCli version in .chezmoidata.toml changes
 
 let version = "{{ .versions.bitbucketCli }}"
+let version_no_v = ($version | str replace "v" "")
 let arch = (uname | get machine)
 let os = "linux"
 
@@ -16,7 +17,7 @@ let go_arch = if $arch == "x86_64" {
     exit 1
 }
 
-let binary_name = $"bb_($version)_($os)_($go_arch).tar.gz"
+let binary_name = $"bitbucket-cli_($version_no_v)_($os)_($go_arch).tar.gz"
 let download_url = $"https://github.com/gildas/bitbucket-cli/releases/download/($version)/($binary_name)"
 let install_dir = $"($env.HOME)/.local/bin"
 
