@@ -38,6 +38,8 @@ set -g @plugin 'Morantron/tmux-fingers'
 bind -n M-f run -b "#{@fingers-cli} start #{pane_id}"
 # Start tmux fingers in jump mode by pressing Alt+J
 bind -n M-j run -b "#{@fingers-cli} start #{pane_id} --mode jump"
+# Custom patterns for upterm SSH strings (with base64 tokens)
+set -g @fingers-pattern-0 'ssh [a-zA-Z0-9]+:[a-zA-Z0-9+/=]+@[a-zA-Z0-9.-]+'
 
 # i3wm like navigation with TAB key
 set -g @plugin 'farzadmf/tmux-tilish'
