@@ -45,7 +45,7 @@ rm $temp_zip
 # Verify installation
 print "Verifying installation..."
 with-env {PATH: ($env.PATH | prepend $install_dir)} {
-    bb version
+    bb --version
 }
 
 print "✅ bitbucket-cli installed successfully"
