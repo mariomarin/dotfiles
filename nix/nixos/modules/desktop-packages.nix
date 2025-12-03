@@ -28,6 +28,7 @@
     gnome-disk-utility # Disk management utility
     obsidian # Knowledge base and note-taking application
     tridactyl-native # Native messaging host for Tridactyl Firefox addon
+    vscode # Visual Studio Code editor
     zathura # PDF/document viewer
 
     # Window Manager & Desktop Environment

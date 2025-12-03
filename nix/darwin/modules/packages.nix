@@ -9,5 +9,8 @@
 
     # Security & password management
     bitwarden
+
+    # Development tools
+    vscode
   ];
 }

@@ -36,6 +36,7 @@ packages:
             # System utilities
             - topgrade-rs.topgrade
             # GUI applications
+            - Microsoft.VisualStudioCode
             - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)
             - Mirantis.Lens # Kubernetes Lens
             - Devolutions.RemoteDesktopManager
