@@ -2,6 +2,28 @@
 
 Cloudflare Tunnel provides secure remote access without exposing ports or configuring firewalls.
 
+## Quick Start - SSH Access (Multi-Machine)
+
+### On WSL (or any host you want to access)
+
+```bash
+# Generate a quick tunnel for SSH
+cloudflared tunnel --url ssh://localhost:22
+```
+
+This outputs a URL like: `https://attraction-creator-accessing-share.trycloudflare.com`
+
+### On Dendrite (or any client)
+
+```bash
+# Connect through the tunnel
+cloudflared access ssh --hostname https://attraction-creator-accessing-share.trycloudflare.com
+```
+
+That's it! You're now connected via SSH through the Cloudflare tunnel.
+
+---
+
 ## Why Cloudflare Tunnel?
 
 - **No port forwarding**: Works through restrictive firewalls
@@ -12,10 +34,10 @@ Cloudflare Tunnel provides secure remote access without exposing ports or config
 
 ## Prerequisites
 
-- Cloudflare account (free): <https://dash.cloudflare.com/sign-up>
+- Cloudflare account (free): <https://dash.cloudflare.com/sign-up> (only needed for named tunnels)
 - `cloudflared` installed (already in minimal.nix)
 
-## Quick Start - SSH Access
+## Persistent Tunnels - SSH Access
 
 ### 1. Authenticate cloudflared
 
