@@ -56,9 +56,8 @@ systemd.user.services."service-name" = {
 
 **Used for:**
 
-- Battery monitor service
+- Systemd user service symlink management (syncthing, ssh-agent)
 - Desktop autostart entries
-- Syncthing service symlink management
 
 **How it works:**
 
@@ -143,9 +142,14 @@ systemctl --user enable battery-combined-udev.service
 
 | Service | Script | Purpose |
 | --- | --- | --- |
-| Battery Monitor | `30-setup-battery-service.sh` | Low battery notifications |
-| Syncthing Symlink | `20-user-systemd-services.sh` | Link to NixOS service |
-| Desktop Autostart | `40-setup-desktop-autostart.sh` | Application startup |
+| Systemd User Services | `linux-systemd-user-services.nu` | Manage symlinks for syncthing, ssh-agent |
+| Desktop Autostart | `linux-autostart-desktop-files.nu` | Application startup |
+
+### Managed by Chezmoi Files (Direct)
+
+| Service | File | Purpose |
+| --- | --- | --- |
+| Battery Monitor | `battery-combined-udev.service` | Low battery notifications for Polybar |
 
 ## Migration Guidelines
 

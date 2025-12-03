@@ -1,23 +1,28 @@
 { config, pkgs, lib, ... }:
 
+let
+  isDesktop = config.custom.desktop.enable or false;
+in
 {
-  # Polkit
+  # Polkit (all machines)
   security.polkit.enable = true;
 
-  # Gnome keyring with SSH agent
-  security.pam.services.lightdm.enableGnomeKeyring = true;
-  security.pam.services.login.enableGnomeKeyring = true;
-  security.pam.services.xfce.enableGnomeKeyring = true;
-  services.gnome.gnome-keyring.enable = true;
+  # Desktop-specific: GNOME keyring with SSH agent
+  security.pam.services = lib.mkIf isDesktop {
+    lightdm.enableGnomeKeyring = true;
+    login.enableGnomeKeyring = true;
+    xfce.enableGnomeKeyring = true;
+  };
 
-  # Disable the standard SSH agent since we're using GNOME Keyring
-  programs.ssh.startAgent = false;
+  services.gnome.gnome-keyring.enable = lib.mkIf isDesktop true;
 
-  # Enable gnome-keyring SSH agent in the session
-  # Note: The actual socket path will be set by gnome-keyring-daemon
+  # SSH agent configuration
+  # Desktop: Use GNOME Keyring (started via desktop.nix sessionCommands)
+  # Headless: Use standard SSH agent
+  programs.ssh.startAgent = !isDesktop;
 
-  # Set proper askpass programs to use gnome-keyring instead of x11-ssh-askpass
-  environment.variables = {
+  # Desktop-specific: Set proper askpass programs to use gnome-keyring
+  environment.variables = lib.mkIf isDesktop {
     SSH_ASKPASS = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     SSH_ASKPASS_REQUIRE = "prefer";
     SUDO_ASKPASS = "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";

@@ -47,8 +47,9 @@ fi
 # node
 npm config set prefix "$NPM_CONFIG_PREFIX"
 
-# Use GNOME Keyring SSH agent
+# SSH agent configuration
 if [[ -n "$DISPLAY" ]] || [[ -n "$WAYLAND_DISPLAY" ]]; then
+  # Desktop: Use GNOME Keyring SSH agent
   # Primary: GNOME Control Center socket
   if [[ -S "/run/user/$(id -u)/gcr/ssh" ]]; then
     export SSH_AUTH_SOCK="/run/user/$(id -u)/gcr/ssh"
@@ -56,10 +57,16 @@ if [[ -n "$DISPLAY" ]] || [[ -n "$WAYLAND_DISPLAY" ]]; then
   elif [[ -S "/run/user/$(id -u)/keyring/ssh" ]]; then
     export SSH_AUTH_SOCK="/run/user/$(id -u)/keyring/ssh"
   fi
-
-  if [[ -n "$SSH_AUTH_SOCK" ]] && command -v ssh-add >/dev/null 2>&1; then
-    ssh-add -l >/dev/null 2>&1 || true
+else
+  # Headless (WSL/VMs): Use systemd SSH agent
+  if [[ -S "/run/user/$(id -u)/ssh-agent" ]]; then
+    export SSH_AUTH_SOCK="/run/user/$(id -u)/ssh-agent"
   fi
+fi
+
+# Test SSH agent connection
+if [[ -n "$SSH_AUTH_SOCK" ]] && command -v ssh-add >/dev/null 2>&1; then
+  ssh-add -l >/dev/null 2>&1 || true
 fi
 
 # zoxide (fasd replacement)
@@ -122,4 +129,3 @@ cf-ssh() {
   local target="${1:-$USER@localhost}"
   ssh -o ProxyCommand="cloudflared access tcp --hostname $CLOUDFLARE_TUNNEL_HOST" "$target"
 }
-
