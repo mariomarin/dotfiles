@@ -3,7 +3,7 @@
 # This script runs when bitbucketCli version in .chezmoidata.toml changes
 
 let version = "{{ .versions.bitbucketCli }}"
-let arch = (sys host | get arch)
+let arch = (uname | get machine)
 let os = "darwin"
 
 # Map architecture names
