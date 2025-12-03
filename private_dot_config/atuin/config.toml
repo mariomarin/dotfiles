@@ -1,0 +1,25 @@
+## Atuin shell history configuration
+
+## Allow editing commands before execution
+## When false, pressing Enter in search will put the command in your shell for editing
+## When true, pressing Enter will execute immediately (use Tab to edit)
+enter_accept = false
+
+## Search mode: how atuin searches your history
+## Options: prefix, fulltext, fuzzy, skim
+search_mode = "fuzzy"
+
+## Filter mode: what history to show
+## Options: global, host, session, directory
+filter_mode = "global"
+
+## Style: interface appearance
+## Options: auto, full, compact
+style = "auto"
+
+## Show preview of selected command
+show_preview = true
+
+## What to do when escape is pressed
+## Options: return-original, return-query
+exit_mode = "return-original"
