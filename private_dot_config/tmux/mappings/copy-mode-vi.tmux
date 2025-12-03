@@ -1,10 +1,12 @@
 # Vi-mode copy configuration
 # Native tmux clipboard integration without tmux-yank plugin
 
-# Detect and set appropriate copy command for X11/Wayland
-if-shell -b 'echo $XDG_SESSION_TYPE | grep -q wayland' \
-  'set -s copy-command "wl-copy"' \
-  'set -s copy-command "xclip -in -selection clipboard"'
+# Detect and set appropriate copy command for WSL/X11/Wayland
+if-shell -b '[ -n "$WSL_DISTRO_NAME" ]' \
+  'set -s copy-command "clip.exe"' \
+  'if-shell -b "echo $XDG_SESSION_TYPE | grep -q wayland" \
+    "set -s copy-command \"wl-copy\"" \
+    "set -s copy-command \"xclip -in -selection clipboard\""'
 
 # Visual selection
 bind-key -T copy-mode-vi v send-keys -X begin-selection
