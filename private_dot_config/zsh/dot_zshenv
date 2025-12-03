@@ -90,6 +90,8 @@ export DOCKER_BUILDKIT=1
 
 # upterm - use WebSocket for better firewall compatibility
 export UPTERM_SERVER=wss://uptermd.upterm.dev
+# Default admin socket for session management
+export UPTERM_ADMIN_SOCKET="${HOME}/.upterm/current.sock"
 
 # zim
 : ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}

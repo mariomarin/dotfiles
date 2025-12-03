@@ -109,3 +109,15 @@ source <(kubectl completion zsh)
 # help me to fix wrong typed commands
 eval "$(pay-respects zsh --alias)"
 
+# upterm helper function to check current session from any terminal
+upterm-current() {
+  local socket
+  socket=$(find ~/.upterm -name "*.sock" 2>/dev/null | head -1)
+  if [ -n "$socket" ]; then
+    upterm session current --admin-socket "$socket"
+  else
+    echo "No active upterm session found"
+    return 1
+  fi
+}
+
