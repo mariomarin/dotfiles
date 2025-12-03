@@ -41,6 +41,51 @@
     claude-code
   ];
 
+  # Claude Code integration
+  claude.code = {
+    # Hooks to protect against dangerous commands
+    hooks.PreToolUse.Bash = pkgs.writeShellScript "validate-bash-command" ''
+      # Read JSON input from stdin
+      INPUT=$(cat)
+
+      # Extract command from JSON (using basic grep since jq might not be available)
+      COMMAND=$(echo "$INPUT" | grep -o '"command":"[^"]*"' | cut -d'"' -f4)
+
+      # Check for dangerous chezmoi commands
+      if echo "$COMMAND" | grep -qE "chezmoi\s+purge"; then
+        echo "⛔ BLOCKED: 'chezmoi purge' is destructive and will delete your entire chezmoi source directory."
+        echo "This command has been blocked for your safety."
+        echo ""
+        echo "If you need to reset script state, use these SAFE alternatives:"
+        echo "  chezmoi state delete-bucket --bucket=scriptState    # Reset run_once_ scripts"
+        echo "  chezmoi state delete-bucket --bucket=entryState     # Reset run_onchange_ scripts"
+        exit 1
+      fi
+
+      if echo "$COMMAND" | grep -qE "chezmoi\s+state\s+reset"; then
+        echo "⛔ BLOCKED: 'chezmoi state reset' is destructive and will cause chezmoi to lose track of all managed files."
+        echo "This command has been blocked for your safety."
+        echo ""
+        echo "Use these SAFE alternatives instead:"
+        echo "  chezmoi state delete-bucket --bucket=scriptState    # Clear run_once_ script state"
+        echo "  chezmoi state delete-bucket --bucket=entryState     # Clear run_onchange_ script state"
+        exit 1
+      fi
+
+      # Block direct deletion of state files
+      if echo "$COMMAND" | grep -qE "rm.*chezmoistate\.boltdb|rm.*\.chezmoidata\.db"; then
+        echo "⛔ BLOCKED: Direct deletion of chezmoi state database files is dangerous."
+        echo "This will cause chezmoi to lose track of all managed files."
+        echo ""
+        echo "Use 'chezmoi state delete-bucket' commands instead for safe state management."
+        exit 1
+      fi
+
+      # Allow all other commands
+      exit 0
+    '';
+  };
+
   # Git hooks - format only staged files on commit
   git-hooks = {
     hooks = {
