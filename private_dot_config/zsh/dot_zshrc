@@ -111,12 +111,20 @@ eval "$(pay-respects zsh --alias)"
 
 # upterm helper function to check current session from any terminal
 upterm-current() {
-  local socket
-  # Get the most recently modified .sock file
-  socket=$(ls -t ~/.upterm/*.sock 2>/dev/null | head -1)
-  if [ -n "$socket" ]; then
-    upterm session current --admin-socket "$socket"
-  else
+  local socket found=0
+  # Try each socket file (newest first) until we find a working one
+  for socket in $(ls -t ~/.upterm/*.sock 2>/dev/null); do
+    if upterm session current --admin-socket "$socket" 2>/dev/null; then
+      found=1
+      break
+    else
+      # Remove stale socket
+      echo "Removing stale socket: $socket" >&2
+      rm -f "$socket"
+    fi
+  done
+
+  if [ $found -eq 0 ]; then
     echo "No active upterm session found"
     return 1
   fi
