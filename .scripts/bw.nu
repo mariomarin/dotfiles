@@ -3,6 +3,31 @@
 
 # Unlock Bitwarden vault and save session token
 def "main unlock" [] {
+    # Check if .env.local exists and has a valid session
+    if (".env.local" | path exists) {
+        let env_content = (open .env.local | str trim)
+        let session_token = ($env_content | str replace "BW_SESSION=" "" | str trim)
+
+        if ($session_token | is-not-empty) {
+            # Test if session is valid
+            let status = try {
+                do -i { BW_SESSION=$session_token bw status } | from json | get status
+            } catch {
+                "invalid"
+            }
+
+            if $status == "unlocked" {
+                print "⚠️  You already have a valid session in .env.local"
+                print "   The vault is currently unlocked with this session."
+                print "   Run 'just bw-reload' to load it into your environment (Unix only)"
+                return
+            } else if $status == "locked" {
+                print "ℹ️  Existing session in .env.local is expired (vault locked)"
+                print "   Getting a fresh session..."
+            }
+        }
+    }
+
     let bw_status = try {
         bw status | from json | get status
     } catch {
@@ -31,12 +56,30 @@ def "main unlock" [] {
 
     $"BW_SESSION=($bw_session)" | save -f .env.local
     print "✅ Session saved to .env.local"
-    print "💡 Run 'nu bw.nu reload' or 'just bw-reload' to reload direnv"
+    print "💡 Run 'nu bw.nu reload' or 'just bw-reload' to reload direnv (Unix only)"
     print "💡 Just targets automatically load BW_SESSION from .env.local"
 }
 
 # Reload direnv environment (loads BW_SESSION from .env.local)
 def "main reload" [] {
+    # Check if we're on a Unix-like system
+    let os = (sys | get host | get name)
+    if ($os == "Windows") {
+        print "❌ direnv reload is only available on Unix-like systems (Linux, macOS, WSL)"
+        print "   On Windows, BW_SESSION is automatically loaded by just targets from .env.local"
+        print "   No manual reload needed - just run your just commands"
+        exit 1
+    }
+
+    # Check if direnv is available
+    let has_direnv = (which direnv | is-not-empty)
+    if not $has_direnv {
+        print "❌ direnv is not installed or not in PATH"
+        print "   On Unix systems, BW_SESSION can be loaded via direnv"
+        print "   However, just targets automatically load from .env.local"
+        exit 1
+    }
+
     print "🔄 Reloading direnv environment..."
     direnv allow
     direnv reload
