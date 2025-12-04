@@ -1,0 +1,7 @@
+{
+    name: "claude-helpers"
+    version: "1.0.0"
+    description: "Helper functions for Claude Code CLI - MCP integration, prompt improvement, and git workflows"
+    type: "module"
+    license: "MIT"
+}

@@ -1,0 +1,7 @@
+{
+    name: "bitwarden"
+    version: "1.0.0"
+    description: "Bitwarden CLI utilities for Nushell - session management and item retrieval"
+    type: "module"
+    license: "MIT"
+}

@@ -1,0 +1,7 @@
+{
+    name: "sesh"
+    version: "1.0.0"
+    description: "Smart tmux session manager with fuzzy selection"
+    type: "module"
+    license: "MIT"
+}
