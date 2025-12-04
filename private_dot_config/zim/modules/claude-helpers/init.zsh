@@ -103,147 +103,6 @@ copus() {
         "$@"
 }
 
-# Git commit assistant - analyzes changes and creates atomic commits
-gitblade() {
-    # Helper: get git changes
-    get_changes() {
-        { git diff --name-only; git diff --cached --name-only; } | sort -u
-    }
-    
-    # Helper: get full diff
-    get_diff() {
-        git diff
-        git diff --cached
-    }
-    
-    # Helper: parse commit block
-    parse_commit() {
-        local block="$1"
-        local -A commit
-        
-        for line in ${(f)block}; do
-            case "$line" in
-                files:*) commit[files]="${line#files: }" ;;
-                message:*) commit[message]="${line#message: }" ;;
-                body:*) commit[body]="${line#body: }" ;;
-            esac
-        done
-        
-        [[ -n "${commit[files]}" && -n "${commit[message]}" ]] || return 1
-        
-        echo "${commit[files]}"
-        echo "${commit[message]}"
-        echo "${commit[body]:-}"
-    }
-    
-    # Helper: apply single commit
-    apply_commit() {
-        local files="$1" message="$2" body="$3"
-        
-        # Stage files
-        for file in ${=files}; do
-            git add "$file" || return 1
-        done
-        
-        # Create commit
-        if [[ -n "$body" ]]; then
-            git commit -m "$message" -m "$body"
-        else
-            git commit -m "$message"
-        fi
-    }
-    
-    # Helper: display commit info
-    show_commit() {
-        local num="$1" files="$2" message="$3" body="$4"
-        
-        echo "\nCommit #$num:"
-        echo "  Files: $files"
-        echo "  Message: $message"
-        [[ -n "$body" ]] && echo "  Body: $body"
-    }
-    
-    # Main logic
-    local -a changes
-    changes=(${(f)"$(get_changes)"})
-    
-    [[ ${#changes} -eq 0 ]] && { echo "No changes to commit" >&2; return 1; }
-    
-    echo "Changed files:"
-    printf "  %s\n" "${changes[@]}"
-    echo
-    
-    # Build and send prompt
-    local prompt="Analyze these git changes and suggest atomic commits.
-
-Output format (use EXACTLY this format):
-===
-files: file1.txt file2.txt
-message: type(scope): complete description here
-body: optional detailed description if needed
-===
-
-Rules:
-- Group related changes together
-- Write COMPLETE commit messages, not just prefixes
-- Use conventional commit format: feat, fix, docs, style, refactor, test, chore
-- Message must be complete and descriptive (e.g., 'feat(todo): add todo item component')
-- Each === block is one commit
-
-Changed files:
-${(j:\n:)changes}
-
-Diff (first 1000 lines):
-$(get_diff | head -1000)"
-    
-    echo "Analyzing changes..."
-    local suggestions
-    suggestions=$(claude --model haiku "$prompt" 2>/dev/null) || {
-        echo "Failed to analyze changes" >&2
-        return 1
-    }
-    
-    # Process suggestions
-    local -a blocks
-    blocks=("${(@s:===:)suggestions}")
-    
-    local count=0 applied=0
-    for block in "${blocks[@]}"; do
-        [[ -z "${block// }" ]] && continue
-        
-        local -a commit_data
-        commit_data=($(parse_commit "$block")) || continue
-        
-        ((count++))
-        show_commit "$count" "${commit_data[@]}"
-        
-        echo -n "Apply this commit? [Y/n/q] "
-        local response
-        if [[ -t 0 ]]; then
-            read -k1 response
-            echo
-        else
-            response="y"  # Default to yes if non-interactive
-            echo "y (non-interactive)"
-        fi
-        
-        case "$response" in
-            q|Q) break ;;
-            n|N) continue ;;
-            *)
-                if apply_commit "${commit_data[@]}"; then
-                    echo "✓ Committed"
-                    ((applied++))
-                else
-                    echo "✗ Failed to commit" >&2
-                fi
-                ;;
-        esac
-    done
-    
-    echo "\nCreated $applied of $count suggested commits"
-}
-
 # Fun Deadpool-style Claude
 claudepool() {
     local deadpool_prompt="Talk like a caffeinated Deadpool with sadistic commentary "
@@ -271,17 +130,12 @@ claude_help() {
     echo "  popus      - Run opus model with clipboard content"
     echo "  dopus      - Run opus with dangerous permissions skipped"
     echo "  copus      - Run opus with specific MCP tools"
-    echo "  gitblade   - Analyze changes and create atomic commits"
     echo "  claudepool - Fun Deadpool-style Claude personality"
     echo "  ccusage    - Show Claude usage statistics"
 }
 
 # Alias for help
 alias clhelp='claude_help'
-
-# Epic aliases for the commit assassin
-alias blade='gitblade'
-alias gb='gitblade'
 
 # Source local customizations if they exist
 # shellcheck disable=SC1091

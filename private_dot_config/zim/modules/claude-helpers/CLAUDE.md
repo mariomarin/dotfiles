@@ -11,8 +11,7 @@ claude-helpers/
 │   ├── _claude        # Main claude command completion
 │   ├── _cl            # Container-use enforced claude
 │   ├── _improve       # Prompt improvement helper
-│   ├── _popus         # Opus with clipboard
-│   └── _gitblade      # Git commit assistant
+│   └── _popus         # Opus with clipboard
 ├── README.md          # User documentation
 └── CLAUDE.md          # This file
 ```
@@ -50,15 +49,6 @@ claude-helpers/
 - Works across macOS (pbpaste) and Linux (xclip/xsel)
 - Accepts additional arguments
 
-### gitblade - Git Commit Assistant
-
-- Analyzes git changes and suggests atomic commits
-- Interactive commit-by-commit approval
-- Uses Zsh native features for parsing
-- Simpler === delimited format
-- Uses haiku model for faster responses
-- Aliases: `blade`, `gb`
-
 ### Other Helpers
 
 - **dopus**: Opus with dangerous permissions skipped
@@ -77,7 +67,6 @@ exec zsh
 # Test completions
 claude <TAB>
 cl <TAB>
-gitblade <TAB>
 ```
 
 ## Maintenance
