@@ -1,0 +1,27 @@
+#!/usr/bin/env nu
+# Download and setup Nushell utility scripts
+# This script runs when this file changes
+
+let scripts_dir = $"($env.HOME)/.config/nushell/scripts"
+
+# Create scripts directory if it doesn't exist
+mkdir $scripts_dir
+
+print "📦 Downloading Nushell utility scripts..."
+
+# Git utilities
+print "  - git.nu"
+http get https://raw.githubusercontent.com/nushell/nu_scripts/main/modules/git/git.nu | save --force $"($scripts_dir)/git.nu"
+
+print "  - git-aliases.nu"
+http get https://raw.githubusercontent.com/nushell/nu_scripts/main/modules/git/git-aliases.nu | save --force $"($scripts_dir)/git-aliases.nu"
+
+# Docker utilities
+print "  - docker.nu"
+http get https://raw.githubusercontent.com/nushell/nu_scripts/main/modules/docker/docker.nu | save --force $"($scripts_dir)/docker.nu"
+
+# Kubernetes utilities
+print "  - kubernetes.nu"
+http get https://raw.githubusercontent.com/nushell/nu_scripts/main/modules/kubernetes/kubernetes.nu | save --force $"($scripts_dir)/kubernetes.nu"
+
+print "✅ Nushell scripts downloaded successfully"
