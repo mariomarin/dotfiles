@@ -2,6 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Documentation Style
+
+**IMPORTANT**: When creating README or documentation files:
+
+- ✅ **Be concise** - Focus on essential information only
+- ✅ **Use tables** - Condense information into tables when possible
+- ✅ **Short examples** - One or two examples max, not exhaustive
+- ✅ **External links** - Link to official docs instead of reproducing them
+- ❌ **Avoid verbosity** - No need for comprehensive guides
+- ❌ **No repetition** - Don't explain the same thing multiple ways
+- ❌ **No obvious info** - Skip what users can infer from context
+
+**Good example**: "Start SSH tunnel: `just tunnel-ssh`. See `just tunnel-help` for all options."
+
+**Bad example**: Multiple paragraphs explaining every flag, every use case, every platform, etc.
+
 ## CRITICAL: Never Run These Commands
 
 **NEVER** run these commands under any circumstances:
