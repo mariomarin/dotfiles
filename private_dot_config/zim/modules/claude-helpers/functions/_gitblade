@@ -1,8 +1,0 @@
-#compdef gitblade blade gb
-
-# Completion for gitblade (git commit assistant)
-
-_arguments -s -S -C \
-    {-h,--help}'[Show help information]'
-
-return 0
