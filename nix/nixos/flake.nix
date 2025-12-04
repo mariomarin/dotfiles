@@ -33,7 +33,7 @@
         # NUR overlay
         { nixpkgs.overlays = [ nur.overlays.default ]; }
 
-        # Make unstable packages available
+        # Make unstable packages and custom packages available
         {
           nixpkgs.overlays = [
             (final: prev: {
@@ -41,6 +41,8 @@
                 system = final.system;
                 config.allowUnfree = true;
               };
+              keyring-cli = final.callPackage ./pkgs/keyring-cli.nix { };
+              cf-vault = final.callPackage ./pkgs/cf-vault.nix { };
             })
             claude-code-nix.overlays.default
           ];

@@ -58,8 +58,10 @@ in
       # System utilities
       atuin # Shell history sync, search and backup
       bitwarden-cli # Password manager CLI
+      cf-vault # Cloudflare credentials management (uses system keyring)
       cheat # Create and view interactive cheatsheets
       envsubst # Substitutes environment variables in shell format strings
+      keyring-cli # Cross-platform keyring access (for Bitwarden session storage)
       libnotify # Desktop notification library
       libzip # Library for reading, creating, and modifying zip archives
       navi # Interactive cheatsheet tool
