@@ -5,6 +5,19 @@
 # version = "0.104.0"
 
 # -----------------------------------------------------------------------------
+# 0. LOAD NUPM (Nushell Package Manager)
+# -----------------------------------------------------------------------------
+{{- if eq .chezmoi.os "windows" }}
+let nupm_path = ($env.USERPROFILE | path join '.local' 'share' 'nupm' 'nupm')
+{{- else }}
+let nupm_path = ($env.HOME | path join '.local' 'share' 'nupm' 'nupm')
+{{- end }}
+
+if ($nupm_path | path exists) {
+    use nupm
+}
+
+# -----------------------------------------------------------------------------
 # 1. ENABLE VI MODE
 # -----------------------------------------------------------------------------
 $env.config.edit_mode = 'vi'
@@ -372,4 +385,57 @@ if (which carapace | is-not-empty) {
         | if ($in | default [] | where value =~ '^-.*ERR' | is-empty) { $in } else { null }
     }
     $env.config.completions.external.completer = $carapace_completer
+}
+
+# -----------------------------------------------------------------------------
+# 12. NUPM MODULES
+# -----------------------------------------------------------------------------
+
+# Claude helpers (if claude command exists)
+if (which claude | is-not-empty) {
+    use claude-helpers *
+}
+
+# Sesh session manager (if sesh command exists)
+if (which sesh | is-not-empty) {
+    use sesh *
+}
+
+# Container-use completions (if container-use exists)
+if (which container-use | is-not-empty) {
+    use container-use-completions *
+}
+
+# AWS SSO CLI completions (if aws-sso exists)
+if (which aws-sso | is-not-empty) {
+    use aws-sso-cli-completions *
+}
+
+# Git branchless completions (if git-branchless exists)
+if (which git-branchless | is-not-empty) {
+    use git-branchless-completions *
+}
+
+# -----------------------------------------------------------------------------
+# 13. COMMUNITY SCRIPTS
+# -----------------------------------------------------------------------------
+
+# Git utilities
+if ("~/.config/nushell/scripts/git.nu" | path exists) {
+    use ~/.config/nushell/scripts/git.nu *
+}
+
+# Git aliases
+if ("~/.config/nushell/scripts/git-aliases.nu" | path exists) {
+    use ~/.config/nushell/scripts/git-aliases.nu *
+}
+
+# Docker utilities
+if ("~/.config/nushell/scripts/docker.nu" | path exists) {
+    use ~/.config/nushell/scripts/docker.nu *
+}
+
+# Kubernetes utilities
+if ("~/.config/nushell/scripts/kubernetes.nu" | path exists) {
+    use ~/.config/nushell/scripts/kubernetes.nu *
 }
