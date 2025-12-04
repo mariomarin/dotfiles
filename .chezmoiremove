@@ -1,0 +1,4 @@
+# Files to remove from target system
+# Managed by chezmoi - these files will be deleted when running chezmoi apply
+
+.config/nvim/lua/plugins/clipboard.lua
