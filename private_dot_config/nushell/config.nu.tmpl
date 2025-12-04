@@ -1,0 +1,375 @@
+# =============================================================================
+# NUSHELL VI MODE CONFIGURATION
+# Attempting to match zsh-vi-mode capabilities
+# =============================================================================
+# version = "0.104.0"
+
+# -----------------------------------------------------------------------------
+# 1. ENABLE VI MODE
+# -----------------------------------------------------------------------------
+$env.config.edit_mode = 'vi'
+
+# -----------------------------------------------------------------------------
+# 2. CURSOR SHAPES PER MODE
+# Options: block, underscore, line, blink_block, blink_underscore, blink_line, inherit
+# -----------------------------------------------------------------------------
+$env.config.cursor_shape = {
+    vi_insert: line        # Beam cursor in insert mode (like default vim)
+    vi_normal: block       # Block cursor in normal mode
+    emacs: line            # For when temporarily in emacs mode
+}
+
+# -----------------------------------------------------------------------------
+# 3. BUFFER EDITOR - External editor fallback (Ctrl+X Ctrl+E equivalent)
+# This is your escape hatch for complex edits requiring text objects/surrounds
+# -----------------------------------------------------------------------------
+$env.config.buffer_editor = 'nvim'
+
+# -----------------------------------------------------------------------------
+# 4. HISTORY CONFIGURATION
+# -----------------------------------------------------------------------------
+$env.config.history = {
+    max_size: 100_000
+    sync_on_enter: true
+    file_format: "sqlite"  # Enables advanced history features
+    isolation: false       # Share history across sessions
+}
+
+# -----------------------------------------------------------------------------
+# 5. COMPLETIONS
+# -----------------------------------------------------------------------------
+$env.config.completions = {
+    case_sensitive: false
+    quick: true
+    partial: true
+    algorithm: "fuzzy"     # or "prefix"
+    external: {
+        enable: true
+        max_results: 100
+        completer: null    # Will be set by carapace if available
+    }
+}
+
+# -----------------------------------------------------------------------------
+# 6. COLOR CONFIG
+# -----------------------------------------------------------------------------
+$env.config.color_config = {
+    separator: white
+    leading_trailing_space_bg: { attr: n }
+    header: green_bold
+    empty: blue
+    bool: light_cyan
+    int: white
+    filesize: cyan
+    duration: white
+    datetime: purple
+    range: white
+    float: white
+    string: white
+    nothing: white
+    binary: white
+    cell-path: white
+    row_index: green_bold
+    record: white
+    list: white
+    closure: green_bold
+    glob: cyan_bold
+    block: white
+    hints: dark_gray
+    search_result: { bg: red fg: white }
+    shape_binary: purple_bold
+    shape_block: blue_bold
+    shape_bool: light_cyan
+    shape_closure: green_bold
+    shape_custom: green
+    shape_datetime: cyan_bold
+    shape_directory: cyan
+    shape_external: cyan
+    shape_externalarg: green_bold
+    shape_external_resolved: light_yellow_bold
+    shape_filepath: cyan
+    shape_flag: blue_bold
+    shape_float: purple_bold
+    shape_glob_interpolation: cyan_bold
+    shape_globpattern: cyan_bold
+    shape_int: purple_bold
+    shape_internalcall: cyan_bold
+    shape_keyword: cyan_bold
+    shape_list: cyan_bold
+    shape_literal: blue
+    shape_match_pattern: green
+    shape_matching_brackets: { attr: u }
+    shape_nothing: light_cyan
+    shape_operator: yellow
+    shape_pipe: purple_bold
+    shape_range: yellow_bold
+    shape_record: cyan_bold
+    shape_redirection: purple_bold
+    shape_signature: green_bold
+    shape_string: green
+    shape_string_interpolation: cyan_bold
+    shape_table: blue_bold
+    shape_variable: purple
+    shape_vardecl: purple
+    shape_raw_string: light_purple
+    shape_garbage: {
+        fg: white
+        bg: red
+        attr: b
+    }
+}
+
+# -----------------------------------------------------------------------------
+# 7. KEYBINDINGS - Emulating zsh-vi-mode where possible
+# -----------------------------------------------------------------------------
+
+# Note: Core vi sequences (i, a, I, A, c, d, etc.) are hardcoded in Reedline
+# and cannot be remapped. Only Ctrl/Alt sequences are configurable.
+
+$env.config.keybindings = [
+    # -------------------------------------------------------------------------
+    # INSERT MODE BINDINGS
+    # -------------------------------------------------------------------------
+
+    # Ctrl+A - Move to beginning of line (like Emacs/zsh)
+    {
+        name: move_to_line_start
+        modifier: control
+        keycode: char_a
+        mode: vi_insert
+        event: { edit: MoveToLineStart }
+    }
+
+    # Ctrl+E - Move to end of line
+    {
+        name: move_to_line_end
+        modifier: control
+        keycode: char_e
+        mode: vi_insert
+        event: { edit: MoveToLineEnd }
+    }
+
+    # Ctrl+K - Kill to end of line
+    {
+        name: kill_line
+        modifier: control
+        keycode: char_k
+        mode: vi_insert
+        event: { edit: CutToLineEnd }
+    }
+
+    # Ctrl+U - Kill to beginning of line
+    {
+        name: unix_line_discard
+        modifier: control
+        keycode: char_u
+        mode: vi_insert
+        event: { edit: CutFromLineStart }
+    }
+
+    # Ctrl+W - Delete word backward
+    {
+        name: backward_kill_word
+        modifier: control
+        keycode: char_w
+        mode: vi_insert
+        event: { edit: BackspaceWord }
+    }
+
+    # Ctrl+H - Backspace (explicit)
+    {
+        name: backspace
+        modifier: control
+        keycode: char_h
+        mode: vi_insert
+        event: { edit: Backspace }
+    }
+
+    # Ctrl+L - Clear screen
+    {
+        name: clear_screen
+        modifier: control
+        keycode: char_l
+        mode: [vi_insert, vi_normal]
+        event: { send: ClearScreen }
+    }
+
+    # -------------------------------------------------------------------------
+    # NORMAL MODE BINDINGS
+    # -------------------------------------------------------------------------
+
+    # Ctrl+R - Reverse history search (works in both modes)
+    {
+        name: reverse_history
+        modifier: control
+        keycode: char_r
+        mode: [vi_insert, vi_normal]
+        event: { send: menu name: history_menu }
+    }
+
+    # -------------------------------------------------------------------------
+    # MENU NAVIGATION
+    # -------------------------------------------------------------------------
+
+    # Tab - Completion menu
+    {
+        name: completion_menu
+        modifier: none
+        keycode: tab
+        mode: [vi_insert, vi_normal]
+        event: {
+            until: [
+                { send: menu name: completion_menu }
+                { send: menunext }
+                { edit: complete }
+            ]
+        }
+    }
+
+    # Shift+Tab - Previous completion
+    {
+        name: completion_previous
+        modifier: shift
+        keycode: backtab
+        mode: [vi_insert, vi_normal]
+        event: { send: menuprevious }
+    }
+
+    # Ctrl+N / Ctrl+P - Next/Previous in menus (emacs style)
+    {
+        name: menu_next
+        modifier: control
+        keycode: char_n
+        mode: [vi_insert, vi_normal]
+        event: {
+            until: [
+                { send: menudown }
+                { send: down }
+            ]
+        }
+    }
+    {
+        name: menu_prev
+        modifier: control
+        keycode: char_p
+        mode: [vi_insert, vi_normal]
+        event: {
+            until: [
+                { send: menuup }
+                { send: up }
+            ]
+        }
+    }
+]
+
+# -----------------------------------------------------------------------------
+# 8. MENUS CONFIGURATION
+# -----------------------------------------------------------------------------
+$env.config.menus = [
+    {
+        name: completion_menu
+        only_buffer_difference: false
+        marker: "| "
+        type: {
+            layout: columnar
+            columns: 4
+            col_width: 20
+            col_padding: 2
+        }
+        style: {
+            text: green
+            selected_text: { attr: r }
+            description_text: yellow
+        }
+    }
+    {
+        name: history_menu
+        only_buffer_difference: true
+        marker: "? "
+        type: {
+            layout: list
+            page_size: 20
+        }
+        style: {
+            text: green
+            selected_text: green_reverse
+            description_text: yellow
+        }
+    }
+    {
+        name: ide_completion_menu
+        only_buffer_difference: false
+        marker: "❯ "
+        type: {
+            layout: ide
+            min_completion_width: 0
+            max_completion_width: 50
+            max_completion_height: 10
+            padding: 0
+            border: true
+            cursor_offset: 0
+            description_mode: "prefer_right"
+            min_description_width: 0
+            max_description_width: 50
+            max_description_height: 10
+            description_offset: 1
+        }
+        style: {
+            text: green
+            selected_text: { attr: r }
+            description_text: yellow
+        }
+    }
+]
+
+# -----------------------------------------------------------------------------
+# 9. HOOKS - Matching zsh-vi-mode hook system
+# -----------------------------------------------------------------------------
+$env.config.hooks = {
+    pre_prompt: [{ ||
+        null
+    }]
+    pre_execution: [{ ||
+        null
+    }]
+    env_change: {
+        PWD: [{ |before, after|
+            null
+        }]
+    }
+    display_output: "if (term size).columns >= 100 { table -e } else { table }"
+    command_not_found: { ||
+        null
+    }
+}
+
+# -----------------------------------------------------------------------------
+# 10. OTHER SETTINGS
+# -----------------------------------------------------------------------------
+$env.config.show_banner = false
+$env.config.use_ansi_coloring = true
+$env.config.bracketed_paste = true
+
+# -----------------------------------------------------------------------------
+# 11. EXTERNAL TOOL INTEGRATIONS
+# -----------------------------------------------------------------------------
+
+# Atuin history (if available)
+if (which atuin | is-not-empty) {
+    source ~/.config/nushell/atuin.nu
+}
+
+# Zoxide directory navigation (if available)
+if (which zoxide | is-not-empty) {
+    source ~/.config/nushell/zoxide.nu
+}
+
+# Carapace completer (if available)
+if (which carapace | is-not-empty) {
+    let carapace_completer = {|spans: list<string>|
+        carapace $spans.0 nushell ...$spans
+        | from json
+        | if ($in | default [] | where value =~ '^-.*ERR' | is-empty) { $in } else { null }
+    }
+    $env.config.completions.external.completer = $carapace_completer
+}
