@@ -1,0 +1,36 @@
+# SSH Client Configuration
+# Managed by chezmoi - keys loaded from Bitwarden
+
+# Default settings for all hosts
+Host *
+    # Use SSH keys in priority order
+    IdentityFile ~/.ssh/main
+    IdentityFile ~/.ssh/work
+    IdentityFile ~/.ssh/legacy
+
+    # Security settings
+    AddKeysToAgent yes
+{{- if eq .chezmoi.os "darwin" }}
+    UseKeychain yes
+{{- end }}
+
+    # Connection settings
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    TCPKeepAlive yes
+
+    # Performance
+    Compression yes
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h:%p
+    ControlPersist 10m
+
+# GitHub
+Host github.com
+    User git
+    IdentityFile ~/.ssh/main
+
+# Bitbucket
+Host bitbucket.org
+    User git
+    IdentityFile ~/.ssh/main
