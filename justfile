@@ -12,13 +12,43 @@ default: chezmoi-quick-apply
 
 # Bitwarden session management
 bw-unlock:
-    nu .scripts/bw.nu unlock
+    nu -c "use bitwarden; bitwarden unlock"
 
 # Direnv management (convenience wrapper)
 
 # Note: Named bw-reload for workflow clarity, but this is a general direnv command
 bw-reload:
-    nu .scripts/bw.nu reload
+    nu -c "use bitwarden; bitwarden reload"
+
+# Cloudflare Tunnel with cf-vault
+
+# Setup cf-vault profile for Cloudflare
+tunnel-setup:
+    nu .scripts/cloudflare-tunnel.nu tunnel setup
+
+# List active tunnels via Cloudflare API
+tunnel-list:
+    nu .scripts/cloudflare-tunnel.nu tunnel list
+
+# Start SSH tunnel (default port 22)
+tunnel-ssh PORT="22":
+    nu .scripts/cloudflare-tunnel.nu tunnel ssh --port {{ PORT }}
+
+# Start HTTP tunnel
+tunnel-http PORT:
+    nu .scripts/cloudflare-tunnel.nu tunnel http {{ PORT }}
+
+# Start custom quick tunnel
+tunnel-quick SERVICE="ssh://localhost:22":
+    nu .scripts/cloudflare-tunnel.nu tunnel quick {{ SERVICE }}
+
+# Show tunnel status
+tunnel-status:
+    nu .scripts/cloudflare-tunnel.nu tunnel status
+
+# Stop running tunnel
+tunnel-stop:
+    nu .scripts/cloudflare-tunnel.nu tunnel stop
 
 # Krew plugin management
 
