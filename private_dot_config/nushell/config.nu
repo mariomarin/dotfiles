@@ -248,28 +248,29 @@ $env.config.keybindings = [
         event: { send: menuprevious }
     }
 
-    # Ctrl+N / Ctrl+P - Next/Previous in menus (emacs style)
+    # Ctrl+N / Ctrl+P - History prefix search (like zsh history-substring-search)
+    # Uppercase = vim direction, lowercase = opposite
     {
-        name: menu_next
+        name: history_prefix_search_forward
         modifier: control
         keycode: char_n
         mode: [vi_insert, vi_normal]
         event: {
             until: [
                 { send: menudown }
-                { send: down }
+                { send: historyhintcomplete }
             ]
         }
     }
     {
-        name: menu_prev
+        name: history_prefix_search_backward
         modifier: control
         keycode: char_p
         mode: [vi_insert, vi_normal]
         event: {
             until: [
                 { send: menuup }
-                { send: up }
+                { send: historyhintwordcomplete }
             ]
         }
     }
