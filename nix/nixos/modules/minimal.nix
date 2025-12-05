@@ -30,6 +30,7 @@ in
       bash # Bourne Again Shell
       nushell # Modern shell with structured data support (used by chezmoi scripts)
       oh-my-posh # Prompt framework for nushell and other shells
+      carapace # Universal shell completion framework (nushell, zsh, bash, fish)
       python3 # Python 3 interpreter (required by tmux extrakto plugin)
 
       # File utilities
