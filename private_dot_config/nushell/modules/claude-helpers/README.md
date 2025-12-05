@@ -1,12 +1,6 @@
 # Claude Helpers Module
 
-Helper functions for Claude Code CLI with MCP integration, prompt improvement, and git workflows.
-
-## Installation
-
-```nu
-nupm install --path ~/.config/nushell/modules/claude-helpers
-```
+Helper functions for Claude Code CLI.
 
 ## Usage
 
@@ -14,81 +8,24 @@ nupm install --path ~/.config/nushell/modules/claude-helpers
 use claude-helpers *
 ```
 
-## Available Commands
+## Commands
 
-### `cl` - MCP Container-Use Claude
+| Command | Description |
+|---------|-------------|
+| `cl` | Claude with MCP container-use |
+| `improve` | Improve prompts |
+| `popus` | Opus with clipboard |
+| `dopus` | Opus with skipped permissions |
+| `copus` | Opus with specific tools |
+| `claudepool` | Deadpool personality |
+| `ccusage` | Usage statistics |
+| `claude help` | Show help |
 
-Run Claude with MCP environment and container-use enforcement:
+## Installation
 
-```nu
-cl "create a python environment and test some code"
-```
-
-### `improve` - Prompt Improvement
-
-Improve a prompt for better AI understanding:
-
-```nu
-improve "make my code better"
-```
-
-### `popus` - Opus with Clipboard
-
-Run Opus model with clipboard content:
-
-```nu
-popus "explain this code"
-```
-
-### `dopus` - Opus with Skipped Permissions
-
-Run Opus with dangerous permissions skipped:
-
-```nu
-dopus "refactor this function"
-```
-
-### `copus` - Opus with Specific Tools
-
-Run Opus with specific MCP tools:
-
-```nu
-copus "research this topic"
-```
-
-### `claudepool` - Deadpool Personality
-
-Fun Deadpool-style Claude personality:
-
-```nu
-claudepool "help me debug this"
-```
-
-### `ccusage` - Usage Statistics
-
-Show Claude usage tracking information:
-
-```nu
-ccusage
-```
-
-### `claude help` - Help Information
-
-Display help for all commands:
-
-```nu
-claude help
-```
-
-## Aliases
-
-- `clhelp` → `claude help`
+Auto-installed via nupm when running `chezmoi apply`.
 
 ## Requirements
 
-- Claude Code CLI (`claude` command)
-- Clipboard tool: `pbpaste` (macOS), `xclip` or `xsel` (Linux), PowerShell (Windows)
-
-## License
-
-MIT
+- Claude Code CLI
+- Clipboard tool (pbpaste/xclip/xsel)

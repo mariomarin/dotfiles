@@ -1,77 +1,26 @@
 # Sesh Module
 
-Smart tmux session manager with fuzzy selection for Nushell.
-
-## Installation
-
-```nu
-nupm install --path ~/.config/nushell/modules/sesh
-```
+Tmux session manager integration for Nushell.
 
 ## Usage
 
 ```nu
 use sesh *
+sesh sessions  # or: ss
 ```
 
-## Available Commands
-
-### `sesh sessions` - Interactive Session Selector
-
-Select and connect to a tmux session interactively:
-
-```nu
-sesh sessions
-```
-
-Features:
-
-- Lists all available tmux sessions and zoxide directories
-- Fuzzy search with fzf or skim
-- Automatically connects to selected session
-- Creates new session if directory selected
-
-## Aliases
-
-- `ss` → `sesh sessions` (quick shortcut)
+Lists tmux sessions and zoxide directories with fuzzy search. Connects to selected session or creates new one.
 
 ## Requirements
 
-- `sesh` - Session manager binary
-- `fzf` - Fuzzy finder (recommended)
-- `nu_plugin_skim` - Optional Nushell fuzzy selection plugin (alternative to fzf)
+- `sesh` - Session manager binary (in NixOS minimal.nix)
+- `fzf` - Fuzzy finder
 - `tmux` - Terminal multiplexer
 
-## Fuzzy Finder Support
+## Installation
 
-The module automatically detects and uses the best available fuzzy finder:
+Auto-installed via nupm when running `chezmoi apply`.
 
-1. **nu_plugin_skim** - If registered, provides native Nushell integration
-2. **fzf** - External fuzzy finder (fallback)
+## Tmux Integration
 
-To install nu_plugin_skim:
-
-```bash
-cargo install nu_plugin_skim
-nu -c "plugin add ~/.cargo/bin/nu_plugin_skim"
-```
-
-## Integration with Tmux
-
-Add this to your tmux.conf for quick access:
-
-```tmux
-# Open sesh session selector
-bind-key "s" run-shell "sesh connect \"$(
-  sesh list -t -c | fzf \
-    --height 40% \
-    --reverse \
-    --border-label ' sesh ' \
-    --border \
-    --prompt '⚡  '
-)\""
-```
-
-## License
-
-MIT
+See `~/.config/tmux/tmux.conf` for keybinding configuration.

@@ -1,239 +1,93 @@
-# Nushell Plugins Installation Guide
+# Nushell Plugins
 
-This guide covers installing essential Nushell plugins to enhance functionality.
+Plugins extend Nushell with additional data formats, integrations, and utilities.
 
-## Overview
+## Installed Plugins
 
-Nushell plugins are external binaries that extend Nushell's capabilities. They must be:
+| Plugin | Source | Installation | Usage |
+|--------|--------|--------------|-------|
+| **clipboard** | nupm | Auto via chezmoi | `clipboard copy`, `clipboard paste` |
+| **formats** | NixOS | System package | Auto-loaded (EML, ICS, INI, plist, VCF) |
+| **query** | NixOS | System package | `query web`, `query json` |
+| **gstat** | NixOS | System package | `gstat` (git status data) |
 
-1. Installed (via cargo or system package manager)
-2. Registered with Nushell (via `plugin add`)
-3. Used in scripts or commands
+## Installation Methods
 
-## Essential Plugins
+### NixOS Plugins (Automatic)
 
-### 1. nu_plugin_skim - Fuzzy Selection (fzf equivalent)
+Installed via `nix/nixos/modules/minimal.nix`:
 
-**Purpose**: Interactive fuzzy finding within Nushell pipelines
+```nix
+nushellPlugins.formats
+nushellPlugins.query
+nushellPlugins.gstat
+```
 
-**Installation**:
+Auto-registered via system PATH.
+
+### Nupm Plugins (Automatic)
+
+Installed via `.chezmoiscripts/run_onchange_after_nushell-install-plugins.nu`:
+
+- Clones from GitHub to `~/.local/share/nushell/plugins/`
+- Installs via nupm: `nupm install --path <plugin> -f`
+- Registered in `config.nu.tmpl`
+
+### Manual Installation (If Needed)
 
 ```bash
-# Install via cargo
-cargo install nu_plugin_skim
+# Via cargo
+cargo install nu_plugin_<name>
+plugin add ~/.cargo/bin/nu_plugin_<name>
 
-# Register with nushell
-nu -c "plugin add ~/.cargo/bin/nu_plugin_skim"
+# Via nupm
+git clone https://github.com/<repo>/nu_plugin_<name>.git
+nupm install --path nu_plugin_<name> -f
 ```
 
-**Usage**:
+## Available Plugins
 
-```nu
-# Select from list
-ls | skim
+See [awesome-nu](https://github.com/nushell/awesome-nu/blob/main/plugin_details.md) for complete catalog.
 
-# Select file interactively
-open (ls | get name | skim)
+**Notable plugins:**
 
-# Select from JSON
-open data.json | skim
-```
-
-### 2. nu_plugin_clipboard - Clipboard Integration
-
-**Purpose**: Read and write system clipboard
-
-**Installation**:
-
-```bash
-# Install via cargo
-cargo install nu_plugin_clipboard
-
-# Register with nushell
-nu -c "plugin add ~/.cargo/bin/nu_plugin_clipboard"
-```
-
-**Usage**:
-
-```nu
-# Copy to clipboard
-"hello world" | clipboard copy
-
-# Paste from clipboard
-clipboard paste
-
-# Pipe clipboard to commands
-clipboard paste | lines | where $it =~ 'search'
-```
-
-### 3. nu_plugin_gstat - Git Status
-
-**Purpose**: Enhanced git status information
-
-**Installation**:
-
-```bash
-# Install via cargo
-cargo install nu_plugin_gstat
-
-# Register with nushell
-nu -c "plugin add ~/.cargo/bin/nu_plugin_gstat"
-```
-
-**Usage**:
-
-```nu
-# Get git status
-gstat
-
-# Filter git status
-gstat | where status == "modified"
-```
-
-## Optional Plugins
-
-### nu_plugin_plot - Terminal Plotting
-
-**Purpose**: Visualize data in terminal
-
-```bash
-cargo install nu_plugin_plot
-nu -c "plugin add ~/.cargo/bin/nu_plugin_plot"
-```
-
-**Usage**:
-
-```nu
-# Plot data
-seq 1 100 | each { |x| {x: $x, y: ($x * $x)} } | plot
-```
-
-### nu_plugin_query - Query JSON/XML/HTML
-
-**Purpose**: Query structured data with CSS/XPath selectors
-
-```bash
-cargo install nu_plugin_query
-nu -c "plugin add ~/.cargo/bin/nu_plugin_query"
-```
-
-**Usage**:
-
-```nu
-# Query HTML
-http get https://example.com | query web --query 'title'
-
-# Query JSON with jq-like syntax
-open data.json | query json '.items[] | select(.active)'
-```
+- `nu_plugin_desktop_notifications` - Desktop notifications
+- `nu_plugin_highlight` - Syntax highlighting
+- `nu_plugin_polars` - DataFrame operations
+- `nu_plugin_skim` - Fuzzy finder integration
 
 ## Verification
 
-After installing plugins, verify they're loaded:
-
 ```nu
-# List all registered plugins
+# List registered plugins
 plugin list
 
-# Test plugin functionality
+# Test clipboard
 "test" | clipboard copy
 clipboard paste
 ```
 
-## Plugin Registry
-
-Nushell maintains a plugin registry at `~/.config/nushell/plugin.msgpackz`. This file is automatically managed by Nushell.
-
 ## Troubleshooting
 
-### Plugin not found
+**Plugin version mismatch:**
 
 ```bash
-# Ensure plugin binary is in PATH or specify full path
-which nu_plugin_skim
+# Reinstall after nushell update
+cargo install nu_plugin_<name> --force
+plugin add ~/.cargo/bin/nu_plugin_<name>
+```
+
+**Plugin not found:**
+
+```bash
+# Check installation
+which nu_plugin_<name>
 
 # Re-register with full path
-nu -c "plugin add $(which nu_plugin_skim)"
+plugin add $(which nu_plugin_<name>)
 ```
 
-### Plugin version mismatch
+## References
 
-```text
-Error: Plugin protocol version mismatch
-```
-
-**Solution**: Rebuild plugins after Nushell updates
-
-```bash
-# Reinstall all plugins
-cargo install nu_plugin_skim --force
-cargo install nu_plugin_clipboard --force
-# ... etc
-
-# Re-register
-nu -c "plugin add ~/.cargo/bin/nu_plugin_skim"
-nu -c "plugin add ~/.cargo/bin/nu_plugin_clipboard"
-```
-
-### List outdated plugins
-
-```nu
-plugin list | where is_loaded == false
-```
-
-## Automated Installation
-
-You can automate plugin installation with a script:
-
-```nu
-#!/usr/bin/env nu
-# install-plugins.nu
-
-let plugins = [
-    "nu_plugin_skim"
-    "nu_plugin_clipboard"
-    "nu_plugin_gstat"
-]
-
-for plugin in $plugins {
-    print $"Installing ($plugin)..."
-    cargo install $plugin
-
-    print $"Registering ($plugin)..."
-    plugin add $"~/.cargo/bin/($plugin)"
-}
-
-print "✅ All plugins installed"
-```
-
-## Platform-Specific Notes
-
-### Windows
-
-Plugins use `.exe` extension:
-
-```nu
-plugin add $"($env.USERPROFILE)\\.cargo\\bin\\nu_plugin_skim.exe"
-```
-
-### macOS
-
-No special considerations, same as Linux.
-
-### NixOS
-
-Plugins need to be in PATH or installed via Nix:
-
-```nix
-# In configuration.nix or home-manager
-environment.systemPackages = with pkgs; [
-  # Nushell plugins (if available in nixpkgs)
-  # Otherwise install via cargo
-];
-```
-
-## Further Reading
-
-- [Nushell Plugin Documentation](https://www.nushell.sh/book/plugins.html)
-- [Available Plugins](https://github.com/nushell/awesome-nu#plugins-60)
-- [Creating Custom Plugins](https://www.nushell.sh/contributor-book/plugins.html)
+- [Nushell Plugin Docs](https://www.nushell.sh/book/plugins.html)
+- [awesome-nu Plugin List](https://github.com/nushell/awesome-nu)
