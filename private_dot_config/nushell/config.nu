@@ -5,6 +5,15 @@
 # version = "0.104.0"
 
 # -----------------------------------------------------------------------------
+# OH-MY-POSH PROMPT
+# -----------------------------------------------------------------------------
+# Source oh-my-posh prompt (generated in env.nu)
+let posh_config = ($nu.default-config-dir | path join 'oh-my-posh.nu')
+if ($posh_config | path exists) {
+    source ~/.config/nushell/oh-my-posh.nu
+}
+
+# -----------------------------------------------------------------------------
 # LOAD NUPM (Nushell Package Manager)
 # -----------------------------------------------------------------------------
 # Note: nupm module auto-loaded if in NU_LIB_DIRS (see env.nu)
@@ -248,29 +257,30 @@ $env.config.keybindings = [
         event: { send: menuprevious }
     }
 
-    # Ctrl+N / Ctrl+P - History prefix search (like zsh history-substring-search)
-    # Uppercase = vim direction, lowercase = opposite
+    # Ctrl+N / Ctrl+P - History navigation (like zsh history-substring-search)
+    # Empty buffer = cycle through all history
+    # With text = prefix search
     {
-        name: history_prefix_search_forward
+        name: history_search_forward
         modifier: control
         keycode: char_n
         mode: [vi_insert, vi_normal]
         event: {
             until: [
                 { send: menudown }
-                { send: historyhintcomplete }
+                { send: down }
             ]
         }
     }
     {
-        name: history_prefix_search_backward
+        name: history_search_backward
         modifier: control
         keycode: char_p
         mode: [vi_insert, vi_normal]
         event: {
             until: [
                 { send: menuup }
-                { send: historyhintwordcomplete }
+                { send: up }
             ]
         }
     }
