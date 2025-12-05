@@ -7,11 +7,7 @@
 # -----------------------------------------------------------------------------
 # LOAD NUPM (Nushell Package Manager)
 # -----------------------------------------------------------------------------
-let nupm_path = ($nu.home-path | path join '.local' 'share' 'nupm' 'nupm')
-
-if ($nupm_path | path exists) {
-    use nupm
-}
+# Note: nupm module auto-loaded if in NU_LIB_DIRS (see env.nu)
 
 # -----------------------------------------------------------------------------
 # VI MODE
