@@ -73,7 +73,7 @@ $env.PATH = (
 # -----------------------------------------------------------------------------
 # Oh-my-posh integration (cross-platform)
 if (which oh-my-posh | is-not-empty) {
-    $env.POSH_THEME = ($nu.home-path | path join '.config' 'oh-my-posh' 'themes' 'catppuccin_mocha.omp.json')
+    $env.POSH_THEME = ($nu.default-config-dir | path join 'oh-my-posh' 'themes' 'catppuccin_mocha.omp.json')
     oh-my-posh init nu --config $env.POSH_THEME | save --force ($nu.default-config-dir | path join 'oh-my-posh.nu')
 }
 
