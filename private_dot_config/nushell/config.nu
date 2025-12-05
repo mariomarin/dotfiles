@@ -329,7 +329,45 @@ $env.config.hooks = {
         null
     }]
     pre_execution: [{ ||
-        null
+        # WakaTime integration - track terminal activity
+        if ($env | get -i WAKATIME_DO_NOT_TRACK | default 0) == 0 {
+            let wakatime_bin = ($env | get -i ZSH_WAKATIME_BIN | default ($nu.home-path | path join '.wakatime' 'wakatime-cli'))
+
+            if ($wakatime_bin | path exists) {
+                let cmd = (commandline | split row ' ' | first)
+
+                # Determine project name
+                let project = if ('.wakatime-project' | path exists) {
+                    open .wakatime-project | lines | first
+                } else {
+                    try {
+                        git rev-parse --show-toplevel | path basename
+                    } catch {
+                        'Terminal'
+                    }
+                }
+
+                let offline_flag = if ($env | get -i WAKATIME_DISABLE_OFFLINE | default 0) == 1 {
+                    '--disable-offline'
+                } else {
+                    ''
+                }
+
+                let timeout = ($env | get -i WAKATIME_TIMEOUT | default '5')
+
+                # Send heartbeat in background
+                try {
+                    ^$wakatime_bin --write `
+                        --plugin 'nushell-wakatime/0.1.0' `
+                        --entity-type app `
+                        --entity $cmd `
+                        --project $project `
+                        --language sh `
+                        --timeout $timeout `
+                        $offline_flag o> /dev/null e> /dev/null &
+                }
+            }
+        }
     }]
     env_change: {
         PWD: [{ |before, after|
