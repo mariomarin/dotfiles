@@ -203,14 +203,8 @@ $env.config.keybindings = [
     # NORMAL MODE BINDINGS
     # -------------------------------------------------------------------------
 
-    # Ctrl+R - Reverse history search (works in both modes)
-    {
-        name: reverse_history
-        modifier: control
-        keycode: char_r
-        mode: [vi_insert, vi_normal]
-        event: { send: menu name: history_menu }
-    }
+    # Note: Ctrl+R is handled by atuin if available (see atuin.nu)
+    # Falls back to built-in history menu if atuin is not installed
 
     # -------------------------------------------------------------------------
     # MENU NAVIGATION
@@ -474,3 +468,19 @@ if ($clipboard_plugin | path exists) {
 
 # Community scripts loaded via nu-scripts (installed by nupm)
 # Individual scripts can be used with: use nu-scripts/git *
+
+# -----------------------------------------------------------------------------
+# EZA ALIASES (eza/exa replacement for ls)
+# -----------------------------------------------------------------------------
+if (which eza | is-not-empty) {
+    $env.EZA_COLORS = 'da=1;34:gm=1;34:Su=1;34'
+
+    alias ls = eza --group-directories-first
+    alias ll = ls -l --git  # Long format with git status
+    alias l = ll -a         # Long format, all files
+    alias lr = ll -T        # Long format, recursive tree
+    alias lx = ll --sort=extension  # Long format, sort by extension
+    alias lk = ll --sort=size       # Long format, largest file size last
+    alias lt = ll --sort=modified   # Long format, newest modification time last
+    alias lc = ll --sort=changed    # Long format, newest status change last
+}
