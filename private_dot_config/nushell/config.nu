@@ -324,50 +324,14 @@ $env.config.menus = [
 # -----------------------------------------------------------------------------
 # HOOKS - Matching zsh-vi-mode hook system
 # -----------------------------------------------------------------------------
+use wakatime.nu
+
 $env.config.hooks = {
     pre_prompt: [{ ||
         null
     }]
     pre_execution: [{ ||
-        # WakaTime integration - track terminal activity
-        if ($env | get -i WAKATIME_DO_NOT_TRACK | default 0) == 0 {
-            let wakatime_bin = ($env | get -i ZSH_WAKATIME_BIN | default ($nu.home-path | path join '.wakatime' 'wakatime-cli'))
-
-            if ($wakatime_bin | path exists) {
-                let cmd = (commandline | split row ' ' | first)
-
-                # Determine project name
-                let project = if ('.wakatime-project' | path exists) {
-                    open .wakatime-project | lines | first
-                } else {
-                    try {
-                        git rev-parse --show-toplevel | path basename
-                    } catch {
-                        'Terminal'
-                    }
-                }
-
-                let offline_flag = if ($env | get -i WAKATIME_DISABLE_OFFLINE | default 0) == 1 {
-                    '--disable-offline'
-                } else {
-                    ''
-                }
-
-                let timeout = ($env | get -i WAKATIME_TIMEOUT | default '5')
-
-                # Send heartbeat in background
-                try {
-                    ^$wakatime_bin --write `
-                        --plugin 'nushell-wakatime/0.1.0' `
-                        --entity-type app `
-                        --entity $cmd `
-                        --project $project `
-                        --language sh `
-                        --timeout $timeout `
-                        $offline_flag o> /dev/null e> /dev/null &
-                }
-            }
-        }
+        wakatime wakatime-heartbeat
     }]
     env_change: {
         PWD: [{ |before, after|
@@ -521,4 +485,11 @@ if (which eza | is-not-empty) {
     alias lk = ll --sort=size       # Long format, largest file size last
     alias lt = ll --sort=modified   # Long format, newest modification time last
     alias lc = ll --sort=changed    # Long format, newest status change last
+}
+
+# -----------------------------------------------------------------------------
+# GIT ALIASES (git module with 'g' prefix)
+# -----------------------------------------------------------------------------
+if (which git | is-not-empty) {
+    use git.nu *
 }
