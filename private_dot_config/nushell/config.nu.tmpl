@@ -5,7 +5,7 @@
 # version = "0.104.0"
 
 # -----------------------------------------------------------------------------
-# 0. LOAD NUPM (Nushell Package Manager)
+# LOAD NUPM (Nushell Package Manager)
 # -----------------------------------------------------------------------------
 let nupm_path = ($nu.home-path | path join '.local' 'share' 'nupm' 'nupm')
 
@@ -14,12 +14,12 @@ if ($nupm_path | path exists) {
 }
 
 # -----------------------------------------------------------------------------
-# 1. ENABLE VI MODE
+# VI MODE
 # -----------------------------------------------------------------------------
 $env.config.edit_mode = 'vi'
 
 # -----------------------------------------------------------------------------
-# 2. CURSOR SHAPES PER MODE
+# CURSOR SHAPES PER MODE
 # Options: block, underscore, line, blink_block, blink_underscore, blink_line, inherit
 # -----------------------------------------------------------------------------
 $env.config.cursor_shape = {
@@ -29,13 +29,13 @@ $env.config.cursor_shape = {
 }
 
 # -----------------------------------------------------------------------------
-# 3. BUFFER EDITOR - External editor fallback (Ctrl+X Ctrl+E equivalent)
+# BUFFER EDITOR - External editor fallback (Ctrl+X Ctrl+E equivalent)
 # This is your escape hatch for complex edits requiring text objects/surrounds
 # -----------------------------------------------------------------------------
 $env.config.buffer_editor = 'nvim'
 
 # -----------------------------------------------------------------------------
-# 4. HISTORY CONFIGURATION
+# HISTORY CONFIGURATION
 # -----------------------------------------------------------------------------
 $env.config.history = {
     max_size: 100_000
@@ -45,7 +45,7 @@ $env.config.history = {
 }
 
 # -----------------------------------------------------------------------------
-# 5. COMPLETIONS
+# COMPLETIONS
 # -----------------------------------------------------------------------------
 $env.config.completions = {
     case_sensitive: false
@@ -60,7 +60,7 @@ $env.config.completions = {
 }
 
 # -----------------------------------------------------------------------------
-# 6. COLOR CONFIG
+# COLOR CONFIG
 # -----------------------------------------------------------------------------
 $env.config.color_config = {
     separator: white
@@ -129,7 +129,7 @@ $env.config.color_config = {
 }
 
 # -----------------------------------------------------------------------------
-# 7. KEYBINDINGS - Emulating zsh-vi-mode where possible
+# KEYBINDINGS - Emulating zsh-vi-mode where possible
 # -----------------------------------------------------------------------------
 
 # Note: Core vi sequences (i, a, I, A, c, d, etc.) are hardcoded in Reedline
@@ -272,7 +272,7 @@ $env.config.keybindings = [
 ]
 
 # -----------------------------------------------------------------------------
-# 8. MENUS CONFIGURATION
+# MENUS CONFIGURATION
 # -----------------------------------------------------------------------------
 $env.config.menus = [
     {
@@ -332,7 +332,7 @@ $env.config.menus = [
 ]
 
 # -----------------------------------------------------------------------------
-# 9. HOOKS - Matching zsh-vi-mode hook system
+# HOOKS - Matching zsh-vi-mode hook system
 # -----------------------------------------------------------------------------
 $env.config.hooks = {
     pre_prompt: [{ ||
@@ -353,7 +353,7 @@ $env.config.hooks = {
 }
 
 # -----------------------------------------------------------------------------
-# 10. SHELL INTEGRATION (OSC Codes)
+# SHELL INTEGRATION (OSC Codes)
 # -----------------------------------------------------------------------------
 # OSC codes for terminal integration with Alacritty and Windows Terminal
 $env.config.shell_integration = {
@@ -367,7 +367,7 @@ $env.config.shell_integration = {
 }
 
 # -----------------------------------------------------------------------------
-# 11. DISPLAY & UI SETTINGS
+# DISPLAY & UI SETTINGS
 # -----------------------------------------------------------------------------
 $env.config.show_banner = false
 $env.config.use_ansi_coloring = true
@@ -403,7 +403,7 @@ $env.config.table = {
 }
 
 # -----------------------------------------------------------------------------
-# 12. EXTERNAL TOOL INTEGRATIONS
+# EXTERNAL TOOL INTEGRATIONS
 # -----------------------------------------------------------------------------
 
 # Atuin history (if available)
@@ -427,7 +427,7 @@ if (which carapace | is-not-empty) {
 }
 
 # -----------------------------------------------------------------------------
-# 13. NUPM MODULES
+# NUPM MODULES
 # -----------------------------------------------------------------------------
 
 # Claude helpers (if claude command exists)
@@ -456,7 +456,7 @@ if (which git-branchless | is-not-empty) {
 }
 
 # -----------------------------------------------------------------------------
-# 14. PLUGIN REGISTRATION
+# PLUGIN REGISTRATION
 # -----------------------------------------------------------------------------
 # Plugins installed via NixOS packages or nupm need to be registered
 
@@ -473,7 +473,7 @@ if ($clipboard_plugin | path exists) {
 # NixOS plugins are automatically registered via system PATH
 
 # -----------------------------------------------------------------------------
-# 15. COMMUNITY SCRIPTS
+# COMMUNITY SCRIPTS
 # -----------------------------------------------------------------------------
 
 # Git utilities
