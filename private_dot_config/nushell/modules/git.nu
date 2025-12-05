@@ -123,7 +123,7 @@ export alias gp = git push
 export alias gpf = git push --force-with-lease
 export alias gpF = git push --force
 export alias gpa = git push --all
-export alias gpA = git push --all && git push --tags --no-verify
+export def gpA [] { git push --all; git push --tags --no-verify }
 export alias gpt = git push --tags
 export def gpc [] { git push --set-upstream origin (git rev-parse --abbrev-ref HEAD) }
 export def gpp [] {
