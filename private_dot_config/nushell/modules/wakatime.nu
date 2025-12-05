@@ -43,13 +43,6 @@ export def wakatime-heartbeat [] {
 
     # Send heartbeat in background
     try {
-        ^$wakatime_bin --write `
-            --plugin 'nushell-wakatime/0.1.0' `
-            --entity-type app `
-            --entity $cmd `
-            --project $project `
-            --language sh `
-            --timeout $timeout `
-            $offline_flag o> /dev/null e> /dev/null &
+        ^$wakatime_bin --write --plugin 'nushell-wakatime/0.1.0' --entity-type app --entity $cmd --project $project --language sh --timeout $timeout $offline_flag o> /dev/null e> /dev/null &
     }
 }

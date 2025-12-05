@@ -19,11 +19,7 @@ $env.ENV_CONVERSIONS = {
 # -----------------------------------------------------------------------------
 # NUPM (Nushell Package Manager) CONFIGURATION
 # -----------------------------------------------------------------------------
-{{- if eq .chezmoi.os "windows" }}
-$env.NUPM_HOME = ($env.USERPROFILE | path join '.local' 'share' 'nupm')
-{{- else }}
-$env.NUPM_HOME = ($env.HOME | path join '.local' 'share' 'nupm')
-{{- end }}
+$env.NUPM_HOME = ($nu.home-path | path join '.local' 'share' 'nupm')
 
 # Directories to search for scripts when calling source or use
 $env.NU_LIB_DIRS = [
@@ -42,31 +38,21 @@ $env.NU_PLUGIN_DIRS = [
 # -----------------------------------------------------------------------------
 # PATH CONFIGURATION
 # -----------------------------------------------------------------------------
-{{- if eq .chezmoi.os "windows" }}
-# Windows PATH
-$env.Path = (
-    $env.Path
-    | split row (char esep)
-    | append ($env.USERPROFILE | path join '.local' 'bin')
-    | append ($env.USERPROFILE | path join 'go' 'bin')
-    | append ($env.NUPM_HOME | path join 'scripts')
-    | uniq
-)
-{{- else }}
-# Unix PATH
-$env.PATH = (
-    $env.PATH
-    | split row (char esep)
-    | prepend ($env.HOME | path join '.local' 'bin')
-    | prepend ($env.HOME | path join 'go' 'bin')
-    | prepend ($env.NUPM_HOME | path join 'scripts')
-{{- if eq .chezmoi.os "darwin" }}
-    | prepend '/opt/homebrew/bin'
-    | prepend '/usr/local/bin'
-{{- end }}
-    | uniq
-)
-{{- end }}
+# Cross-platform PATH setup
+let path_var = if ($nu.os-info.name == "windows") { "Path" } else { "PATH" }
+let path_additions = [
+    ($nu.home-path | path join '.local' 'bin')
+    ($nu.home-path | path join 'go' 'bin')
+    ($env.NUPM_HOME | path join 'scripts')
+]
+
+if ($nu.os-info.name == "windows") {
+    $env.Path = ($env.Path | split row (char esep) | append $path_additions | uniq)
+} else if ($nu.os-info.name == "macos") {
+    $env.PATH = ($env.PATH | split row (char esep) | prepend $path_additions | prepend ['/opt/homebrew/bin' '/usr/local/bin'] | uniq)
+} else {
+    $env.PATH = ($env.PATH | split row (char esep) | prepend $path_additions | uniq)
+}
 
 # -----------------------------------------------------------------------------
 # OH-MY-POSH PROMPT
@@ -83,10 +69,9 @@ if (which oh-my-posh | is-not-empty) {
 $env.EDITOR = 'nvim'
 $env.VISUAL = 'nvim'
 
-{{- if eq .chezmoi.os "linux" }}
-# Linux-specific
-$env.BROWSER = 'firefox'
-{{- else if eq .chezmoi.os "darwin" }}
-# macOS-specific
-$env.BROWSER = 'open'
-{{- end }}
+# OS-specific environment
+if ($nu.os-info.name == "linux") {
+    $env.BROWSER = 'firefox'
+} else if ($nu.os-info.name == "macos") {
+    $env.BROWSER = 'open'
+}
