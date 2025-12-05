@@ -425,27 +425,27 @@ if (which carapace | is-not-empty) {
 
 # Claude helpers (if claude command exists)
 if (which claude | is-not-empty) {
-    use claude-helpers *
+    use ($nu.default-config-dir | path join 'modules' 'claude-helpers') *
 }
 
 # Sesh session manager (if sesh command exists)
 if (which sesh | is-not-empty) {
-    use sesh *
+    use ($nu.default-config-dir | path join 'modules' 'sesh') *
 }
 
 # Container-use completions (if container-use exists)
 if (which container-use | is-not-empty) {
-    use container-use-completions *
+    use ($nu.default-config-dir | path join 'modules' 'container-use-completions') *
 }
 
 # AWS SSO CLI completions (if aws-sso exists)
 if (which aws-sso | is-not-empty) {
-    use aws-sso-cli-completions *
+    use ($nu.default-config-dir | path join 'modules' 'aws-sso-cli-completions') *
 }
 
 # Git branchless completions (if git-branchless exists)
 if (which git-branchless | is-not-empty) {
-    use git-branchless-completions *
+    use ($nu.default-config-dir | path join 'modules' 'git-branchless-completions') *
 }
 
 # -----------------------------------------------------------------------------
