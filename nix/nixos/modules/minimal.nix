@@ -33,6 +33,11 @@ in
       carapace # Universal shell completion framework (nushell, zsh, bash, fish)
       python3 # Python 3 interpreter (required by tmux extrakto plugin)
 
+      # Nushell plugins
+      nushellPlugins.formats # Additional format support (EML, ICS, INI, plist, VCF)
+      nushellPlugins.query # Query JSON, XML, and web data
+      nushellPlugins.gstat # Git status as structured data
+
       # File utilities
       file # Determine file types
       unzip # Extract compressed files
