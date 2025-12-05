@@ -1,112 +1,33 @@
 # Bitwarden utilities module for Nushell
 
-# Detect available keyring backend
-def get_keyring_backend [] {
-    let os = (sys host | get name)
-
-    # Prefer keyring-cli if available (NixOS systems)
-    if (which keyring-cli | is-not-empty) {
-        "keyring-cli"
-    } else if ($os == "Windows") {
-        "powershell"  # Windows Credential Manager via PowerShell
-    } else if (which secret-tool | is-not-empty) {
-        "secret-tool"  # GNOME keyring (Linux)
-    } else if ($os == "Darwin") {
-        "security"  # macOS Keychain
-    } else {
-        "file"  # Fallback to file storage
-    }
-}
-
-# Store session in keyring
+# Store session in .env.local file
 def store_session [session: string] {
-    let backend = (get_keyring_backend)
+    $"BW_SESSION=($session)" | save -f .env.local
 
-    match $backend {
-        "keyring-cli" => {
-            keyring-cli set $session
-        }
-        "powershell" => {
-            # Windows: Use LOCALAPPDATA (protected by Windows permissions)
-            let session_file = ($env.LOCALAPPDATA | path join "bitwarden-session.txt")
-            $session | save -f $session_file
-            print $"⚠️  Using Windows file storage: ($session_file)"
-        }
-        "secret-tool" => {
-            $session | secret-tool store --label="Bitwarden Session" service bitwarden username $env.USER
-        }
-        "security" => {
-            # macOS Keychain
-            security add-generic-password -a $env.USER -s bitwarden -w $session -U
-        }
-        _ => {
-            # Fallback: .env.local with warning
-            $"BW_SESSION=($session)" | save -f .env.local
-            chmod 600 .env.local
-            print "⚠️  Using file storage (no keyring available)"
-        }
+    # Set permissions on Unix-like systems
+    if ((sys host | get name) != "Windows") {
+        chmod 600 .env.local
     }
 }
 
-# Retrieve session from keyring
+# Retrieve session from .env.local file
 def get_stored_session [] {
-    let backend = (get_keyring_backend)
-
     try {
-        match $backend {
-            "keyring-cli" => {
-                keyring-cli get | str trim
-            }
-            "powershell" => {
-                # Windows: Read from LOCALAPPDATA
-                let session_file = ($env.LOCALAPPDATA | path join "bitwarden-session.txt")
-                if ($session_file | path exists) {
-                    open $session_file | str trim
-                } else {
-                    ""
-                }
-            }
-            "secret-tool" => {
-                secret-tool lookup service bitwarden username $env.USER | str trim
-            }
-            "security" => {
-                security find-generic-password -a $env.USER -s bitwarden -w | str trim
-            }
-            _ => {
-                # Fallback: .env.local
-                if (".env.local" | path exists) {
-                    open .env.local | str replace "BW_SESSION=" "" | str trim
-                } else {
-                    ""
-                }
-            }
+        if (".env.local" | path exists) {
+            open .env.local | str replace "BW_SESSION=" "" | str trim
+        } else {
+            ""
         }
     } catch {
         ""
     }
 }
 
-# Clear session from keyring
+# Clear session from .env.local file
 def clear_stored_session [] {
-    let backend = (get_keyring_backend)
-
     try {
-        match $backend {
-            "keyring-cli" => {
-                keyring-cli delete
-            }
-            "secret-tool" => {
-                secret-tool clear service bitwarden username $env.USER
-            }
-            "security" => {
-                security delete-generic-password -a $env.USER -s bitwarden
-            }
-            _ => {
-                # Fallback: remove .env.local
-                if (".env.local" | path exists) {
-                    rm .env.local
-                }
-            }
+        if (".env.local" | path exists) {
+            rm .env.local
         }
     } catch {
         # Session already cleared
@@ -115,7 +36,7 @@ def clear_stored_session [] {
 
 # Unlock Bitwarden vault and save session token
 export def unlock [] {
-    # Check keyring for existing session
+    # Check for existing session in .env.local
     let stored_session = (get_stored_session)
 
     if ($stored_session | is-not-empty) {
@@ -127,7 +48,7 @@ export def unlock [] {
         }
 
         if $status == "unlocked" {
-            print "✅ Valid session found in keyring"
+            print "✅ Valid session found in .env.local"
             $env.BW_SESSION = $stored_session
             return
         } else {
@@ -162,20 +83,14 @@ export def unlock [] {
         exit 1
     }
 
-    # Store in keyring
+    # Store in .env.local
     store_session $bw_session
 
     # Also set in current environment
     $env.BW_SESSION = $bw_session
 
-    let backend = (get_keyring_backend)
-    if $backend == "file" {
-        print "✅ Session saved to .env.local (file storage)"
-        print "💡 Run 'bitwarden reload' to load in new shells"
-    } else {
-        print $"✅ Session saved securely to ($backend)"
-        print "💡 Session persists across shell restarts"
-    }
+    print "✅ Session saved to .env.local"
+    print "💡 Run 'bitwarden reload' to load in new shells"
 }
 
 # Lock vault and clear session
@@ -186,12 +101,12 @@ export def lock [] {
     print "🔒 Vault locked and session cleared"
 }
 
-# Load session from keyring into environment
+# Load session from .env.local into environment
 export def reload [] {
     let stored_session = (get_stored_session)
 
     if ($stored_session | is-empty) {
-        print "❌ No session found in keyring"
+        print "❌ No session found in .env.local"
         print "   Run 'bitwarden unlock' first"
         exit 1
     }
@@ -205,7 +120,7 @@ export def reload [] {
 
     if $status == "unlocked" {
         $env.BW_SESSION = $stored_session
-        print "✅ Session loaded from keyring"
+        print "✅ Session loaded from .env.local"
         print "✅ Vault is unlocked"
     } else {
         print "⚠️  Stored session is invalid"
