@@ -403,12 +403,14 @@ $env.config.table = {
 # -----------------------------------------------------------------------------
 
 # Atuin history (if available)
-if (which atuin | is-not-empty) {
+let atuin_init = ($nu.default-config-dir | path join 'atuin.nu')
+if (which atuin | is-not-empty) and ($atuin_init | path exists) {
     source ~/.config/nushell/atuin.nu
 }
 
 # Zoxide directory navigation (if available)
-if (which zoxide | is-not-empty) {
+let zoxide_init = ($nu.default-config-dir | path join 'zoxide.nu')
+if (which zoxide | is-not-empty) and ($zoxide_init | path exists) {
     source ~/.config/nushell/zoxide.nu
 }
 

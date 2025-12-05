@@ -1,9 +1,8 @@
 #!/usr/bin/env nu
-# Install nushell plugins via nupm
+# Install nushell plugins via nupm registry
 # This script runs when this file changes
 
 let nupm_path = ($nu.home-path | path join '.local' 'share' 'nupm' 'nupm')
-let plugins_dir = ($nu.home-path | path join '.local' 'share' 'nushell' 'plugins')
 
 # Check if nupm is installed
 if not ($nupm_path | path exists) {
@@ -11,51 +10,23 @@ if not ($nupm_path | path exists) {
     exit 0
 }
 
-print "🔌 Installing Nushell plugins via nupm..."
+print "🔌 Installing Nushell plugins via nupm registry..."
 
-# Create plugins directory if it doesn't exist
-mkdir $plugins_dir
-
-# List of plugins to install from GitHub via nupm
-let github_plugins = [
-    {
-        name: "nu_plugin_clipboard"
-        repo: "https://github.com/FMotalleb/nu_plugin_clipboard.git"
-        description: "Clipboard integration (copy/paste)"
-    }
+# List of plugins to install from nupm registry
+let registry_plugins = [
+    "nu_plugin_clipboard"
 ]
 
-for plugin in $github_plugins {
-    print $"  Installing ($plugin.name) - ($plugin.description)..."
-    let plugin_path = ($plugins_dir | path join $plugin.name)
-
-    # Clone if not exists, otherwise pull
-    if not ($plugin_path | path exists) {
-        try {
-            git clone $plugin.repo $plugin_path
-        } catch {
-            print $"  ⚠️  Failed to clone ($plugin.name)"
-            continue
-        }
-    } else {
-        try {
-            cd $plugin_path
-            git pull
-            cd -
-        } catch {
-            print $"  ⚠️  Failed to update ($plugin.name)"
-        }
-    }
-
-    # Install via nupm
+for plugin in $registry_plugins {
+    print $"  Installing ($plugin)..."
     try {
-        ^nu -c $"use ($nupm_path); nupm install --path ($plugin_path) -f"
-        print $"  ✓ ($plugin.name) installed"
+        ^nu -c $"use ($nupm_path); nupm install ($plugin)"
+        print $"  ✓ ($plugin) installed from registry"
     } catch {
-        print $"  ⚠️  Failed to install ($plugin.name) via nupm"
+        print $"  ⚠️  Failed to install ($plugin)"
     }
 }
 
 print ""
 print "✅ Plugin installation complete"
-print "   Plugins will be registered when you start nushell"
+print "   Run 'plugin list' to see registered plugins"
