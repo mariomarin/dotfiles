@@ -36,36 +36,28 @@ Modern shell with structured data, vi mode, and shell integration for Alacritty/
 
 Usage: `clipboard copy`, `clipboard paste`, `query web`, `gstat`
 
-## Feature Parity with Zsh
+## Zsh Migration: Complete ✅
 
-✅ **Achieved:**
+**Verdict:** Feature parity achieved. Nushell ready as primary shell.
 
-- Vi mode with visual mode
-- Cursor shapes per mode
-- History search and sync
-- Tab completion with descriptions
-- External tool integration (direnv, zoxide, atuin, carapace)
-- Shell integration (OSC codes)
-- Plugin system
+**What changed:** Zsh+zim → Nushell+carapace. Carapace bridges (Cobra/Clap) replace custom completions.
 
-⚠️ **Workaround Available:**
+| Zsh Feature | Nushell | Notes |
+|-------------|---------|-------|
+| Vi mode, completions, history | ✅ | Full parity |
+| zoxide, fzf, atuin, direnv | ✅ | Native integration |
+| container-use, aws-sso, git-branchless | ✅ | Carapace auto-bridge |
+| Prompt (gitster) | ✅ | Oh-My-Posh catppuccin_mocha |
+| OSC codes (terminal/VS Code) | ✅ | Surpasses zsh |
 
-- Text objects (diw, ciw) → Use external editor (`v` in normal mode)
-- Surround operations → Use external editor
-- Complex edits → Neovim integration via buffer editor
+**Limitations:** jk/jj escape (use ESC), text objects (use `v` for nvim), dot repeat (basic).
 
-❌ **Not Available:**
-
-- jk/jj escape sequences (Reedline limitation)
-- Dot repeat (basic only)
-
-**Verdict:** Nushell now provides 90%+ zsh feature parity with superior structured data handling.
+**Advantage:** Structured data + better terminal integration.
 
 ## Files
 
-- `config.nu.tmpl` - Main configuration with vi mode, plugins, integrations
-- `env.nu.tmpl` - Environment, PATH, Oh-My-Posh prompt
-- `modules/` - Custom modules (bitwarden, claude-helpers, sesh)
+- `config.nu.tmpl` - Vi mode, plugins, integrations
+- `env.nu.tmpl` - Environment, PATH, Oh-My-Posh
+- `modules/` - Custom: bitwarden, claude-helpers, sesh
 
-See [COMPARISON.md](COMPARISON.md) for detailed zsh/nushell comparison.
-See [PLUGINS.md](PLUGINS.md) for available plugins and installation.
+See [PLUGINS.md](PLUGINS.md) for plugin details.
