@@ -436,30 +436,23 @@ if (which carapace | is-not-empty) {
 # NUPM MODULES
 # -----------------------------------------------------------------------------
 
-# Claude helpers (if claude command exists)
-if (which claude | is-not-empty) {
-    use ($nu.default-config-dir | path join 'modules' 'claude-helpers') *
-}
+# Note: use must be at top-level for exports to work
+# Modules load unconditionally - completions/commands only work if binary exists
 
-# Sesh session manager (if sesh command exists)
-if (which sesh | is-not-empty) {
-    use ($nu.default-config-dir | path join 'modules' 'sesh') *
-}
+# Claude helpers
+use ($nu.default-config-dir | path join 'modules' 'claude-helpers') *
 
-# Container-use completions (if container-use exists)
-if (which container-use | is-not-empty) {
-    use ($nu.default-config-dir | path join 'modules' 'container-use-completions') *
-}
+# Sesh session manager
+use ($nu.default-config-dir | path join 'modules' 'sesh') *
 
-# AWS SSO CLI completions (if aws-sso exists)
-if (which aws-sso | is-not-empty) {
-    use ($nu.default-config-dir | path join 'modules' 'aws-sso-cli-completions') *
-}
+# Container-use completions
+use ($nu.default-config-dir | path join 'modules' 'container-use-completions') *
 
-# Git branchless completions (if git-branchless exists)
-if (which git-branchless | is-not-empty) {
-    use ($nu.default-config-dir | path join 'modules' 'git-branchless-completions') *
-}
+# AWS SSO CLI completions
+use ($nu.default-config-dir | path join 'modules' 'aws-sso-cli-completions') *
+
+# Git branchless completions
+use ($nu.default-config-dir | path join 'modules' 'git-branchless-completions') *
 
 # -----------------------------------------------------------------------------
 # PLUGIN REGISTRATION
@@ -504,6 +497,5 @@ if (which eza | is-not-empty) {
 # -----------------------------------------------------------------------------
 # GIT ALIASES (git module with 'g' prefix)
 # -----------------------------------------------------------------------------
-if (which git | is-not-empty) {
-    use ($nu.default-config-dir | path join 'modules' 'git.nu') *
-}
+# Note: use must be at top-level, not inside conditionals
+use ($nu.default-config-dir | path join 'modules' 'git.nu') *
