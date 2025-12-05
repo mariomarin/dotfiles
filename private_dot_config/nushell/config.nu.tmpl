@@ -368,7 +368,6 @@ $env.config.shell_integration = {
 $env.config.show_banner = false
 $env.config.use_ansi_coloring = true
 $env.config.bracketed_paste = true
-$env.config.use_grid_icons = true
 $env.config.footer_mode = "25"  # Show footer when more than 25 rows
 $env.config.float_precision = 2
 $env.config.error_style = "fancy"  # Fancy error messages with context
@@ -474,22 +473,5 @@ if ($clipboard_plugin | path exists) {
 # COMMUNITY SCRIPTS
 # -----------------------------------------------------------------------------
 
-# Git utilities
-if ("~/.config/nushell/scripts/git.nu" | path exists) {
-    use ~/.config/nushell/scripts/git.nu *
-}
-
-# Git aliases
-if ("~/.config/nushell/scripts/git-aliases.nu" | path exists) {
-    use ~/.config/nushell/scripts/git-aliases.nu *
-}
-
-# Docker utilities
-if ("~/.config/nushell/scripts/docker.nu" | path exists) {
-    use ~/.config/nushell/scripts/docker.nu *
-}
-
-# Kubernetes utilities
-if ("~/.config/nushell/scripts/kubernetes.nu" | path exists) {
-    use ~/.config/nushell/scripts/kubernetes.nu *
-}
+# Community scripts loaded via nu-scripts (installed by nupm)
+# Individual scripts can be used with: use nu-scripts/git *
