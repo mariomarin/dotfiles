@@ -199,6 +199,19 @@ $env.config.keybindings = [
         event: { send: ClearScreen }
     }
 
+    # Ctrl+Y - Accept autosuggestion (like zsh)
+    {
+        name: accept_autosuggestion
+        modifier: control
+        keycode: char_y
+        mode: vi_insert
+        event: {
+            until: [
+                { send: historyhintcomplete }
+            ]
+        }
+    }
+
     # -------------------------------------------------------------------------
     # NORMAL MODE BINDINGS
     # -------------------------------------------------------------------------
