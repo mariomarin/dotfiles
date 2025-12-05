@@ -1,7 +1,0 @@
-{
-    name: "git-branchless-completions"
-    version: "1.0.0"
-    description: "Nushell completions for git-branchless workflow tools"
-    type: "module"
-    license: "MIT"
-}

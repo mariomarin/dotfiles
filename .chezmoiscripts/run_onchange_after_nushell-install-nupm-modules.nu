@@ -1,35 +1,35 @@
 #!/usr/bin/env nu
-# Install all nupm modules from ~/.config/nushell/modules
+# Install all nupm modules
 # This script runs when this file changes
 
-{{- if eq .chezmoi.os "windows" }}
-let modules_dir = ($env.USERPROFILE | path join '.config' 'nushell' 'modules')
-let nupm_path = ($env.USERPROFILE | path join '.local' 'share' 'nupm' 'nupm')
-{{- else }}
-let modules_dir = ($env.HOME | path join '.config' 'nushell' 'modules')
-let nupm_path = ($env.HOME | path join '.local' 'share' 'nupm' 'nupm')
-{{- end }}
+let modules_dir = ($nu.home-path | path join '.config' 'nushell' 'modules')
+let nupm_path = ($nu.home-path | path join '.local' 'share' 'nupm' 'nupm')
 
 # Check if nupm is installed
 if not ($nupm_path | path exists) {
-    print "⚠️  nupm not found. Please run the nupm install script first."
-    exit 1
+    print "⚠️  nupm not found. Skipping module installation."
+    exit 0
 }
 
-print "📦 Installing Nushell modules via nupm..."
+print "📦 Installing Nushell packages via nupm..."
 
-# List of modules to install
-let modules = [
+# Install from nupm registry
+print "  Installing nu-scripts (git, docker, kubernetes utilities)..."
+try {
+    ^nu -c $"use ($nupm_path); nupm install nu-scripts"
+    print "  ✓ nu-scripts installed"
+} catch {
+    print "  ⚠️  Failed to install nu-scripts from registry"
+}
+
+# Install local custom modules
+let local_modules = [
     "bitwarden"
     "claude-helpers"
     "sesh"
-    "container-use-completions"
-    "aws-sso-cli-completions"
-    "git-branchless-completions"
 ]
 
-# Install each module
-for module in $modules {
+for module in $local_modules {
     let module_path = ($modules_dir | path join $module)
 
     if ($module_path | path exists) {

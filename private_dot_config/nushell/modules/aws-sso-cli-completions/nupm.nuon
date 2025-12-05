@@ -1,7 +1,0 @@
-{
-    name: "aws-sso-cli-completions"
-    version: "1.0.0"
-    description: "Nushell completions for aws-sso-cli tool"
-    type: "module"
-    license: "MIT"
-}

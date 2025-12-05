@@ -1,7 +1,0 @@
-{
-    name: "container-use-completions"
-    version: "1.0.0"
-    description: "Nushell completions for container-use CLI tool"
-    type: "module"
-    license: "MIT"
-}
