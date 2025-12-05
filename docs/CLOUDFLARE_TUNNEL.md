@@ -36,14 +36,17 @@ export CF_ACCOUNT_ID="your-account-id"
 echo 'export CF_ACCOUNT_ID="your-account-id"' >> ~/.zshenv
 ```
 
-### 3. Start Quick Tunnel
+### 3. Start and Query Tunnel
 
 ```bash
-# SSH tunnel (temporary URL)
+# Start SSH tunnel (temporary URL)
 just tunnel-ssh
 
-# Returns: https://random-name.trycloudflare.com
-# Share this URL - changes on restart
+# Query tunnel status (shows URL)
+just tunnel-status
+
+# Or list all active tunnels via API
+just tunnel-list
 ```
 
 ## Common Commands
