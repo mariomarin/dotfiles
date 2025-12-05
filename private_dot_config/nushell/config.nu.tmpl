@@ -353,14 +353,57 @@ $env.config.hooks = {
 }
 
 # -----------------------------------------------------------------------------
-# 10. OTHER SETTINGS
+# 10. SHELL INTEGRATION (OSC Codes)
+# -----------------------------------------------------------------------------
+# OSC codes for terminal integration with Alacritty and Windows Terminal
+$env.config.shell_integration = {
+    osc2: true    # Window/tab title with abbreviated path
+    osc7: true    # Communicate working directory to terminal
+    osc8: true    # Clickable hyperlinks in terminal output
+    osc9_9: false # ConEmu path communication (conflicts with osc7)
+    osc133: true  # Shell integration markers (prompt/command/output)
+    osc633: true  # VS Code shell integration
+    reset_application_mode: true # Reset mode for better SSH compatibility
+}
+
+# -----------------------------------------------------------------------------
+# 11. DISPLAY & UI SETTINGS
 # -----------------------------------------------------------------------------
 $env.config.show_banner = false
 $env.config.use_ansi_coloring = true
 $env.config.bracketed_paste = true
+$env.config.use_grid_icons = true
+$env.config.footer_mode = "25"  # Show footer when more than 25 rows
+$env.config.float_precision = 2
+$env.config.error_style = "fancy"  # Fancy error messages with context
+
+# LS configuration
+$env.config.ls = {
+    use_ls_colors: true
+    clickable_links: true  # Enable clickable file paths (requires OSC 8)
+}
+
+# RM configuration
+$env.config.rm = {
+    always_trash: false  # Don't always use trash, allow permanent deletion
+}
+
+# Table configuration
+$env.config.table = {
+    mode: rounded  # Rounded table borders
+    index_mode: always  # Always show row indices
+    show_empty: true
+    padding: { left: 1, right: 1 }
+    trim: {
+        methodology: wrapping
+        wrapping_try_keep_words: true
+        truncating_suffix: "..."
+    }
+    header_on_separator: false
+}
 
 # -----------------------------------------------------------------------------
-# 11. EXTERNAL TOOL INTEGRATIONS
+# 12. EXTERNAL TOOL INTEGRATIONS
 # -----------------------------------------------------------------------------
 
 # Atuin history (if available)
@@ -384,7 +427,7 @@ if (which carapace | is-not-empty) {
 }
 
 # -----------------------------------------------------------------------------
-# 12. NUPM MODULES
+# 13. NUPM MODULES
 # -----------------------------------------------------------------------------
 
 # Claude helpers (if claude command exists)
@@ -413,7 +456,7 @@ if (which git-branchless | is-not-empty) {
 }
 
 # -----------------------------------------------------------------------------
-# 13. COMMUNITY SCRIPTS
+# 14. COMMUNITY SCRIPTS
 # -----------------------------------------------------------------------------
 
 # Git utilities
