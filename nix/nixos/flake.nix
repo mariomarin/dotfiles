@@ -41,7 +41,6 @@
                 system = final.system;
                 config.allowUnfree = true;
               };
-              keyring-cli = final.callPackage ./pkgs/keyring-cli.nix { };
               cf-vault = final.callPackage ./pkgs/cf-vault.nix { };
             })
             claude-code-nix.overlays.default
