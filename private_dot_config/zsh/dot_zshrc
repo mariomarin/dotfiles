@@ -107,8 +107,7 @@ unalias gt 2>/dev/null
 # Post-init module configuration
 # Note: Key bindings that might be overridden by zsh-vi-mode
 # are configured in zsh-vi-mode-config.zsh's zvm_after_init function
-
-bindkey "''${key[Up]}" up-line-or-search
+# Up arrow is handled by atuin (see atuin-config.zsh)
 
 # kubernetes
 source <(kubectl completion zsh)

@@ -205,6 +205,7 @@ $env.config.keybindings = [
 
     # Note: Ctrl+R is handled by atuin if available (see atuin.nu)
     # Falls back to built-in history menu if atuin is not installed
+    # Ctrl+N/P for menu/history navigation defined below in MENU NAVIGATION section
 
     # -------------------------------------------------------------------------
     # MENU NAVIGATION
