@@ -24,18 +24,20 @@ zmodule gitster
 
 # Additional completion definitions for Zsh.
 zmodule zsh-users/zsh-completions --fpath src
-# container-use completions - must be loaded before completion module
-zmodule ${ZIM_CONFIG_FILE:h}/modules/container-use
-# git-branchless completions - must be loaded before completion module
-zmodule ${ZIM_CONFIG_FILE:h}/modules/git-branchless
-# aws-sso-cli completions - must be loaded before completion module
-zmodule ${ZIM_CONFIG_FILE:h}/modules/aws-sso-cli
+
+# Custom modules
 # sesh - Smart session manager with tmux integration
 zmodule ${ZIM_CONFIG_FILE:h}/modules/sesh
 # claude-helpers - Claude Code helper functions
 zmodule ${ZIM_CONFIG_FILE:h}/modules/claude-helpers
+
+# Carapace - Universal completion framework
+# Provides completions for container-use, aws-sso-cli, git-branchless, and many more
+# Must be initialized after completion module
+zmodule carapace-sh/carapace-bin --on-pull 'carapace _carapace > init.zsh'
+
 # Enables and configures smart and extensive tab completion.
-# completion must be sourced after all completion modules
+# completion must be sourced before carapace
 zmodule completion
 # atuin
 zmodule atuinsh/atuin
