@@ -5,7 +5,7 @@ def store_session [session: string] {
     $"BW_SESSION=($session)" | save -f .env.local
 
     # Set permissions on Unix-like systems
-    if ((sys host | get name) != "Windows") {
+    if $nu.os-info.name != "windows" {
         chmod 600 .env.local
     }
 }

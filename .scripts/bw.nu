@@ -63,8 +63,7 @@ def "main unlock" [] {
 # Reload direnv environment (loads BW_SESSION from .env.local)
 def "main reload" [] {
     # Check if we're on a Unix-like system
-    let os = (sys host | get name)
-    if ($os == "Windows") {
+    if $nu.os-info.name == "windows" {
         print "❌ direnv reload is only available on Unix-like systems (Linux, macOS, WSL)"
         print "   On Windows, BW_SESSION is automatically loaded by just targets from .env.local"
         print "   No manual reload needed - just run your just commands"

@@ -46,7 +46,7 @@ Return ONLY the improved prompt, no explanation."
 # Opus with clipboard content
 export def popus [...args] {
     # Check clipboard command based on OS
-    let clipboard_cmd = if (sys host | get name) == "Windows" {
+    let clipboard_cmd = if $nu.os-info.name == "windows" {
         "powershell.exe -command Get-Clipboard"
     } else if (which pbpaste | is-not-empty) {
         "pbpaste"
