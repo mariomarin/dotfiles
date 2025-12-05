@@ -456,7 +456,24 @@ if (which git-branchless | is-not-empty) {
 }
 
 # -----------------------------------------------------------------------------
-# 14. COMMUNITY SCRIPTS
+# 14. PLUGIN REGISTRATION
+# -----------------------------------------------------------------------------
+# Plugins installed via NixOS packages or nupm need to be registered
+
+# Register clipboard plugin if installed via nupm
+let clipboard_plugin = ($nu.home-path | path join '.local' 'share' 'nupm' 'modules' 'nu_plugin_clipboard' 'target' 'release' 'nu_plugin_clipboard')
+if ($clipboard_plugin | path exists) {
+    try {
+        plugin add $clipboard_plugin
+    } catch {
+        # Plugin already registered or error - silently continue
+    }
+}
+
+# NixOS plugins are automatically registered via system PATH
+
+# -----------------------------------------------------------------------------
+# 15. COMMUNITY SCRIPTS
 # -----------------------------------------------------------------------------
 
 # Git utilities
