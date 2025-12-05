@@ -325,7 +325,7 @@ $env.config.menus = [
 # -----------------------------------------------------------------------------
 # HOOKS - Matching zsh-vi-mode hook system
 # -----------------------------------------------------------------------------
-use wakatime.nu
+use ($nu.default-config-dir | path join 'modules' 'wakatime.nu')
 
 $env.config.hooks = {
     pre_prompt: [{ ||
@@ -492,5 +492,5 @@ if (which eza | is-not-empty) {
 # GIT ALIASES (git module with 'g' prefix)
 # -----------------------------------------------------------------------------
 if (which git | is-not-empty) {
-    use git.nu *
+    use ($nu.default-config-dir | path join 'modules' 'git.nu') *
 }
