@@ -7,11 +7,7 @@
 # -----------------------------------------------------------------------------
 # 0. LOAD NUPM (Nushell Package Manager)
 # -----------------------------------------------------------------------------
-{{- if eq .chezmoi.os "windows" }}
-let nupm_path = ($env.USERPROFILE | path join '.local' 'share' 'nupm' 'nupm')
-{{- else }}
-let nupm_path = ($env.HOME | path join '.local' 'share' 'nupm' 'nupm')
-{{- end }}
+let nupm_path = ($nu.home-path | path join '.local' 'share' 'nupm' 'nupm')
 
 if ($nupm_path | path exists) {
     use nupm

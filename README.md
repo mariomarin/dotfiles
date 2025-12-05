@@ -15,6 +15,12 @@ Personal configuration files managed with chezmoi, using Nix for packages and Bi
 
 ## Quick Start
 
+### Requirements
+
+- **Bitwarden account** with items using **unique, specific names** (e.g., `ssh-key-main` not `main`)
+  - ⚠️ Limitation: Chezmoi's Bitwarden integration cannot filter by type or folder, only by name with fuzzy matching
+  - Avoid common words that might match multiple items
+
 ### One-Line Installation
 
 **macOS/NixOS:**
