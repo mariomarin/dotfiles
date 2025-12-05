@@ -36,7 +36,7 @@ export alias gcp = git cherry-pick
 export alias gcP = git cherry-pick --no-commit
 export alias gcr = git revert
 export alias gcR = git reset "HEAD^"
-export alias gcs = git show --pretty=format:$git_log_fuller_format
+export def gcs [...args] { git show $"--pretty=format:($git_log_fuller_format)" ...$args }
 export alias gcS = git commit --verbose -S
 export alias gcu = git commit --fixup
 export alias gcU = git commit --squash
@@ -95,15 +95,15 @@ export alias gix = git rm --cached -r
 export alias giX = git rm --cached -rf
 
 # Log (gl)
-export alias gl = git log --date-order --pretty=format:$git_log_fuller_format
-export alias gls = git log --date-order --stat --pretty=format:$git_log_fuller_format
-export alias gld = git log --date-order --stat --patch --pretty=format:$git_log_fuller_format
-export alias glf = git log --date-order --stat --patch --follow --pretty=format:$git_log_fuller_format
-export alias glo = git log --date-order --pretty=format:$git_log_oneline_format
-export alias glO = git log --date-order --pretty=format:$git_log_oneline_medium_format
-export alias glg = git log --date-order --graph --pretty=format:$git_log_oneline_format
-export alias glG = git log --date-order --graph --pretty=format:$git_log_oneline_medium_format
-export alias glv = git log --date-order --show-signature --pretty=format:$git_log_fuller_format
+export def gl [...args] { git log --date-order $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def gls [...args] { git log --date-order --stat $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def gld [...args] { git log --date-order --stat --patch $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def glf [...args] { git log --date-order --stat --patch --follow $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def glo [...args] { git log --date-order $"--pretty=format:($git_log_oneline_format)" ...$args }
+export def glO [...args] { git log --date-order $"--pretty=format:($git_log_oneline_medium_format)" ...$args }
+export def glg [...args] { git log --date-order --graph $"--pretty=format:($git_log_oneline_format)" ...$args }
+export def glG [...args] { git log --date-order --graph $"--pretty=format:($git_log_oneline_medium_format)" ...$args }
+export def glv [...args] { git log --date-order --show-signature $"--pretty=format:($git_log_fuller_format)" ...$args }
 export alias glc = git shortlog --summary --numbered
 export alias glr = git reflog
 
