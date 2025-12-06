@@ -14,10 +14,10 @@ def "main first-time" [
     print ""
     print "📦 Installing nix-darwin..."
     # Run darwin-rebuild from nix-darwin flake (uses master/unstable)
-    # Note: Use 'sudo env PATH=$env.PATH' to preserve PATH so sudo can find nix
+    # Note: Use absolute path to nix to avoid PATH length issues with nested nix-shells
     let flake_ref = "nix-darwin/master#darwin-rebuild"
     let config_ref = $".#($host)"
-    sudo env $"PATH=($env.PATH)" nix run $flake_ref -- switch --flake $config_ref
+    sudo /nix/var/nix/profiles/default/bin/nix run $flake_ref -- switch --flake $config_ref
     print ""
     print "✅ nix-darwin installed!"
     print "💡 Future rebuilds: just darwin"
