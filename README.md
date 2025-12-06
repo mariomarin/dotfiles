@@ -43,22 +43,21 @@ The bootstrap script will:
 - Setup Bitwarden and unlock vault
 - Prompt for hostname selection
 - Initialize chezmoi
+- **Automatically apply OS-specific system configuration** (NixOS/nix-darwin)
 
-### After Installation
+After bootstrap completes, your system is fully configured!
 
-```bash
-cd ~/.local/share/chezmoi
-just apply      # Apply all configurations
-```
-
-**NixOS/Darwin System Configuration:**
+### Future Updates
 
 ```bash
-# NixOS: Apply system configuration
-cd nix/nixos && just switch  # Auto-detects hostname
+# macOS: Update nix-darwin configuration
+cd ~/.local/share/chezmoi && just darwin
 
-# macOS: Apply nix-darwin configuration
-just darwin-first-time  # Auto-detects hostname via scutil
+# NixOS: Update system configuration
+cd ~/.local/share/chezmoi && just nixos
+
+# Apply dotfile changes only (no system rebuild)
+cd ~/.local/share/chezmoi && just apply
 ```
 
 ### Platform-Specific Details
