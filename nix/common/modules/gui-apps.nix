@@ -3,8 +3,7 @@
 
 {
   environment.systemPackages = with pkgs; [
-    # Web Browsers
-    firefox
+    # Web Browsers (firefox via homebrew on darwin)
     brave
 
     # Terminal Emulators
@@ -19,7 +18,11 @@
 
     # File Sync
     syncthing
+  ] ++ lib.optionals pkgs.stdenv.isLinux [
+    # Linux-only: Firefox from nixpkgs
+    firefox
   ];
 
-  programs.firefox.enable = true;
+  # NixOS-only option
+  programs.firefox.enable = lib.mkIf pkgs.stdenv.isLinux true;
 }
