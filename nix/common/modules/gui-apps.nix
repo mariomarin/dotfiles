@@ -1,5 +1,5 @@
 # Shared GUI applications for both NixOS and nix-darwin
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -23,6 +23,10 @@
     firefox
   ];
 
-  # NixOS-only option
-  programs.firefox.enable = lib.mkIf pkgs.stdenv.isLinux true;
+  # NixOS-only option - use optionalAttrs to completely omit on Darwin
+  programs = lib.optionalAttrs pkgs.stdenv.isLinux {
+    firefox = {
+      enable = true;
+    };
+  };
 }
