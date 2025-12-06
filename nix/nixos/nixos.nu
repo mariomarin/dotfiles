@@ -18,15 +18,13 @@ def "main first-time" [
 ] {
     check-os
     print "🚀 First-time NixOS setup..."
-    print "  This will:"
-    print "  1. Enable flakes in current session"
-    print "  2. Build and switch to flake configuration"
+    print "  This will build and switch to the flake configuration"
     print ""
     print "📦 Building NixOS configuration with flakes..."
-    sudo nixos-rebuild switch --flake $".#($host)" --extra-experimental-features "nix-command flakes"
+    sudo nixos-rebuild switch --flake $".#($host)"
     print ""
     print "✅ First-time setup complete!"
-    print "💡 Flakes are now enabled system-wide. Future rebuilds use: just switch"
+    print "💡 Future rebuilds use: just switch"
 }
 
 # Remote deployment
