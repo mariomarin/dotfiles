@@ -20,7 +20,7 @@ first-time:
     print "📦 Installing nix-darwin..."
     # Run darwin-rebuild from nix-darwin flake (uses master/unstable)
     let flake_ref = $"nix-darwin/master#darwin-rebuild"
-    let config_ref = $"..#{{HOST}}"
+    let config_ref = $"../nixos#{{HOST}}"
     sudo nix run $flake_ref -- switch --flake $config_ref
     print ""
     print "✅ nix-darwin installed!"
@@ -28,28 +28,28 @@ first-time:
 
 # Local build and switch
 switch:
-    darwin-rebuild switch --flake ..#{{HOST}}
+    darwin-rebuild switch --flake ../nixos#{{HOST}}
 
 test:
-    darwin-rebuild check --flake ..#{{HOST}}
+    darwin-rebuild check --flake ../nixos#{{HOST}}
 
 build:
-    darwin-rebuild build --flake ..#{{HOST}}
+    darwin-rebuild build --flake ../nixos#{{HOST}}
 
 # Flake management
 update:
     #!/usr/bin/env nu
-    cd ..
+    cd ../nixos
     nix flake update
 
 check:
     #!/usr/bin/env nu
-    cd ..
+    cd ../nixos
     nix flake check
 
 show:
     #!/usr/bin/env nu
-    cd ..
+    cd ../nixos
     nix flake show
 
 # Show available hosts
@@ -82,7 +82,7 @@ health:
     print $"✓ Nix version: ($nix_version)"
     let darwin_rebuild_exists = (which darwin-rebuild | is-not-empty)
     print $"✓ darwin-rebuild: (if $darwin_rebuild_exists { 'installed' } else { '❌ not installed' })"
-    let flake_path = "../flake.nix"
+    let flake_path = "../nixos/flake.nix"
     let flake_exists = ($flake_path | path exists)
     print $"✓ Flake exists: (if $flake_exists { 'yes' } else { '❌ no' })"
     let config_dir = ("/etc/nix-darwin" | path exists)
