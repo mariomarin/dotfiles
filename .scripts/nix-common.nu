@@ -8,6 +8,35 @@ export def main [] {
     exit 1
 }
 
+# Run a command and return result or default value
+export def run-or-default [
+    command: closure   # Command to run
+    default: string    # Default value if command fails
+] {
+    let result = (do -i $command | complete)
+    if $result.exit_code == 0 and ($result.stdout | str trim | is-not-empty) {
+        $result.stdout | str trim
+    } else {
+        $default
+    }
+}
+
+# Print a health check item
+export def health-item [
+    label: string      # Label for the health check item
+    value: string      # Value to display
+] {
+    print $"✓ ($label): ($value)"
+}
+
+# Print header with title and underline
+export def print-header [
+    title: string      # Header title
+] {
+    print $title
+    print ("=" | fill -c "=" -w ($title | str length))
+}
+
 # Generic help display function
 export def show-help [
     title: string         # Title (e.g., "NixOS Utilities")

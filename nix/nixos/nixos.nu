@@ -23,7 +23,7 @@ def "main first-time" [
     print "  2. Build and switch to flake configuration"
     print ""
     print "📦 Building NixOS configuration with flakes..."
-    ^sudo ^nixos-rebuild switch --flake $".#($host)" --extra-experimental-features "nix-command flakes"
+    sudo nixos-rebuild switch --flake $".#($host)" --extra-experimental-features "nix-command flakes"
     print ""
     print "✅ First-time setup complete!"
     print "💡 Flakes are now enabled system-wide. Future rebuilds use: just switch"
@@ -41,7 +41,7 @@ def "main remote-switch" [
         exit 1
     }
     let build_host_flag = if ($build_host | is-not-empty) { ["--build-host" $build_host] } else { [] }
-    ^nixos-rebuild switch --flake $".#($host)" --target-host $target_host --use-remote-sudo ...$build_host_flag
+    nixos-rebuild switch --flake $".#($host)" --target-host $target_host --use-remote-sudo ...$build_host_flag
 }
 
 # Remote testing
@@ -56,10 +56,11 @@ def "main remote-test" [
         exit 1
     }
     let build_host_flag = if ($build_host | is-not-empty) { ["--build-host" $build_host] } else { [] }
-    ^nixos-rebuild test --flake $".#($host)" --target-host $target_host --use-remote-sudo ...$build_host_flag
+    nixos-rebuild test --flake $".#($host)" --target-host $target_host --use-remote-sudo ...$build_host_flag
 }
 
 # Deploy VM configuration to remote host
+# Note: Always deploys "mitosis" VM configuration - this is the only VM config in the flake
 def "main deploy-vm" [
     target_host: string   # Target host for deployment (user@host)
     --build-host: string  # Optional build host (user@build-server)
@@ -70,7 +71,7 @@ def "main deploy-vm" [
         exit 1
     }
     let build_host_flag = if ($build_host | is-not-empty) { ["--build-host" $build_host] } else { [] }
-    ^nixos-rebuild switch --flake ".#mitosis" --target-host $target_host --use-remote-sudo ...$build_host_flag
+    nixos-rebuild switch --flake ".#mitosis" --target-host $target_host --use-remote-sudo ...$build_host_flag
 }
 
 # Show available NixOS configurations
@@ -91,31 +92,30 @@ def "main health" [
     host: string  # Current hostname
 ] {
     check-os
-    print $"🔍 NixOS Health Check for ($host)"
-    print "================================"
-    let version_result = (do { ^nixos-version } | complete)
-    let version = if $version_result.exit_code == 0 { $version_result.stdout | str trim } else { "unknown" }
-    print $"✓ NixOS version: ($version)"
-    let hostname_result = (do { ^hostname } | complete)
-    let hostname = if $hostname_result.exit_code == 0 { $hostname_result.stdout | str trim } else { "unknown" }
-    print $"✓ Hostname: ($hostname)"
-    let gen_result = (do { ^sudo ^nix-env --list-generations --profile /nix/var/nix/profiles/system } | complete)
+    nix-common print-header $"🔍 NixOS Health Check for ($host)"
+
+    nix-common health-item "NixOS version" (nix-common run-or-default { nixos-version } "unknown")
+    nix-common health-item "Hostname" (nix-common run-or-default { hostname } "unknown")
+
+    let gen_result = (do -i { sudo nix-env --list-generations --profile /nix/var/nix/profiles/system } | complete)
     let generation = if $gen_result.exit_code == 0 { $gen_result.stdout | lines | last } else { "unknown" }
-    print $"✓ Current generation: ($generation)"
+    nix-common health-item "Current generation" $generation
+
     let flake_status = if ("flake.lock" | path exists) { "locked" } else { "⚠️  not locked" }
-    print $"✓ Flake status: ($flake_status)"
-    let syntax_result = (do { ^nix-instantiate --parse configuration.nix } | complete)
-    let syntax = if $syntax_result.exit_code == 0 { "valid" } else { "❌ invalid" }
-    print $"✓ Configuration syntax: ($syntax)"
-    let flake_result = (do { ^nix flake check --no-build } | complete)
-    let flake_check = if $flake_result.exit_code == 0 { "passed" } else { "⚠️  warnings" }
-    print $"✓ Flake check: ($flake_check)"
-    let daemon_result = (do { ^systemctl is-active nix-daemon.service } | complete)
-    let daemon = if $daemon_result.exit_code == 0 { $daemon_result.stdout | str trim } else { "not running" }
-    print $"✓ Nix daemon: ($daemon)"
-    let disk_result = (do { ^du -sh /nix/store } | complete)
+    nix-common health-item "Flake status" $flake_status
+
+    let syntax = (nix-common run-or-default { nix-instantiate --parse configuration.nix } "❌ invalid")
+    nix-common health-item "Configuration syntax" (if $syntax != "❌ invalid" { "valid" } else { $syntax })
+
+    let flake_check = (nix-common run-or-default { nix flake check --no-build } "⚠️  warnings")
+    nix-common health-item "Flake check" (if $flake_check != "⚠️  warnings" { "passed" } else { $flake_check })
+
+    nix-common health-item "Nix daemon" (nix-common run-or-default { systemctl is-active nix-daemon.service } "not running")
+
+    let disk_result = (do -i { ^du -sh /nix/store } | complete)
     let disk = if $disk_result.exit_code == 0 { $disk_result.stdout | split row "\t" | first } else { "unknown" }
-    print $"✓ Disk usage: ($disk)"
+    nix-common health-item "Disk usage" $disk
+
     print ""
 }
 
