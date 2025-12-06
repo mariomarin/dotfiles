@@ -40,6 +40,15 @@ case "$(uname -s)" in
     else
       success "Nix already installed"
     fi
+
+    step "Install Homebrew"
+    if command -v brew > /dev/null 2>&1; then
+      success "Homebrew already installed"
+    else
+      printf "Installing Homebrew...\n"
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      success "Homebrew installed"
+    fi
     ;;
 
   Linux)
