@@ -9,12 +9,6 @@
     oh-my-posh # Prompt framework for nushell and other shells
     carapace # Universal completion framework (nushell, zsh, bash, fish)
 
-    # Web browsers
-    firefox
-
-    # Security & password management
-    bitwarden
-
     # Development tools
     vscode
   ];

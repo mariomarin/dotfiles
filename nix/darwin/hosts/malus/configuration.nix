@@ -4,8 +4,10 @@
 
 {
   imports = [
-    ../../../common/modules/cli-tools.nix # Shared CLI tools with NixOS
-    ../../modules/packages.nix # GUI apps from nixpkgs
+    ../../../common/modules/cli-tools.nix # Shared CLI tools
+    ../../../common/modules/gui-apps.nix # Shared GUI applications
+    ../../../common/modules/development.nix # Shared development tools
+    ../../modules/packages.nix # macOS-specific packages
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
   ];
 

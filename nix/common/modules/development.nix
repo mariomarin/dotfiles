@@ -3,6 +3,9 @@
 
 {
   environment.systemPackages = with pkgs; [
+    # Dotfiles management
+    chezmoi
+
     # Go development
     go
     gopls
