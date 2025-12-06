@@ -7,7 +7,8 @@ default:
     @just switch
 
 # Auto-detect hostname or use HOSTNAME environment variable
-HOST := env_var_or_default("HOSTNAME", `scutil --get LocalHostName 2>/dev/null || echo "malus"`)
+# Bootstrap script sets HOSTNAME before calling just, so static fallback is sufficient
+HOST := env_var_or_default("HOSTNAME", "malus")
 
 # First-time nix-darwin setup
 first-time:
