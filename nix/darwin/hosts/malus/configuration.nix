@@ -15,6 +15,9 @@
   # Allow unfree packages (VSCode, etc.)
   nixpkgs.config.allowUnfree = true;
 
+  # Disable nix-darwin's nix-daemon management (use system-installed Nix)
+  nix.enable = false;
+
   # Set hostname
   networking.hostName = "malus";
   networking.computerName = "malus";
