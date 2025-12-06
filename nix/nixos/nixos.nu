@@ -1,6 +1,8 @@
 #!/usr/bin/env nu
 # NixOS management utilities
 
+use ../../.scripts/nix-common.nu
+
 # OS compatibility check
 def check-os [] {
     if (sys host).name == "Windows" {
@@ -119,19 +121,15 @@ def "main health" [
 
 # Show help
 def "main help" [] {
-    print "NixOS Utilities"
-    print "==============="
-    print ""
-    print "Usage: nu nixos.nu <command> [args]"
-    print ""
-    print "Commands:"
-    print "  first-time <host>                           First-time NixOS setup"
-    print "  remote-switch <host> <target> [--build-host] Deploy to remote host"
-    print "  remote-test <host> <target> [--build-host]   Test on remote host"
-    print "  deploy-vm <target> [--build-host]            Deploy VM config to remote"
-    print "  hosts <host>                                 Show available configurations"
-    print "  health <host>                                System health check"
-    print "  help                                         Show this help message"
+    nix-common show-help "NixOS Utilities" "nixos.nu" [
+        {name: "first-time <host>", description: "First-time NixOS setup"}
+        {name: "remote-switch <host> <target> [--build-host]", description: "Deploy to remote host"}
+        {name: "remote-test <host> <target> [--build-host]", description: "Test on remote host"}
+        {name: "deploy-vm <target> [--build-host]", description: "Deploy VM config to remote"}
+        {name: "hosts <host>", description: "Show available configurations"}
+        {name: "health <host>", description: "System health check"}
+        {name: "help", description: "Show this help message"}
+    ]
 }
 
 def main [] {

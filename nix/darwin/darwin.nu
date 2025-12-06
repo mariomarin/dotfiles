@@ -1,6 +1,8 @@
 #!/usr/bin/env nu
 # nix-darwin management utilities
 
+use ../../.scripts/nix-common.nu
+
 # First-time nix-darwin setup
 def "main first-time" [
     host: string  # Hostname for the darwin configuration
@@ -61,16 +63,12 @@ def "main health" [] {
 
 # Show help
 def "main help" [] {
-    print "nix-darwin Utilities"
-    print "===================="
-    print ""
-    print "Usage: nu darwin.nu <command> [args]"
-    print ""
-    print "Commands:"
-    print "  first-time <host>   First-time nix-darwin setup"
-    print "  hosts <host>        Show available configurations"
-    print "  health              System health check"
-    print "  help                Show this help message"
+    nix-common show-help "nix-darwin Utilities" "darwin.nu" [
+        {name: "first-time <host>", description: "First-time nix-darwin setup"}
+        {name: "hosts <host>", description: "Show available configurations"}
+        {name: "health", description: "System health check"}
+        {name: "help", description: "Show this help message"}
+    ]
 }
 
 def main [] {
