@@ -12,6 +12,9 @@
   # Primary user for nix-darwin (required for user-specific options)
   system.primaryUser = "mario";
 
+  # Allow unfree packages (VSCode, etc.)
+  nixpkgs.config.allowUnfree = true;
+
   # Set hostname
   networking.hostName = "malus";
   networking.computerName = "malus";
