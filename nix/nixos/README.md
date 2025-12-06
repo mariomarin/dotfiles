@@ -19,11 +19,8 @@ sudo nixos-rebuild switch --flake .#$(hostname)
 
 ### Multi-Host Support
 
-The configuration supports three host types:
-
-- **dendrite**: ThinkPad T470 portable workstation with GNOME/LeftWM
-- **mitosis**: Virtual machine for testing and replication
-- **symbiont**: NixOS on WSL (two systems coexisting) for development
+Three NixOS hosts: **dendrite** (laptop), **mitosis** (VM), **symbiont** (WSL).
+See `../../.chezmoidata/machines.yaml` for details.
 
 ### Package Organization
 
@@ -92,7 +89,7 @@ Each host:
 Choose the appropriate module based on package purpose:
 
 | Package Type | Module | Example |
-|-------------|--------|---------|
+| ------------ | ------ | ------- |
 | CLI tool for all hosts | `modules/minimal.nix` | ripgrep, jq, curl |
 | Development tool | `modules/development.nix` | nodejs, clang, poetry |
 | GUI application | `modules/desktop-packages.nix` | firefox, gimp |
@@ -106,23 +103,11 @@ Then:
 
 ## Host Configurations
 
-### dendrite (ThinkPad T470 Portable Workstation)
-
-- Modules: minimal, development, desktop
-- Desktop: LeftWM tiling window manager
-- Features: Full development environment with GUI tools
-
-### symbiont (Headless)
-
-- Modules: minimal, development, wsl
-- Purpose: Development via browser (MS DevBox)
-- Features: CLI-only, Docker enabled, per-project devenv.nix
-
-### mitosis (Virtual Machine)
-
-- Modules: minimal
-- Purpose: Testing, replication, and experimentation
-- Features: Minimal footprint, SSH-only access
+| Host          | Modules                       | Desktop | Purpose                             |
+| ------------- | ----------------------------- | ------- | ----------------------------------- |
+| **dendrite**  | minimal, development, desktop | LeftWM  | Full workstation with GUI           |
+| **mitosis**   | minimal                       | None    | Testing/replication (minimal)       |
+| **symbiont**  | minimal, development, wsl     | None    | Development via browser (headless)  |
 
 ## Module System
 
@@ -153,9 +138,7 @@ inputs:
   - home-manager
 
 outputs:
-  - dendrite: ThinkPad T470 portable workstation
-  - mitosis: Virtual machine for testing and replication
-  - symbiont: NixOS on WSL (two systems coexisting)
+  - nixosConfigurations: dendrite, mitosis, symbiont
 ```
 
 ## Best Practices

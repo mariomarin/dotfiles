@@ -36,20 +36,16 @@ This allows sharing common modules and maintaining consistent package versions a
 
 ## Host Configurations
 
-### NixOS Hosts (Linux)
+All hosts use biology-themed naming. See `.chezmoidata/machines.yaml` for complete configuration.
 
-- **dendrite**: ThinkPad T470 portable workstation with GNOME/LeftWM
-- **mitosis**: Virtual machine for testing and replication
-- **symbiont**: NixOS on WSL (two systems coexisting) for development
-
-### Darwin Hosts (macOS)
-
-- **malus**: macOS configuration (planned) - biology theme: Malus (apple genus)
-
-### Windows Hosts
-
-- **prion**: Native Windows workstation (planned)
-- **spore**: Microsoft 365 DevBox cloud Windows environment (planned)
+| Host         | Platform  | Type    | Description                           |
+| ------------ | --------- | ------- | ------------------------------------- |
+| **dendrite** | NixOS     | Laptop  | ThinkPad T470 portable workstation    |
+| **mitosis**  | NixOS     | VM      | Virtual machine for testing           |
+| **symbiont** | NixOS-WSL | WSL     | NixOS on Windows Subsystem for Linux  |
+| **malus**    | Darwin    | Desktop | macOS workstation                     |
+| **prion**    | Windows   | Desktop | Native Windows workstation            |
+| **spore**    | Windows   | Cloud   | M365 DevBox environment               |
 
 ## Platform-Specific Documentation
 
