@@ -201,7 +201,7 @@ properties:
           settings:
             id: Microsoft.AzureCLI
             source: winget
-        # PowerShell modules
+        # PowerShell
         - resource: Microsoft.WinGet.DSC/WinGetPackage
           directives:
             description: Install PowerShell
@@ -209,4 +209,41 @@ properties:
           settings:
             id: Microsoft.PowerShell
             source: winget
+        # PowerShell Gallery modules
+        - resource: PSModule
+          directives:
+            description: Install PSReadLine
+          settings:
+            Name: PSReadLine
+            Repository: PSGallery
+        - resource: PSModule
+          directives:
+            description: Install posh-git
+          settings:
+            Name: posh-git
+            Repository: PSGallery
+        - resource: PSModule
+          directives:
+            description: Install Terminal-Icons
+          settings:
+            Name: Terminal-Icons
+            Repository: PSGallery
+        - resource: PSModule
+          directives:
+            description: Install PSFzf
+          settings:
+            Name: PSFzf
+            Repository: PSGallery
+        - resource: PSModule
+          directives:
+            description: Install git-aliases
+          settings:
+            Name: git-aliases
+            Repository: PSGallery
+        - resource: PSModule
+          directives:
+            description: Install CompletionPredictor
+          settings:
+            Name: CompletionPredictor
+            Repository: PSGallery
     configurationVersion: 0.2.0
