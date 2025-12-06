@@ -8,6 +8,7 @@
     nushell
     tmux
     alacritty
+    oh-my-posh
 
     # Editor
     neovim
