@@ -201,4 +201,12 @@ properties:
           settings:
             id: Microsoft.AzureCLI
             source: winget
+        # PowerShell modules
+        - resource: Microsoft.WinGet.DSC/WinGetPackage
+          directives:
+            description: Install PowerShell
+            allowPrerelease: true
+          settings:
+            id: Microsoft.PowerShell
+            source: winget
     configurationVersion: 0.2.0
