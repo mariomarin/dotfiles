@@ -9,6 +9,9 @@
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
   ];
 
+  # Primary user for nix-darwin (required for user-specific options)
+  system.primaryUser = "mario";
+
   # Set hostname
   networking.hostName = "malus";
   networking.computerName = "malus";
