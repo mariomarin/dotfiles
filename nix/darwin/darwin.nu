@@ -40,10 +40,10 @@ def "main hosts" [
 def "main health" [] {
     nix-common print-header "🔍 nix-darwin Health Check"
 
-    nix-common health-item "Hostname" (nix-common run-or-default { scutil --get LocalHostName } "unknown")
-    nix-common health-item "macOS version" (nix-common run-or-default { sw_vers -productVersion } "unknown")
-    nix-common health-item "Architecture" (nix-common run-or-default { uname -m } "unknown")
-    nix-common health-item "Nix version" (nix-common run-or-default { nix --version } "not installed")
+    nix-common health-item "Hostname" (nix-common run-cmd [scutil --get LocalHostName])
+    nix-common health-item "macOS version" (nix-common run-cmd [sw_vers -productVersion])
+    nix-common health-item "Architecture" (nix-common run-cmd [uname -m])
+    nix-common health-item "Nix version" (nix-common run-cmd --default "not installed" [nix --version])
 
     let darwin_rebuild_exists = (which darwin-rebuild | is-not-empty)
     nix-common health-item "darwin-rebuild" (if $darwin_rebuild_exists { "installed" } else { "❌ not installed" })

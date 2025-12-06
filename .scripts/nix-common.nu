@@ -8,12 +8,12 @@ export def main [] {
     exit 1
 }
 
-# Run a command and return result or default value
-export def run-or-default [
-    command: closure   # Command to run
-    default: string    # Default value if command fails
+# Run external command with args and return result or default value
+export def run-cmd [
+    cmd: list          # Command as list: [command, arg1, arg2, ...]
+    --default: string = "unknown"    # Default value if command fails
 ] {
-    let result = (do -i $command | complete)
+    let result = (do -i { run-external ...$cmd } | complete)
     if $result.exit_code == 0 and ($result.stdout | str trim | is-not-empty) {
         $result.stdout | str trim
     } else {
@@ -35,6 +35,26 @@ export def print-header [
 ] {
     print $title
     print ("=" | fill -c "=" -w ($title | str length))
+}
+
+# Build nixos-rebuild command with optional build host
+export def nixos-rebuild [
+    action: string            # Action: switch, test, build
+    flake: string             # Flake reference (e.g., ".#host")
+    --target-host: string     # Target host for deployment
+    --build-host: string      # Optional build host
+] {
+    mut cmd = ["nixos-rebuild" $action "--flake" $flake]
+
+    if ($target_host | is-not-empty) {
+        $cmd = ($cmd | append ["--target-host" $target_host "--use-remote-sudo"])
+    }
+
+    if ($build_host | is-not-empty) {
+        $cmd = ($cmd | append ["--build-host" $build_host])
+    }
+
+    run-external ...$cmd
 }
 
 # Generic help display function

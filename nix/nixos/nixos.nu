@@ -40,8 +40,7 @@ def "main remote-switch" [
         print "Error: TARGET_HOST not set. Usage: just remote-switch TARGET_HOST=user@host"
         exit 1
     }
-    let build_host_flag = if ($build_host | is-not-empty) { ["--build-host" $build_host] } else { [] }
-    nixos-rebuild switch --flake $".#($host)" --target-host $target_host --use-remote-sudo ...$build_host_flag
+    nix-common nixos-rebuild switch $".#($host)" --target-host $target_host --build-host $build_host
 }
 
 # Remote testing
@@ -55,8 +54,7 @@ def "main remote-test" [
         print "Error: TARGET_HOST not set. Usage: just remote-test TARGET_HOST=user@host"
         exit 1
     }
-    let build_host_flag = if ($build_host | is-not-empty) { ["--build-host" $build_host] } else { [] }
-    nixos-rebuild test --flake $".#($host)" --target-host $target_host --use-remote-sudo ...$build_host_flag
+    nix-common nixos-rebuild test $".#($host)" --target-host $target_host --build-host $build_host
 }
 
 # Deploy VM configuration to remote host
@@ -70,8 +68,7 @@ def "main deploy-vm" [
         print "Error: TARGET_HOST not set. Usage: just deploy-vm TARGET_HOST=user@host"
         exit 1
     }
-    let build_host_flag = if ($build_host | is-not-empty) { ["--build-host" $build_host] } else { [] }
-    nixos-rebuild switch --flake $".#($vm_host)" --target-host $target_host --use-remote-sudo ...$build_host_flag
+    nix-common nixos-rebuild switch $".#($vm_host)" --target-host $target_host --build-host $build_host
 }
 
 # Show available NixOS configurations
@@ -94,26 +91,25 @@ def "main health" [
     check-os
     nix-common print-header $"🔍 NixOS Health Check for ($host)"
 
-    nix-common health-item "NixOS version" (nix-common run-or-default { nixos-version } "unknown")
-    nix-common health-item "Hostname" (nix-common run-or-default { hostname } "unknown")
+    nix-common health-item "NixOS version" (nix-common run-cmd [nixos-version])
+    nix-common health-item "Hostname" (nix-common run-cmd [hostname])
 
-    let gen_result = (do -i { sudo nix-env --list-generations --profile /nix/var/nix/profiles/system } | complete)
-    let generation = if $gen_result.exit_code == 0 { $gen_result.stdout | lines | last } else { "unknown" }
+    let gen_output = (nix-common run-cmd [sudo nix-env --list-generations --profile /nix/var/nix/profiles/system])
+    let generation = if $gen_output != "unknown" { $gen_output | lines | last } else { "unknown" }
     nix-common health-item "Current generation" $generation
 
-    let flake_status = if ("flake.lock" | path exists) { "locked" } else { "⚠️  not locked" }
-    nix-common health-item "Flake status" $flake_status
+    nix-common health-item "Flake status" (if ("flake.lock" | path exists) { "locked" } else { "⚠️  not locked" })
 
-    let syntax = (nix-common run-or-default { nix-instantiate --parse configuration.nix } "❌ invalid")
+    let syntax = (nix-common run-cmd --default "❌ invalid" [nix-instantiate --parse configuration.nix])
     nix-common health-item "Configuration syntax" (if $syntax != "❌ invalid" { "valid" } else { $syntax })
 
-    let flake_check = (nix-common run-or-default { nix flake check --no-build } "⚠️  warnings")
+    let flake_check = (nix-common run-cmd --default "⚠️  warnings" [nix flake check --no-build])
     nix-common health-item "Flake check" (if $flake_check != "⚠️  warnings" { "passed" } else { $flake_check })
 
-    nix-common health-item "Nix daemon" (nix-common run-or-default { systemctl is-active nix-daemon.service } "not running")
+    nix-common health-item "Nix daemon" (nix-common run-cmd --default "not running" [systemctl is-active nix-daemon.service])
 
-    let disk_result = (do -i { ^du -sh /nix/store } | complete)
-    let disk = if $disk_result.exit_code == 0 { $disk_result.stdout | split row "\t" | first } else { "unknown" }
+    let disk_output = (nix-common run-cmd [du -sh /nix/store])
+    let disk = if $disk_output != "unknown" { $disk_output | split row "\t" | first } else { "unknown" }
     nix-common health-item "Disk usage" $disk
 
     print ""
