@@ -12,13 +12,13 @@ default: chezmoi-quick-apply
 
 # Bitwarden session management
 bw-unlock:
-    nu -c "use bitwarden; bitwarden unlock"
+    nu .scripts/bw.nu unlock
 
 # Direnv management (convenience wrapper)
 
 # Note: Named bw-reload for workflow clarity, but this is a general direnv command
 bw-reload:
-    nu -c "use bitwarden; bitwarden reload"
+    nu .scripts/bw.nu reload
 
 # Cloudflare Tunnel with cf-vault
 
