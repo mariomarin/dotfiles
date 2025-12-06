@@ -139,6 +139,106 @@ set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
 **Prefer early returns over nested conditionals** to reduce nesting and improve readability.
 
+## Nushell and Justfile Standards
+
+### Extract Complex Nushell Code to `.nu` Files
+
+**IMPORTANT**: Justfiles with embedded Nushell code (`#!/usr/bin/env nu`) are NOT validated by git hooks.
+
+**Problem**: The `nushell-check` pre-commit hook only runs on files ending in `.nu`, not justfiles.
+
+**Solution**: Extract significant Nushell code to standalone `.nu` files.
+
+### When to Extract Nushell Code
+
+✅ **Extract to `.nu` file when**:
+
+- Recipe has >10 lines of Nushell code
+- Recipe contains complex logic (loops, conditionals, error handling)
+- Recipe has commands that need syntax validation
+- Similar to existing patterns (`.scripts/bw.nu`, `nix/darwin/darwin.nu`)
+
+❌ **Keep inline when**:
+
+- Recipe is <5 lines
+- Simple command wrapper with no logic
+- Print statements only
+
+### How to Extract
+
+**Before** (inline in justfile):
+
+```just
+health:
+    #!/usr/bin/env nu
+    print "Health Check"
+    let result = (do { command } | complete)
+    # ... 20 more lines of complex logic
+```
+
+**After** (extracted to `.nu` file):
+
+```just
+# justfile
+health:
+    nu component.nu health
+```
+
+```nu
+# component.nu
+def "main health" [] {
+    print "Health Check"
+    let result = (do { ^command } | complete)
+    # ... validated by git hooks!
+}
+```
+
+### Nushell Syntax Rules
+
+**Never mix Just template variables with Nushell string interpolation**:
+
+```nu
+# ❌ Wrong - Nushell tries to execute HOST as command
+let config = $".#({{HOST}})"
+
+# ✅ Correct - Just substitutes before Nushell sees it
+let config = ".#{{HOST}}"
+
+# ✅ Best - Pass as parameter to .nu script
+# justfile: nu script.nu {{HOST}}
+# script.nu: def main [host: string] { let config = $".#($host)" }
+```
+
+**Only use `^` prefix for commands that shadow Nushell builtins**:
+
+```nu
+# ❌ Unnecessary - bw is not a Nushell builtin
+^bw unlock
+
+# ✅ Correct - bw doesn't shadow anything
+bw unlock
+
+# ✅ Correct - uname does shadow Nushell's uname
+^uname -m
+
+# ✅ Correct - nix doesn't shadow, but good for clarity in complex scripts
+^nix build
+```
+
+**Check if a command shadows Nushell builtins**:
+
+```bash
+nu -c "help commands | where name == 'command-name'"
+```
+
+### Examples in This Repository
+
+| Component  | Extracted File                   | Justfile                 |
+| ---------- | -------------------------------- | ------------------------ |
+| Darwin     | `nix/darwin/darwin.nu`           | `nix/darwin/justfile`    |
+| Bitwarden  | `.scripts/bw.nu`                 | `justfile`               |
+| Cloudflare | `.scripts/cloudflare-tunnel.nu`  | `justfile`               |
+
 ## Repository Overview
 
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system
@@ -167,7 +267,7 @@ hostname = "prion"  # or spore, dendrite, mitosis, etc.
 **Available Hostnames:**
 
 | Hostname | Platform | Type | Description |
-|----------|----------|------|-------------|
+| -------- | -------- | ---- | ----------- |
 | **dendrite** | NixOS | Laptop | ThinkPad T470 portable workstation (desktop with KMonad) |
 | **mitosis** | NixOS | VM | Virtual machine for testing (headless server) |
 | **symbiont** | NixOS-WSL | WSL | NixOS on Windows Subsystem for Linux (headless) |
@@ -329,7 +429,7 @@ The repository uses chezmoi pre-hooks for OS-specific bootstrap **before reading
 **Examples:**
 
 | Tool | Location | Reason |
-|------|----------|--------|
+| ---- | -------- | ------ |
 | Bitwarden CLI | Bootstrap | Templates use `{{ bitwarden "id_ed25519" }}` |
 | jq | Bootstrap | Templates might parse JSON data |
 | Homebrew (macOS) | Bootstrap | Needed to install other bootstrap tools |
