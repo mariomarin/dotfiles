@@ -60,10 +60,10 @@ def "main remote-test" [
 }
 
 # Deploy VM configuration to remote host
-# Note: Always deploys "mitosis" VM configuration - this is the only VM config in the flake
 def "main deploy-vm" [
-    target_host: string   # Target host for deployment (user@host)
-    --build-host: string  # Optional build host (user@build-server)
+    target_host: string                  # Target host for deployment (user@host)
+    --vm-host: string = "mitosis"        # VM hostname (default: mitosis)
+    --build-host: string                 # Optional build host (user@build-server)
 ] {
     check-os
     if ($target_host | is-empty) {
@@ -71,7 +71,7 @@ def "main deploy-vm" [
         exit 1
     }
     let build_host_flag = if ($build_host | is-not-empty) { ["--build-host" $build_host] } else { [] }
-    nixos-rebuild switch --flake ".#mitosis" --target-host $target_host --use-remote-sudo ...$build_host_flag
+    nixos-rebuild switch --flake $".#($vm_host)" --target-host $target_host --use-remote-sudo ...$build_host_flag
 }
 
 # Show available NixOS configurations
@@ -125,7 +125,7 @@ def "main help" [] {
         {name: "first-time <host>", description: "First-time NixOS setup"}
         {name: "remote-switch <host> <target> [--build-host]", description: "Deploy to remote host"}
         {name: "remote-test <host> <target> [--build-host]", description: "Test on remote host"}
-        {name: "deploy-vm <target> [--build-host]", description: "Deploy VM config to remote"}
+        {name: "deploy-vm <target> [--vm-host] [--build-host]", description: "Deploy VM config (default: mitosis)"}
         {name: "hosts <host>", description: "Show available configurations"}
         {name: "health <host>", description: "System health check"}
         {name: "help", description: "Show this help message"}

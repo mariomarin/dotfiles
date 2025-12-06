@@ -47,9 +47,9 @@ remote-switch TARGET_HOST BUILD_HOST="": _check-os
 remote-test TARGET_HOST BUILD_HOST="": _check-os
     nu nixos.nu remote-test {{HOST}} {{TARGET_HOST}} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
 
-# Deploy VM configuration to remote host
-deploy-vm TARGET_HOST BUILD_HOST="": _check-os
-    nu nixos.nu deploy-vm {{TARGET_HOST}} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
+# Deploy VM configuration to remote host (default VM: mitosis)
+deploy-vm TARGET_HOST VM_HOST="mitosis" BUILD_HOST="": _check-os
+    nu nixos.nu deploy-vm {{TARGET_HOST}} --vm-host {{VM_HOST}} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
 
 # Flake management
 update: _check-os
