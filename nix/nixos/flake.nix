@@ -13,6 +13,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # nix-darwin support
+    nix-darwin = {
+      url = "github:lnl7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nur.url = "github:nix-community/NUR";
 
     home-manager = {
@@ -26,7 +32,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nixos-wsl, nur, home-manager, claude-code-nix, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nixos-wsl, nix-darwin, nur, home-manager, claude-code-nix, ... }@inputs:
     let
       # Common modules shared by all hosts
       commonModules = [
@@ -107,6 +113,19 @@
             # WSL-specific configuration
             ./hosts/symbiont/configuration.nix
           ];
+        };
+      };
+
+      # nix-darwin configurations
+      darwinConfigurations = {
+        # malus - macOS workstation
+        malus = nix-darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          modules = [
+            # Darwin configuration
+            ../darwin/hosts/malus/configuration.nix
+          ];
+          specialArgs = { inherit inputs; };
         };
       };
     };
