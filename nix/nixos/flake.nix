@@ -2,8 +2,10 @@
   description = "NixOS configurations for multiple hosts";
 
   inputs = {
-    # Stable 25.05 for both NixOS and darwin
+    # Stable 25.05 for NixOS
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    # Stable 25.05 for darwin (uses darwin-specific branch)
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.05-darwin";
     # Unstable available for select packages
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
@@ -15,10 +17,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nix-darwin support - use release-25.05 branch to match nixpkgs
+    # nix-darwin support - use nix-darwin-25.05 branch
     nix-darwin = {
-      url = "github:lnl7/nix-darwin/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-25.05";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
     nur.url = "github:nix-community/NUR";
@@ -34,7 +36,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, nixos-wsl, nix-darwin, nur, home-manager, claude-code-nix, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-darwin, nixpkgs-unstable, nixos-hardware, nixos-wsl, nix-darwin, nur, home-manager, claude-code-nix, ... }@inputs:
     let
       # Common modules shared by all hosts
       commonModules = [
@@ -124,10 +126,28 @@
         malus = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           modules = [
+            # Make unstable packages available via overlay
+            {
+              nixpkgs.overlays = [
+                (final: prev: {
+                  unstable = import nixpkgs-unstable {
+                    system = final.system;
+                    config.allowUnfree = true;
+                  };
+                })
+              ];
+            }
+
             # Darwin configuration
             ../darwin/hosts/malus/configuration.nix
           ];
-          specialArgs = { inherit inputs; };
+          specialArgs = {
+            inherit inputs;
+            pkgs-unstable = import nixpkgs-unstable {
+              system = "aarch64-darwin";
+              config.allowUnfree = true;
+            };
+          };
         };
       };
     };
