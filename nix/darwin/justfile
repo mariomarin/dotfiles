@@ -6,8 +6,8 @@ set shell := ["nu", "-c"]
 default:
     @just switch
 
-# Default host (get from scutil)
-HOST := `scutil --get LocalHostName 2>/dev/null || echo "Marios-MacBook"`
+# Auto-detect hostname or use HOSTNAME environment variable
+HOST := env_var_or_default("HOSTNAME", `scutil --get LocalHostName 2>/dev/null || echo "malus"`)
 
 # First-time nix-darwin setup
 first-time:
@@ -19,7 +19,9 @@ first-time:
     print ""
     print "📦 Installing nix-darwin..."
     # Run darwin-rebuild from nix-darwin flake (uses master/unstable)
-    sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake $"..#{{HOST}}"
+    let flake_ref = $"nix-darwin/master#darwin-rebuild"
+    let config_ref = $"..#{{HOST}}"
+    sudo nix run $flake_ref -- switch --flake $config_ref
     print ""
     print "✅ nix-darwin installed!"
     print "💡 Future rebuilds: just darwin"
@@ -72,14 +74,16 @@ health:
     let macos_result = (do { sw_vers -productVersion } | complete)
     let macos = if $macos_result.exit_code == 0 { $macos_result.stdout | str trim } else { "unknown" }
     print $"✓ macOS version: ($macos)"
-    let arch = (uname -m)
+    let arch_result = (do { uname -m } | complete)
+    let arch = if $arch_result.exit_code == 0 { $arch_result.stdout | str trim } else { "unknown" }
     print $"✓ Architecture: ($arch)"
     let nix_result = (do { nix --version } | complete)
     let nix_version = if $nix_result.exit_code == 0 { $nix_result.stdout | str trim } else { "not installed" }
     print $"✓ Nix version: ($nix_version)"
     let darwin_rebuild_exists = (which darwin-rebuild | is-not-empty)
     print $"✓ darwin-rebuild: (if $darwin_rebuild_exists { 'installed' } else { '❌ not installed' })"
-    let flake_exists = ("../nixos/flake.nix" | path exists)
+    let flake_path = "../flake.nix"
+    let flake_exists = ($flake_path | path exists)
     print $"✓ Flake exists: (if $flake_exists { 'yes' } else { '❌ no' })"
     let config_dir = ("/etc/nix-darwin" | path exists)
     print $"✓ nix-darwin config: (if $config_dir { 'installed' } else { 'not installed (run: just first-time)' })"
