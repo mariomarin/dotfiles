@@ -27,7 +27,7 @@ first-time: _check-os
     print "  2. Build and switch to flake configuration"
     print ""
     print "📦 Building NixOS configuration with flakes..."
-    sudo nixos-rebuild switch --flake $".#{{HOST}}" --extra-experimental-features "nix-command flakes"
+    sudo nixos-rebuild switch --flake ".#{{HOST}}" --extra-experimental-features "nix-command flakes"
     print ""
     print "✅ First-time setup complete!"
     print "💡 Flakes are now enabled system-wide. Future rebuilds use: just switch"
@@ -63,7 +63,7 @@ remote-switch TARGET_HOST BUILD_HOST="": _check-os
         exit 1
     }
     let build_host_flag = if ("{{BUILD_HOST}}" | is-not-empty) { ["--build-host" "{{BUILD_HOST}}"] } else { [] }
-    nixos-rebuild switch --flake $".#{{HOST}}" --target-host {{TARGET_HOST}} --use-remote-sudo ...$build_host_flag
+    nixos-rebuild switch --flake ".#{{HOST}}" --target-host {{TARGET_HOST}} --use-remote-sudo ...$build_host_flag
 
 remote-test TARGET_HOST BUILD_HOST="": _check-os
     #!/usr/bin/env nu
@@ -72,7 +72,7 @@ remote-test TARGET_HOST BUILD_HOST="": _check-os
         exit 1
     }
     let build_host_flag = if ("{{BUILD_HOST}}" | is-not-empty) { ["--build-host" "{{BUILD_HOST}}"] } else { [] }
-    nixos-rebuild test --flake $".#{{HOST}}" --target-host {{TARGET_HOST}} --use-remote-sudo ...$build_host_flag
+    nixos-rebuild test --flake ".#{{HOST}}" --target-host {{TARGET_HOST}} --use-remote-sudo ...$build_host_flag
 
 # Deploy VM configuration to remote host
 deploy-vm TARGET_HOST BUILD_HOST="": _check-os
@@ -82,7 +82,7 @@ deploy-vm TARGET_HOST BUILD_HOST="": _check-os
         exit 1
     }
     let build_host_flag = if ("{{BUILD_HOST}}" | is-not-empty) { ["--build-host" "{{BUILD_HOST}}"] } else { [] }
-    nixos-rebuild switch --flake $".#mitosis" --target-host {{TARGET_HOST}} --use-remote-sudo ...$build_host_flag
+    nixos-rebuild switch --flake ".#mitosis" --target-host {{TARGET_HOST}} --use-remote-sudo ...$build_host_flag
 
 # Flake management
 update: _check-os
@@ -102,7 +102,7 @@ hosts: _check-os
     print "  - mitosis     : Virtual machine for testing and replication"
     print "  - symbiont    : NixOS on WSL (Windows Subsystem for Linux)"
     print ""
-    print $"Current HOST: {{HOST}}"
+    print "Current HOST: {{HOST}}"
 
 # Health check
 health: _check-os
