@@ -95,10 +95,21 @@ nix-shell .install/shell.nix --run '
   printf "✅ Using hostname: %s\n" "$HOSTNAME"
   chezmoi init --force
 
+  printf "\n==> Apply system configuration\n"
+  case "$(uname -s)" in
+    Darwin)
+      printf "Applying nix-darwin configuration...\n"
+      cd nix/darwin && just first-time
+      ;;
+    Linux)
+      printf "Applying NixOS configuration...\n"
+      cd nix/nixos && just first-time
+      ;;
+  esac
+
   printf "\n✅ Bootstrap complete!\n"
-  printf "\nNext steps:\n"
-  printf "  cd ~/.local/share/chezmoi\n"
-  printf "  just apply\n"
-  printf "\nTo enter nix-shell environment:\n"
-  printf "  nix-shell .install/shell.nix\n"
+  printf "\nYour system is now configured!\n"
+  printf "\nFuture updates:\n"
+  printf "  macOS:  cd ~/.local/share/chezmoi && just darwin\n"
+  printf "  NixOS:  cd ~/.local/share/chezmoi && just nixos\n"
 '
