@@ -2,71 +2,67 @@
 
 set shell := ["nu", "-c"]
 
-# OS compatibility check
-_check-os:
-    nu nixos.nu check-os
-
 # Default target - first-time setup or switch
-default: _check-os
+default:
     @just switch
 
 # Auto-detect hostname or use HOST environment variable
 HOST := env_var_or_default("HOST", `hostname`)
 
 # First-time NixOS setup (use this after fresh NixOS install)
-first-time: _check-os
+first-time:
     nu nixos.nu first-time {{HOST}}
 
 # Local build and switch commands
-switch: _check-os
+switch:
     sudo nixos-rebuild switch --flake .#{{HOST}}
 
-test: _check-os
+test:
     sudo nixos-rebuild test --flake .#{{HOST}}
 
-boot: _check-os
+boot:
     sudo nixos-rebuild boot --flake .#{{HOST}}
 
-build: _check-os
+build:
     sudo nixos-rebuild build --flake .#{{HOST}}
 
 # VM-specific targets
-vm-switch: _check-os
+vm-switch:
     sudo nixos-rebuild switch --flake .#mitosis
 
-vm-test: _check-os
+vm-test:
     sudo nixos-rebuild test --flake .#mitosis
 
-vm-build: _check-os
+vm-build:
     sudo nixos-rebuild build --flake .#mitosis
 
 # Remote deployment targets
-remote-switch TARGET_HOST BUILD_HOST="": _check-os
+remote-switch TARGET_HOST BUILD_HOST="":
     nu nixos.nu remote-switch {{HOST}} {{TARGET_HOST}} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
 
-remote-test TARGET_HOST BUILD_HOST="": _check-os
+remote-test TARGET_HOST BUILD_HOST="":
     nu nixos.nu remote-test {{HOST}} {{TARGET_HOST}} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
 
 # Deploy VM configuration to remote host (default VM: mitosis)
-deploy-vm TARGET_HOST VM_HOST="mitosis" BUILD_HOST="": _check-os
+deploy-vm TARGET_HOST VM_HOST="mitosis" BUILD_HOST="":
     nu nixos.nu deploy-vm {{TARGET_HOST}} --vm-host {{VM_HOST}} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
 
 # Flake management
-update: _check-os
+update:
     nix flake update
 
-check: _check-os
+check:
     nix flake check
 
-show: _check-os
+show:
     nix flake show
 
 # Show available hosts
-hosts: _check-os
+hosts:
     nu nixos.nu hosts {{HOST}}
 
 # Health check
-health: _check-os
+health:
     nu nixos.nu health {{HOST}}
 
 # Help target
