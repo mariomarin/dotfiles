@@ -5,18 +5,10 @@
 # version = "0.104.0"
 
 # -----------------------------------------------------------------------------
-# OH-MY-POSH PROMPT
-# -----------------------------------------------------------------------------
-# Source oh-my-posh prompt (generated in env.nu)
-let posh_config = ($nu.default-config-dir | path join 'oh-my-posh.nu')
-if ($posh_config | path exists) {
-    source ~/.config/nushell/oh-my-posh.nu
-}
-
-# -----------------------------------------------------------------------------
 # LOAD NUPM (Nushell Package Manager)
 # -----------------------------------------------------------------------------
 # Note: nupm module auto-loaded if in NU_LIB_DIRS (see env.nu)
+# Note: oh-my-posh prompt is initialized in env.nu
 
 # -----------------------------------------------------------------------------
 # VI MODE
