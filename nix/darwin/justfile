@@ -16,23 +16,23 @@ first-time:
 
 # Local build and switch
 switch:
-    darwin-rebuild switch --flake .#{{HOST}}
+    darwin-rebuild switch --flake ../nixos#{{HOST}}
 
 test:
-    darwin-rebuild check --flake .#{{HOST}}
+    darwin-rebuild check --flake ../nixos#{{HOST}}
 
 build:
-    darwin-rebuild build --flake .#{{HOST}}
+    darwin-rebuild build --flake ../nixos#{{HOST}}
 
-# Flake management
+# Flake management (runs in nixos directory where actual flake.nix lives)
 update:
-    nix flake update
+    cd ../nixos && nix flake update
 
 check:
-    nix flake check
+    cd ../nixos && nix flake check
 
 show:
-    nix flake show
+    cd ../nixos && nix flake show
 
 # Show available hosts
 hosts:

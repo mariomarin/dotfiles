@@ -15,8 +15,9 @@ def "main first-time" [
     print "📦 Installing nix-darwin..."
     # Run darwin-rebuild from nix-darwin flake (uses master/unstable)
     # Note: Use absolute path to nix to avoid PATH length issues with nested nix-shells
+    # Note: Point to ../nixos for actual flake location (symlinks don't work with flake.lock)
     let flake_ref = "nix-darwin/master#darwin-rebuild"
-    let config_ref = $".#($host)"
+    let config_ref = $"../nixos#($host)"
     sudo /nix/var/nix/profiles/default/bin/nix run $flake_ref -- switch --flake $config_ref
     print ""
     print "✅ nix-darwin installed!"
@@ -48,7 +49,7 @@ def "main health" [] {
     nix-common health-item "Nix version" (if $nix_version.exit_code == 0 { $nix_version.stdout | str trim } else { "not installed" })
 
     nix-common health-item "darwin-rebuild" (if (which darwin-rebuild | is-not-empty) { "installed" } else { "❌ not installed" })
-    nix-common health-item "Flake exists" (if ("flake.nix" | path exists) { "yes" } else { "❌ no" })
+    nix-common health-item "Flake exists" (if ("../nixos/flake.nix" | path exists) { "yes" } else { "❌ no" })
     nix-common health-item "nix-darwin config" (if ("/etc/nix-darwin" | path exists) { "installed" } else { "not installed (run: just first-time)" })
 
     print ""
