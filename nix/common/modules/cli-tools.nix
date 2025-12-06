@@ -43,6 +43,7 @@
     # Development tools
     just
     direnv
+    chezmoi
 
     # Kubernetes tools
     krew
