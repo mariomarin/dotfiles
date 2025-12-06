@@ -91,26 +91,24 @@ def "main health" [
     check-os
     nix-common print-header $"🔍 NixOS Health Check for ($host)"
 
-    nix-common health-item "NixOS version" (nix-common run-cmd [nixos-version])
-    nix-common health-item "Hostname" (nix-common run-cmd [hostname])
+    nix-common health-item "NixOS version" (do -i { nixos-version } | complete | get stdout | str trim)
+    nix-common health-item "Hostname" (do -i { hostname } | complete | get stdout | str trim)
 
-    let gen_output = (nix-common run-cmd [sudo nix-env --list-generations --profile /nix/var/nix/profiles/system])
-    let generation = if $gen_output != "unknown" { $gen_output | lines | last } else { "unknown" }
-    nix-common health-item "Current generation" $generation
+    let gen_result = (do -i { sudo nix-env --list-generations --profile /nix/var/nix/profiles/system } | complete)
+    nix-common health-item "Current generation" (if $gen_result.exit_code == 0 { $gen_result.stdout | lines | last } else { "unknown" })
 
     nix-common health-item "Flake status" (if ("flake.lock" | path exists) { "locked" } else { "⚠️  not locked" })
 
-    let syntax = (nix-common run-cmd --default "❌ invalid" [nix-instantiate --parse configuration.nix])
-    nix-common health-item "Configuration syntax" (if $syntax != "❌ invalid" { "valid" } else { $syntax })
+    let syntax_result = (do -i { nix-instantiate --parse configuration.nix } | complete)
+    nix-common health-item "Configuration syntax" (if $syntax_result.exit_code == 0 { "valid" } else { "❌ invalid" })
 
-    let flake_check = (nix-common run-cmd --default "⚠️  warnings" [nix flake check --no-build])
-    nix-common health-item "Flake check" (if $flake_check != "⚠️  warnings" { "passed" } else { $flake_check })
+    let flake_result = (do -i { nix flake check --no-build } | complete)
+    nix-common health-item "Flake check" (if $flake_result.exit_code == 0 { "passed" } else { "⚠️  warnings" })
 
-    nix-common health-item "Nix daemon" (nix-common run-cmd --default "not running" [systemctl is-active nix-daemon.service])
+    nix-common health-item "Nix daemon" (do -i { systemctl is-active nix-daemon.service } | complete | get stdout | str trim)
 
-    let disk_output = (nix-common run-cmd [du -sh /nix/store])
-    let disk = if $disk_output != "unknown" { $disk_output | split row "\t" | first } else { "unknown" }
-    nix-common health-item "Disk usage" $disk
+    let disk_result = (do -i { ^du -sh /nix/store } | complete)
+    nix-common health-item "Disk usage" (if $disk_result.exit_code == 0 { $disk_result.stdout | split row "\t" | first } else { "unknown" })
 
     print ""
 }

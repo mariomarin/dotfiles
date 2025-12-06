@@ -8,18 +8,6 @@ export def main [] {
     exit 1
 }
 
-# Run external command with args and return result or default value
-export def run-cmd [
-    cmd: list          # Command as list: [command, arg1, arg2, ...]
-    --default: string = "unknown"    # Default value if command fails
-] {
-    let result = (do -i { run-external ...$cmd } | complete)
-    if $result.exit_code == 0 and ($result.stdout | str trim | is-not-empty) {
-        $result.stdout | str trim
-    } else {
-        $default
-    }
-}
 
 # Print a health check item
 export def health-item [

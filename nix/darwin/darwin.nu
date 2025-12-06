@@ -40,19 +40,16 @@ def "main hosts" [
 def "main health" [] {
     nix-common print-header "🔍 nix-darwin Health Check"
 
-    nix-common health-item "Hostname" (nix-common run-cmd [scutil --get LocalHostName])
-    nix-common health-item "macOS version" (nix-common run-cmd [sw_vers -productVersion])
-    nix-common health-item "Architecture" (nix-common run-cmd [uname -m])
-    nix-common health-item "Nix version" (nix-common run-cmd --default "not installed" [nix --version])
+    nix-common health-item "Hostname" (do -i { ^scutil --get LocalHostName } | complete | get stdout | str trim)
+    nix-common health-item "macOS version" (do -i { ^sw_vers -productVersion } | complete | get stdout | str trim)
+    nix-common health-item "Architecture" (do -i { ^uname -m } | complete | get stdout | str trim)
 
-    let darwin_rebuild_exists = (which darwin-rebuild | is-not-empty)
-    nix-common health-item "darwin-rebuild" (if $darwin_rebuild_exists { "installed" } else { "❌ not installed" })
+    let nix_version = (do -i { nix --version } | complete)
+    nix-common health-item "Nix version" (if $nix_version.exit_code == 0 { $nix_version.stdout | str trim } else { "not installed" })
 
-    let flake_exists = ("flake.nix" | path exists)
-    nix-common health-item "Flake exists" (if $flake_exists { "yes" } else { "❌ no" })
-
-    let config_dir = ("/etc/nix-darwin" | path exists)
-    nix-common health-item "nix-darwin config" (if $config_dir { "installed" } else { "not installed (run: just first-time)" })
+    nix-common health-item "darwin-rebuild" (if (which darwin-rebuild | is-not-empty) { "installed" } else { "❌ not installed" })
+    nix-common health-item "Flake exists" (if ("flake.nix" | path exists) { "yes" } else { "❌ no" })
+    nix-common health-item "nix-darwin config" (if ("/etc/nix-darwin" | path exists) { "installed" } else { "not installed (run: just first-time)" })
 
     print ""
 }
