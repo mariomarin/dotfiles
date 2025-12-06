@@ -217,15 +217,20 @@ hostname  # Should output: dendrite (or mitosis/symbiont)
 
 ### What Happens Automatically (NixOS)
 
-1. **NixOS Configuration** (`nixos-rebuild switch`):
-   - Sets hostname via `networking.hostName`
-   - Installs ALL system packages: chezmoi, just, neovim, git, etc.
-   - Enables system services
+1. **Bootstrap** (`bootstrap-unix.sh`):
+   - Verifies NixOS
+   - Clones repository
+   - Enters nix-shell with chezmoi, just, yq, Bitwarden CLI
+   - Prompts for Bitwarden login and unlocks vault
+   - Prompts for hostname selection
+   - Initializes chezmoi
+   - **Automatically runs `just nixos/first-time`** to apply system configuration
 
-2. **Bootstrap** (`bootstrap-unix.sh` pre-hook):
-   - Verifies Nushell and Bitwarden CLI are available
-   - If missing, suggests using `.install/shell.nix` or adding to system packages
-   - No automatic installation (packages managed by NixOS configuration)
+2. **NixOS Configuration** (`just nixos/first-time` → `nixos-rebuild switch`):
+   - Sets hostname via `networking.hostName`
+   - Installs ALL system packages: neovim, git, development tools, etc.
+   - Enables system services
+   - Configures boot loader, networking, users
 
 ## macOS Setup
 
@@ -263,37 +268,26 @@ EOF
 
 > **Note:** Replace `"malus"` with your machine's hostname. Available machines are defined in `.chezmoidata/machines.yaml`
 
-### Apply Configuration (macOS)
+### What Happens Automatically (macOS)
 
-```bash
-# From within the nix-shell environment
+With the automated bootstrap, you don't need to run these commands manually:
 
-# Initialize chezmoi
-chezmoi init
+1. **Bootstrap** (`bootstrap-unix.sh`):
+   - Installs Nix (if not present)
+   - Clones repository
+   - Enters nix-shell with chezmoi, just, yq, Bitwarden CLI
+   - Prompts for Bitwarden login and unlocks vault
+   - Prompts for hostname selection
+   - Initializes chezmoi
+   - **Automatically runs `just darwin/first-time`** to apply nix-darwin configuration
 
-# Login to Bitwarden
-bw login
-export BW_SESSION=$(bw unlock --raw)
-
-# Apply dotfiles
-chezmoi apply -v
-
-# Apply nix-darwin configuration (installs chezmoi, just, and all packages permanently)
-sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .#malus
-```
+2. **nix-darwin Configuration** (`just darwin/first-time`):
+   - Installs ALL system packages permanently: just, neovim, git, etc.
+   - Configures Homebrew casks for GUI apps (only when not in nixpkgs)
+   - Sets macOS system defaults
+   - Installs fonts
 
 **Future updates:** `just darwin` (just now installed via nix-darwin)
-
-### What Happens (macOS)
-
-1. **Bootstrap Shell** (`.install/shell.nix`):
-   - Provides temporary environment with: nushell, bitwarden-cli, git, chezmoi
-   - No permanent installations to user profile
-
-2. **nix-darwin Configuration**:
-   - Installs ALL system packages permanently: just, neovim, git, etc.
-   - Configures system settings
-   - Enables services
 
 ## Supported Platforms
 
