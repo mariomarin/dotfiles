@@ -3,8 +3,8 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Build environment with all system applications for mkalias
-  env = pkgs.buildEnv {
+  # Build environment with all system applications
+  appEnv = pkgs.buildEnv {
     name = "system-applications";
     paths = config.environment.systemPackages;
     pathsToLink = "/Applications";
@@ -19,17 +19,31 @@ in
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
   ];
 
-  # Use mkalias instead of symlinks for Nix Apps to enable Spotlight indexing
-  # Symlinks aren't indexed by Spotlight, but macOS aliases (created by mkalias) are
+  # Copy applications instead of symlinking to make Spotlight happy
+  # Based on nix-darwin PR #1396 (not yet in stable 25.05)
+  # Symlinks aren't indexed by Spotlight, aliases have other issues
+  # rsync with --copy-unsafe-links converts nix store symlinks to real files
   system.activationScripts.applications.text = lib.mkForce ''
     echo "setting up /Applications/Nix Apps..." >&2
-    rm -rf /Applications/Nix\ Apps
-    mkdir -p /Applications/Nix\ Apps
-    find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + | while read -r src; do
-      app_name=$(basename "$src")
-      echo "copying $src" >&2
-      ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
-    done
+
+    targetFolder='/Applications/Nix Apps'
+
+    # Clean up old style symlink to nix store (if exists)
+    if [ -L "$targetFolder" ]; then
+      rm "$targetFolder"
+    fi
+
+    mkdir -p "$targetFolder"
+
+    ${lib.getExe pkgs.rsync} \
+      --checksum \
+      --copy-unsafe-links \
+      --archive \
+      --delete \
+      --chmod=-w \
+      --no-group \
+      --no-owner \
+      ${appEnv}/Applications/ "$targetFolder"
   '';
 
   # Enable CLI tools with modern replacements
