@@ -125,6 +125,14 @@ cf-ssh() {
     return 1
   fi
 
+  # Find cloudflared path - ProxyCommand runs in /bin/sh without Nix paths
+  local cloudflared_bin
+  cloudflared_bin=$(command -v cloudflared)
+  if [ -z "$cloudflared_bin" ]; then
+    echo "Error: cloudflared not found in PATH"
+    return 1
+  fi
+
   local target="${1:-$USER@localhost}"
-  ssh -o ProxyCommand="cloudflared access tcp --hostname $CLOUDFLARE_TUNNEL_HOST" "$target"
+  ssh -o ProxyCommand="$cloudflared_bin access tcp --hostname $CLOUDFLARE_TUNNEL_HOST" "$target"
 }
