@@ -56,6 +56,7 @@ in
       curl
       wget
       cloudflared # Cloudflare Tunnel client
+      cf-vault # Cloudflare credentials (uses macOS Keychain / Linux keyring)
       speedtest-cli # Internet speed test
       trippy # Network diagnostic (traceroute + ping)
 

@@ -5,10 +5,7 @@
   config = lib.mkIf config.custom.cli.enable {
     environment.systemPackages = with pkgs; [
       # ── Git (full version with extras) ──────────────────────────────────
-      gitFull # Overrides common git with full features
-
-      # ── Cloudflare ─────────────────────────────────────────────────────
-      cf-vault # Cloudflare credentials management (uses system keyring)
+      gitFull # git gui, gitk, git-send-email (GUI tools need X11)
 
       # ── Desktop notifications ──────────────────────────────────────────
       libnotify # notify-send (Linux desktop only)
