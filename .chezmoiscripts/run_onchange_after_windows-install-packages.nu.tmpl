@@ -1,6 +1,7 @@
 #!/usr/bin/env nu
 # Install packages from winget configuration DSC file (Windows)
-# This script runs when the winget configuration file or script content changes
+# This script runs after files are applied, only when configuration changes
+# config hash: {{ include "private_dot_config/winget/configuration.dsc.yaml" | sha256sum }}
 
 print "📦 Installing packages for Windows using winget configure..."
 
