@@ -3,46 +3,66 @@
 
 {
   environment.systemPackages = with pkgs; [
-    # Dotfiles management
-    chezmoi
+    # Dotfiles and environment
+    unstable.chezmoi
+    direnv
 
     # AI assistant
     claude-code
 
-    # Go development
+    # Nix development
+    niv
+    nix-direnv
+    nil
+    unstable.devenv
+
+    # Editors
+    unstable.neovim
+
+    # Go
     go
     gopls
     gotools
     go-tools
     golangci-lint
 
-    # Python development
+    # Python
     python3
     python3Packages.pip
     python3Packages.virtualenv
+    poetry
     ruff
     pyright
 
-    # Rust development
+    # Rust
     rustup
     rust-analyzer
 
-    # Node.js development
+    # Lua
+    lua5_1
+    luarocks
+
+    # Node.js
     nodejs_22
     nodePackages.pnpm
     nodePackages.yarn
 
+    # Java
+    openjdk
+
     # Build tools
+    bear
+    clang
     gnumake
     cmake
     pkg-config
 
-    # Container tools
+    # Containers
     docker-compose
     dive
     lazydocker
 
-    # Database clients
+    # Databases
     postgresql
     sqlite
 
@@ -53,5 +73,14 @@
     # Infrastructure as Code
     terraform
     ansible
+
+    # Documentation
+    pandoc
+    plantuml
+    zeal
+
+    # Utilities
+    unstable.svu
+    unstable.tree-sitter
   ];
 }
