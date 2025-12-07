@@ -83,7 +83,6 @@ in
       pay-respects # Terminal command correction
       topgrade # Update everything
       envsubst # Environment variable substitution
-      pipr # Interactive pipe evaluation
 
       # ── Help and documentation ──────────────────────────────────────────
       cheat # Interactive cheatsheets

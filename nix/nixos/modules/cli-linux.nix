@@ -12,6 +12,9 @@
 
       # ── System info ────────────────────────────────────────────────────
       lfs # List filesystem info (Linux only)
+
+      # ── Shell utilities ───────────────────────────────────────────────
+      pipr # Interactive pipe evaluation (uses bubblewrap, Linux only)
     ];
   };
 }
