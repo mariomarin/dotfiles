@@ -56,9 +56,12 @@ in
       curl
       wget
       cloudflared # Cloudflare Tunnel client
+      speedtest-cli # Internet speed test
+      trippy # Network diagnostic (traceroute + ping)
 
       # ── System monitoring ───────────────────────────────────────────────
       htop
+      viddy # Modern watch command
 
       # ── Development tools ───────────────────────────────────────────────
       just # Command runner
@@ -78,11 +81,21 @@ in
       atuin # Shell history sync and search
       pay-respects # Terminal command correction
       topgrade # Update everything
+      envsubst # Environment variable substitution
+      pipr # Interactive pipe evaluation
 
       # ── Help and documentation ──────────────────────────────────────────
       cheat # Interactive cheatsheets
       navi # Interactive cheatsheet tool
       tealdeer # Fast tldr client
+
+      # ── Nushell plugins ─────────────────────────────────────────────────
+      nushellPlugins.formats # EML, ICS, INI, plist, VCF support
+      nushellPlugins.query # Query JSON, XML, web data
+      nushellPlugins.gstat # Git status as structured data
+
+      # ── Libraries ──────────────────────────────────────────────────────
+      libzip # Zip archive library
     ] ++ lib.optionals cfg.modernCli [
       # ── Modern CLI replacements ─────────────────────────────────────────
       bat # cat with syntax highlighting
