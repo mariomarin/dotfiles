@@ -55,6 +55,7 @@ in
       # ── Network utilities ───────────────────────────────────────────────
       curl
       wget
+      cloudflared # Cloudflare Tunnel client
 
       # ── System monitoring ───────────────────────────────────────────────
       htop

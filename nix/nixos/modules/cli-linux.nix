@@ -13,7 +13,6 @@
       nushellPlugins.gstat # Git status as structured data
 
       # ── Remote access ───────────────────────────────────────────────────
-      cloudflared # Cloudflare Tunnel
       cf-vault # Cloudflare credentials management
 
       # ── System utilities ────────────────────────────────────────────────
