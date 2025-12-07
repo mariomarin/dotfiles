@@ -2,6 +2,14 @@
 # Biology theme: Malus (apple genus) for macOS
 { config, pkgs, lib, ... }:
 
+let
+  # Build environment with all system applications for mkalias
+  env = pkgs.buildEnv {
+    name = "system-applications";
+    paths = config.environment.systemPackages;
+    pathsToLink = "/Applications";
+  };
+in
 {
   imports = [
     ../../../common/modules/cli-tools.nix # Shared CLI tools
@@ -10,6 +18,19 @@
     ../../modules/packages.nix # macOS-specific packages
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
   ];
+
+  # Use mkalias instead of symlinks for Nix Apps to enable Spotlight indexing
+  # Symlinks aren't indexed by Spotlight, but macOS aliases (created by mkalias) are
+  system.activationScripts.applications.text = lib.mkForce ''
+    echo "setting up /Applications/Nix Apps..." >&2
+    rm -rf /Applications/Nix\ Apps
+    mkdir -p /Applications/Nix\ Apps
+    find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + | while read -r src; do
+      app_name=$(basename "$src")
+      echo "copying $src" >&2
+      ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
+    done
+  '';
 
   # Primary user for nix-darwin (required for user-specific options)
   system.primaryUser = "mario";
