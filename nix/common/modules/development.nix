@@ -77,7 +77,6 @@
     # Documentation
     pandoc
     plantuml
-    zeal
 
     # Utilities
     unstable.svu

@@ -13,6 +13,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = commonDev.environment.systemPackages;
+    environment.systemPackages = commonDev.environment.systemPackages ++ (with pkgs; [
+      # Linux-only documentation tools
+      zeal # Offline documentation browser (Qt build broken on darwin)
+    ]);
   };
 }
