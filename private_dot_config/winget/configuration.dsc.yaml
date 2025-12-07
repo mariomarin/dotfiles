@@ -2,248 +2,261 @@
 # Winget Configuration DSC for declarative package installation
 # See: https://learn.microsoft.com/en-us/windows/package-manager/configuration/
 properties:
-    resources:
-        # Shell and terminal
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Oh My Posh
-            allowPrerelease: true
-          settings:
-            id: JanDeDobbeleer.OhMyPosh
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Nushell
-            allowPrerelease: true
-          settings:
-            id: Nushell.Nushell
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Carapace
-            allowPrerelease: true
-          settings:
-            id: rsteube.Carapace
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Alacritty
-            allowPrerelease: true
-          settings:
-            id: Alacritty.Alacritty
-            source: winget
-        # Editor
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Neovim
-            allowPrerelease: true
-          settings:
-            id: Neovim.Neovim
-            source: winget
-        # Version control
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Git
-            allowPrerelease: true
-          settings:
-            id: Git.Git
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install GitHub CLI
-            allowPrerelease: true
-          settings:
-            id: GitHub.cli
-            source: winget
-        # Search and text processing
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install fzf
-            allowPrerelease: true
-          settings:
-            id: junegunn.fzf
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install ripgrep
-            allowPrerelease: true
-          settings:
-            id: BurntSushi.ripgrep.MSVC
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install fd
-            allowPrerelease: true
-          settings:
-            id: sharkdp.fd
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install jq
-            allowPrerelease: true
-          settings:
-            id: jqlang.jq
-            source: winget
-        # Modern CLI replacements
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install bat
-            allowPrerelease: true
-          settings:
-            id: sharkdp.bat
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install eza
-            allowPrerelease: true
-          settings:
-            id: eza-community.eza
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install delta
-            allowPrerelease: true
-          settings:
-            id: dandavison.delta
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install zoxide
-            allowPrerelease: true
-          settings:
-            id: ajeetdsouza.zoxide
-            source: winget
-        # Development tools
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Just
-            allowPrerelease: true
-          settings:
-            id: Casey.Just
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install direnv
-            allowPrerelease: true
-          settings:
-            id: direnv.direnv
-            source: winget
-        # Kubernetes tools
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install kubectl
-            allowPrerelease: true
-          settings:
-            id: Kubernetes.kubectl
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install kubelogin
-            allowPrerelease: true
-          settings:
-            id: Microsoft.Azure.Kubelogin
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install krew
-            allowPrerelease: true
-          settings:
-            id: Kubernetes.krew
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install kubectx
-            allowPrerelease: true
-          settings:
-            id: ahmetb.kubectx
-            source: winget
-        # System utilities
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install topgrade
-            allowPrerelease: true
-          settings:
-            id: topgrade-rs.topgrade
-            source: winget
-        # GUI applications
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Visual Studio Code
-            allowPrerelease: true
-          settings:
-            id: Microsoft.VisualStudioCode
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Windows App (Remote Desktop)
-            allowPrerelease: true
-          settings:
-            id: 9N1F85V9T8BN
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Kubernetes Lens
-            allowPrerelease: true
-          settings:
-            id: Mirantis.Lens
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Remote Desktop Manager
-            allowPrerelease: true
-          settings:
-            id: Devolutions.RemoteDesktopManager
-            source: winget
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install Azure CLI
-            allowPrerelease: true
-          settings:
-            id: Microsoft.AzureCLI
-            source: winget
-        # PowerShell
-        - resource: Microsoft.WinGet.DSC/WinGetPackage
-          directives:
-            description: Install PowerShell
-            allowPrerelease: true
-          settings:
-            id: Microsoft.PowerShell
-            source: winget
-        # PowerShell Gallery modules
-        - resource: PSModule
-          directives:
-            description: Install PSReadLine
-          settings:
-            Name: PSReadLine
-            Repository: PSGallery
-        - resource: PSModule
-          directives:
-            description: Install posh-git
-          settings:
-            Name: posh-git
-            Repository: PSGallery
-        - resource: PSModule
-          directives:
-            description: Install Terminal-Icons
-          settings:
-            Name: Terminal-Icons
-            Repository: PSGallery
-        - resource: PSModule
-          directives:
-            description: Install PSFzf
-          settings:
-            Name: PSFzf
-            Repository: PSGallery
-        - resource: PSModule
-          directives:
-            description: Install git-aliases
-          settings:
-            Name: git-aliases
-            Repository: PSGallery
-        - resource: PSModule
-          directives:
-            description: Install CompletionPredictor
-          settings:
-            Name: CompletionPredictor
-            Repository: PSGallery
-    configurationVersion: 0.2.0
+  resources:
+    # Shell and terminal
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Oh My Posh
+        allowPrerelease: true
+      settings:
+        id: JanDeDobbeleer.OhMyPosh
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Nushell
+        allowPrerelease: true
+      settings:
+        id: Nushell.Nushell
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Carapace
+        allowPrerelease: true
+      settings:
+        id: rsteube.Carapace
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Alacritty
+        allowPrerelease: true
+      settings:
+        id: Alacritty.Alacritty
+        source: winget
+    # Editor
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Neovim
+        allowPrerelease: true
+      settings:
+        id: Neovim.Neovim
+        source: winget
+    # Version control
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Git
+        allowPrerelease: true
+      settings:
+        id: Git.Git
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install GitHub CLI
+        allowPrerelease: true
+      settings:
+        id: GitHub.cli
+        source: winget
+    # Search and text processing
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install fzf
+        allowPrerelease: true
+      settings:
+        id: junegunn.fzf
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install ripgrep
+        allowPrerelease: true
+      settings:
+        id: BurntSushi.ripgrep.MSVC
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install fd
+        allowPrerelease: true
+      settings:
+        id: sharkdp.fd
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install jq
+        allowPrerelease: true
+      settings:
+        id: jqlang.jq
+        source: winget
+    # Modern CLI replacements
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install bat
+        allowPrerelease: true
+      settings:
+        id: sharkdp.bat
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install eza
+        allowPrerelease: true
+      settings:
+        id: eza-community.eza
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install delta
+        allowPrerelease: true
+      settings:
+        id: dandavison.delta
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install zoxide
+        allowPrerelease: true
+      settings:
+        id: ajeetdsouza.zoxide
+        source: winget
+    # Development tools
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Just
+        allowPrerelease: true
+      settings:
+        id: Casey.Just
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install direnv
+        allowPrerelease: true
+      settings:
+        id: direnv.direnv
+        source: winget
+    # Kubernetes tools
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install kubectl
+        allowPrerelease: true
+      settings:
+        id: Kubernetes.kubectl
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install kubelogin
+        allowPrerelease: true
+      settings:
+        id: Microsoft.Azure.Kubelogin
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install krew
+        allowPrerelease: true
+      settings:
+        id: Kubernetes.krew
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install kubectx
+        allowPrerelease: true
+      settings:
+        id: ahmetb.kubectx
+        source: winget
+    # System utilities
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install topgrade
+        allowPrerelease: true
+      settings:
+        id: topgrade-rs.topgrade
+        source: winget
+    # GUI applications
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Visual Studio Code
+        allowPrerelease: true
+      settings:
+        id: Microsoft.VisualStudioCode
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Windows App (Remote Desktop)
+        allowPrerelease: true
+      settings:
+        id: 9N1F85V9T8BN
+        source: msstore
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Kubernetes Lens
+        allowPrerelease: true
+      settings:
+        id: Mirantis.Lens
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Remote Desktop Manager
+        allowPrerelease: true
+      settings:
+        id: Devolutions.RemoteDesktopManager
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Azure CLI
+        allowPrerelease: true
+      settings:
+        id: Microsoft.AzureCLI
+        source: winget
+    # PowerShell
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install PowerShell
+        allowPrerelease: true
+      settings:
+        id: Microsoft.PowerShell
+        source: winget
+    # Trust PSGallery before installing modules
+    - resource: PSDscResources/Script
+      directives:
+        description: Trust PSGallery repository
+      settings:
+        GetScript: |
+          @{ Result = (Get-PSRepository -Name PSGallery).InstallationPolicy }
+        TestScript: |
+          (Get-PSRepository -Name PSGallery).InstallationPolicy -eq 'Trusted'
+        SetScript: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+    # PowerShell Gallery modules
+    - resource: PSModule
+      directives:
+        description: Install PSReadLine
+        dependsOn:
+          - Trust PSGallery repository
+      settings:
+        Name: PSReadLine
+        Repository: PSGallery
+    - resource: PSModule
+      directives:
+        description: Install posh-git
+      settings:
+        Name: posh-git
+        Repository: PSGallery
+    - resource: PSModule
+      directives:
+        description: Install Terminal-Icons
+      settings:
+        Name: Terminal-Icons
+        Repository: PSGallery
+    - resource: PSModule
+      directives:
+        description: Install PSFzf
+      settings:
+        Name: PSFzf
+        Repository: PSGallery
+    - resource: PSModule
+      directives:
+        description: Install git-aliases
+      settings:
+        Name: git-aliases
+        Repository: PSGallery
+    - resource: PSModule
+      directives:
+        description: Install CompletionPredictor
+      settings:
+        Name: CompletionPredictor
+        Repository: PSGallery
+  configurationVersion: 0.2.0
