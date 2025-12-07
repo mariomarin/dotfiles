@@ -10,8 +10,8 @@
   # Set hostname
   networking.hostName = "dendrite";
 
-  # Enable minimal system packages with modern CLI tools
-  custom.minimal = {
+  # Enable CLI tools with modern replacements
+  custom.cli = {
     enable = true;
     modernCli = true;
   };

@@ -1,72 +1,110 @@
 # Shared CLI tools for both NixOS and nix-darwin
-{ pkgs, lib, ... }:
+# Provides essential command-line utilities with optional modern replacements
+{ config, pkgs, lib, ... }:
 
+let
+  cfg = config.custom.cli;
+in
 {
-  environment.systemPackages = with pkgs; [
-    # Shell and terminal
-    zsh
-    nushell
-    tmux
-    alacritty
+  options.custom.cli = {
+    enable = lib.mkEnableOption "CLI tools";
 
-    # Editor
-    neovim
+    modernCli = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Include modern CLI replacements (bat, eza, ripgrep, etc.)";
+    };
+  };
 
-    # Version control
-    git
-    git-lfs
-    gh
-    git-branchless
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      # ── Shells ──────────────────────────────────────────────────────────
+      zsh
+      bash
+      nushell
+      oh-my-posh # Prompt framework
+      carapace # Universal completion framework
 
-    # File management
-    rsync
-    tree
+      # ── Terminal multiplexer ────────────────────────────────────────────
+      tmux
+      sesh # Smart session manager for tmux
 
-    # Search and text processing
-    fzf
-    ripgrep
-    fd
-    sd
-    jq
-    yq-go
+      # ── Editor ──────────────────────────────────────────────────────────
+      vim
+      neovim
 
-    # Network utilities
-    curl
-    wget
+      # ── Version control ─────────────────────────────────────────────────
+      git
+      git-lfs
+      gh # GitHub CLI
+      git-branchless
+      lazygit # TUI for git
 
-    # Modern CLI replacements
-    bat
-    eza
-    delta
-    zoxide
+      # ── File management ─────────────────────────────────────────────────
+      file # Determine file types
+      tree
+      rsync
+      unzip
 
-    # Development tools
-    just
-    direnv
+      # ── Search and text processing ──────────────────────────────────────
+      fzf
+      jq
+      yq-go
+      miller # CSV, TSV, JSON processing
 
-    # Kubernetes tools
-    krew
-    kubelogin
+      # ── Network utilities ───────────────────────────────────────────────
+      curl
+      wget
 
-    # System utilities
-    htop
-    bottom
-    dua
-    procs
+      # ── System monitoring ───────────────────────────────────────────────
+      htop
 
-    # Password management
-    bitwarden-cli
-    age
+      # ── Development tools ───────────────────────────────────────────────
+      just # Command runner
+      direnv
+      age # Encryption (for chezmoi)
+      python3 # Required by tmux extrakto plugin
 
-    # Misc
-    topgrade
-    atuin
-  ];
+      # ── Kubernetes ──────────────────────────────────────────────────────
+      kubectl
+      krew
+      kubelogin
 
-  programs.zsh.enable = true;
+      # ── Password and secrets ────────────────────────────────────────────
+      bitwarden-cli
 
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
+      # ── Shell utilities ─────────────────────────────────────────────────
+      atuin # Shell history sync and search
+      pay-respects # Terminal command correction
+      topgrade # Update everything
+
+      # ── Help and documentation ──────────────────────────────────────────
+      cheat # Interactive cheatsheets
+      navi # Interactive cheatsheet tool
+      tealdeer # Fast tldr client
+    ] ++ lib.optionals cfg.modernCli [
+      # ── Modern CLI replacements ─────────────────────────────────────────
+      bat # cat with syntax highlighting
+      bottom # Modern top/htop
+      delta # Modern diff
+      difftastic # Structural diff
+      dua # Disk usage analyzer
+      eza # Modern ls
+      fd # Modern find
+      lsd # Modern ls with icons
+      procs # Modern ps
+      pstree # Process tree
+      ripgrep # Modern grep
+      sd # Modern sed
+      xcp # Modern cp with progress
+      zoxide # Modern cd with frecency
+    ];
+
+    programs.zsh.enable = true;
+
+    programs.direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
   };
 }

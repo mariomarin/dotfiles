@@ -16,19 +16,14 @@
       };
   };
 
-  # System packages
+  # System packages (Linux-specific desktop apps)
+  # Common apps (alacritty, bitwarden, brave, firefox, gimp, obsidian, vscode, syncthing)
+  # are in common/modules/gui-apps.nix
   environment.systemPackages = with pkgs; [
-    # Desktop Applications
-    alacritty # GPU-accelerated terminal emulator
-    bitwarden-desktop # Password manager GUI
+    # Linux Desktop Applications
     baobab # Disk usage analyzer with graphical interface
-    brave # Privacy-focused web browser
-    firefox # Open-source web browser
-    gimp # GNU Image Manipulation Program
     gnome-disk-utility # Disk management utility
-    obsidian # Knowledge base and note-taking application
     tridactyl-native # Native messaging host for Tridactyl Firefox addon
-    vscode # Visual Studio Code editor
     zathura # PDF/document viewer
 
     # Window Manager & Desktop Environment
@@ -59,7 +54,6 @@
     nss # Network Security Services
     nssTools # NSS security tools
     ntfs3g # NTFS filesystem driver
-    syncthing # Continuous file synchronization
 
     # Audio & Multimedia
     alsa-lib-with-plugins # Advanced Linux Sound Architecture libraries

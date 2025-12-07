@@ -25,10 +25,10 @@
   hardware.pulseaudio.enable = false;
   services.pipewire.enable = false;
 
-  # Enable minimal system packages (essential CLI tools only)
-  custom.minimal = {
+  # Enable CLI tools (essential only, no modern replacements)
+  custom.cli = {
     enable = true;
-    modernCli = false; # Basic tools only, no modern replacements
+    modernCli = false;
   };
 
   # Essential services for headless operation

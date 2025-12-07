@@ -13,7 +13,7 @@ in
 {
   imports = [
     ../../../common/modules/cli-tools.nix # Shared CLI tools
-    ../../../common/modules/gui-apps.nix # Shared GUI applications
+    ../../../common/modules/apps.nix # Shared GUI applications
     ../../../common/modules/development.nix # Shared development tools
     ../../modules/packages.nix # macOS-specific packages
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
@@ -31,6 +31,12 @@ in
       ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
     done
   '';
+
+  # Enable CLI tools with modern replacements
+  custom.cli = {
+    enable = true;
+    modernCli = true;
+  };
 
   # Primary user for nix-darwin (required for user-specific options)
   system.primaryUser = "mario";

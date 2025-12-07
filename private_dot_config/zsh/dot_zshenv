@@ -1,3 +1,9 @@
+# Nix (macOS) - source nix-daemon before anything else
+# This ensures Nix paths are available for the rest of the config
+if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+
 # Xorg
 export XENVIRONMENT="$HOME/.Xresources"
 

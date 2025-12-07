@@ -12,6 +12,7 @@
     # Productivity
     obsidian
     bitwarden-desktop
+    vscode
 
     # Image Editing
     gimp

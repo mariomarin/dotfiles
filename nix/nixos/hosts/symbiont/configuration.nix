@@ -26,11 +26,11 @@
   services.xserver.enable = lib.mkForce false;
   services.resolved.enable = lib.mkForce false; # WSL manages resolv.conf
 
-  # Enable minimal system packages with modern CLI tools
+  # Enable CLI tools with modern replacements
   # Per-project tools should come from devenv.nix
-  custom.minimal = {
+  custom.cli = {
     enable = true;
-    modernCli = true; # Include modern replacements (bat, eza, ripgrep, etc.)
+    modernCli = true;
   };
 
   # Enable development tools
