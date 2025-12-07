@@ -126,7 +126,7 @@
         malus = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           modules = [
-            # Make unstable packages available via overlay
+            # Make unstable packages and claude-code available via overlay
             {
               nixpkgs.overlays = [
                 (final: prev: {
@@ -135,6 +135,7 @@
                     config.allowUnfree = true;
                   };
                 })
+                claude-code-nix.overlays.default
               ];
             }
 

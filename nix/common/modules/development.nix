@@ -6,6 +6,9 @@
     # Dotfiles management
     chezmoi
 
+    # AI assistant
+    claude-code
+
     # Go development
     go
     gopls
