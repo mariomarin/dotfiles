@@ -7,6 +7,7 @@ disable = [
 {{- if ne .chezmoi.os "windows" }}
   "system",     # System update (NixOS uses flakes, not channels)
 {{- end }}
+  "chezmoi",    # Run via just command instead of built-in
   "containers", # Docker/Podman containers
   "firmware",   # Firmware updates (handle manually)
   "restarts",   # Don't auto-restart services
@@ -33,14 +34,14 @@ cleanup = true
 
 # Custom commands to run at specific times
 [pre_commands]
-# Load BW_SESSION from .env.local if it exists (for chezmoi templates)
-"Load Bitwarden session" = """
-nu -c 'cd (chezmoi source-path); if (".env.local" | path exists) { let line = (open .env.local | lines | where $it starts-with "BW_SESSION=" | first); if ($line | is-not-empty) { $env.BW_SESSION = ($line | split row "=" | last) } }'
-"""
-
-{{- if ne .chezmoi.os "windows" }}
+# Ensure Bitwarden vault is unlocked and session is saved
+"Bitwarden unlock" = "cd $(chezmoi source-path) && just bw-unlock"
 
 [commands]
+# Apply chezmoi dotfiles (loads BW_SESSION automatically via just)
+"chezmoi" = "cd $(chezmoi source-path) && just chezmoi-apply"
+
+{{- if ne .chezmoi.os "windows" }}
 # Update tmux plugins via TPM
 "Tmux Plugins" = "~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
 # Update Nix system configuration with flakes (OS-specific)
@@ -83,11 +84,14 @@ apt_arguments = "--only-upgrade"
 dnf_arguments = "--refresh"
 {{- end }}
 
-{{- if eq .chezmoi.os "windows" }}
+{{- else }}
 
-[commands]
+# Windows-specific commands
 # Apply winget configuration (packages and settings)
 "Winget Configuration" = "winget configure --file $env:USERPROFILE\\.config\\winget\\configuration.dsc.yaml --accept-configuration-agreements"
+{{- end }}
+
+{{- if eq .chezmoi.os "windows" }}
 
 [windows]
 # Accept all prompts
