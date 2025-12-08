@@ -469,7 +469,7 @@ automatically detects and updates:
 
 1. **System packages**: NixOS packages, Nix flakes
 2. **Plugin managers**: Neovim (LazyVim), Tmux (TPM), Zim modules
-3. **Programming tools**: npm/pnpm packages, Rust toolchain, Python packages
+3. **Programming tools**: npm packages, Rust toolchain, Python packages
 4. **Other tools**: Git repos, firmware (disabled by default)
 
 ### Automatic Updates

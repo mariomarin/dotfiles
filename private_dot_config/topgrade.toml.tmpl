@@ -14,7 +14,8 @@ disable = [
   "restarts",   # Don't auto-restart services
   "vscode",     # VSCode extensions (using Neovim instead)
   "poetry",     # Poetry packages (not using)
-  "yarn",       # Yarn global packages (using pnpm instead)
+  "yarn",       # Yarn global packages (not using)
+  "pnpm",       # pnpm (not using)
 {{- if ne .chezmoi.os "windows" }}
   "rustup",     # Rustup (managed by Nix on NixOS)
   "bun",        # Bun (managed by NixOS)
@@ -125,7 +126,6 @@ force_plug_update = false
 
 [npm]
 # NPM configuration
-# Note: use_pnpm was removed in newer versions, pnpm is auto-detected
 
 [python]
 # Enable pip updates

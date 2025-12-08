@@ -55,7 +55,6 @@ fields will cause errors when running topgrade.
 #### Development Tools
 
 - **Vim**: Don't force plugin updates
-- **NPM**: Use pnpm when available
 - **Python**: Enable pip-review for updates
 - **Tmux**: Update plugins via TPM (path: ~/.local/share/tmux/plugins/tpm)
 - **Distrobox**: Run without root

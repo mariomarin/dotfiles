@@ -44,7 +44,6 @@
 
     # Node.js
     nodejs_22
-    nodePackages.pnpm
     nodePackages.yarn
 
     # Java
