@@ -50,6 +50,14 @@ cleanup = true
 {{- else }}
 "NixOS Flake" = "cd $(chezmoi source-path) && just nixos"
 {{- end }}
+{{- end }}
+
+{{- if eq .chezmoi.os "windows" }}
+# Windows-specific: Apply winget configuration (packages and settings)
+"Winget Configuration" = "winget configure --file $env:USERPROFILE\\.config\\winget\\configuration.dsc.yaml --accept-configuration-agreements"
+{{- end }}
+
+{{- if ne .chezmoi.os "windows" }}
 
 [post_commands]
 # Add and commit updated lock files to chezmoi after updates
@@ -82,13 +90,6 @@ nix_env_arguments = "--prebuilt-only"
 # Update package managers
 apt_arguments = "--only-upgrade"
 dnf_arguments = "--refresh"
-{{- end }}
-
-{{- else }}
-
-# Windows-specific commands
-# Apply winget configuration (packages and settings)
-"Winget Configuration" = "winget configure --file $env:USERPROFILE\\.config\\winget\\configuration.dsc.yaml --accept-configuration-agreements"
 {{- end }}
 
 {{- if eq .chezmoi.os "windows" }}
