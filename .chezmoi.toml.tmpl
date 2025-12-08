@@ -52,7 +52,7 @@
 
         [data.machineConfig.features]
             desktop = {{ $isDesktop }}
-            kmonad = {{ $hasKmonad }}
+            kanata = {{ $hasKmonad }}
             audio = {{ and $isDesktop (not $isWSL) }}
             bluetooth = {{ and $isDesktop (not $isWSL) }}
             wsl = {{ $isWSL }}
