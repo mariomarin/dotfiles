@@ -1,4 +1,3 @@
-{{- if and (ne .chezmoi.os "windows") (.machineConfig.features.desktop) -}}
 [window]
 opacity = 0.97
 blur = true
@@ -8,12 +7,10 @@ import = [
     "~/.config/alacritty/themes/themes/ayu_light.toml"
 ]
 
-{{- if eq .chezmoi.os "darwin" }}
 # macOS: Use Option as Meta key for tmux-tilish and other Alt/Meta bindings
+# Note: This option is ignored on Linux/Windows
 [keyboard]
 option_as_alt = "Both"
-{{- end }}
-
 
 # Instead of using: `alacritty --print-events`
 # https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping
@@ -35,4 +32,3 @@ mods = "Shift"
 chars = "\u001B[13;5u"
 key = "Return"
 mods = "Control"
-{{- end -}}
