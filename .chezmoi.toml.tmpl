@@ -1,5 +1,5 @@
-{{- /* Get hostname from HOSTNAME env var or system hostname */ -}}
-{{- $hostname := env "HOSTNAME" | default .chezmoi.hostname -}}
+{{- /* Get hostname from config file, HOSTNAME env var, or system hostname */ -}}
+{{- $hostname := .hostname | default (env "HOSTNAME") | default .chezmoi.hostname -}}
 
 {{- /* Detect environment */ -}}
 {{- $codespaces := env "CODESPACES" | not | not -}}
