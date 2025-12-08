@@ -243,6 +243,20 @@ darwin-switch:
 darwin-health:
     @just nix/darwin/health
 
+# Windows package management (Windows only)
+
+# Apply winget DSC configuration (packages and settings)
+windows-configure:
+    #!/usr/bin/env nu
+    let config_file = ($env.USERPROFILE | path join ".config" "winget" "configuration.dsc.yaml")
+    if not ($config_file | path exists) {
+        print $"❌ Config file not found: ($config_file)"
+        exit 1
+    }
+    print "📦 Applying winget configuration..."
+    winget configure --file $config_file --accept-configuration-agreements
+
 # Convenience aliases
 
 alias darwin := darwin-switch
+alias windows := windows-configure

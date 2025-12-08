@@ -54,7 +54,7 @@ cleanup = true
 
 {{- if eq .chezmoi.os "windows" }}
 # Windows-specific: Apply winget configuration (packages and settings)
-"Winget Configuration" = "winget configure --file $env:USERPROFILE\\.config\\winget\\configuration.dsc.yaml --accept-configuration-agreements"
+"Winget Configuration" = "cd $(chezmoi source-path) && just windows-configure"
 {{- end }}
 
 {{- if ne .chezmoi.os "windows" }}
