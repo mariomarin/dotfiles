@@ -105,7 +105,7 @@ cd ~/.local/share/chezmoi && just apply
 │   ├── zsh/                      # Zsh shell configuration
 │   ├── zim/                      # Zim framework for Zsh
 │   ├── leftwm/                   # LeftWM window manager
-│   └── kmonad/                   # Keyboard remapping
+│   └── kanata/                   # Keyboard remapping
 ├── private_dot_local/            # Local data → ~/.local/
 │   ├── bin/                      # User binaries
 │   └── share/                    # Shared data
@@ -128,7 +128,7 @@ For chezmoi naming conventions, see the
 | Neovim keybindings | [private_dot_config/nvim/KEYBINDINGS.md](private_dot_config/nvim/KEYBINDINGS.md) |
 | Tmux keybindings | [private_dot_config/tmux/KEYBINDINGS.md](private_dot_config/tmux/KEYBINDINGS.md) |
 | LeftWM keybindings | [private_dot_config/leftwm/KEYBINDINGS.md](private_dot_config/leftwm/KEYBINDINGS.md) |
-| KMonad keybindings | [private_dot_config/kmonad/KEYBINDINGS.md](private_dot_config/kmonad/KEYBINDINGS.md) |
+| Kanata keybindings | [private_dot_config/kanata/KEYBINDINGS.md](private_dot_config/kanata/KEYBINDINGS.md) |
 
 ## Common Commands
 

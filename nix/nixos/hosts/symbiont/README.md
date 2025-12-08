@@ -306,7 +306,7 @@ Machine features for WSL:
 
 - `machineType = "wsl"`
 - `desktop = false`
-- `kmonad = false`
+- `kanata = false`
 - `audio = false`
 - `bluetooth = false`
 - `wsl = true`

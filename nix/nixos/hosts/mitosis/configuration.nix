@@ -16,7 +16,7 @@
   services.xserver.enable = false;
 
   # Disable desktop-specific services
-  services.kmonad.enable = lib.mkForce false;
+  services.kanata.enable = lib.mkForce false;
   programs.kdeconnect.enable = lib.mkForce false;
   hardware.bluetooth.enable = lib.mkForce false;
   services.blueman.enable = lib.mkForce false;

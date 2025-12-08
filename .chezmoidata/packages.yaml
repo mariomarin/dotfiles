@@ -36,6 +36,8 @@ packages:
             - ahmetb.kubectx
             # System utilities
             - topgrade-rs.topgrade
+            # Keyboard remapping
+            - jtroo.kanata
             # GUI applications
             - Microsoft.VisualStudioCode
             - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)

@@ -165,6 +165,43 @@ properties:
       settings:
         id: topgrade-rs.topgrade
         source: winget
+    # Keyboard remapping
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Kanata
+        allowPrerelease: true
+      settings:
+        id: jtroo.kanata
+        source: winget
+    # Kanata scheduled task (run at startup)
+    - resource: PSDscResources/Script
+      directives:
+        description: Create Kanata scheduled task
+        dependsOn:
+          - Install Kanata
+      settings:
+        GetScript: |
+          $task = Get-ScheduledTask -TaskName 'Kanata' -ErrorAction SilentlyContinue
+          @{ Result = if ($task) { 'Present' } else { 'Absent' } }
+        TestScript: |
+          $task = Get-ScheduledTask -TaskName 'Kanata' -ErrorAction SilentlyContinue
+          return ($null -ne $task)
+        SetScript: |
+          $kanataPath = (Get-Command kanata -ErrorAction SilentlyContinue).Source
+          if (-not $kanataPath) {
+            Write-Warning "Kanata not found in PATH. Skipping task creation."
+            return
+          }
+          $configPath = "$env:USERPROFILE\.config\kanata\windows.kbd"
+          if (-not (Test-Path $configPath)) {
+            Write-Warning "Kanata config not found at: $configPath"
+            return
+          }
+          $action = New-ScheduledTaskAction -Execute $kanataPath -Argument "--cfg `"$configPath`""
+          $trigger = New-ScheduledTaskTrigger -AtLogOn
+          $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Highest
+          $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
+          Register-ScheduledTask -TaskName 'Kanata' -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Description 'Kanata keyboard remapping service' -Force | Out-Null
     # GUI applications
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:

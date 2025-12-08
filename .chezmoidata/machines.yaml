@@ -13,7 +13,7 @@ machines:
             bluetooth: true
             x11: true
             physical_keyboard: true
-            kmonad: true
+            kanata: true
         services:
             - syncthing
             - kdeconnect
@@ -29,7 +29,7 @@ machines:
             bluetooth: false
             x11: false
             physical_keyboard: false
-            kmonad: false
+            kanata: false
         services:
             - syncthing # Still useful for file sync
     # symbiont - NixOS on WSL (two systems coexisting)
@@ -43,7 +43,7 @@ machines:
             bluetooth: false
             x11: false
             physical_keyboard: false
-            kmonad: false
+            kanata: false
             wsl: true
         services: []
     # malus - macOS workstation (apple genus)
@@ -57,7 +57,7 @@ machines:
             bluetooth: true
             x11: false # macOS uses native window system
             physical_keyboard: true
-            kmonad: false # KMonad not typically used on macOS
+            kanata: true
         services:
             - syncthing
     # prion - Native Windows workstation (self-replicating protein)
@@ -71,7 +71,7 @@ machines:
             bluetooth: true
             x11: false
             physical_keyboard: true
-            kmonad: false
+            kanata: true
         services: []
     # spore - M365 DevBox cloud Windows environment (dormant cell ready to grow)
     spore:
@@ -84,7 +84,7 @@ machines:
             bluetooth: false
             x11: false
             physical_keyboard: false
-            kmonad: false
+            kanata: true # Enable for cloud desktop via RDP
         services: []
 # Default machine type if no match found
 default:
@@ -95,5 +95,5 @@ default:
         bluetooth: false
         x11: false
         physical_keyboard: false
-        kmonad: false
+        kanata: false
     services: []

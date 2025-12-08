@@ -136,7 +136,7 @@ systemctl --user enable battery-combined-udev.service
 | Syncthing | `services/syncthing.nix` | File synchronization |
 | Rclone | `services.nix` | Cloud storage mounts |
 | Polkit Agent | `services.nix` | Authentication dialogs |
-| KMonad | `services/kmonad.nix` | Keyboard remapping |
+| Kanata | `services/kanata.nix` | Keyboard remapping |
 
 ### Managed by Chezmoi Scripts
 

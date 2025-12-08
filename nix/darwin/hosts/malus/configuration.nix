@@ -17,6 +17,7 @@ in
     ../../../common/modules/development.nix # Shared development tools
     ../../modules/packages.nix # macOS-specific packages
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
+    ../../modules/kanata.nix # Kanata keyboard remapping service
   ];
 
   # Copy applications instead of symlinking to make Spotlight happy

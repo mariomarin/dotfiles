@@ -60,8 +60,6 @@ devenv.yaml
 .config/zsh/**
 .config/autorandr
 .config/autorandr/**
-.config/kmonad
-.config/kmonad/**
 .config/leftwm
 .config/leftwm/**
 .config/picom

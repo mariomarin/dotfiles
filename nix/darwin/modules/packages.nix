@@ -4,6 +4,7 @@
 
 {
   environment.systemPackages = with pkgs; [
-    # macOS-specific packages (if any)
+    # Keyboard remapping
+    kanata
   ];
 }

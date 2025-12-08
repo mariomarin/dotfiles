@@ -26,7 +26,7 @@
   };
 
   # Enable all desktop-related services
-  services.kmonad.enable = true;
+  services.kanata.enable = true;
   programs.kdeconnect.enable = true;
 
   # Audio

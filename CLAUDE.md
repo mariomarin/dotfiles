@@ -252,7 +252,7 @@ configurations across different machines.
 
 - Which configuration files are applied (desktop vs headless)
 - Which scripts run (via `.chezmoiignore` patterns)
-- Machine-specific features (audio, bluetooth, kmonad, etc.)
+- Machine-specific features (audio, bluetooth, kanata, etc.)
 
 **Implementation:** Users create `~/.config/chezmoi/chezmoi.toml` manually:
 
@@ -268,7 +268,7 @@ hostname = "prion"  # or spore, dendrite, mitosis, etc.
 
 | Hostname | Platform | Type | Description |
 | -------- | -------- | ---- | ----------- |
-| **dendrite** | NixOS | Laptop | ThinkPad T470 portable workstation (desktop with KMonad) |
+| **dendrite** | NixOS | Laptop | ThinkPad T470 portable workstation (desktop with Kanata) |
 | **mitosis** | NixOS | VM | Virtual machine for testing (headless server) |
 | **symbiont** | NixOS-WSL | WSL | NixOS on Windows Subsystem for Linux (headless) |
 | **malus** | macOS | Desktop | macOS workstation |
@@ -303,7 +303,7 @@ After hostname is selected/loaded:
 - `{{ .machineConfig.hostname }}` - Selected hostname
 - `{{ .machineConfig.type }}` - Machine type (laptop/server/wsl/desktop/cloud)
 - `{{ .machineConfig.features.desktop }}` - Boolean: has GUI
-- `{{ .machineConfig.features.kmonad }}` - Boolean: uses KMonad
+- `{{ .machineConfig.features.kanata }}` - Boolean: uses Kanata
 - `{{ .machineConfig.features.audio }}` - Boolean: has audio
 - `{{ .machineConfig.features.bluetooth }}` - Boolean: has bluetooth
 

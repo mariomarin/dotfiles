@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./services/kmonad.nix
+    ./services/kanata.nix
   ];
   # Fingerprint sensor
   services.fprintd.enable = true;
