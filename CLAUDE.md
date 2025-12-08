@@ -246,23 +246,21 @@ configurations across different machines.
 
 ## Machine Configuration and Hostname Selection
 
-### Manual Hostname Configuration
+### Automatic Hostname Detection
 
-**CRITICAL**: Before running `chezmoi init`, users must create a minimal config file with their hostname. This determines:
+Hostname is automatically detected from:
 
+1. **HOSTNAME environment variable** (if set)
+2. **System hostname** (`.chezmoi.hostname`)
+
+This determines:
 - Which configuration files are applied (desktop vs headless)
 - Which scripts run (via `.chezmoiignore` patterns)
 - Machine-specific features (audio, bluetooth, kanata, etc.)
 
-**Implementation:** Users create `~/.config/chezmoi/chezmoi.toml` manually:
-
-```toml
-[bitwarden]
-command = "bw"
-
-[data]
-hostname = "prion"  # or spore, dendrite, mitosis, etc.
-```
+**To override:** Set environment variable before running `chezmoi init`:
+- Unix/macOS: `export HOSTNAME="malus"`
+- Windows: `$env:HOSTNAME = "prion"`
 
 **Available Hostnames:**
 
@@ -277,10 +275,9 @@ hostname = "prion"  # or spore, dendrite, mitosis, etc.
 
 ### How It Works
 
-1. **Setup**: User creates `~/.config/chezmoi/chezmoi.toml` with hostname
-2. **Init**: User runs `chezmoi init` (reads hostname from config)
-3. **Template processing**: `.chezmoi.toml.tmpl` reads hostname via `{{ .hostname | default .chezmoi.hostname }}`
-4. **Application**: chezmoi applies appropriate configs based on hostname
+1. **Init**: User runs `chezmoi init` (or sets HOSTNAME env var to override)
+2. **Template processing**: `.chezmoi.toml.tmpl` reads hostname via `{{ env "HOSTNAME" | default .chezmoi.hostname }}`
+3. **Application**: chezmoi applies appropriate configs based on detected/overridden hostname
 
 ### Machine Detection Logic (`.chezmoi.toml.tmpl`)
 
@@ -321,9 +318,9 @@ After hostname is selected/loaded:
 
 **User reports wrong configuration applied:**
 
-1. Check selected hostname: `chezmoi data | grep hostname`
+1. Check detected hostname: `chezmoi data | grep hostname`
 2. Check if it matches expected machine in `machines.yaml`
-3. If wrong, user must re-init or edit `~/.config/chezmoi/chezmoi.toml` manually
+3. If wrong, set `HOSTNAME` env var and re-init: `export HOSTNAME="correct-name" && chezmoi init --force`
 
 **Bootstrap didn't run:**
 

@@ -63,28 +63,12 @@ iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
 
 ### Setup (Windows)
 
-Before initializing chezmoi, create a minimal configuration file:
-
 ```powershell
-# 1. Create config directory
-mkdir -Force ~/.config/chezmoi
-
-# 2. Create minimal config file
-@"
-[bitwarden]
-command = "bw"
-
-[data]
-hostname = "prion"
-"@ | Set-Content ~/.config/chezmoi/chezmoi.toml
-```
-
-> **Note:** Replace `"prion"` with your machine's hostname. Available machines are defined in `.chezmoidata/machines.yaml`
-
-```powershell
-# 3. Initialize dotfiles
+# Initialize dotfiles
 chezmoi init https://github.com/mariomarin/dotfiles.git
 ```
+
+> **Note:** The hostname is detected automatically from your system or the `HOSTNAME` environment variable. To override, set `$env:HOSTNAME = "prion"` before running `chezmoi init`.
 
 **Continue with setup:**
 
@@ -172,23 +156,7 @@ cd ~/.local/share/chezmoi/nix/nixos
 
 ### Setup (NixOS)
 
-Before initializing chezmoi, create a minimal configuration file:
-
-```bash
-# 1. Create config directory
-mkdir -p ~/.config/chezmoi
-
-# 2. Create minimal config file
-cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
-[bitwarden]
-command = "bw"
-
-[data]
-hostname = "dendrite"
-EOF
-```
-
-> **Note:** Replace `"dendrite"` with your machine's hostname. Available machines are defined in `.chezmoidata/machines.yaml`
+> **Note:** The hostname is detected automatically from your system or the `HOSTNAME` environment variable. To override, set `export HOSTNAME="dendrite"` before running `chezmoi init`.
 
 ### Apply Configuration (NixOS)
 
@@ -250,23 +218,7 @@ nix-shell .install/shell.nix
 
 ### Setup (macOS)
 
-Before initializing chezmoi, create a minimal configuration file:
-
-```bash
-# 1. Create config directory
-mkdir -p ~/.config/chezmoi
-
-# 2. Create minimal config file
-cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
-[bitwarden]
-command = "bw"
-
-[data]
-hostname = "malus"
-EOF
-```
-
-> **Note:** Replace `"malus"` with your machine's hostname. Available machines are defined in `.chezmoidata/machines.yaml`
+> **Note:** The hostname is detected automatically from your system or the `HOSTNAME` environment variable. To override, set `export HOSTNAME="malus"` before running `chezmoi init`.
 
 ### What Happens Automatically (macOS)
 
