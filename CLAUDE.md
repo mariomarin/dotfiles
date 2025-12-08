@@ -279,10 +279,7 @@ hostname = "prion"  # or spore, dendrite, mitosis, etc.
 
 1. **Setup**: User creates `~/.config/chezmoi/chezmoi.toml` with hostname
 2. **Init**: User runs `chezmoi init` (reads hostname from config)
-3. **Template processing**: `.chezmoi.toml.tmpl` reads hostname with priority:
-   - First: `.hostname` from config file
-   - Second: `HOSTNAME` environment variable
-   - Last: `.chezmoi.hostname` (system hostname)
+3. **Template processing**: `.chezmoi.toml.tmpl` reads hostname via `{{ .hostname | default .chezmoi.hostname }}`
 4. **Application**: chezmoi applies appropriate configs based on hostname
 
 ### Machine Detection Logic (`.chezmoi.toml.tmpl`)
