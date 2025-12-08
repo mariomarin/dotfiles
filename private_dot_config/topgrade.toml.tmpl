@@ -62,14 +62,25 @@ cleanup = true
 [post_commands]
 # Add and commit updated lock files to chezmoi after updates
 "Commit Neovim plugin updates" = """
-if [ -f ~/.config/nvim/lazy-lock.json ]; then
-    chezmoi add ~/.config/nvim/lazy-lock.json && \
-    cd $(chezmoi source-path) && \
-    if git diff --staged --name-only private_dot_config/nvim/lazy-lock.json | grep -q . || git diff --name-only private_dot_config/nvim/lazy-lock.json | grep -q .; then
-        git add private_dot_config/nvim/lazy-lock.json && \
-        git commit -m 'chore(nvim): update lazy-lock.json' || true
-    fi
+# Check if lazy-lock.json exists
+if [ ! -f ~/.config/nvim/lazy-lock.json ]; then
+    exit 0
 fi
+
+# Add to chezmoi and navigate to source directory
+chezmoi add ~/.config/nvim/lazy-lock.json
+cd $(chezmoi source-path)
+
+# Check if the file has changes (staged or unstaged)
+if git diff --staged --quiet private_dot_config/nvim/lazy-lock.json && \
+   git diff --quiet private_dot_config/nvim/lazy-lock.json; then
+    # No changes, nothing to commit
+    exit 0
+fi
+
+# Commit the changes
+git add private_dot_config/nvim/lazy-lock.json
+git commit -m 'chore(nvim): update lazy-lock.json' || true
 """
 {{- end }}
 
