@@ -8,7 +8,7 @@
       ProgramArguments = [
         "${pkgs.kanata}/bin/kanata"
         "--cfg"
-        "${config.users.users.mario.home}/.config/kanata/darwin.kbd"
+        "/Users/${config.system.primaryUser}/.config/kanata/darwin.kbd"
       ];
       RunAtLoad = true;
       KeepAlive = true;
