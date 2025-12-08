@@ -6,6 +6,7 @@
 disable = [
 {{- if ne .chezmoi.os "windows" }}
   "system",     # System update (NixOS uses flakes, not channels)
+  "nix",        # Determinate Nix doesn't support upgrade-nix
 {{- end }}
   "chezmoi",    # Run via just command instead of built-in
   "containers", # Docker/Podman containers
@@ -62,18 +63,22 @@ cleanup = true
 [post_commands]
 # Add and commit updated lock files to chezmoi after updates
 "Commit Neovim plugin updates" = """
+set -e  # Exit on error
+
 # Check if lazy-lock.json exists
 if [ ! -f ~/.config/nvim/lazy-lock.json ]; then
     exit 0
 fi
 
-# Add to chezmoi and navigate to source directory
-chezmoi add ~/.config/nvim/lazy-lock.json
-cd $(chezmoi source-path)
+# Add to chezmoi (force overwrite to avoid prompts)
+chezmoi add --force ~/.config/nvim/lazy-lock.json || exit 0
+
+# Navigate to source directory
+cd $(chezmoi source-path) || exit 0
 
 # Check if the file has changes (staged or unstaged)
-if git diff --staged --quiet private_dot_config/nvim/lazy-lock.json && \
-   git diff --quiet private_dot_config/nvim/lazy-lock.json; then
+if git diff --staged --quiet private_dot_config/nvim/lazy-lock.json 2>/dev/null && \
+   git diff --quiet private_dot_config/nvim/lazy-lock.json 2>/dev/null; then
     # No changes, nothing to commit
     exit 0
 fi
