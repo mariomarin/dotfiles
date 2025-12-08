@@ -11,7 +11,7 @@ def "main unlock" [] {
         if ($session_token | is-not-empty) {
             # Test if session is valid
             let status = try {
-                do -i { BW_SESSION=$session_token bw status } | from json | get status
+                with-env {BW_SESSION: $session_token} { bw status } | from json | get status
             } catch {
                 "invalid"
             }

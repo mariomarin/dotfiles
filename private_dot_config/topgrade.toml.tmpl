@@ -33,15 +33,24 @@ cleanup = true
 
 # Custom commands to run at specific times
 [pre_commands]
-# Commands to run before updates
+# Load BW_SESSION from .env.local if it exists (for chezmoi templates)
+"Load Bitwarden session" = """
+if [ -f $(chezmoi source-path)/.env.local ]; then
+    export $(grep '^BW_SESSION=' $(chezmoi source-path)/.env.local)
+fi
+"""
 
 {{- if ne .chezmoi.os "windows" }}
 
 [commands]
 # Update tmux plugins via TPM
 "Tmux Plugins" = "~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
-# Update NixOS with flakes
+# Update Nix system configuration with flakes (OS-specific)
+{{- if eq .chezmoi.os "darwin" }}
+"NixOS Flake" = "cd $(chezmoi source-path) && sudo just darwin"
+{{- else }}
 "NixOS Flake" = "cd $(chezmoi source-path) && just nixos"
+{{- end }}
 
 [post_commands]
 # Add and commit updated lock files to chezmoi after updates
