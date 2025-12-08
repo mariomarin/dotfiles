@@ -32,15 +32,13 @@ assume_yes = false
 cleanup = true
 
 # Custom commands to run at specific times
-{{- if ne .chezmoi.os "windows" }}
-
 [pre_commands]
 # Load BW_SESSION from .env.local if it exists (for chezmoi templates)
 "Load Bitwarden session" = """
-if [ -f $(chezmoi source-path)/.env.local ]; then
-    export $(grep '^BW_SESSION=' $(chezmoi source-path)/.env.local)
-fi
+nu -c 'cd (chezmoi source-path); if (".env.local" | path exists) { let line = (open .env.local | lines | where $it starts-with "BW_SESSION=" | first); if ($line | is-not-empty) { $env.BW_SESSION = ($line | split row "=" | last) } }'
 """
+
+{{- if ne .chezmoi.os "windows" }}
 
 [commands]
 # Update tmux plugins via TPM
@@ -87,27 +85,9 @@ dnf_arguments = "--refresh"
 
 {{- if eq .chezmoi.os "windows" }}
 
-[pre_commands]
-# Load BW_SESSION from .env.local if it exists (for chezmoi templates)
-"Load Bitwarden session" = """
-$envFile = "$(chezmoi source-path)\.env.local"
-if (Test-Path $envFile) {
-    $content = Get-Content $envFile | Select-String '^BW_SESSION='
-    if ($content) {
-        $session = $content.Line -replace '^BW_SESSION=',''
-        $env:BW_SESSION = $session
-    }
-}
-"""
-
 [commands]
 # Apply winget configuration (packages and settings)
-"Winget Configuration" = """
-$configFile = "$env:USERPROFILE\.config\winget\configuration.dsc.yaml"
-if (Test-Path $configFile) {
-    winget configure --file $configFile --accept-configuration-agreements
-}
-"""
+"Winget Configuration" = "winget configure --file $env:USERPROFILE\\.config\\winget\\configuration.dsc.yaml --accept-configuration-agreements"
 
 [windows]
 # Accept all prompts
