@@ -1,365 +1,143 @@
 # Installation Scripts
 
-Bootstrap scripts for setting up dotfiles on new machines.
+Bootstrap scripts for first-time setup on new machines.
 
-## Bootstrap Philosophy
+## Quick Start
 
-**Separation of concerns:**
+| Platform | Prerequisites | Setup Command |
+|----------|--------------|---------------|
+| **Windows** | Git, chezmoi | `chezmoi init https://github.com/mariomarin/dotfiles.git` |
+| **macOS** | Nix | `nix-shell .install/shell.nix` → `chezmoi init` |
+| **NixOS** | git, chezmoi | `chezmoi init` |
 
-1. **Manual Prerequisites** (you install):
-   - **Nix** (macOS/Linux) - Package manager for development tools
-   - **Git** (Windows only) - For cloning repository
+> **Hostname override:** Set `HOSTNAME` env var before init: `export HOSTNAME="malus"` (Unix) or `$env:HOSTNAME = "prion"` (Windows)
 
-2. **Bootstrap Environment** (nix-shell provides on Unix):
-   - chezmoi, just, yq, Bitwarden CLI, Nushell, devenv, git
-   - All dependencies in one isolated environment via `.install/shell.nix`
+## Platform-Specific Setup
 
-3. **Windows Bootstrap** (script installs via winget):
-   - chezmoi, just, yq, Bitwarden CLI, Nushell
-   - Auto-installs winget if not present
+### Windows
 
-4. **System Packages** (managed by system configuration):
-   - **NixOS**: `configuration.nix` and `nixos-rebuild`
-   - **macOS**: nix-darwin configuration
-   - **Windows**: winget packages in `.chezmoidata/packages.yaml`
-
-**Key concept**: Unix uses nix-shell for reproducible bootstrap environment. Windows uses winget for
-declarative package installation.
-
-## Windows Setup
-
-**IMPORTANT:**
-
-- **Use PowerShell** (not cmd.exe) for all Windows commands
-- winget is required for Windows setup. If you encounter issues with winget not being found,
-  see [Windows: winget not found](#windows-winget-not-found) troubleshooting section.
-
-### Manual Prerequisites (Windows)
-
-Since winget may not be available on a fresh Windows install, use these prerequisite-free installers:
-
-#### Step 1: Install Git
-
-**Option 1:** Download installer from [git-scm.com](https://git-scm.com/download/win)
-
-**Option 2:** If winget is available: `winget install Git.Git`
-
-#### Step 2: Install chezmoi
+**Prerequisites:**
 
 ```powershell
-# PowerShell one-liner (no prerequisites needed)
+# Install Git: https://git-scm.com/download/win
+# Install chezmoi
 iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
 ```
 
-**Alternative:** Download from [chezmoi releases](https://github.com/twpayne/chezmoi/releases)
-
-#### Step 3: Restart PowerShell
+**Setup:**
 
 ```powershell
-# Close and reopen PowerShell to refresh PATH
-```
-
-> **Note:** The bootstrap script will auto-install winget, Nushell, and Bitwarden CLI on first run.
-
-### Setup (Windows)
-
-```powershell
-# Initialize dotfiles
+# Initialize (auto-installs winget, nushell, bitwarden-cli)
 chezmoi init https://github.com/mariomarin/dotfiles.git
-```
 
-> **Note:** The hostname is detected automatically from your system or the `HOSTNAME` environment variable. To override, set `$env:HOSTNAME = "prion"` before running `chezmoi init`.
+# Restart PowerShell if nushell was just installed
 
-**Continue with setup:**
-
-```powershell
-# ⚠️  IMPORTANT: If Nushell was just installed, restart PowerShell before continuing
-#              (the bootstrap will warn you if this is required)
-
-# Login to Bitwarden
+# Login and apply
 bw login
-
-# Unlock and set session (PowerShell syntax)
 $env:BW_SESSION = bw unlock --raw
-
-# Apply configuration
 chezmoi apply -v
 ```
 
-**If using cmd.exe instead of PowerShell:**
+**Bootstrap installs:** winget, nushell, bitwarden-cli
+**Packages managed by:** winget DSC (`just windows-configure`)
 
-```cmd
-REM Login to Bitwarden
-bw login
+### macOS
 
-REM Unlock vault (copy the output token)
-bw unlock --raw
-
-REM Set session (paste the token from above)
-set BW_SESSION=your-session-token-here
-
-REM Apply configuration
-chezmoi apply -v
-```
-
-### What Happens Automatically (Windows)
-
-1. **Bootstrap** (`bootstrap-windows.ps1` pre-hook):
-   - Installs/registers winget via [winget-install script](https://github.com/asheroto/winget-install) (if not found)
-   - Installs winget dependencies (VCLibs, UI.Xaml)
-   - Configures PATH with literal `%LOCALAPPDATA%`
-   - Installs Nushell via winget
-   - Installs Bitwarden CLI via winget
-
-2. **Declarative Packages** (`run_onchange_windows-install-packages.nu` script):
-   - Installs packages from `.chezmoidata/packages.yaml`
-   - Includes: just, neovim, git, and more
-
-## NixOS Setup
-
-### Manual Prerequisites (NixOS)
-
-#### Option 1: Use bootstrap shell (Recommended for first-time setup)
+**Prerequisites:**
 
 ```bash
-# Clone repository
-nix-shell -p git --run "git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi"
-
-# Enter bootstrap environment (provides nushell, bitwarden-cli, git, chezmoi)
-cd ~/.local/share/chezmoi
-nix-shell .install/shell.nix
-```
-
-#### Option 2: Install system-wide (Recommended for permanent setup)
-
-Add to `/etc/nixos/configuration.nix`:
-
-```nix
-environment.systemPackages = with pkgs; [
-  nushell
-  bitwarden-cli
-  git
-  chezmoi
-];
-```
-
-Then apply:
-
-```bash
-# Rebuild NixOS configuration
-sudo nixos-rebuild switch
-
-# Clone repository
-git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
-cd ~/.local/share/chezmoi/nix/nixos
-```
-
-### Setup (NixOS)
-
-> **Note:** The hostname is detected automatically from your system or the `HOSTNAME` environment variable. To override, set `export HOSTNAME="dendrite"` before running `chezmoi init`.
-
-### Apply Configuration (NixOS)
-
-```bash
-# From within the nix-shell environment
-
-# Initialize chezmoi
-chezmoi init
-
-# Login to Bitwarden
-bw login
-export BW_SESSION=$(bw unlock --raw)
-
-# Apply dotfiles
-chezmoi apply -v
-
-# Apply NixOS configuration (sets hostname and installs chezmoi, just, and all packages permanently)
-cd nix/nixos
-sudo nixos-rebuild switch --flake .#dendrite  # or .#mitosis, .#symbiont
-
-# Verify hostname was set correctly
-hostname  # Should output: dendrite (or mitosis/symbiont)
-```
-
-**Future updates:** `just nixos` (chezmoi and just now installed via NixOS configuration)
-
-### What Happens Automatically (NixOS)
-
-1. **Bootstrap** (`bootstrap-unix.sh`):
-   - Verifies NixOS
-   - Clones repository
-   - Enters nix-shell with chezmoi, just, yq, Bitwarden CLI
-   - Prompts for Bitwarden login and unlocks vault
-   - Prompts for hostname selection
-   - Initializes chezmoi
-   - **Automatically runs `just nixos/first-time`** to apply system configuration
-
-2. **NixOS Configuration** (`just nixos/first-time` → `nixos-rebuild switch`):
-   - Sets hostname via `networking.hostName`
-   - Installs ALL system packages: neovim, git, development tools, etc.
-   - Enables system services
-   - Configures boot loader, networking, users
-
-## macOS Setup
-
-### Manual Prerequisites (macOS)
-
-```bash
-# Install Nix (if not already installed)
+# Install Nix
 curl -sfL https://install.determinate.systems/nix | sh -s -- install
 
-# Clone dotfiles
+# Clone and enter bootstrap shell
 git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
-
-# Enter bootstrap shell (provides nushell, bitwarden-cli, git, chezmoi)
 nix-shell .install/shell.nix
 ```
 
-### Setup (macOS)
+**Setup:**
 
-> **Note:** The hostname is detected automatically from your system or the `HOSTNAME` environment variable. To override, set `export HOSTNAME="malus"` before running `chezmoi init`.
+```bash
+# Initialize and apply
+chezmoi init
+bw login
+export BW_SESSION=$(bw unlock --raw)
+chezmoi apply -v
 
-### What Happens Automatically (macOS)
+# Apply system configuration (installs all packages)
+just darwin-first-time
+```
 
-With the automated bootstrap, you don't need to run these commands manually:
+**Bootstrap provides:** chezmoi, just, nushell, bitwarden-cli (via nix-shell)
+**Packages managed by:** nix-darwin (`just darwin`)
 
-1. **Bootstrap** (`bootstrap-unix.sh`):
-   - Installs Nix (if not present)
-   - Clones repository
-   - Enters nix-shell with chezmoi, just, yq, Bitwarden CLI
-   - Prompts for Bitwarden login and unlocks vault
-   - Prompts for hostname selection
-   - Initializes chezmoi
-   - **Automatically runs `just darwin/first-time`** to apply nix-darwin configuration
+### NixOS
 
-2. **nix-darwin Configuration** (`just darwin/first-time`):
-   - Installs ALL system packages permanently: just, neovim, git, etc.
-   - Configures Homebrew casks for GUI apps (only when not in nixpkgs)
-   - Sets macOS system defaults
-   - Installs fonts
+**Prerequisites:**
 
-**Future updates:** `just darwin` (just now installed via nix-darwin)
+```bash
+# Option 1: Bootstrap shell (first-time)
+nix-shell -p git --run "git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi"
+cd ~/.local/share/chezmoi
+nix-shell .install/shell.nix
+
+# Option 2: System packages (permanent)
+# Add to /etc/nixos/configuration.nix: nushell, bitwarden-cli, git, chezmoi
+sudo nixos-rebuild switch
+```
+
+**Setup:**
+
+```bash
+# Initialize and apply
+chezmoi init
+bw login
+export BW_SESSION=$(bw unlock --raw)
+chezmoi apply -v
+
+# Apply system configuration
+cd nix/nixos
+sudo nixos-rebuild switch --flake .#dendrite  # or .#mitosis, .#symbiont
+```
+
+**Bootstrap provides:** chezmoi, just, nushell, bitwarden-cli (via nix-shell)
+**Packages managed by:** NixOS configuration (`just nixos`)
+
+## How It Works
+
+1. **Bootstrap** (pre-hook): Installs minimal tools needed for templates
+2. **chezmoi init**: Reads hostname (from `HOSTNAME` env or system), clones dotfiles
+3. **chezmoi apply**: Processes templates, applies dotfiles, runs scripts
+4. **System config**: Installs all packages declaratively (nix-darwin/NixOS/winget)
 
 ## Supported Platforms
 
-This configuration **only supports**:
-
-- ✅ **NixOS** (Linux with declarative system management)
-- ✅ **macOS** (via nix-darwin)
 - ✅ **Windows** (via winget)
-
-### Other Linux Distributions
-
-❌ **Not supported**. If you're on Debian, Ubuntu, Arch, Fedora, etc.:
-
-- **Option 1**: Install NixOS directly (recommended)
-- **Option 2**: Use NixOS via WSL on Windows (see symbiont host)
-- **Option 3**: Install Nix via [Determinate Systems installer](https://github.com/DeterminateSystems/nix-installer)
-  (untested - may work for package management)
-- **Option 4**: Create your own dotfiles configuration for your distro
-
-The bootstrap script will fail on non-NixOS Linux systems. Option 3 may allow you to use Nix package management on your
-existing distribution, but this configuration is untested outside of NixOS.
-
-## Repository Structure
-
-```text
-.install/
-├── README.md                  # This file (installation guide)
-├── bootstrap-unix.sh          # Unix/macOS/NixOS bootstrap (chezmoi pre-hook)
-└── bootstrap-windows.ps1      # Windows bootstrap (chezmoi pre-hook)
-```
-
-## Bootstrap Scripts
-
-Bootstrap scripts are chezmoi pre-hooks that run automatically **before** reading source state when you execute
-`chezmoi init` or `chezmoi apply`. See platform-specific sections above for what each bootstrap script does.
+- ✅ **macOS** (via nix-darwin)
+- ✅ **NixOS** (via nixos-rebuild)
+- ❌ **Other Linux** (not supported - install NixOS or use NixOS-WSL)
 
 ## Troubleshooting
 
-### Windows: Execution Policy Error
+**Windows: winget not found**
+- Bootstrap auto-installs via [asheroto/winget-install](https://github.com/asheroto/winget-install)
+- Manual: `irm https://get.winget.run | iex`
 
+**Windows: Execution policy error**
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
 ```
 
-### Windows: winget not found
-
-> **Note:** The bootstrap script now automatically installs winget using the
-> [asheroto/winget-install](https://github.com/asheroto/winget-install) script. This handles all edge cases
-> including dependencies, PATH setup, and different Windows versions.
-
-#### What the bootstrap does automatically
-
-The bootstrap script uses the [asheroto/winget-install](https://github.com/asheroto/winget-install) script:
-
-- Detects if winget is already installed (checks multiple locations)
-- Installs required dependencies (VCLibs, UI.Xaml)
-- Registers App Installer package
-- Handles different Windows versions (10/11, Server 2019, Server Core)
-- Uses literal `%LOCALAPPDATA%` in PATH (prevents issues with profile changes)
-- Works without Microsoft Store access
-- Refreshes PATH in current session
-
-If installation fails, the bootstrap provides manual installation options.
-
-#### Manual installation (if bootstrap fails)
-
-If the automatic setup fails, you can install winget manually:
-
-##### Option 1: Run winget-install directly (Recommended)
-
-```powershell
-irm https://get.winget.run | iex
-```
-
-##### Option 2: Install from Microsoft Store
-
-1. Open Microsoft Store app
-2. Search for "App Installer"
-3. Click Install
-4. Restart PowerShell
-
-##### Option 3: Download manually
-
-Download the latest `.msixbundle` from:
-
-- Official Microsoft: <https://aka.ms/getwinget>
-- GitHub releases: <https://github.com/microsoft/winget-cli/releases>
-
-##### Option 4: Install Git and chezmoi without winget
-
-- Git: <https://git-scm.com/download/win>
-- chezmoi: <https://github.com/twpayne/chezmoi/releases>
-
-Then run `chezmoi init` - the bootstrap will install winget for package management.
-
-### NixOS: Bootstrap fails "bitwarden-cli not found"
-
-Install it system-wide first:
-
+**NixOS: bitwarden-cli not found**
 ```bash
 nix-env -iA nixos.bitwarden-cli
-# Or add to configuration.nix
 ```
 
-### macOS: Bootstrap fails
-
-Bootstrap requires `curl` (pre-installed on macOS). If Nix installation fails, try installing manually:
-
+**macOS: Nix installation fails**
 ```bash
 curl -sfL https://install.determinate.systems/nix | sh -s -- install
 ```
 
-### Other Linux: Not supported
-
-This configuration only supports NixOS on Linux. For other distributions:
-
-- Install NixOS directly, or
-- Use NixOS via WSL on Windows, or
-- Create your own dotfiles configuration
-
 ## Security Note
 
-Always review scripts before running them. Bootstrap scripts are minimal and only install what templates need.
+Review scripts before running. Bootstrap only installs what templates require.
