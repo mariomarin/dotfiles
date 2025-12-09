@@ -15,13 +15,13 @@
 )
 
 (defalias
-  cap (tap-hold 200 200 esc lctl)
-  lspc (tap-hold 200 200 \( lsft)
-  rspc (tap-hold 200 200 \) rsft)
-  lapc (tap-hold 200 200 < lalt)
-  rapc (tap-hold 200 200 > @nav)
-  hyper (tap-hold 200 200 tab (multi lctl lmet lalt))
   nav (layer-toggle navigation)
+  cap (tap-hold 200 200 esc lctl)
+  lspc (tap-hold 200 200 S-9 lsft)
+  rspc (tap-hold 200 200 S-0 rsft)
+  lapc (tap-hold 200 200 S-, lalt)
+  rapc (tap-hold 200 200 S-. @nav)
+  hyper (tap-hold 200 200 tab (multi lctl lmet lalt))
 )
 
 (deflayer base
