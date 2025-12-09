@@ -8,6 +8,7 @@
     # Only apps not available in nixpkgs or better via homebrew on macOS
     casks = [
       "firefox" # Better macOS integration via homebrew
+      "karabiner-elements" # Includes DriverKit VirtualHIDDevice for kanata
       "windows-app" # Microsoft Windows App (Remote Desktop)
     ];
   };
