@@ -30,7 +30,7 @@ hostname = {{ .machineConfig.hostname | quote }}
 type = {{ .machineConfig.type | quote }}
 
 [data.machineConfig.features]
-desktop = {{ .machineConfig.features.desktop }}
-kanata = {{ .machineConfig.features.kanata }}
-audio = {{ .machineConfig.features.audio }}
-bluetooth = {{ .machineConfig.features.bluetooth }}
+desktop = {{ .machineConfig.features.desktop | default false }}
+kanata = {{ if hasKey .machineConfig.features "kanata" }}{{ .machineConfig.features.kanata }}{{ else }}false{{ end }}
+audio = {{ .machineConfig.features.audio | default false }}
+bluetooth = {{ .machineConfig.features.bluetooth | default false }}

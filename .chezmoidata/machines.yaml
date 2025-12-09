@@ -2,98 +2,98 @@
 # This file defines different machine types and their capabilities
 # Biology-themed naming convention for all hosts
 machines:
-    # dendrite - ThinkPad T470 portable workstation (branches like dendrites)
-    dendrite:
-        type: laptop
-        platform: nixos
-        hostname: dendrite
-        features:
-            desktop: true
-            audio: true
-            bluetooth: true
-            x11: true
-            physical_keyboard: true
-            kanata: true
-        services:
-            - syncthing
-            - kdeconnect
-            - autostart_apps
-    # mitosis - Virtual machine for testing/replication (cell division)
-    mitosis:
-        type: server
-        platform: nixos
-        hostname: mitosis
-        features:
-            desktop: false
-            audio: false
-            bluetooth: false
-            x11: false
-            physical_keyboard: false
-            kanata: false
-        services:
-            - syncthing # Still useful for file sync
-    # symbiont - NixOS on WSL (two systems coexisting)
-    symbiont:
-        type: wsl
-        platform: nixos-wsl
-        hostname: symbiont
-        features:
-            desktop: false
-            audio: false
-            bluetooth: false
-            x11: false
-            physical_keyboard: false
-            kanata: false
-            wsl: true
-        services: []
-    # malus - macOS workstation (apple genus)
-    malus:
-        type: desktop
-        platform: darwin
-        hostname: malus
-        features:
-            desktop: true
-            audio: true
-            bluetooth: true
-            x11: false # macOS uses native window system
-            physical_keyboard: true
-            kanata: true
-        services:
-            - syncthing
-    # prion - Native Windows workstation (self-replicating protein)
-    prion:
-        type: desktop
-        platform: windows
-        hostname: prion
-        features:
-            desktop: true
-            audio: true
-            bluetooth: true
-            x11: false
-            physical_keyboard: true
-            kanata: true
-        services: []
-    # spore - M365 DevBox cloud Windows environment (dormant cell ready to grow)
-    spore:
-        type: cloud
-        platform: windows
-        hostname: spore
-        features:
-            desktop: true # Full Windows desktop via browser RDP
-            audio: false
-            bluetooth: false
-            x11: false
-            physical_keyboard: false
-            kanata: true # Enable for cloud desktop via RDP
-        services: []
+  # dendrite - ThinkPad T470 portable workstation (branches like dendrites)
+  dendrite:
+    type: laptop
+    platform: nixos
+    hostname: dendrite
+    features:
+      desktop: true
+      audio: true
+      bluetooth: true
+      x11: true
+      physical_keyboard: true
+      kanata: true
+    services:
+      - syncthing
+      - kdeconnect
+      - autostart_apps
+  # mitosis - Virtual machine for testing/replication (cell division)
+  mitosis:
+    type: server
+    platform: nixos
+    hostname: mitosis
+    features:
+      desktop: false
+      audio: false
+      bluetooth: false
+      x11: false
+      physical_keyboard: false
+      kanata: false
+    services:
+      - syncthing # Still useful for file sync
+  # symbiont - NixOS on WSL (two systems coexisting)
+  symbiont:
+    type: wsl
+    platform: nixos-wsl
+    hostname: symbiont
+    features:
+      desktop: false
+      audio: false
+      bluetooth: false
+      x11: false
+      physical_keyboard: false
+      kanata: false
+      wsl: true
+    services: []
+  # malus - macOS workstation (apple genus)
+  malus:
+    type: desktop
+    platform: darwin
+    hostname: malus
+    features:
+      desktop: true
+      audio: true
+      bluetooth: true
+      x11: false # macOS uses native window system
+      physical_keyboard: true
+      kanata: true
+    services:
+      - syncthing
+  # prion - Native Windows workstation (self-replicating protein)
+  prion:
+    type: desktop
+    platform: windows
+    hostname: prion
+    features:
+      desktop: true
+      audio: true
+      bluetooth: true
+      x11: false
+      physical_keyboard: true
+      kanata: true
+    services: []
+  # spore - M365 DevBox cloud Windows environment (dormant cell ready to grow)
+  spore:
+    type: cloud
+    platform: windows
+    hostname: spore
+    features:
+      desktop: true # Full Windows desktop via browser RDP
+      audio: false
+      bluetooth: false
+      x11: false
+      physical_keyboard: false
+      kanata: false # No kanata on DevBox
+    services: []
 # Default machine type if no match found
 default:
-    type: unknown
-    features:
-        desktop: false
-        audio: false
-        bluetooth: false
-        x11: false
-        physical_keyboard: false
-        kanata: false
-    services: []
+  type: unknown
+  features:
+    desktop: false
+    audio: false
+    bluetooth: false
+    x11: false
+    physical_keyboard: false
+    kanata: false
+  services: []
