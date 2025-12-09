@@ -254,11 +254,13 @@ Hostname is automatically detected from:
 2. **System hostname** (`.chezmoi.hostname`)
 
 This determines:
+
 - Which configuration files are applied (desktop vs headless)
 - Which scripts run (via `.chezmoiignore` patterns)
 - Machine-specific features (audio, bluetooth, kanata, etc.)
 
 **To override:** Set environment variable before running `chezmoi init`:
+
 - Unix/macOS: `export HOSTNAME="malus"`
 - Windows: `$env:HOSTNAME = "prion"`
 
@@ -689,6 +691,7 @@ This integration ensures AI assistants can't accidentally execute destructive co
 - **Make small, focused commits frequently** - Don't batch multiple unrelated changes
 - Follow conventional commit format with **SHORT** titles and descriptions
 - Keep commit messages concise: title under 50 chars, description under 72 chars per line
+- **No AI footers** - Do NOT add "Generated with Claude Code" or "Co-Authored-By: Claude" to commits
 - Use format: `type: brief description`
 - Examples:
   - `fix: resolve tmux keybinding conflict`
