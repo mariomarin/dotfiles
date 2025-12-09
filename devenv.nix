@@ -7,6 +7,9 @@
   # Enable dotenv support for loading .env file
   dotenv.enable = true;
 
+  # Disable cachix auto-management (nix.conf managed by Determinate Systems)
+  cachix.enable = false;
+
   packages = with pkgs; [
     # Nix formatting, linting, and LSP
     nixpkgs-fmt
