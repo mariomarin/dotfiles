@@ -1,46 +1,28 @@
 # Installation Scripts
 
-Bootstrap scripts for first-time dotfiles setup.
+One-line bootstrap for automated setup.
 
 ## Quick Start
 
-| Platform | Install | Initialize | Apply |
-|----------|---------|------------|-------|
-| **Windows** | [Git](https://git-scm.com/download/win) + `iex "&{$(irm 'https://get.chezmoi.io/ps1')}"` | `chezmoi init https://github.com/mariomarin/dotfiles.git` | `bw login && $env:BW_SESSION = bw unlock --raw && chezmoi apply -v` |
-| **macOS** | `curl -sfL https://install.determinate.systems/nix \| sh -s -- install` | `git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi && cd ~/.local/share/chezmoi && nix-shell .install/shell.nix` | `chezmoi init && bw login && export BW_SESSION=$(bw unlock --raw) && chezmoi apply -v && just darwin-first-time` |
-| **NixOS** | `nix-shell -p git --run "git clone https://github.com/mariomarin/dotfiles.git ~/.local/share/chezmoi"` | `cd ~/.local/share/chezmoi && nix-shell .install/shell.nix` | `chezmoi init && bw login && export BW_SESSION=$(bw unlock --raw) && chezmoi apply -v && cd nix/nixos && sudo nixos-rebuild switch --flake .#dendrite` |
+| Platform | Command |
+|----------|---------|
+| **macOS/NixOS** | `curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh \| sh` |
+| **Windows** | `irm https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-windows.ps1 \| iex` |
 
-> **Note:** Hostname auto-detected from system. Override: `export HOSTNAME="name"` (Unix) or `$env:HOSTNAME = "name"` (Windows)
+Bootstrap installs package managers, clones repo, prompts for hostname, sets up Bitwarden, and applies configuration. Override hostname: `export HOSTNAME="name"` (before running).
 
-## What Gets Installed
+## Secret Management
 
-**Bootstrap (automatic):**
-- Windows: winget, nushell, bitwarden-cli
-- macOS: nix, nushell, bitwarden-cli (via nix-shell)
-- NixOS: nushell, bitwarden-cli (via nix-shell)
-
-**System packages (via final just command):**
-- Windows: `just windows-configure` (winget DSC)
-- macOS: `just darwin` (nix-darwin)
-- NixOS: `just nixos` (nixos-rebuild)
+`just bw-setup` → saves session to `.env.local` → `just` auto-loads via `set dotenv-load` → chezmoi templates fetch secrets → topgrade validates session. No manual `export` needed
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| **Windows: winget not found** | Auto-installed by bootstrap via [asheroto/winget-install](https://github.com/asheroto/winget-install)<br>Manual: `irm https://get.winget.run \| iex` |
-| **Windows: Execution policy** | `Set-ExecutionPolicy Bypass -Scope Process -Force` |
-| **Windows: Restart required** | Restart PowerShell after bootstrap installs nushell |
-| **NixOS: bitwarden-cli missing** | `nix-env -iA nixos.bitwarden-cli` |
-| **macOS: Nix install fails** | `curl -sfL https://install.determinate.systems/nix \| sh -s -- install` |
+| **Execution policy (Windows)** | `Set-ExecutionPolicy Bypass -Scope Process -Force` |
+| **Restart required (Windows)** | Restart PowerShell after tools install |
+| **bitwarden-cli missing (NixOS)** | `nix-env -iA nixos.bitwarden-cli` |
 
-## Supported Platforms
+**Platforms:** Windows (winget DSC), macOS (nix-darwin), NixOS (nixos-rebuild). Other Linux not supported.
 
-- ✅ Windows (via winget)
-- ✅ macOS (via nix-darwin)
-- ✅ NixOS (via nixos-rebuild)
-- ❌ Other Linux (install NixOS or use NixOS-WSL)
-
-## Security
-
-Review scripts before running. Bootstrap installs only what templates require.
+**Security:** Review [bootstrap scripts](.install/) before running.

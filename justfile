@@ -11,6 +11,15 @@ set dotenv-load := true
 default: chezmoi-quick-apply
 
 # Bitwarden session management
+
+# Setup: login and unlock Bitwarden (first-time setup)
+bw-setup:
+    #!/usr/bin/env nu
+    print "🔐 Logging into Bitwarden..."
+    bw login
+    print "\n✅ Login successful. Unlocking vault..."
+    nu .scripts/bw.nu unlock
+
 bw-unlock:
     nu .scripts/bw.nu unlock
 
