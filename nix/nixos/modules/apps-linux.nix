@@ -16,10 +16,14 @@
       };
   };
 
+  # Enable Firefox with NixOS integration
+  programs.firefox.enable = true;
+
   # System packages (Linux-specific desktop apps)
-  # Common apps (alacritty, bitwarden, brave, firefox, gimp, obsidian, vscode, syncthing)
-  # are in common/modules/gui-apps.nix
+  # Common cross-platform apps are in common/modules/apps.nix
   environment.systemPackages = with pkgs; [
+    # Web browser (Linux-only in nixpkgs, macOS uses homebrew)
+    firefox
     # Linux Desktop Applications
     baobab # Disk usage analyzer with graphical interface
     gnome-disk-utility # Disk management utility

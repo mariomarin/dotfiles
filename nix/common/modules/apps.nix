@@ -1,9 +1,11 @@
 # Shared GUI applications for both NixOS and nix-darwin
+# NOTE: Do NOT use pkgs.stdenv.isLinux here - causes infinite recursion with overlays
+# Platform-specific packages go in apps-linux.nix (NixOS) or packages.nix (Darwin)
 { config, pkgs, lib, ... }:
 
 {
   environment.systemPackages = with pkgs; [
-    # Web Browsers (firefox via homebrew on darwin)
+    # Web Browsers
     brave
 
     # Terminal Emulators
@@ -19,15 +21,5 @@
 
     # File Sync
     syncthing
-  ] ++ lib.optionals pkgs.stdenv.isLinux [
-    # Linux-only: Firefox from nixpkgs
-    firefox
   ];
-
-  # NixOS-only option - use optionalAttrs to completely omit on Darwin
-  programs = lib.optionalAttrs pkgs.stdenv.isLinux {
-    firefox = {
-      enable = true;
-    };
-  };
 }
