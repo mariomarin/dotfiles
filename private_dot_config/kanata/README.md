@@ -128,6 +128,9 @@ tail /tmp/kanata.*.log /tmp/karabiner-*.log
 
 **Note**: The vhidmanager may show exit code 1 - this is normal if the extension was already activated.
 
+**Warning**: macOS dead keys (Option+e → e = é) do not work through kanata's virtual keyboard.
+Use macOS Input Sources or add `(unicode é)` aliases in your config for accented characters.
+
 ### Windows
 
 #### 1. Install Interception driver
