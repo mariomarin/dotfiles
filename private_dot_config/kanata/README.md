@@ -65,13 +65,36 @@ Kanata runs as a LaunchDaemon via nix-darwin with Karabiner-DriverKit-VirtualHID
 
 #### 1. First-time setup
 
-Activate the Karabiner driver extension (one-time, from `/Applications`):
+1. Activate Karabiner driver:
 
-```bash
-sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
-```
+   ```bash
+   MANAGER="/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app"
+   sudo "$MANAGER/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
+   ```
 
-Approve in **System Settings → Privacy & Security** when prompted.
+2. Approve system extension:
+
+   ```bash
+   open "x-apple.systempreferences:com.apple.LoginItems-Settings.extension"
+   ```
+
+   Enable the Karabiner extension when prompted.
+
+3. Add kanata to Accessibility:
+
+   ```bash
+   open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+   ```
+
+   Click `+`, press `Shift+Cmd+G`, enter `/run/current-system/sw/bin`, select `kanata`.
+
+4. Add kanata to Input Monitoring:
+
+   ```bash
+   open "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent"
+   ```
+
+   Same steps as Accessibility.
 
 #### 2. Rebuild nix-darwin
 
