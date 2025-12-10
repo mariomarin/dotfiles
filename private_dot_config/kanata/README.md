@@ -59,60 +59,51 @@ boot.kernelModules = [ "uinput" ];
 sudo nixos-rebuild switch
 ```
 
-### macOS
+### macOS (nix-darwin)
 
-#### 1. Install Kanata via nix-darwin
+Kanata runs as a LaunchDaemon via nix-darwin with Karabiner-DriverKit-VirtualHIDDevice.
 
-Kanata is included in the darwin packages. Rebuild your system:
+#### 1. First-time setup
+
+Activate the Karabiner driver extension (one-time, from `/Applications`):
+
+```bash
+sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
+```
+
+Approve in **System Settings → Privacy & Security** when prompted.
+
+#### 2. Rebuild nix-darwin
 
 ```bash
 just darwin
 ```
 
-#### 2. Install the driverkit extension
+This creates three LaunchDaemons:
 
-Kanata requires the Karabiner DriverKit VirtualHIDDevice:
+| Service                          | Purpose                       |
+| -------------------------------- | ----------------------------- |
+| `org.pqrs.karabiner-vhiddaemon`  | Virtual HID device (must run) |
+| `org.pqrs.karabiner-vhidmanager` | Driver activation (one-shot)  |
+| `org.nixos.kanata`               | Keyboard remapping            |
 
-```bash
-# Download and install Karabiner-Elements
-# This also installs the required DriverKit extension
-brew install --cask karabiner-elements
-
-# Approve the extension in System Settings > Privacy & Security
-# Then uninstall Karabiner-Elements if you only need the driver
-# brew uninstall --cask karabiner-elements
-```
-
-Or install just the driver:
+#### 3. Verify services
 
 ```bash
-# Clone Karabiner-DriverKit-VirtualHIDDevice
-git clone https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice.git
-cd Karabiner-DriverKit-VirtualHIDDevice
-
-# Build and install
-make install
-
-# Approve in System Settings > Privacy & Security
+sudo launchctl list | grep -E 'kanata|karabiner'
+tail /tmp/kanata.out.log
 ```
 
-#### 3. Find your keyboard device name
+#### 4. Logs and troubleshooting
 
 ```bash
-ioreg -c IOHIDKeyboard -r | grep -i "Product"
+# Check all logs
+tail /tmp/kanata.*.log /tmp/karabiner-*.log
+
+# Emergency exit (physical keys): lctl+spc+esc
 ```
 
-Update the `iokit-name` in `~/.config/kanata/darwin.kbd` if needed.
-
-#### 4. Run Kanata
-
-```bash
-# Test the configuration
-sudo kanata ~/.config/kanata/darwin.kbd
-
-# To run on startup, create a LaunchAgent (optional)
-# See: https://github.com/kanata/kanata/blob/master/doc/installation.md#macos
-```
+**Note**: The vhidmanager may show exit code 1 - this is normal if the extension was already activated.
 
 ### Windows
 

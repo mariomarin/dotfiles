@@ -6,5 +6,6 @@
   environment.systemPackages = with pkgs; [
     # Keyboard remapping
     kanata
+    karabiner-dk # DriverKit VirtualHIDDevice (driver-only, no full Karabiner-Elements)
   ];
 }

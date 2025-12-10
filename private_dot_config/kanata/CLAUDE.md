@@ -34,12 +34,47 @@ Kanata is available on all desktop platforms:
 - Uses `uinput` for input/output
 - Requires `input` and `uinput` groups
 
-### macOS (darwin)
+### macOS (nix-darwin)
 
-- Installed via nix-darwin (`nix/darwin/modules/packages.nix`)
-- Requires Karabiner DriverKit VirtualHIDDevice
-- Uses `iokit-name` for input, `kext` for output
-- Run manually or via LaunchAgent
+- Configured in `nix/darwin/modules/kanata.nix`
+- Packages in `nix/darwin/modules/packages.nix` (kanata, karabiner-dk)
+- Three LaunchDaemons: vhidmanager, vhiddaemon, kanata
+- Logs: `/tmp/kanata.*.log`, `/tmp/karabiner-*.log`
+
+**Architecture:**
+
+```text
+┌─────────────────────┐
+│  Physical Keyboard  │
+└──────────┬──────────┘
+           │
+┌──────────▼──────────┐
+│ Karabiner DriverKit │  (system extension, activated once)
+│   VirtualHIDDevice  │
+└──────────┬──────────┘
+           │
+┌──────────▼──────────┐
+│ karabiner-vhiddaemon│  (LaunchDaemon, runs continuously)
+│   creates socket    │
+└──────────┬──────────┘
+           │
+┌──────────▼──────────┐
+│       kanata        │  (LaunchDaemon, connects to socket)
+│  keyboard remapper  │
+└──────────┬──────────┘
+           │
+┌──────────▼──────────┐
+│  Virtual Keyboard   │  (output to macOS)
+└─────────────────────┘
+```
+
+**First-time setup requires manual activation:**
+
+```bash
+sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
+```
+
+This can't run from `/nix/store` - macOS requires `/Applications` for system extensions.
 
 ### Windows
 
@@ -78,18 +113,43 @@ Uses `low-level-hook` - no device path needed.
 
 ### Debugging
 
-Check service logs:
+**Linux:**
 
 ```bash
 journalctl -u kanata-laptop -f
 ```
 
+**macOS:**
+
+```bash
+# Check service status
+sudo launchctl list | grep -E 'kanata|karabiner'
+
+# View logs
+tail -f /tmp/kanata.out.log /tmp/kanata.err.log
+
+# Restart services
+sudo launchctl stop org.nixos.kanata && sudo launchctl start org.nixos.kanata
+```
+
 ## Important Notes
+
+**Linux:**
 
 - Kanata requires kernel module `uinput`
 - User must be in `input` and `uinput` groups
-- Disable conflicting services (e.g., interception-tools)
 - Device paths may vary between systems
+
+**macOS:**
+
+- Karabiner driver extension must be activated once from `/Applications`
+- Cannot activate from `/nix/store` (macOS security restriction)
+- Emergency exit: `lctl+spc+esc` (physical keys)
+- vhidmanager exit code 1 is normal after initial activation
+
+**General:**
+
+- Disable conflicting services (Karabiner-Elements, interception-tools)
 
 ## Related Documentation
 
