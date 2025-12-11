@@ -195,6 +195,16 @@
         pass_filenames = false;
         always_run = false;
       };
+
+      # Kanata config validation
+      kanata-check = {
+        enable = true;
+        name = "kanata-check";
+        entry = "kanata --check --cfg";
+        files = "\\.kbd$";
+        language = "system";
+        pass_filenames = true;
+      };
     };
   };
 }

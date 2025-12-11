@@ -69,6 +69,9 @@ in
   # Enable nix flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # Enable TouchID for sudo
+  security.pam.services.sudo_local.touchIdAuth = true;
+
   # macOS system defaults (to be configured)
   # system.defaults = {
   #   dock = {
