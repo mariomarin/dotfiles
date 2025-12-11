@@ -26,7 +26,6 @@
   lspc (tap-hold 200 200 S-9 lsft)      ;; LShift → (/Shift
   rspc (tap-hold 200 200 S-0 rsft)      ;; RShift → )/Shift
   lcpc (tap-hold 200 200 S-[ lctl)      ;; LCtrl → {/Ctrl
-  rcpc (tap-hold 200 200 S-] rctl)      ;; RCtrl → }/Ctrl
   hyper (tap-hold 200 200 tab (multi lctl lmet lalt))
 
   ;; º key: tap = º, hold = accent layer
@@ -39,7 +38,7 @@
   @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
   @lspc z    x    c    v    b    n    m    ,    .    /    @rspc
-  @lcpc lalt lmet           @nav           rmet ralt left down up   @rcpc
+  @lcpc lalt lmet           @nav           rmet ralt left down up   rght
 )
 
 ;; Navigation layer: hold Space
@@ -55,9 +54,9 @@
 ;; Accents layer: hold º key, press vowel
 (deflayer accents
   _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    (unicode ¡) (unicode ü) _  _  _  _  _  _  _  _    _    _    _
-  _    (unicode ¿) _  (unicode é) _  _  _  (unicode ú) (unicode í) (unicode ó) _  _  _  _
+  _    (unicode ¡) (unicode ü) _    _    _    _    _    _    _    _    _    _    _
+  _    (unicode ¿) _    (unicode é) _    _    _    (unicode ú) (unicode í) (unicode ó) _    _    _    _
   _    (unicode á) _    _    _    _    _    _    _    _    _    _    _
-  (unicode Ñ) _  _  _  _  _  (unicode ñ) _  _  _  _  (unicode Ü)
-  _    _    _    _              _              _    _    _    _    _    _
+  (unicode Ñ) _    _    _    _    _    (unicode ñ) _    _    _    _    (unicode Ü)
+  _    _    _              _              _    _    _    _    _    _
 )
