@@ -53,6 +53,7 @@
               };
               cf-vault = final.callPackage ./pkgs/cf-vault.nix { };
               tmux-harpoon = final.callPackage ./pkgs/tmux-harpoon.nix { };
+              bitbucket-cli = final.callPackage ./pkgs/bitbucket-cli.nix { };
             })
             claude-code-nix.overlays.default
           ];
@@ -137,6 +138,7 @@
                     config.allowUnfree = true;
                   };
                   tmux-harpoon = final.callPackage ./pkgs/tmux-harpoon.nix { };
+                  bitbucket-cli = final.callPackage ./pkgs/bitbucket-cli.nix { };
                 })
                 claude-code-nix.overlays.default
               ];

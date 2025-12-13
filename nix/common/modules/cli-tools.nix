@@ -50,6 +50,7 @@ in
       git
       git-lfs
       gh # GitHub CLI
+      bitbucket-cli # Bitbucket CLI (custom pkg)
       git-branchless
       lazygit # TUI for git
 
