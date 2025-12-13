@@ -28,11 +28,7 @@ bw-unlock:
 bw-reload:
     use ~/.config/nushell/modules/bitwarden; bitwarden reload
 
-# Cloudflare Quick Tunnels (no auth required for quick tunnels)
-
-# List active tunnels via Cloudflare API
-tunnel-list:
-    nu .scripts/cloudflare-tunnel.nu list
+# Cloudflare Quick Tunnels (temporary, anonymous, no auth required)
 
 # Start SSH tunnel (default port 22)
 tunnel-ssh PORT="22":

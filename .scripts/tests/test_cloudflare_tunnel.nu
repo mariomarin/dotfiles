@@ -9,14 +9,7 @@ def "test script parses" [] {
 
 def "test help output" [] {
     let help = nu $SCRIPT | str downcase
-    ["quick tunnels" "ssh" "http" "status" "stop" "list"]
+    ["quick" "ssh" "http" "status" "stop"]
     | each { |term| assert str contains $help $term }
-    | ignore
-}
-
-def "test help mentions env vars" [] {
-    let help = nu $SCRIPT
-    ["CF_ACCOUNT_ID" "CF_API_TOKEN"]
-    | each { |var| assert str contains $help $var }
     | ignore
 }

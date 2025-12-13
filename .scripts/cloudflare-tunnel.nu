@@ -3,35 +3,7 @@
 # Quick tunnels require no authentication
 
 const TUNNEL_LOG = "/tmp/cloudflared-tunnel.log"
-const CF_API = "https://api.cloudflare.com/client/v4"
 
-# List active tunnels via Cloudflare API
-def "main list" [] {
-    # Requires CF_ACCOUNT_ID and CF_API_TOKEN environment variables
-    let account_id = $env.CF_ACCOUNT_ID? | default ""
-    let api_token = $env.CF_API_TOKEN? | default ""
-
-    if ($account_id | is-empty) {
-        print "❌ CF_ACCOUNT_ID not set"
-        print "   Get it from: https://dash.cloudflare.com → Account ID"
-        return
-    }
-
-    if ($api_token | is-empty) {
-        print "❌ CF_API_TOKEN not set"
-        print "   Create one at: https://dash.cloudflare.com/profile/api-tokens"
-        print "   Required permission: Account > Cloudflare Tunnel > Read"
-        return
-    }
-
-    let response = http get $"($CF_API)/accounts/($account_id)/tunnels?is_deleted=false" --headers [Authorization $"Bearer ($api_token)"]
-
-    if ($response.success? | default false) {
-        $response.result | select id name status created_at | table
-    } else {
-        print $"❌ API error: ($response.errors)"
-    }
-}
 
 # Start quick tunnel (temporary, no DNS, no auth required)
 def "main quick" [
@@ -116,25 +88,17 @@ def "main http" [
 
 # Show help / default
 def main [] {
-    print "Cloudflare Quick Tunnels (no auth required)"
+    print "Cloudflare Quick Tunnels (temporary, anonymous, no auth required)"
     print ""
-    print "Quick tunnels (temporary, anonymous):"
-    print "  quick <service>       Start quick tunnel (default: ssh://localhost:22)"
+    print "Commands:"
+    print "  quick <service>       Start tunnel (default: ssh://localhost:22)"
     print "  ssh [--port 22]       SSH tunnel shortcut"
     print "  http <port>           HTTP tunnel shortcut"
     print "  status                Show running tunnel process"
     print "  stop                  Stop running tunnel"
     print ""
-    print "API access (requires env vars):"
-    print "  list                  List named tunnels via API"
-    print ""
-    print "Environment variables for API access:"
-    print "  CF_ACCOUNT_ID  → dash.cloudflare.com → Overview → Account ID (right sidebar)"
-    print "  CF_API_TOKEN   → dash.cloudflare.com/profile/api-tokens → Create Token"
-    print "                   Permission: Account > Cloudflare Tunnel > Read"
-    print ""
     print "Examples:"
-    print "  cloudflare-tunnel.nu ssh           # Quick SSH tunnel on port 22"
-    print "  cloudflare-tunnel.nu http 3000     # HTTP server on port 3000"
-    print "  cloudflare-tunnel.nu quick tcp://localhost:5432  # PostgreSQL"
+    print "  just tunnel-ssh                    # SSH on port 22"
+    print "  just tunnel-http 3000              # HTTP on port 3000"
+    print "  just tunnel-quick tcp://localhost:5432  # PostgreSQL"
 }
