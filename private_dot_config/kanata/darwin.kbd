@@ -31,10 +31,10 @@
   lcpc (tap-hold 200 200 S-[ lctl)      ;; LCtrl → {/Ctrl
   hyper (tap-hold 200 200 tab (multi lctl lmet lalt))
 
-  ;; Key below Esc: tap = passthrough, hold = accent layer
-  ;; grv for Kinesis `~, nubs for MacBook §±
-  accg (tap-hold 200 200 grv @acc)      ;; Kinesis: `~ key
-  accn (tap-hold 200 200 nubs @acc)     ;; MacBook: §± key
+  ;; Key below Esc: tap = `~ (grv), hold = accent layer
+  ;; Both keyboards output `~ on tap for consistency
+  accg (tap-hold 200 200 grv @acc)      ;; Kinesis: `~ → `~
+  accn (tap-hold 200 200 grv @acc)      ;; MacBook: §± → `~
 )
 
 (deflayer base
