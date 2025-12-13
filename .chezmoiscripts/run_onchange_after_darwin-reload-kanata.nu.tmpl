@@ -1,0 +1,16 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/usr/bin/env nu
+# Reload kanata when config changes (macOS)
+# darwin.kbd hash: {{ include "private_dot_config/kanata/darwin.kbd" | sha256sum }}
+
+print "Reloading kanata (macOS)..."
+
+if (do { sudo launchctl list | grep "org.nixos.kanata" } | complete).exit_code == 0 {
+    sudo launchctl stop org.nixos.kanata
+    sleep 1sec
+    sudo launchctl start org.nixos.kanata
+    print "Kanata reloaded"
+} else {
+    print "Kanata service not found, skipping"
+}
+{{- end }}
