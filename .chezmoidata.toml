@@ -4,5 +4,4 @@
 # To pin a specific version, uncomment and modify the relevant line.
 #
 [versions]
-bitbucketCli = "v0.16.0" # Bitbucket CLI
 # zimfw = "v1.18.0"       # Zim framework for Zsh
