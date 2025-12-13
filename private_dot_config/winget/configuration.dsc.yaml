@@ -187,11 +187,12 @@ properties:
           $task = Get-ScheduledTask -TaskName 'Kanata' -ErrorAction SilentlyContinue
           return ($null -ne $task)
         SetScript: |
-          $kanataPath = (Get-Command kanata -ErrorAction SilentlyContinue).Source
-          if (-not $kanataPath) {
+          $kanataCmd = Get-Command kanata -ErrorAction SilentlyContinue
+          if (-not $kanataCmd) {
             Write-Warning "Kanata not found in PATH. Skipping task creation."
             return
           }
+          $kanataPath = $kanataCmd.Source
           $configPath = "$env:USERPROFILE\.config\kanata\windows.kbd"
           if (-not (Test-Path $configPath)) {
             Write-Warning "Kanata config not found at: $configPath"
@@ -210,13 +211,6 @@ properties:
       settings:
         id: Microsoft.VisualStudioCode
         source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Windows App (Remote Desktop)
-        allowPrerelease: true
-      settings:
-        id: 9N1F85V9T8BN
-        source: msstore
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Kubernetes Lens
