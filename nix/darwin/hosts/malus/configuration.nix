@@ -72,6 +72,9 @@ in
   # Enable TouchID for sudo
   security.pam.services.sudo_local.touchIdAuth = true;
 
+  # Zsh configuration - disable global compinit (Zim handles it)
+  programs.zsh.enableGlobalCompInit = false;
+
   # macOS system defaults (to be configured)
   # system.defaults = {
   #   dock = {
