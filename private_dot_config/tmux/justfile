@@ -1,4 +1,5 @@
 # Tmux configuration management
+# Plugins managed by nix (see nix/common/modules/cli-tools.nix)
 
 set shell := ["nu", "-c"]
 
@@ -8,18 +9,6 @@ default: reload
 # Reload tmux configuration
 reload:
     tmux source-file ~/.config/tmux/tmux.conf ; tmux display-message "Config reloaded!"
-
-# Install TPM plugins
-plugins-install:
-    ~/.local/share/tmux/plugins/tpm/bin/install_plugins
-
-# Update TPM plugins
-plugins-update:
-    ~/.local/share/tmux/plugins/tpm/bin/update_plugins all
-
-# Clean unused plugins
-plugins-clean:
-    ~/.local/share/tmux/plugins/tpm/bin/clean_plugins
 
 # Show tmux status
 status:
@@ -47,12 +36,9 @@ health:
     print $"✓ Tmux version: ($version)"
     let config_exists = ("~/.config/tmux/tmux.conf" | path expand | path exists)
     print $"✓ Config file: (if $config_exists { 'exists' } else { '❌ missing' })"
-    let tpm_dir = ("~/.local/share/tmux/plugins/tpm" | path expand)
-    let tpm_installed = if ($tpm_dir | path exists) { "yes" } else { "❌ no" }
-    print $"✓ TPM installed: ($tpm_installed)"
-    let plugins_dir = ("~/.local/share/tmux/plugins" | path expand)
+    let plugins_dir = "/run/current-system/sw/share/tmux-plugins"
     let plugins = if ($plugins_dir | path exists) { (ls $plugins_dir | length) } else { 0 }
-    print $"✓ Plugins installed: ($plugins) plugins"
+    print $"✓ Nix plugins: ($plugins) installed"
     let server_result = (do { tmux list-sessions } | complete)
     let server_running = if $server_result.exit_code == 0 { "yes" } else { "no" }
     print $"✓ Server running: ($server_running)"

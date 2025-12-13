@@ -12,6 +12,7 @@ zmodule ${ZIM_CONFIG_FILE:h}/modules/claude-helpers
 ```
 
 Then run:
+
 ```bash
 zimfw install
 ```
@@ -25,18 +26,21 @@ zimfw install
   - Includes checkpointing and isolated execution
   
 - **`improve`** - Improve prompts for better AI understanding
+
   ```bash
   improve "help me fix this bug"
-  # Returns: "Debug and resolve the error in [specific file/function] by analyzing stack trace, identifying root cause, and implementing a fix with tests"
+  # Returns: "Debug and resolve the error by analyzing stack trace and implementing a fix"
   ```
 
 - **`popus`** - Run Opus model with clipboard content
+
   ```bash
   # Copy code to clipboard, then:
   popus "explain this code"
   ```
 
 - **`dopus`** - Run Opus with dangerous permissions skipped
+
   ```bash
   dopus "analyze this entire codebase"
   ```
@@ -47,6 +51,7 @@ zimfw install
 ### Workflow Functions
 
 - **`claude_chain`** - Generate git commits with Claude
+
   ```bash
   # Make changes, then:
   claude_chain
@@ -59,6 +64,7 @@ zimfw install
   ```
 
 - **`claudepool`** - Fun Deadpool personality mode
+
   ```bash
   claudepool "help me organize my tasks"
   # Get help with sarcastic commentary and chimichanga references
@@ -72,23 +78,27 @@ zimfw install
 ## Examples
 
 ### Container-based development
+
 ```bash
 cl "create a FastAPI server with user authentication"
 ```
 
 ### Improve your prompts
+
 ```bash
 improve "make a website"
-# Returns: "Create a responsive website with [specific requirements, tech stack, features] following modern web standards and accessibility guidelines"
+# Returns: "Create a responsive website with specific requirements and tech stack"
 ```
 
 ### Quick code analysis
+
 ```bash
 # Copy problematic code to clipboard
 popus "find the bug and suggest a fix"
 ```
 
 ### Workflow automation
+
 ```bash
 # After making changes
 claude_chain  # Auto-generates and commits with appropriate message

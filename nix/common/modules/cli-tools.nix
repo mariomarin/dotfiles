@@ -29,6 +29,19 @@ in
       tmux
       sesh # Smart session manager for tmux
 
+      # ── Tmux plugins ───────────────────────────────────────────────────
+      # Loaded from /run/current-system/sw/share/tmux-plugins/
+      tmuxPlugins.sensible # Sensible defaults
+      tmuxPlugins.yank # Clipboard integration
+      tmuxPlugins.resurrect # Session persistence
+      tmuxPlugins.continuum # Auto save/restore sessions
+      tmuxPlugins.fingers # Vimium-like copy/paste hints
+      tmuxPlugins.tilish # i3-like keybindings
+      tmuxPlugins.fuzzback # fzf scrollback search
+      tmuxPlugins.extrakto # Quick text selection
+      unstable.tmuxPlugins."minimal-tmux-status" # Minimal theme (not in darwin stable)
+      tmux-harpoon # Quick session/pane navigation (custom pkg)
+
       # ── Editor ──────────────────────────────────────────────────────────
       vim
       neovim

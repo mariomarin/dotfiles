@@ -4,9 +4,6 @@
 # set C-a as prefix
 set -g prefix C-a
 
-# Prevent Esc+key from triggering Alt/Meta bindings (important for vim in tmux)
-set -s escape-time 0
-
 # Mouse support.
 set-option -g mouse on
 

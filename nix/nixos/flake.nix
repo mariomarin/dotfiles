@@ -52,6 +52,7 @@
                 config.allowUnfree = true;
               };
               cf-vault = final.callPackage ./pkgs/cf-vault.nix { };
+              tmux-harpoon = final.callPackage ./pkgs/tmux-harpoon.nix { };
             })
             claude-code-nix.overlays.default
           ];
@@ -135,6 +136,7 @@
                     system = final.system;
                     config.allowUnfree = true;
                   };
+                  tmux-harpoon = final.callPackage ./pkgs/tmux-harpoon.nix { };
                 })
                 claude-code-nix.overlays.default
               ];

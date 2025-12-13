@@ -6,9 +6,7 @@ blur = true
 option_as_alt = "Both"
 
 [general]
-import = [
-    "~/.config/alacritty/themes/themes/ayu_light.toml"
-]
+import = ["~/.config/alacritty/themes/themes/ayu_light.toml"]
 
 # Instead of using: `alacritty --print-events`
 # https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping

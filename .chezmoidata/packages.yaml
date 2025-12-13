@@ -3,44 +3,44 @@
 # NixOS packages are managed via NixOS modules (nix/nixos/modules/*.nix)
 # macOS packages are managed via nix-darwin modules (nix/darwin/modules/*.nix)
 packages:
-    # Windows packages via winget
-    windows:
-        winget:
-            # Shell and terminal
-            - JanDeDobbeleer.OhMyPosh # PowerShell prompt framework
-            - Nushell.Nushell
-            - rsteube.Carapace # Universal completion framework
-            - Alacritty.Alacritty
-            # Editor
-            - Neovim.Neovim
-            # Version control
-            - Git.Git
-            - GitHub.cli # gh
-            # Search and text processing
-            - junegunn.fzf
-            - BurntSushi.ripgrep.MSVC # rg
-            - sharkdp.fd # fd
-            - jqlang.jq
-            # Modern CLI replacements
-            - sharkdp.bat
-            - eza-community.eza
-            - dandavison.delta
-            - ajeetdsouza.zoxide
-            # Development tools
-            - Casey.Just
-            - direnv.direnv
-            # Kubernetes tools
-            - Kubernetes.kubectl
-            - Microsoft.Azure.Kubelogin
-            - Kubernetes.krew
-            - ahmetb.kubectx
-            # System utilities
-            - topgrade-rs.topgrade
-            # Keyboard remapping
-            - jtroo.kanata
-            # GUI applications
-            - Microsoft.VisualStudioCode
-            - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)
-            - Mirantis.Lens # Kubernetes Lens
-            - Devolutions.RemoteDesktopManager
-            - Microsoft.AzureCLI
+  # Windows packages via winget
+  windows:
+    winget:
+      # Shell and terminal
+      - JanDeDobbeleer.OhMyPosh # PowerShell prompt framework
+      - Nushell.Nushell
+      - rsteube.Carapace # Universal completion framework
+      - Alacritty.Alacritty
+      # Editor
+      - Neovim.Neovim
+      # Version control
+      - Git.Git
+      - GitHub.cli # gh
+      # Search and text processing
+      - junegunn.fzf
+      - BurntSushi.ripgrep.MSVC # rg
+      - sharkdp.fd # fd
+      - jqlang.jq
+      # Modern CLI replacements
+      - sharkdp.bat
+      - eza-community.eza
+      - dandavison.delta
+      - ajeetdsouza.zoxide
+      # Development tools
+      - Casey.Just
+      - direnv.direnv
+      # Kubernetes tools
+      - Kubernetes.kubectl
+      - Microsoft.Azure.Kubelogin
+      - Kubernetes.krew
+      - ahmetb.kubectx
+      # System utilities
+      - topgrade-rs.topgrade
+      # Keyboard remapping
+      - jtroo.kanata
+      # GUI applications
+      - Microsoft.VisualStudioCode
+      - 9N1F85V9T8BN # Microsoft Windows App (Remote Desktop)
+      - Mirantis.Lens # Kubernetes Lens
+      - Devolutions.RemoteDesktopManager
+      - Microsoft.AzureCLI
