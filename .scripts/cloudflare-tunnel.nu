@@ -53,21 +53,10 @@ export def "tunnel quick" [
         ^cloudflared tunnel --url $service o+e> $TUNNEL_LOG &
         print $"📝 Tunnel running in background, logs: ($TUNNEL_LOG)"
     } else {
-        # Foreground - stream output and parse URL
-        print "⏳ Waiting for tunnel URL..."
-        ^cloudflared tunnel --url $service err> | lines | each { |line|
-            print $line
-
-            # Parse URL from stderr
-            let url_match = ($line | parse -r 'https://[a-z0-9-]+\.trycloudflare\.com')
-            if ($url_match | is-not-empty) {
-                let url = ($url_match | first | get capture0)
-                print ""
-                print $"✅ Tunnel URL: ($url)"
-                print $"   Service: ($service)"
-                print ""
-            }
-        }
+        # Foreground - run directly, cloudflared prints URL to stderr
+        print "⏳ Waiting for tunnel URL (look for trycloudflare.com)..."
+        print ""
+        ^cloudflared tunnel --url $service
     }
 }
 
