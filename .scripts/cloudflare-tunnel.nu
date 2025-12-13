@@ -50,7 +50,7 @@ export def "tunnel quick" [
 
     if $background {
         # Background mode - detach and log to file
-        ^cloudflared tunnel --url $service o+e>| tee $TUNNEL_LOG | complete
+        ^cloudflared tunnel --url $service o+e> $TUNNEL_LOG &
         print $"📝 Tunnel running in background, logs: ($TUNNEL_LOG)"
     } else {
         # Foreground - stream output and parse URL
