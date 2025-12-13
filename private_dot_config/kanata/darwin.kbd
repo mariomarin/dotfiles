@@ -56,12 +56,14 @@
   _    _    _              _              _    _    _    _    _    _
 )
 
-;; Accents layer: hold key below Esc, press vowel
+;; Accents layer: hold key below Esc, press key
+;; Vowels = acute (áéíóú), Shift positions = grave (àèìòù)
+;; Also: ñ, ü, ç, ß, ø, å, æ, œ, ¿, ¡
 (deflayer accents
   _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    (unicode ¡) (unicode ü) _    _    _    _    _    _    _    _    _    _    _
-  _    (unicode ¿) _    (unicode é) _    _    _    (unicode ú) (unicode í) (unicode ó) _    _    _    _
-  _    (unicode á) _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    (unicode ñ) _    _    _    _    _    _
+  _    (unicode ¡) (unicode ²) (unicode ³) _    _    _    _    _    (unicode ø) (unicode å) _    _    _
+  _    (unicode ¿) (unicode œ) (unicode é) _    _    _    (unicode ú) (unicode í) (unicode ó) _    _    _    _
+  _    (unicode á) (unicode ß) _    _    _    _    _    _    _    (unicode æ) (unicode ü) _
+  _    _    _    _    (unicode ç) _    (unicode ñ) _    (unicode µ) _    _    _    _
   _    _    _              _              _    _    _    _    _    _
 )
