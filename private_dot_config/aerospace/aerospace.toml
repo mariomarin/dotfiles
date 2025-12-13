@@ -1,7 +1,6 @@
 # AeroSpace - LeftWM/Omarchy-style keybindings
 # Reference: https://nikitabobko.github.io/AeroSpace/guide
 
-config-version = 2
 start-at-login = true
 
 # Mouse follows focus (like LeftWM sloppy_mouse_follows_focus)
