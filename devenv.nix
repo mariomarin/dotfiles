@@ -134,11 +134,11 @@
         ];
       };
 
-      # Nushell syntax checking
+      # Nushell syntax checking (source parses more strictly than --ide-check)
       nushell-check = {
         enable = true;
         name = "nushell-check";
-        entry = "nu --ide-check 0";
+        entry = "bash -c 'for f in \"$@\"; do nu -n -c \"source \\\"$f\\\"\"; done' _";
         files = "\\.nu$";
         language = "system";
         pass_filenames = true;
