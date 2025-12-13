@@ -129,8 +129,12 @@ dev:
     nu .scripts/dev.nu
 
 # Run all checks
-check: lint
+check: lint test-nu
     print "✅ All checks passed"
+
+# Run nushell tests
+test-nu:
+    nu .scripts/tests/run.nu
 
 # Health checks
 health: health-summary
