@@ -1,0 +1,4 @@
+{{- if and (eq .chezmoi.os "linux") (env "WSL_DISTRO_NAME") -}}
+{{- $winUser := output "cmd.exe" "/c" "echo %USERNAME%" | trim -}}
+/mnt/c/Users/{{ $winUser }}/.kube/config
+{{- end -}}
