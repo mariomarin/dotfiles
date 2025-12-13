@@ -1,7 +1,8 @@
+{{- if eq .chezmoi.os "windows" -}}
 #!/usr/bin/env nu
 # Install nushell plugins via nupm registry (Windows only)
 # NixOS/Darwin get plugins from nixpkgs (nushellPlugins.*)
-# Plugins list: ~/.config/nushell/plugins.nuon
+# plugins.nuon hash: {{ include "private_dot_config/nushell/plugins.nuon" | sha256sum }}
 
 let nupm_path = ($nu.home-path | path join '.local' 'share' 'nupm' 'nupm')
 let plugins_file = ($nu.home-path | path join '.config' 'nushell' 'plugins.nuon')
@@ -35,3 +36,4 @@ for plugin in $plugins {
 print ""
 print "✅ Plugin installation complete"
 print "   Run 'plugin list' to see registered plugins"
+{{- end }}
