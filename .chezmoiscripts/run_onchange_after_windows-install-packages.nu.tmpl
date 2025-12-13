@@ -1,6 +1,6 @@
+{{- if eq .chezmoi.os "windows" -}}
 #!/usr/bin/env nu
 # Install packages from winget configuration DSC file (Windows)
-# This script runs after files are applied, only when configuration changes
 # config hash: {{ include "private_dot_config/winget/configuration.dsc.yaml" | sha256sum }}
 
 # Check if winget is installed
@@ -9,6 +9,12 @@ if (which winget | is-empty) {
     exit 1
 }
 
-# Use just target for actual configuration
-cd {{ .chezmoi.sourceDir }}
-just windows-configure
+let config_file = ($env.USERPROFILE | path join ".config" "winget" "configuration.dsc.yaml")
+if not ($config_file | path exists) {
+    print $"❌ Config file not found: ($config_file)"
+    exit 1
+}
+
+print "📦 Applying winget configuration..."
+winget configure --file $config_file --accept-configuration-agreements
+{{- end }}
