@@ -7,6 +7,10 @@ vimfiles
 Session.vim
 .config/systemd/user/syncthing.service
 
+# Personal notes (not applied to home)
+etc-personal
+etc-personal/**
+
 # Development and repository files (not dotfiles)
 nix
 nix/**

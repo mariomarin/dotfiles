@@ -28,3 +28,6 @@ dot_git
 tmux/plugins
 !tmux/plugins/tpm
 !zim/modules/kube-gitster
+
+# Personal notes (not in repo, managed by chezmoi)
+etc-personal/
