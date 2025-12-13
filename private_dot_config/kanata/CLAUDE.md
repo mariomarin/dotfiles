@@ -9,9 +9,21 @@ private_dot_config/kanata/
 ├── CLAUDE.md        # This file - AI guidance
 ├── README.md        # User documentation
 ├── laptop.kbd       # Linux/NixOS configuration
-├── darwin.kbd       # macOS configuration
+├── darwin.kbd       # macOS configuration (ANSI Spanish LatAm)
 └── windows.kbd      # Windows configuration
 ```
+
+## Hardware Reference
+
+### macOS (malus) - MacBook Pro 13" M1 2020
+
+- **Physical layout**: ANSI (horizontal Enter, full-width left Shift)
+- **Language layout**: Spanish Latin American
+- **Key below Esc**: Backtick/tilde (`grv` in kanata), prints `<` `>` on Spanish LatAm
+- **Has Ñ key**: Yes (right of L)
+- **Touch Bar**: Yes
+
+**Important**: This is NOT an ISO keyboard. There is no `nubs` key (extra key next to left Shift).
 
 ## Configuration Philosophy
 

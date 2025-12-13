@@ -1,6 +1,6 @@
 ;; Kanata configuration for macOS
 ;; Space Cadet keys + Layer-based navigation and accents
-;; Physical keyboard: Spanish ISO (º key = nubs)
+;; Physical keyboard: ANSI Spanish Latin American (MacBook Pro 13" M1 2020)
 
 (defcfg
   process-unmapped-keys yes
@@ -9,7 +9,7 @@
 
 (defsrc
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
-  nubs 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
@@ -28,8 +28,8 @@
   lcpc (tap-hold 200 200 S-[ lctl)      ;; LCtrl → {/Ctrl
   hyper (tap-hold 200 200 tab (multi lctl lmet lalt))
 
-  ;; º key: tap = º, hold = accent layer
-  acck (tap-hold 200 200 nubs @acc)
+  ;; Backtick key: tap = ` (or < on Spanish LatAm), hold = accent layer
+  acck (tap-hold 200 200 grv @acc)
 )
 
 (deflayer base
