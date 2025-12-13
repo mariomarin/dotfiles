@@ -16,7 +16,6 @@ default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
 accordion-padding = 30
 
-# Gaps (adjust to taste)
 [gaps]
 inner.horizontal = 10
 inner.vertical = 10
@@ -25,42 +24,30 @@ outer.bottom = 10
 outer.top = 10
 outer.right = 10
 
-# =============================================================================
-# MAIN MODE - LeftWM/Omarchy style with Alt (Option) as modifier
-# =============================================================================
+# Main mode - Alt (Option) as modifier
 [mode.main.binding]
 
-# -----------------------------------------------------------------------------
-# Navigation - focus windows (LeftWM: Mod4+hjkl)
-# -----------------------------------------------------------------------------
+# Navigation (LeftWM: Mod4+hjkl)
 alt-h = 'focus left'
 alt-j = 'focus down'
 alt-k = 'focus up'
 alt-l = 'focus right'
-
-# Arrow key alternatives (Omarchy style)
 alt-left = 'focus left'
 alt-down = 'focus down'
 alt-up = 'focus up'
 alt-right = 'focus right'
 
-# -----------------------------------------------------------------------------
 # Move windows (LeftWM: Mod4+Shift+hjkl)
-# -----------------------------------------------------------------------------
 alt-shift-h = 'move left'
 alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
-
-# Arrow key alternatives
 alt-shift-left = 'move left'
 alt-shift-down = 'move down'
 alt-shift-up = 'move up'
 alt-shift-right = 'move right'
 
-# -----------------------------------------------------------------------------
-# Workspaces (LeftWM: Mod4+1-9, Omarchy: Super+1-9)
-# -----------------------------------------------------------------------------
+# Workspaces
 alt-1 = 'workspace 1'
 alt-2 = 'workspace 2'
 alt-3 = 'workspace 3'
@@ -71,7 +58,7 @@ alt-7 = 'workspace 7'
 alt-8 = 'workspace 8'
 alt-9 = 'workspace 9'
 
-# Move to workspace (LeftWM: Mod4+Shift+1-9)
+# Move to workspace
 alt-shift-1 = 'move-node-to-workspace 1'
 alt-shift-2 = 'move-node-to-workspace 2'
 alt-shift-3 = 'move-node-to-workspace 3'
@@ -82,44 +69,29 @@ alt-shift-7 = 'move-node-to-workspace 7'
 alt-shift-8 = 'move-node-to-workspace 8'
 alt-shift-9 = 'move-node-to-workspace 9'
 
-# Workspace navigation (LeftWM: Mod4+h/l for prev/next)
+# Workspace navigation
 alt-ctrl-h = 'workspace prev'
 alt-ctrl-l = 'workspace next'
 alt-tab = 'workspace-back-and-forth'
-
-# Move window to adjacent workspace (LeftWM: Mod4+Shift+,/.)
 alt-shift-comma = 'move-node-to-workspace prev --focus-follows-window'
 alt-shift-period = 'move-node-to-workspace next --focus-follows-window'
 
-# -----------------------------------------------------------------------------
-# Layouts (LeftWM: Mod4+Ctrl+j/k, Omarchy: Super+F/T)
-# -----------------------------------------------------------------------------
+# Layouts
 alt-f = 'fullscreen'
 alt-t = 'layout floating tiling'
 alt-ctrl-j = 'layout tiles horizontal vertical'
 alt-ctrl-k = 'layout accordion horizontal vertical'
-
-# Split orientation (like LeftWM NextLayout/PreviousLayout)
 alt-slash = 'layout tiles horizontal vertical'
-alt-comma = 'layout accordion horizontal vertical'
 
-# -----------------------------------------------------------------------------
 # Window management
-# -----------------------------------------------------------------------------
 alt-shift-q = 'close'
 alt-shift-enter = 'exec-and-forget open -na Alacritty'
 
-# -----------------------------------------------------------------------------
-# Resize mode (LeftWM: Mod4+Shift+Left/Right)
-# -----------------------------------------------------------------------------
+# Modes
 alt-r = 'mode resize'
-
-# Service mode (LeftWM: Mod4+Shift+r for reload)
 alt-shift-semicolon = 'mode service'
 
-# =============================================================================
-# RESIZE MODE
-# =============================================================================
+# Resize mode
 [mode.resize.binding]
 h = 'resize width -50'
 j = 'resize height +50'
@@ -134,18 +106,14 @@ equal = 'resize smart +50'
 enter = 'mode main'
 esc = 'mode main'
 
-# =============================================================================
-# SERVICE MODE (config reload, etc.)
-# =============================================================================
+# Service mode
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main']
 f = ['layout floating tiling', 'mode main']
 backspace = ['close-all-windows-but-current', 'mode main']
 
-# =============================================================================
-# FLOATING WINDOWS
-# =============================================================================
+# Float these apps by default
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
 run = 'layout floating'
