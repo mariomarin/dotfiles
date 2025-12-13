@@ -32,27 +32,27 @@ bw-reload:
 
 # List active tunnels via Cloudflare API
 tunnel-list:
-    nu .scripts/cloudflare-tunnel.nu tunnel list
+    nu .scripts/cloudflare-tunnel.nu list
 
 # Start SSH tunnel (default port 22)
 tunnel-ssh PORT="22":
-    nu .scripts/cloudflare-tunnel.nu tunnel ssh --port {{ PORT }}
+    nu .scripts/cloudflare-tunnel.nu ssh --port {{ PORT }}
 
 # Start HTTP tunnel
 tunnel-http PORT:
-    nu .scripts/cloudflare-tunnel.nu tunnel http {{ PORT }}
+    nu .scripts/cloudflare-tunnel.nu http {{ PORT }}
 
 # Start custom quick tunnel
 tunnel-quick SERVICE="ssh://localhost:22":
-    nu .scripts/cloudflare-tunnel.nu tunnel quick {{ SERVICE }}
+    nu .scripts/cloudflare-tunnel.nu quick {{ SERVICE }}
 
 # Show tunnel status
 tunnel-status:
-    nu .scripts/cloudflare-tunnel.nu tunnel status
+    nu .scripts/cloudflare-tunnel.nu status
 
 # Stop running tunnel
 tunnel-stop:
-    nu .scripts/cloudflare-tunnel.nu tunnel stop
+    nu .scripts/cloudflare-tunnel.nu stop
 
 # Krew plugin management
 

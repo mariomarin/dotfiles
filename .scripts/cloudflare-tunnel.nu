@@ -6,7 +6,7 @@ const TUNNEL_LOG = "/tmp/cloudflared-tunnel.log"
 const CF_API = "https://api.cloudflare.com/client/v4"
 
 # List active tunnels via Cloudflare API
-export def "tunnel list" [] {
+def "main list" [] {
     # Requires CF_ACCOUNT_ID and CF_API_TOKEN environment variables
     let account_id = $env.CF_ACCOUNT_ID? | default ""
     let api_token = $env.CF_API_TOKEN? | default ""
@@ -38,7 +38,7 @@ export def "tunnel list" [] {
 }
 
 # Start quick tunnel (temporary, no DNS, no auth required)
-export def "tunnel quick" [
+def "main quick" [
     service: string = "ssh://localhost:22"  # Service to expose
     --background                            # Run in background
 ] {
@@ -61,7 +61,7 @@ export def "tunnel quick" [
 }
 
 # Stop running tunnel
-export def "tunnel stop" [] {
+def "main stop" [] {
     print "🛑 Stopping cloudflared tunnel..."
 
     let pids = (ps | where name =~ cloudflared | get pid)
@@ -78,7 +78,7 @@ export def "tunnel stop" [] {
 }
 
 # Show tunnel status
-export def "tunnel status" [] {
+def "main status" [] {
     let running = (ps | where name =~ cloudflared)
 
     if ($running | is-empty) {
@@ -103,34 +103,34 @@ export def "tunnel status" [] {
 }
 
 # SSH service shortcut
-export def "tunnel ssh" [
+def "main ssh" [
     --port: int = 22              # SSH port
     --background                  # Run in background
 ] {
-    tunnel quick $"ssh://localhost:($port)" --background=$background
+    main quick $"ssh://localhost:($port)" --background=$background
 }
 
 # HTTP service shortcut
-export def "tunnel http" [
+def "main http" [
     port: int = 8080              # HTTP port
     --background                  # Run in background
 ] {
-    tunnel quick $"http://localhost:($port)" --background=$background
+    main quick $"http://localhost:($port)" --background=$background
 }
 
-# Show help
-export def "tunnel help" [] {
+# Show help / default
+def main [] {
     print "Cloudflare Quick Tunnels (no auth required)"
     print ""
     print "Quick tunnels (temporary, anonymous):"
-    print "  tunnel quick <service>    Start quick tunnel (default: ssh://localhost:22)"
-    print "  tunnel ssh [--port 22]    SSH tunnel shortcut"
-    print "  tunnel http <port>        HTTP tunnel shortcut"
-    print "  tunnel status             Show running tunnel process"
-    print "  tunnel stop               Stop running tunnel"
+    print "  quick <service>       Start quick tunnel (default: ssh://localhost:22)"
+    print "  ssh [--port 22]       SSH tunnel shortcut"
+    print "  http <port>           HTTP tunnel shortcut"
+    print "  status                Show running tunnel process"
+    print "  stop                  Stop running tunnel"
     print ""
     print "API access (requires env vars):"
-    print "  tunnel list               List named tunnels via API"
+    print "  list                  List named tunnels via API"
     print ""
     print "Environment variables for API access:"
     print "  CF_ACCOUNT_ID  → dash.cloudflare.com → Overview → Account ID (right sidebar)"
@@ -138,12 +138,7 @@ export def "tunnel help" [] {
     print "                   Permission: Account > Cloudflare Tunnel > Read"
     print ""
     print "Examples:"
-    print "  tunnel ssh                # Quick SSH tunnel on port 22"
-    print "  tunnel http 3000          # HTTP server on port 3000"
-    print "  tunnel quick tcp://localhost:5432  # PostgreSQL"
-}
-
-# Default
-def main [] {
-    tunnel help
+    print "  cloudflare-tunnel.nu ssh           # Quick SSH tunnel on port 22"
+    print "  cloudflare-tunnel.nu http 3000     # HTTP server on port 3000"
+    print "  cloudflare-tunnel.nu quick tcp://localhost:5432  # PostgreSQL"
 }
