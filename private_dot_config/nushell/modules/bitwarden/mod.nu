@@ -10,67 +10,55 @@ def store_session [session: string] {
     }
 }
 
-# Retrieve session from .env.local file
+# Retrieve session from .env.local file (returns null if not found)
 def get_stored_session [] {
-    try {
-        if (".env.local" | path exists) {
-            open .env.local | str replace "BW_SESSION=" "" | str trim
-        } else {
-            ""
-        }
-    } catch {
-        ""
-    }
+    if not (".env.local" | path exists) { return null }
+    let content = open .env.local | str trim
+    if ($content | is-empty) { return null }
+    $content | str replace "BW_SESSION=" "" | str trim
 }
 
 # Clear session from .env.local file
 def clear_stored_session [] {
-    try {
-        if (".env.local" | path exists) {
-            rm .env.local
-        }
-    } catch {
-        # Session already cleared
+    if (".env.local" | path exists) { rm .env.local }
+}
+
+# Get bw status safely (returns null on failure)
+def get-bw-status [session?: string] {
+    let result = if ($session | is-not-empty) {
+        do { BW_SESSION=$session bw status } | complete
+    } else {
+        do { bw status } | complete
     }
+    if $result.exit_code != 0 { return null }
+    $result.stdout | from json
 }
 
 # Unlock Bitwarden vault and save session token
 export def unlock [] {
     # Check for existing session in .env.local
-    let stored_session = (get_stored_session)
+    let stored_session = get_stored_session
 
     if ($stored_session | is-not-empty) {
-        # Test if session is valid
-        let status = try {
-            do -i { BW_SESSION=$stored_session bw status } | from json | get status
-        } catch {
-            "invalid"
-        }
-
-        if $status == "unlocked" {
+        let status = get-bw-status $stored_session
+        if ($status | is-not-empty) and $status.status == "unlocked" {
             print "✅ Valid session found in .env.local"
             $env.BW_SESSION = $stored_session
             return
-        } else {
-            print "ℹ️  Stored session expired, getting fresh session..."
-            clear_stored_session
         }
+        print "ℹ️  Stored session expired, getting fresh session..."
+        clear_stored_session
     }
 
-    let bw_status = try {
-        bw status | from json | get status
-    } catch {
-        "unauthenticated"
-    }
+    let status = get-bw-status
+    let bw_status = $status | get status? | default "unauthenticated"
 
     let bw_session = if $bw_status == "unlocked" {
-        # Vault is already unlocked, check if we have a session token
-        let current_session = ($env.BW_SESSION? | default "")
+        let current_session = $env.BW_SESSION? | default ""
         if ($current_session | is-not-empty) {
             print "✅ Vault is already unlocked, using existing session"
             $current_session
         } else {
-            # No session in environment, lock and unlock to get a fresh one
             print "🔒 Vault is unlocked but no session found, getting fresh session..."
             bw lock | ignore
             bw unlock --raw | str trim
@@ -83,10 +71,7 @@ export def unlock [] {
         exit 1
     }
 
-    # Store in .env.local
     store_session $bw_session
-
-    # Also set in current environment
     $env.BW_SESSION = $bw_session
 
     print "✅ Session saved to .env.local"
@@ -103,7 +88,7 @@ export def lock [] {
 
 # Load session from .env.local into environment
 export def reload [] {
-    let stored_session = (get_stored_session)
+    let stored_session = get_stored_session
 
     if ($stored_session | is-empty) {
         print "❌ No session found in .env.local"
@@ -111,14 +96,9 @@ export def reload [] {
         exit 1
     }
 
-    # Verify session is still valid
-    let status = try {
-        do -i { BW_SESSION=$stored_session bw status } | from json | get status
-    } catch {
-        "invalid"
-    }
+    let status = get-bw-status $stored_session
 
-    if $status == "unlocked" {
+    if ($status | is-not-empty) and $status.status == "unlocked" {
         $env.BW_SESSION = $stored_session
         print "✅ Session loaded from .env.local"
         print "✅ Vault is unlocked"
@@ -130,53 +110,34 @@ export def reload [] {
     }
 }
 
-# Get an item from Bitwarden
+# Get an item from Bitwarden (returns null if not found)
 export def "get item" [name: string] {
     if ($env.BW_SESSION? | default "" | is-empty) {
         print "❌ BW_SESSION not set. Run 'bitwarden unlock' first"
         exit 1
     }
 
-    try {
-        bw get item $name | from json
-    } catch {
-        error make {msg: $"Item '($name)' not found in Bitwarden"}
-    }
+    let result = do { bw get item $name } | complete
+    if $result.exit_code != 0 { return null }
+    $result.stdout | from json
 }
 
-# Get a field from a Bitwarden item
-export def "get field" [
-    item: string
-    field: string
-] {
-    let item_data = (get item $item)
+# Get a field from a Bitwarden item (returns null if not found)
+export def "get field" [item: string, field: string] {
+    let item_data = get item $item
+    if ($item_data | is-empty) { return null }
 
     # Try custom fields first
-    let custom_field = try {
-        $item_data.fields? | default [] | where name == $field | first | get value
-    } catch {
-        null
-    }
-
-    if ($custom_field | is-not-empty) {
-        return $custom_field
-    }
+    let custom_field = $item_data.fields? | default [] | where name == $field | get 0?.value?
+    if ($custom_field | is-not-empty) { return $custom_field }
 
     # Fall back to standard fields
-    try {
-        $item_data | get $field
-    } catch {
-        error make {msg: $"Field '($field)' not found in item '($item)'"}
-    }
+    $item_data | get $field?
 }
 
-# Check Bitwarden status
+# Check Bitwarden status (returns null on failure)
 export def status [] {
-    try {
-        bw status | from json
-    } catch {
-        error make {msg: "Failed to get Bitwarden status"}
-    }
+    get-bw-status
 }
 
 # Show help
