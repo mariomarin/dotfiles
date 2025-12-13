@@ -24,10 +24,10 @@ let plugins = open $plugins_file
 
 for plugin in $plugins {
     print $"  Installing ($plugin)..."
-    try {
-        ^nu -c $"use ($nupm_path); nupm install ($plugin)"
+    let result = do { ^nu -c $"use ($nupm_path); nupm install ($plugin)" } | complete
+    if $result.exit_code == 0 {
         print $"  ✓ ($plugin) installed"
-    } catch {
+    } else {
         print $"  ⚠️  Failed to install ($plugin)"
     }
 }

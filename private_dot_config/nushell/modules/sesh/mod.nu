@@ -11,19 +11,8 @@ export def "sesh sessions" [] {
         return
     }
 
-    # Use skim plugin if available, otherwise fall back to fzf
-    let session = if (which skim | is-not-empty) {
-        # Try using nu_plugin_skim if registered
-        try {
-            $sessions | skim
-        } catch {
-            # Fall back to external fzf
-            $sessions | str join "\n" | fzf --height 40% --reverse --border-label ' sesh ' --border --prompt '⚡  '
-        }
-    } else {
-        # Use external fzf
-        $sessions | str join "\n" | fzf --height 40% --reverse --border-label ' sesh ' --border --prompt '⚡  '
-    }
+    # Use fzf for fuzzy selection
+    let session = $sessions | str join "\n" | fzf --height 40% --reverse --border-label ' sesh ' --border --prompt '⚡  '
 
     if ($session | is-empty) {
         return

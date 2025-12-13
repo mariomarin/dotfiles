@@ -15,10 +15,10 @@ print "📦 Installing Nushell packages via nupm..."
 
 # Install from nupm registry
 print "  Installing nu-scripts (git, docker, kubernetes utilities)..."
-try {
-    ^nu -c $"use ($nupm_path); nupm install nu-scripts"
+let result = do { ^nu -c $"use ($nupm_path); nupm install nu-scripts" } | complete
+if $result.exit_code == 0 {
     print "  ✓ nu-scripts installed"
-} catch {
+} else {
     print "  ⚠️  Failed to install nu-scripts from registry"
 }
 
@@ -32,16 +32,17 @@ let local_modules = [
 for module in $local_modules {
     let module_path = ($modules_dir | path join $module)
 
-    if ($module_path | path exists) {
-        print $"  Installing ($module)..."
-        try {
-            ^nu -c $"use ($nupm_path); nupm install --path ($module_path) --force"
-            print $"  ✓ ($module) installed"
-        } catch {
-            print $"  ⚠️  Failed to install ($module)"
-        }
-    } else {
+    if not ($module_path | path exists) {
         print $"  ⚠️  Module not found: ($module_path)"
+        continue
+    }
+
+    print $"  Installing ($module)..."
+    let result = do { ^nu -c $"use ($nupm_path); nupm install --path ($module_path) --force" } | complete
+    if $result.exit_code == 0 {
+        print $"  ✓ ($module) installed"
+    } else {
+        print $"  ⚠️  Failed to install ($module)"
     }
 }
 

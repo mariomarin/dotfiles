@@ -25,11 +25,8 @@ export def wakatime-heartbeat [] {
     let project = if ('.wakatime-project' | path exists) {
         open .wakatime-project | lines | first
     } else {
-        try {
-            git rev-parse --show-toplevel | path basename
-        } catch {
-            'Terminal'
-        }
+        let result = do { git rev-parse --show-toplevel } | complete
+        if $result.exit_code == 0 { $result.stdout | str trim | path basename } else { 'Terminal' }
     }
 
     # Build offline flag
@@ -41,8 +38,6 @@ export def wakatime-heartbeat [] {
 
     let timeout = ($env | get -i WAKATIME_TIMEOUT | default '5')
 
-    # Send heartbeat in background
-    try {
-        ^$wakatime_bin --write --plugin 'nushell-wakatime/0.1.0' --entity-type app --entity $cmd --project $project --language sh --timeout $timeout $offline_flag o> /dev/null e> /dev/null &
-    }
+    # Send heartbeat in background (ignore errors)
+    do { ^$wakatime_bin --write --plugin 'nushell-wakatime/0.1.0' --entity-type app --entity $cmd --project $project --language sh --timeout $timeout $offline_flag o> /dev/null e> /dev/null & } | complete | ignore
 }

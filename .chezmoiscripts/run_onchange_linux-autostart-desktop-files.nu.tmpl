@@ -18,11 +18,8 @@ def create_autostart_link [source_file: string, target_name: string, add_delay: 
     }
 
     # Resolve the symlink to get the actual Nix store path
-    let resolved_path = try {
-        readlink -f $source_file | str trim
-    } catch {
-        ""
-    }
+    let result = do { readlink -f $source_file } | complete
+    let resolved_path = if $result.exit_code == 0 { $result.stdout | str trim } else { "" }
 
     if ($resolved_path | is-empty) or not ($resolved_path | path exists) {
         print $"Error: Could not resolve ($source_file) to a valid file"

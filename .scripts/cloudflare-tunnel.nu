@@ -9,15 +9,10 @@ const CF_API = "https://api.cloudflare.com/client/v4"
 export def "tunnel list" [
     --profile: string = "cloudflare"  # cf-vault profile name
 ] {
-    # Get account ID from cf-vault config or environment
-    let account_id = try {
-        $env.CF_ACCOUNT_ID?
-    } catch {
-        error make {msg: "CF_ACCOUNT_ID not set. Export it or add to cf-vault profile"}
-    }
-
+    # Get account ID from environment
+    let account_id = $env.CF_ACCOUNT_ID? | default ""
     if ($account_id | is-empty) {
-        error make {msg: "CF_ACCOUNT_ID not set"}
+        error make {msg: "CF_ACCOUNT_ID not set. Export it or add to cf-vault profile"}
     }
 
     # Query API via cf-vault

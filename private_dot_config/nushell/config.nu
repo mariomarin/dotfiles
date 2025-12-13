@@ -474,11 +474,7 @@ use ($nu.default-config-dir | path join 'modules' 'git-branchless-completions') 
 # Register clipboard plugin if installed via nupm
 let clipboard_plugin = ($nu.home-path | path join '.local' 'share' 'nupm' 'modules' 'nu_plugin_clipboard' 'target' 'release' 'nu_plugin_clipboard')
 if ($clipboard_plugin | path exists) {
-    try {
-        plugin add $clipboard_plugin
-    } catch {
-        # Plugin already registered or error - silently continue
-    }
+    do { plugin add $clipboard_plugin } | complete | ignore
 }
 
 # NixOS plugins are automatically registered via system PATH
