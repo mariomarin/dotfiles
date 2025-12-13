@@ -144,6 +144,16 @@
         pass_filenames = true;
       };
 
+      # Nushell tests (runs relevant tests for changed files)
+      nushell-test = {
+        enable = true;
+        name = "nushell-test";
+        entry = "nu .scripts/tests/run-for-files.nu";
+        files = "\\.nu$";
+        language = "system";
+        pass_filenames = true;
+      };
+
       # TOML formatting with taplo
       taplo = {
         enable = true;

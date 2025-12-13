@@ -132,7 +132,7 @@ export def "get field" [item: string, field: string] {
     if ($custom_field | is-not-empty) { return $custom_field }
 
     # Fall back to standard fields
-    $item_data | get $field?
+    $item_data | get -i $field
 }
 
 # Check Bitwarden status (returns null on failure)
