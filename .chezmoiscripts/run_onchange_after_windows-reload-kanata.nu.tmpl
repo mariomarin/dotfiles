@@ -5,23 +5,31 @@
 
 print "Reloading kanata (Windows)..."
 
-# Windows: kanata typically runs as a background process or scheduled task
-# Try to restart it via taskkill and starting again
+# Check if kanata is running
 let kanata_running = (do { tasklist | find "kanata" } | complete).exit_code == 0
 
 if $kanata_running {
     print "Stopping kanata..."
     taskkill /IM kanata.exe /F | ignore
     sleep 1sec
-    # Start kanata in background - adjust path as needed
-    let kanata_path = ($env.LOCALAPPDATA | path join "kanata" "kanata.exe")
-    let config_path = ($env.USERPROFILE | path join ".config" "kanata" "windows.kbd")
-    if ($kanata_path | path exists) {
-        print "Starting kanata..."
-        ^$kanata_path --cfg $config_path &
+
+    # Try to restart via scheduled task first (preferred method)
+    let task_exists = (do { schtasks /Query /TN "Kanata" } | complete).exit_code == 0
+    if $task_exists {
+        print "Starting kanata via scheduled task..."
+        schtasks /Run /TN "Kanata"
         print "Kanata reloaded"
     } else {
-        print "Kanata executable not found, skipping start"
+        # Fallback: start directly with conhost --headless
+        let kanata_path = ($env.LOCALAPPDATA | path join "kanata" "kanata.exe")
+        let config_path = ($env.USERPROFILE | path join ".config" "kanata" "windows.kbd")
+        if ($kanata_path | path exists) {
+            print "Starting kanata directly..."
+            conhost --headless $kanata_path --cfg $config_path
+            print "Kanata reloaded"
+        } else {
+            print "Kanata executable not found at ($kanata_path), skipping"
+        }
     }
 } else {
     print "Kanata not running, skipping"
