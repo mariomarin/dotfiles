@@ -1,43 +1,54 @@
 { config, pkgs, lib, ... }:
 
+let
+  isDesktop = config.custom.desktop.enable or false;
+in
 {
   imports = [
     ./services/kanata.nix
   ];
-  # Fingerprint sensor
-  services.fprintd.enable = true;
-  security.pam.services.login.fprintAuth = lib.mkForce true;
-  security.pam.services.xscreensaver.fprintAuth = true;
 
-  # File manager support
-  services.gvfs.enable = true;
-  services.tumbler.enable = true;
-
-  # Power management
-  services.upower.enable = true;
-
-  # Polkit authentication agent
-  systemd = {
-    user.services = {
-      polkit-gnome-authentication-agent-1 = {
-        description = "polkit-gnome-authentication-agent-1";
-        wantedBy = [ "graphical-session.target" ];
-        wants = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-          Restart = "on-failure";
-          RestartSec = 1;
-          TimeoutStopSec = 10;
-        };
-      };
-    };
+  # Syncthing - file synchronization (all hosts)
+  services.syncthing = {
+    enable = true;
+    user = "mario";
+    dataDir = "/home/mario";
+    configDir = "/home/mario/.config/syncthing";
   };
 
-  # Light control
-  programs.light.enable = true;
+  # Desktop-only services
+  config = lib.mkIf isDesktop {
+    # Fingerprint sensor
+    services.fprintd.enable = true;
+    security.pam.services.login.fprintAuth = lib.mkForce true;
+    security.pam.services.xscreensaver.fprintAuth = true;
 
-  # KDE Connect - Phone/computer integration
-  programs.kdeconnect.enable = true;
+    # File manager support
+    services.gvfs.enable = true;
+    services.tumbler.enable = true;
+
+    # Power management
+    services.upower.enable = true;
+
+    # Polkit authentication agent
+    systemd.user.services.polkit-gnome-authentication-agent-1 = {
+      description = "polkit-gnome-authentication-agent-1";
+      wantedBy = [ "graphical-session.target" ];
+      wants = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        Restart = "on-failure";
+        RestartSec = 1;
+        TimeoutStopSec = 10;
+      };
+    };
+
+    # Light control
+    programs.light.enable = true;
+
+    # KDE Connect - Phone/computer integration
+    programs.kdeconnect.enable = true;
+  };
 }

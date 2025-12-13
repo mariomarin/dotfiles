@@ -75,6 +75,19 @@ in
   # Zsh configuration - disable global compinit (Zim handles it)
   programs.zsh.enableGlobalCompInit = false;
 
+  # Syncthing - file synchronization
+  launchd.user.agents.syncthing = {
+    serviceConfig = {
+      Label = "org.syncthing.syncthing";
+      ProgramArguments = [ "${pkgs.syncthing}/bin/syncthing" "-no-browser" "-no-restart" ];
+      KeepAlive = true;
+      RunAtLoad = true;
+      ProcessType = "Background";
+      StandardOutPath = "/Users/mario/Library/Logs/syncthing.log";
+      StandardErrorPath = "/Users/mario/Library/Logs/syncthing.log";
+    };
+  };
+
   # macOS system defaults (to be configured)
   # system.defaults = {
   #   dock = {
