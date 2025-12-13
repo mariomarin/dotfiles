@@ -9,8 +9,7 @@ let config_path = ($env.USERPROFILE | path join ".config" "kanata" "windows.kbd"
 # Check if kanata executable exists
 if not ($kanata_path | path exists) {
     print $"⚠️  Kanata not found at ($kanata_path)"
-    print "Download from: https://github.com/jtroo/kanata/releases"
-    print $"Place kanata.exe in: ($env.LOCALAPPDATA | path join 'kanata')"
+    print "Run 'just windows-configure' to install via winget DSC configuration"
     exit 0
 }
 
