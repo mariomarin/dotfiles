@@ -12,18 +12,15 @@ buildGoModule rec {
     hash = "sha256-ZoPvqhxvmZ9UOnD00BUP8e859n40qLwlrTn6mU+5Qhw=";
   };
 
-  vendorHash = null; # Uses vendored dependencies
+  vendorHash = "sha256-KDJAe2Bl/tkI5W/fwWhzAJJGBwHqiGFT+7HxHvarB6Y=";
+
+  doCheck = false; # Tests require network/credentials
 
   ldflags = [
     "-s"
     "-w"
     "-X main.version=${version}"
   ];
-
-  # Binary is named 'bb'
-  postInstall = ''
-    mv $out/bin/bitbucket-cli $out/bin/bb
-  '';
 
   meta = with lib; {
     description = "Bitbucket CLI tool";
