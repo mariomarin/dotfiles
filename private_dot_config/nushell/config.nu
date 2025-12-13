@@ -213,6 +213,15 @@ $env.config.keybindings = [
         }
     }
 
+    # Ctrl+G - Sesh session selector (g = go to session)
+    {
+        name: sesh_sessions
+        modifier: control
+        keycode: char_g
+        mode: [vi_insert, vi_normal]
+        event: { send: ExecuteHostCommand cmd: "sesh sessions" }
+    }
+
     # -------------------------------------------------------------------------
     # NORMAL MODE BINDINGS
     # -------------------------------------------------------------------------

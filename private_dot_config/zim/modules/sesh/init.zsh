@@ -1,6 +1,9 @@
 # sesh - Smart session manager with tmux integration
 # This module provides keybindings and functions for sesh
 
+# Disable flow control (Ctrl+s/Ctrl+q) to free up Ctrl+s for sesh
+stty -ixon 2>/dev/null
+
 # Sesh session selector function
 # Uses functional middle ground approach with early returns
 sesh-sessions() {
@@ -25,7 +28,7 @@ sesh-sessions() {
 # Register the widget
 zle -N sesh-sessions
 
-# Bind Alt+s in all modes
-bindkey -M emacs '\es' sesh-sessions
-bindkey -M vicmd '\es' sesh-sessions
-bindkey -M viins '\es' sesh-sessions
+# Bind Ctrl+g in all modes (g = go to session)
+bindkey -M emacs '^g' sesh-sessions
+bindkey -M vicmd '^g' sesh-sessions
+bindkey -M viins '^g' sesh-sessions
