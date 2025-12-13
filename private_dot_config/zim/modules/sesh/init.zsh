@@ -1,9 +1,6 @@
 # sesh - Smart session manager with tmux integration
 # This module provides keybindings and functions for sesh
 
-# Disable flow control (Ctrl+s/Ctrl+q) to free up Ctrl+s for sesh
-stty -ixon 2>/dev/null
-
 # Sesh session selector function
 # Uses functional middle ground approach with early returns
 sesh-sessions() {
