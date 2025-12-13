@@ -239,6 +239,49 @@ nu -c "help commands | where name == 'command-name'"
 | Bitwarden  | `.scripts/bw.nu`                 | `justfile`               |
 | Cloudflare | `.scripts/cloudflare-tunnel.nu`  | `justfile`               |
 
+### Nushell Code Style
+
+**Prefer idiomatic patterns:**
+
+| Avoid | Prefer |
+| ----- | ------ |
+| `try { } catch { bool }` | Return `null`, check `is-empty` |
+| Nested `if/else` | Guard clauses with early `return` |
+| Boolean flags | Return value or `null` |
+| Exit codes everywhere | `{ ok: bool, error?: string }` records |
+| Imperative loops | `each`, `where`, `reduce` pipelines |
+
+**Examples:**
+
+```nu
+# ✅ Return null for "not found" instead of throwing
+def find-task [name: string] {
+    let result = (do { schtasks /Query /TN $name } | complete)
+    if $result.exit_code == 0 { $name } else { null }
+}
+
+# ✅ Use is-empty/is-not-empty or default
+let task = (find-task "Kanata" | default "FallbackTask")
+
+# ✅ Early return instead of nested if
+def restart-if-exists [name: string] {
+    let task = (find-task $name)
+    if ($task | is-empty) { return }
+    restart-task $task
+}
+
+# ✅ Pipelines over intermediate variables
+$path | validate-exists | read-config | apply-settings
+```
+
+**Naming conventions:**
+
+| Pattern | Naming | Example |
+| ------- | ------ | ------- |
+| Lookup (may fail) | `find-*` | `find-task`, `find-service` |
+| Predicate | `is-*`, `has-*` | `is-running`, `has-config` |
+| Action | verb | `stop-kanata`, `restart-service` |
+
 ## Repository Overview
 
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system
