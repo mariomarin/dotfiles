@@ -28,11 +28,7 @@ bw-unlock:
 bw-reload:
     use ~/.config/nushell/modules/bitwarden; bitwarden reload
 
-# Cloudflare Tunnel with cf-vault
-
-# Setup cf-vault profile for Cloudflare
-tunnel-setup:
-    nu .scripts/cloudflare-tunnel.nu tunnel setup
+# Cloudflare Quick Tunnels (no auth required for quick tunnels)
 
 # List active tunnels via Cloudflare API
 tunnel-list:
