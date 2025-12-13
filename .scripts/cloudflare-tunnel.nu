@@ -24,11 +24,7 @@ def "main list" [] {
         return
     }
 
-    let response = (
-        http get $"($CF_API)/accounts/($account_id)/tunnels?is_deleted=false"
-            --headers [Authorization $"Bearer ($api_token)"]
-        | from json
-    )
+    let response = http get $"($CF_API)/accounts/($account_id)/tunnels?is_deleted=false" --headers [Authorization $"Bearer ($api_token)"]
 
     if ($response.success? | default false) {
         $response.result | select id name status created_at | table
