@@ -4,13 +4,5 @@
 # To pin a specific version, uncomment and modify the relevant line.
 #
 [versions]
-containerUse = "d03dc1c" # Container-based development environments (pinned to latest commit)
 bitbucketCli = "v0.16.0" # Bitbucket CLI
 # zimfw = "v1.18.0"       # Zim framework for Zsh
-
-# Go tools installed via go install
-# Each entry: { module = "go module path", version = "version string", binary = "binary name" }
-[[goTools]]
-module = "github.com/dagger/container-use/cmd/container-use"
-version = "d03dc1c"
-binary = "container-use"

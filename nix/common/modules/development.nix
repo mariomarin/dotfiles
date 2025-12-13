@@ -60,6 +60,7 @@
     docker-compose
     dive
     lazydocker
+    nur.repos.dagger.container-use
 
     # Databases
     postgresql
