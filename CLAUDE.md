@@ -699,6 +699,15 @@ This integration ensures AI assistants can't accidentally execute destructive co
   - `docs: update tmux keybindings README`
   - `refactor: remove .tmpl from non-template scripts`
 
+### Code Removal
+
+When removing code, configuration, or features:
+
+- **Delete completely** - Don't leave tombstone comments like `# X is now in Y` or `# removed`
+- **No migration breadcrumbs** - Comments explaining where something moved become stale noise
+- **Git history is the record** - Use `git log` or `git blame` to find removed code, not comments
+- **Clean deletions** - If something is unused, remove it entirely without explanation
+
 ## User Services Management
 
 We use two approaches for managing systemd user services:
