@@ -3,12 +3,16 @@
 # Reload kanata when config changes (Linux)
 # laptop.kbd hash: {{ include "private_dot_config/kanata/laptop.kbd" | sha256sum }}
 
-print "Reloading kanata (Linux)..."
-
-if (systemctl is-active kanata-laptop | complete).exit_code == 0 {
-    sudo systemctl restart kanata-laptop
-    print "Kanata reloaded"
-} else {
-    print "Kanata service not active, skipping"
+def service-active [] {
+    (do { systemctl is-active kanata-laptop } | complete).exit_code == 0
 }
+
+if not (service-active) {
+    print "Kanata service not active, skipping"
+    exit 0
+}
+
+print "Reloading kanata..."
+sudo systemctl restart kanata-laptop
+print "✓ Kanata reloaded"
 {{- end }}
