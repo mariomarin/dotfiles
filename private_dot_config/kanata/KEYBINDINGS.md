@@ -1,6 +1,8 @@
 # Kanata Keybindings
 
-Space Cadet keys + Layer-based navigation and accents for all platforms.
+Space Cadet keys + Layer-based navigation and accents for US ANSI keyboards.
+
+The accent layer provides international characters without switching keyboard layouts or using dead keys.
 
 ## Primary Remappings
 
