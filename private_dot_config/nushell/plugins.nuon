@@ -1,0 +1,8 @@
+# Nushell plugins to install via nupm (Windows only)
+# NixOS/Darwin use nixpkgs for available plugins
+[
+    "nu_plugin_clipboard"  # clipboard copy/paste
+    "nu_plugin_formats"    # EML, ICS, INI, plist, VCF support
+    "nu_plugin_query"      # Query JSON, XML, web data
+    "nu_plugin_gstat"      # Git status as structured data
+]

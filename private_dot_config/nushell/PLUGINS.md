@@ -4,18 +4,18 @@ Plugins extend Nushell with additional data formats, integrations, and utilities
 
 ## Installed Plugins
 
-| Plugin | Source | Installation | Usage |
-|--------|--------|--------------|-------|
-| **clipboard** | nupm | Auto via chezmoi | `clipboard copy`, `clipboard paste` |
-| **formats** | NixOS | System package | Auto-loaded (EML, ICS, INI, plist, VCF) |
-| **query** | NixOS | System package | `query web`, `query json` |
-| **gstat** | NixOS | System package | `gstat` (git status data) |
+| Plugin        | NixOS/Darwin | Windows | Usage                                   |
+| ------------- | ------------ | ------- | --------------------------------------- |
+| **clipboard** | manual       | nupm    | `clipboard copy`, `clipboard paste`     |
+| **formats**   | nixpkgs      | nupm    | Auto-loaded (EML, ICS, INI, plist, VCF) |
+| **query**     | nixpkgs      | nupm    | `query web`, `query json`               |
+| **gstat**     | nixpkgs      | nupm    | `gstat` (git status data)               |
 
 ## Installation Methods
 
-### NixOS Plugins (Automatic)
+### NixOS/Darwin (via Nix)
 
-Installed via `nix/nixos/modules/minimal.nix`:
+Installed via `nix/common/modules/cli-tools.nix`:
 
 ```nix
 nushellPlugins.formats
@@ -25,13 +25,14 @@ nushellPlugins.gstat
 
 Auto-registered via system PATH.
 
-### Nupm Plugins (Automatic)
+### Windows (via nupm)
 
-Installed via `.chezmoiscripts/run_onchange_after_nushell-install-plugins.nu`:
+Plugins declared in `~/.config/nushell/plugins.nuon`, installed by chezmoi script:
 
-- Clones from GitHub to `~/.local/share/nushell/plugins/`
-- Installs via nupm: `nupm install --path <plugin> -f`
-- Registered in `config.nu.tmpl`
+```bash
+# Add plugins to plugins.nuon, then apply
+chezmoi apply
+```
 
 ### Manual Installation (If Needed)
 
