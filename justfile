@@ -10,7 +10,7 @@ set dotenv-load := true
 # Default recipe (runs when you type `just`)
 default: chezmoi-quick-apply
 
-# Bitwarden session management
+# Bitwarden session management (uses ~/.config/nushell/modules/bitwarden)
 
 # Setup: login and unlock Bitwarden (first-time setup)
 bw-setup:
@@ -18,16 +18,15 @@ bw-setup:
     print "🔐 Logging into Bitwarden..."
     bw login
     print "\n✅ Login successful. Unlocking vault..."
-    nu .scripts/bw.nu unlock
+    use ~/.config/nushell/modules/bitwarden
+    bitwarden unlock
 
 bw-unlock:
-    nu .scripts/bw.nu unlock
+    use ~/.config/nushell/modules/bitwarden; bitwarden unlock
 
-# Direnv management (convenience wrapper)
-
-# Note: Named bw-reload for workflow clarity, but this is a general direnv command
+# Reload direnv to load BW_SESSION from .env.local
 bw-reload:
-    nu .scripts/bw.nu reload
+    use ~/.config/nushell/modules/bitwarden; bitwarden reload
 
 # Cloudflare Tunnel with cf-vault
 
