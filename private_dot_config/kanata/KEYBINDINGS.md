@@ -1,49 +1,50 @@
-# KMonad Keybindings
+# Kanata Keybindings
 
-Advanced keyboard remapping with Carabiner-style keymaps and Space Cadet keyboard emulation for ThinkPad T470.
+Space Cadet keys + Layer-based navigation and accents for all platforms.
 
 ## Primary Remappings
 
-| Physical Key | Mapped To | Description |
-| ------------ | --------- | ----------- |
-| Caps Lock | Control/Escape | Tap for Escape, hold for Control |
-| Tab | Tab/Hyper | Tap for Tab, hold for Hyper (Ctrl+Meta+Alt) |
-| Left Ctrl | {/Ctrl | Tap for {, hold for Control |
-| Right Ctrl | }/Ctrl | Tap for }, hold for Control |
-| Left Shift | (/Shift | Tap for (, hold for Shift |
-| Right Shift | )/Shift | Tap for ), hold for Shift |
-| Left Alt | </Alt | Tap for <, hold for Alt (preserves international input) |
-| Right Alt | >/Navigation | Tap for >, hold for Navigation layer |
+| Physical Key | Tap | Hold | Description |
+| ------------ | --- | ---- | ----------- |
+| Caps Lock | Esc | Ctrl | Escape or Control |
+| Tab | Tab | Hyper | Tab or Ctrl+Meta+Alt |
+| Left Shift | `(` | Shift | Parenthesis or Shift |
+| Right Shift | `)` | Shift | Parenthesis or Shift |
+| Left Ctrl | `{` | Ctrl | Brace or Control |
+| Space | Space | Nav Layer | Navigation layer |
+| Grave (`) | `` ` `` | Accent Layer | Accented characters |
 
-## Navigation Layer (Hold Right Alt)
+## Navigation Layer (Hold Space)
 
-| Key | Action | Description |
-| --- | ------ | ----------- |
-| `h` | Left Arrow | Vim-style left |
-| `j` | Down Arrow | Vim-style down |
-| `k` | Up Arrow | Vim-style up |
-| `l` | Right Arrow | Vim-style right |
-| `y` | Home | Beginning of line |
-| `u` | Page Down | Scroll down |
-| `i` | Page Up | Scroll up |
-| `o` | End | End of line |
+| Key | Action |
+| --- | ------ |
+| `h` | ← Left Arrow |
+| `j` | ↓ Down Arrow |
+| `k` | ↑ Up Arrow |
+| `l` | → Right Arrow |
+| `y` | Home |
+| `u` | Page Down |
+| `i` | Page Up |
+| `o` | End |
 
-## Optional Features (Commented Out)
+## Accent Layer (Hold Grave)
 
-### Home Row Modifiers
+| Key | Output | Key | Output |
+| --- | ------ | --- | ------ |
+| `a` | á | `1` | ¡ |
+| `e` | é | `2` | ² |
+| `i` | í | `3` | ³ |
+| `o` | ó | `9` | ø |
+| `u` | ú | `0` | å |
+| `n` | ñ | `;` | æ |
+| `s` | ß | `'` | ü |
+| `c` | ç | `q` | ¿ |
+| `w` | œ | `m` | µ |
 
-Provides ergonomic access to modifiers without leaving home position:
+## Platform-Specific Notes
 
-| Key | Tap | Hold |
-| --- | --- | ---- |
-| `a` | a | Left Meta (Windows key) |
-| `s` | s | Left Alt |
-| `d` | d | Left Shift |
-| `f` | f | Left Control |
-| `j` | j | Right Control |
-| `k` | k | Right Shift |
-| `l` | l | Right Alt |
-| `;` | ; | Right Meta |
-
-**Note**: Home row modifiers are currently disabled in the configuration but can be enabled by uncommenting the
-relevant sections in `laptop.kbd`.
+| Platform | Config File | Notes |
+| -------- | ----------- | ----- |
+| macOS | `darwin.kbd` | Both `grv` and `nubs` mapped for multi-keyboard support |
+| Linux | `laptop.kbd` | Uses `linux-dev` for device path |
+| Windows | `windows.kbd` | No device path needed |
