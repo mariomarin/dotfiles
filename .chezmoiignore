@@ -81,6 +81,22 @@ devenv.yaml
 {{ if ne .chezmoi.os "darwin" }}
 nix/darwin
 nix/darwin/**
+.config/aerospace
+.config/aerospace/**
+{{ end }}
+
+# Linux-only window managers (ignore on macOS)
+{{ if eq .chezmoi.os "darwin" }}
+.config/leftwm
+.config/leftwm/**
+.config/picom
+.config/picom/**
+.config/polybar
+.config/polybar/**
+.config/rofi
+.config/rofi/**
+.config/autorandr
+.config/autorandr/**
 {{ end }}
 
 # Desktop-specific scripts (ignore on headless/server machines)
