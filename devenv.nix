@@ -196,11 +196,11 @@
         always_run = false;
       };
 
-      # Kanata config validation
+      # Kanata config validation (process each file separately)
       kanata-check = {
         enable = true;
         name = "kanata-check";
-        entry = "kanata --check --cfg";
+        entry = "sh -c 'for f; do kanata --check --cfg \"$f\" || exit 1; done' --";
         files = "\\.kbd$";
         language = "system";
         pass_filenames = true;
