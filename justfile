@@ -42,6 +42,10 @@ tunnel-http PORT:
 tunnel-quick SERVICE="ssh://localhost:22":
     nu .scripts/cloudflare-tunnel.nu quick {{ SERVICE }}
 
+# Get tunnel URL
+tunnel-url:
+    nu .scripts/cloudflare-tunnel.nu url
+
 # Show tunnel status
 tunnel-status:
     nu .scripts/cloudflare-tunnel.nu status

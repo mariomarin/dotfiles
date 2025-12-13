@@ -4,6 +4,23 @@
 
 const TUNNEL_LOG = "/tmp/cloudflared-tunnel.log"
 
+def extract-url [] {
+    if not ($TUNNEL_LOG | path exists) { return null }
+    open $TUNNEL_LOG
+    | parse -r '(https://[a-z0-9-]+\.trycloudflare\.com)'
+    | get -i 0?.capture0
+}
+
+# Get tunnel URL from log (prints export command)
+def "main url" [] {
+    let url = extract-url
+    if ($url | is-empty) {
+        print "❌ No tunnel URL found in log"
+        exit 1
+    }
+    let host = $url | str replace "https://" ""
+    print $"export CLOUDFLARE_TUNNEL_HOST=($host)"
+}
 
 # Start quick tunnel (temporary, no DNS, no auth required)
 def "main quick" [
@@ -16,89 +33,68 @@ def "main quick" [
         error make {msg: "cloudflared not found"}
     }
 
+    # Clear old log
+    rm -f $TUNNEL_LOG
+
     if $background {
-        # Background mode - detach and log to file
         ^cloudflared tunnel --url $service o+e> $TUNNEL_LOG &
-        print $"📝 Tunnel running in background, logs: ($TUNNEL_LOG)"
+        print $"📝 Tunnel running in background"
+        print $"   Log: ($TUNNEL_LOG)"
+        print $"   URL: just tunnel-url (after ~5s)"
     } else {
-        # Foreground - run directly, cloudflared prints URL to stderr
-        print "⏳ Waiting for tunnel URL (look for trycloudflare.com)..."
+        # Foreground - tee to log while showing output
+        print "⏳ Waiting for tunnel URL..."
         print ""
-        ^cloudflared tunnel --url $service
+        bash -c $"cloudflared tunnel --url '($service)' 2>&1 | tee ($TUNNEL_LOG)"
     }
 }
 
 # Stop running tunnel
 def "main stop" [] {
-    print "🛑 Stopping cloudflared tunnel..."
-
-    let pids = (ps | where name =~ cloudflared | get pid)
-
+    let pids = ps | where name =~ cloudflared | get pid
     if ($pids | is-empty) {
-        print "ℹ️  No running tunnel found"
+        print "ℹ️  No tunnel running"
         return
     }
-
-    for pid in $pids {
-        kill $pid
-        print $"✅ Stopped tunnel (PID: ($pid))"
-    }
+    $pids | each { |pid| kill $pid; print $"✅ Stopped (PID: ($pid))" } | ignore
+    rm -f $TUNNEL_LOG
 }
 
 # Show tunnel status
 def "main status" [] {
-    let running = (ps | where name =~ cloudflared)
-
+    let running = ps | where name =~ cloudflared
     if ($running | is-empty) {
         print "❌ No tunnel running"
         return
     }
-
     print "✅ Tunnel is running:"
     $running | select pid cpu mem command | table
 
-    # Try to get URL from log
-    if ($TUNNEL_LOG | path expand | path exists) {
-        let log_content = (open ($TUNNEL_LOG | path expand))
-        let url_match = ($log_content | parse -r 'https://[a-z0-9-]+\.trycloudflare\.com')
-
-        if ($url_match | is-not-empty) {
-            let url = ($url_match | first | get capture0)
-            print $""
-            print $"🔗 Tunnel URL: ($url)"
-        }
-    }
+    let url = extract-url
+    if ($url | is-not-empty) { print $"\n🔗 ($url)" }
 }
 
 # SSH service shortcut
-def "main ssh" [
-    --port: int = 22              # SSH port
-    --background                  # Run in background
-] {
+def "main ssh" [--port: int = 22, --background] {
     main quick $"ssh://localhost:($port)" --background=$background
 }
 
 # HTTP service shortcut
-def "main http" [
-    port: int = 8080              # HTTP port
-    --background                  # Run in background
-] {
+def "main http" [port: int = 8080, --background] {
     main quick $"http://localhost:($port)" --background=$background
 }
 
 # Show help / default
 def main [] {
-    print "Cloudflare Quick Tunnels (temporary, anonymous, no auth required)"
+    print "Cloudflare Quick Tunnels (temporary, anonymous, no auth)"
     print ""
     print "Commands:"
-    print "  quick <service>       Start tunnel (default: ssh://localhost:22)"
-    print "  ssh [--port 22]       SSH tunnel shortcut"
-    print "  http <port>           HTTP tunnel shortcut"
-    print "  status                Show running tunnel process"
-    print "  stop                  Stop running tunnel"
+    print "  ssh [--port 22]       SSH tunnel"
+    print "  http <port>           HTTP tunnel"
+    print "  quick <service>       Custom service (e.g. tcp://localhost:5432)"
+    print "  url                   Print export command with tunnel host"
+    print "  status                Show running tunnel"
+    print "  stop                  Stop tunnel"
     print ""
-    print "Examples:"
-    print "  just tunnel-ssh                    # SSH on port 22"
-    print "  just tunnel-http 3000              # HTTP on port 3000"
-    print "  just tunnel-quick tcp://localhost:5432  # PostgreSQL"
+    print "Options: --background   Run detached"
 }

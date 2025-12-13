@@ -9,7 +9,7 @@ def "test script parses" [] {
 
 def "test help output" [] {
     let help = nu $SCRIPT | str downcase
-    ["quick" "ssh" "http" "status" "stop"]
+    ["quick" "ssh" "http" "url" "status" "stop" "export"]
     | each { |term| assert str contains $help $term }
     | ignore
 }
