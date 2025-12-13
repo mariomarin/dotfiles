@@ -1,18 +1,21 @@
 ;; Kanata configuration for macOS
 ;; Space Cadet keys + Layer-based navigation and accents
-;; Physical keyboard: ANSI Spanish Latin American (MacBook Pro 13" M1 2020)
+;; Supports both MacBook (Spanish LatAm) and Kinesis (US) keyboards
 
 (defcfg
   process-unmapped-keys yes
   danger-enable-cmd no
 )
 
+;; Include both grv and nubs to support multiple keyboards:
+;; - MacBook Spanish LatAm: §± key sends nubs (0x0A ISO Section)
+;; - Kinesis US: `~ key sends grv (0x32 Grave)
 (defsrc
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lsft nubs z    x    c    v    b    n    m    ,    .    /    rsft
   lctl lalt lmet           spc            rmet ralt left down up   rght
 )
 
@@ -28,16 +31,18 @@
   lcpc (tap-hold 200 200 S-[ lctl)      ;; LCtrl → {/Ctrl
   hyper (tap-hold 200 200 tab (multi lctl lmet lalt))
 
-  ;; Backtick key: tap = ` (or < on Spanish LatAm), hold = accent layer
-  acck (tap-hold 200 200 grv @acc)
+  ;; Key below Esc: tap = passthrough, hold = accent layer
+  ;; grv for Kinesis `~, nubs for MacBook §±
+  accg (tap-hold 200 200 grv @acc)      ;; Kinesis: `~ key
+  accn (tap-hold 200 200 nubs @acc)     ;; MacBook: §± key
 )
 
 (deflayer base
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
-  @acck 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  @accg 1    2    3    4    5    6    7    8    9    0    -    =    bspc
   @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
-  @lspc z    x    c    v    b    n    m    ,    .    /    @rspc
+  @lspc @accn z    x    c    v    b    n    m    ,    .    /    @rspc
   @lcpc lalt lmet           @nav           rmet ralt left down up   rght
 )
 
@@ -47,16 +52,16 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    home pgdn pgup end  _    _    _    _
   _    _    _    _    _    _    left down up   rght _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _              _              _    _    _    _    _    _
 )
 
-;; Accents layer: hold º key, press vowel
+;; Accents layer: hold key below Esc, press vowel
 (deflayer accents
   _    _    _    _    _    _    _    _    _    _    _    _    _
   _    (unicode ¡) (unicode ü) _    _    _    _    _    _    _    _    _    _    _
   _    (unicode ¿) _    (unicode é) _    _    _    (unicode ú) (unicode í) (unicode ó) _    _    _    _
   _    (unicode á) _    _    _    _    _    _    _    _    _    _    _
-  (unicode Ñ) _    _    _    _    _    (unicode ñ) _    _    _    _    (unicode Ü)
+  _    _    _    _    _    _    (unicode ñ) _    _    _    _    _    _
   _    _    _              _              _    _    _    _    _    _
 )

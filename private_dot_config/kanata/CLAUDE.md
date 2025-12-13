@@ -15,15 +15,25 @@ private_dot_config/kanata/
 
 ## Hardware Reference
 
-### macOS (malus) - MacBook Pro 13" M1 2020
+### macOS (malus) - Multiple Keyboards
 
-- **Physical layout**: ANSI (horizontal Enter, full-width left Shift)
-- **Language layout**: Spanish Latin American
-- **Key below Esc**: Backtick/tilde (`grv` in kanata), prints `<` `>` on Spanish LatAm
-- **Has Ñ key**: Yes (right of L)
-- **Touch Bar**: Yes
+The darwin.kbd config supports both keyboards by mapping both `grv` and `nubs`:
 
-**Important**: This is NOT an ISO keyboard. There is no `nubs` key (extra key next to left Shift).
+**MacBook Pro 13" M1 2020 (built-in)**:
+
+- Physical layout: ANSI (horizontal Enter, full-width left Shift)
+- Language layout: Spanish Latin American
+- Key below Esc: `§ ±` - sends `nubs` keycode (ISO Section, 0x0A)
+- Has Ñ key: Yes (right of L)
+
+**Kinesis Advantage (external)**:
+
+- Physical layout: ANSI
+- Language layout: US
+- Key below Esc: `` ` ~ `` - sends `grv` keycode (Grave, 0x32)
+
+**Key insight**: Although the MacBook is physically ANSI, Apple uses the ISO `nubs` keycode for the
+`§±` key on international layouts. The config maps both keys to the accent layer trigger.
 
 ## Configuration Philosophy
 
