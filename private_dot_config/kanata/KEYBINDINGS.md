@@ -9,7 +9,7 @@ The accent layer provides international characters without switching keyboard la
 | Physical Key | Tap | Hold | Description |
 | ------------ | --- | ---- | ----------- |
 | Caps Lock | Esc | Ctrl | Escape or Control |
-| Tab | Tab | Hyper | Tab or Ctrl+Meta+Alt |
+| Tab | Tab | Hyper | Tab or Ctrl+Meta+Alt+Shift (all 4 modifiers) |
 | Left Shift | `(` | Shift | Parenthesis or Shift |
 | Right Shift | `)` | Shift | Parenthesis or Shift |
 | Left Ctrl | `{` | Ctrl | Brace or Control |

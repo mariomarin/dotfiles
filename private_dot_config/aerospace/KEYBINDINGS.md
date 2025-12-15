@@ -1,84 +1,72 @@
 # AeroSpace Keybindings
 
-LeftWM/Omarchy-style keybindings for macOS.
+LeftWM-style keybindings for macOS using **Hyper** (Tab-hold via kanata).
 
-**Modifier**: `Alt` (Option key)
+**Modifier**: `Hyper` = `Ctrl+Alt+Cmd+Shift` (all 4 modifiers)
+
+> Alt stays free for tmux-tilish. Tab-hold activates Hyper.
 
 ## Navigation
 
-| Keybinding        | Description                       |
-| ----------------- | --------------------------------- |
-| `Alt+h/j/k/l`     | Focus left/down/up/right          |
-| `Alt+Arrow`       | Focus left/down/up/right (alt)    |
-
-## Move Windows
-
-| Keybinding            | Description                   |
-| --------------------- | ----------------------------- |
-| `Alt+Shift+h/j/k/l`   | Move window left/down/up/right|
-| `Alt+Shift+Arrow`     | Move window (alternative)     |
+| Keybinding   | Description              |
+| ------------ | ------------------------ |
+| `Hyper+hjkl` | Focus left/down/up/right |
 
 ## Workspaces
 
-| Keybinding        | Description                       |
-| ----------------- | --------------------------------- |
-| `Alt+1-9`         | Switch to workspace 1-9           |
-| `Alt+Shift+1-9`   | Move window to workspace 1-9      |
-| `Alt+Ctrl+h`      | Previous workspace                |
-| `Alt+Ctrl+l`      | Next workspace                    |
-| `Alt+Tab`         | Toggle last workspace             |
-| `Alt+Shift+,`     | Move window to prev workspace     |
-| `Alt+Shift+.`     | Move window to next workspace     |
+| Keybinding  | Description         |
+| ----------- | ------------------- |
+| `Hyper+1-9` | Switch to workspace |
 
 ## Layouts
 
-| Keybinding    | Description                       |
-| ------------- | --------------------------------- |
-| `Alt+f`       | Toggle fullscreen                 |
-| `Alt+t`       | Toggle floating/tiling            |
-| `Alt+Ctrl+j`  | Cycle tile layouts                |
-| `Alt+Ctrl+k`  | Cycle accordion layouts           |
-| `Alt+/`       | Horizontal/vertical tiles         |
-| `Alt+,`       | Horizontal/vertical accordion     |
+| Keybinding | Description            |
+| ---------- | ---------------------- |
+| `Hyper+f`  | Toggle fullscreen      |
+| `Hyper+t`  | Toggle floating/tiling |
+| `Hyper+/`  | Cycle tile layouts     |
 
 ## Window Management
 
-| Keybinding        | Description                       |
-| ----------------- | --------------------------------- |
-| `Alt+Shift+q`     | Close window                      |
-| `Alt+Shift+Enter` | Open Alacritty                    |
+| Keybinding     | Description    |
+| -------------- | -------------- |
+| `Hyper+q`      | Close window   |
+| `Hyper+Return` | Open Alacritty |
+
+## App Launchers
+
+| Keybinding     | App       | Mnemonic     |
+| -------------- | --------- | ------------ |
+| `Hyper+Return` | Alacritty | Terminal     |
+| `Hyper+b`      | Firefox   | **B**rowser  |
+| `Hyper+m`      | Spotify   | **M**usic    |
+| `Hyper+o`      | Obsidian  | **O**bsidian |
+| `Hyper+s`      | Slack     | **S**lack    |
 
 ## Modes
 
-| Keybinding        | Description                       |
-| ----------------- | --------------------------------- |
-| `Alt+r`           | Enter resize mode                 |
-| `Alt+Shift+;`     | Enter service mode                |
+| Keybinding | Description        |
+| ---------- | ------------------ |
+| `Hyper+r`  | Enter resize mode  |
+| `Hyper+;`  | Enter service mode |
 
 ### Resize Mode
 
-| Key         | Action                            |
-| ----------- | --------------------------------- |
-| `h/Left`    | Shrink width                      |
-| `l/Right`   | Grow width                        |
-| `j/Down`    | Grow height                       |
-| `k/Up`      | Shrink height                     |
-| `-`         | Shrink smart                      |
-| `=`         | Grow smart                        |
-| `Esc/Enter` | Exit resize mode                  |
+| Key         | Action              |
+| ----------- | ------------------- |
+| `hjkl`      | Resize width/height |
+| `-/=`       | Shrink/grow smart   |
+| `Esc/Enter` | Exit                |
 
 ### Service Mode
 
-| Key         | Action                            |
-| ----------- | --------------------------------- |
-| `Esc`       | Reload config                     |
-| `r`         | Flatten workspace tree            |
-| `f`         | Toggle float/tile                 |
-| `Backspace` | Close all but current             |
+| Key         | Action                |
+| ----------- | --------------------- |
+| `Esc`       | Reload config         |
+| `r`         | Flatten workspace     |
+| `f`         | Toggle float/tile     |
+| `Backspace` | Close all but current |
 
 ## Auto-Float Apps
 
-- Finder
-- System Preferences
-- Calculator
-- Preview
+Finder, System Preferences, Calculator, Preview

@@ -1,16 +1,13 @@
-# AeroSpace - LeftWM/Omarchy-style keybindings
+# AeroSpace - Hyper-based keybindings (no tmux-tilish conflict)
+# Hyper = ctrl-alt-cmd-shift via kanata Tab-hold
 # Reference: https://nikitabobko.github.io/AeroSpace/guide
 
 start-at-login = true
-
-# Mouse follows focus (like LeftWM sloppy_mouse_follows_focus)
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
-# Normalization
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
-# Layout defaults
 default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
 accordion-padding = 30
@@ -23,72 +20,49 @@ outer.bottom = 10
 outer.top = 10
 outer.right = 10
 
-# Main mode - Alt (Option) as modifier
+# Main mode - Hyper (ctrl-alt-cmd-shift) as modifier
+# Alt stays free for tmux-tilish
 [mode.main.binding]
 
 # Navigation (LeftWM: Mod4+hjkl)
-alt-h = 'focus left'
-alt-j = 'focus down'
-alt-k = 'focus up'
-alt-l = 'focus right'
-alt-left = 'focus left'
-alt-down = 'focus down'
-alt-up = 'focus up'
-alt-right = 'focus right'
+ctrl-alt-cmd-shift-h = 'focus left'
+ctrl-alt-cmd-shift-j = 'focus down'
+ctrl-alt-cmd-shift-k = 'focus up'
+ctrl-alt-cmd-shift-l = 'focus right'
 
 # Move windows (LeftWM: Mod4+Shift+hjkl)
-alt-shift-h = 'move left'
-alt-shift-j = 'move down'
-alt-shift-k = 'move up'
-alt-shift-l = 'move right'
-alt-shift-left = 'move left'
-alt-shift-down = 'move down'
-alt-shift-up = 'move up'
-alt-shift-right = 'move right'
+# Note: Hyper already includes Shift, so these are same as above in practice
+# Using separate bindings for clarity and future flexibility
 
-# Workspaces
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
-alt-7 = 'workspace 7'
-alt-8 = 'workspace 8'
-alt-9 = 'workspace 9'
-
-# Move to workspace
-alt-shift-1 = 'move-node-to-workspace 1'
-alt-shift-2 = 'move-node-to-workspace 2'
-alt-shift-3 = 'move-node-to-workspace 3'
-alt-shift-4 = 'move-node-to-workspace 4'
-alt-shift-5 = 'move-node-to-workspace 5'
-alt-shift-6 = 'move-node-to-workspace 6'
-alt-shift-7 = 'move-node-to-workspace 7'
-alt-shift-8 = 'move-node-to-workspace 8'
-alt-shift-9 = 'move-node-to-workspace 9'
-
-# Workspace navigation
-alt-ctrl-h = 'workspace prev'
-alt-ctrl-l = 'workspace next'
-alt-tab = 'workspace-back-and-forth'
-alt-shift-comma = 'move-node-to-workspace prev --focus-follows-window'
-alt-shift-period = 'move-node-to-workspace next --focus-follows-window'
+# Workspaces (LeftWM: Mod4+1-9)
+ctrl-alt-cmd-shift-1 = 'workspace 1'
+ctrl-alt-cmd-shift-2 = 'workspace 2'
+ctrl-alt-cmd-shift-3 = 'workspace 3'
+ctrl-alt-cmd-shift-4 = 'workspace 4'
+ctrl-alt-cmd-shift-5 = 'workspace 5'
+ctrl-alt-cmd-shift-6 = 'workspace 6'
+ctrl-alt-cmd-shift-7 = 'workspace 7'
+ctrl-alt-cmd-shift-8 = 'workspace 8'
+ctrl-alt-cmd-shift-9 = 'workspace 9'
 
 # Layouts
-alt-f = 'fullscreen'
-alt-t = 'layout floating tiling'
-alt-ctrl-j = 'layout tiles horizontal vertical'
-alt-ctrl-k = 'layout accordion horizontal vertical'
-alt-slash = 'layout tiles horizontal vertical'
+ctrl-alt-cmd-shift-f = 'fullscreen'
+ctrl-alt-cmd-shift-t = 'layout floating tiling'
+ctrl-alt-cmd-shift-slash = 'layout tiles horizontal vertical'
 
 # Window management
-alt-shift-q = 'close'
-alt-shift-enter = 'exec-and-forget open -na Alacritty'
+ctrl-alt-cmd-shift-q = 'close'
+
+# App launchers (same mnemonics as Linux with Super)
+ctrl-alt-cmd-shift-return = 'exec-and-forget open -na Alacritty'
+ctrl-alt-cmd-shift-b = 'exec-and-forget open -na Firefox'
+ctrl-alt-cmd-shift-m = 'exec-and-forget open -na Spotify'
+ctrl-alt-cmd-shift-o = 'exec-and-forget open -na Obsidian'
+ctrl-alt-cmd-shift-s = 'exec-and-forget open -na Slack'
 
 # Modes
-alt-r = 'mode resize'
-alt-shift-semicolon = 'mode service'
+ctrl-alt-cmd-shift-r = 'mode resize'
+ctrl-alt-cmd-shift-semicolon = 'mode service'
 
 # Resize mode
 [mode.resize.binding]
@@ -96,10 +70,6 @@ h = 'resize width -50'
 j = 'resize height +50'
 k = 'resize height -50'
 l = 'resize width +50'
-left = 'resize width -50'
-down = 'resize height +50'
-up = 'resize height -50'
-right = 'resize width +50'
 minus = 'resize smart -50'
 equal = 'resize smart +50'
 enter = 'mode main'
