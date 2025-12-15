@@ -1,20 +1,19 @@
 # Kanata Keybindings
 
-Space Cadet keys + Layer-based navigation and accents for US ANSI keyboards.
-
-The accent layer provides international characters without switching keyboard layouts or using dead keys.
+Space Cadet keys + Layer-based navigation, accents, and window management.
 
 ## Primary Remappings
 
 | Physical Key | Tap | Hold | Description |
 | ------------ | --- | ---- | ----------- |
 | Caps Lock | Esc | Ctrl | Escape or Control |
-| Tab | Tab | Hyper | Tab or Ctrl+Meta+Alt+Shift (all 4 modifiers) |
+| Tab | Tab | Hyper | All 4 modifiers (app launchers) |
+| `=` | `=` | Window | Ctrl+Cmd layer (WM control) |
 | Left Shift | `(` | Shift | Parenthesis or Shift |
 | Right Shift | `)` | Shift | Parenthesis or Shift |
 | Left Ctrl | `{` | Ctrl | Brace or Control |
-| Space | Space | Nav Layer | Navigation layer |
-| Grave (`) | `` ` `` | Accent Layer | Accented characters |
+| Space | Space | Nav | Navigation layer (arrows) |
+| Grave (`) | `` ` `` | Accent | Accented characters |
 
 ## Navigation Layer (Hold Space)
 
@@ -28,6 +27,19 @@ The accent layer provides international characters without switching keyboard la
 | `u` | Page Down |
 | `i` | Page Up |
 | `o` | End |
+
+## Window Layer (Hold `=`)
+
+Sends Ctrl+Cmd (macOS) / Ctrl+Super (Linux) for window management.
+
+| Key | Action | With Shift |
+| --- | ------ | ---------- |
+| `hjkl` | Focus/workspace | Move window |
+| `1-9` | Workspace | Move to workspace |
+| `f` | Fullscreen | - |
+| `q` | Close | - |
+| `r` | Resize mode | - |
+| `Return` | Terminal | - |
 
 ## Accent Layer (Hold Grave)
 

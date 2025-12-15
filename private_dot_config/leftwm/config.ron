@@ -56,28 +56,49 @@
         (command: Execute, value: "ytfzf -D", modifier: ["modkey"], key: "y"),
         (command: Execute, value: "~/.config/rofi/power-menu.sh", modifier: ["modkey"], key: "p"),
 
-        // Hyper bindings (Tab-hold via kanata = Ctrl+Alt+Super+Shift)
-        // Matches macOS aerospace for cross-platform muscle memory
-        (command: FocusWindowDown, value: "", modifier: ["modkey", "Control", "Alt", "Shift"], key: "j"),
-        (command: FocusWindowUp, value: "", modifier: ["modkey", "Control", "Alt", "Shift"], key: "k"),
-        (command: FocusWorkspacePrevious, value: "", modifier: ["modkey", "Control", "Alt", "Shift"], key: "h"),
-        (command: FocusWorkspaceNext, value: "", modifier: ["modkey", "Control", "Alt", "Shift"], key: "l"),
-        (command: ToggleFullScreen, value: "", modifier: ["modkey", "Control", "Alt", "Shift"], key: "f"),
-        (command: CloseWindow, value: "", modifier: ["modkey", "Control", "Alt", "Shift"], key: "q"),
+        // Window mode (=-hold via kanata sends Ctrl+Super)
+        // i3-style: =+hjkl = focus, =+Shift+hjkl = move
+        // Focus
+        (command: FocusWorkspacePrevious, value: "", modifier: ["modkey", "Control"], key: "h"),
+        (command: FocusWindowDown, value: "", modifier: ["modkey", "Control"], key: "j"),
+        (command: FocusWindowUp, value: "", modifier: ["modkey", "Control"], key: "k"),
+        (command: FocusWorkspaceNext, value: "", modifier: ["modkey", "Control"], key: "l"),
+        // Move
+        (command: MoveWindowToPreviousWorkspace, value: "", modifier: ["modkey", "Control", "Shift"], key: "h"),
+        (command: MoveWindowDown, value: "", modifier: ["modkey", "Control", "Shift"], key: "j"),
+        (command: MoveWindowUp, value: "", modifier: ["modkey", "Control", "Shift"], key: "k"),
+        (command: MoveWindowToNextWorkspace, value: "", modifier: ["modkey", "Control", "Shift"], key: "l"),
+        // Workspaces
+        (command: GotoTag, value: "1", modifier: ["modkey", "Control"], key: "1"),
+        (command: GotoTag, value: "2", modifier: ["modkey", "Control"], key: "2"),
+        (command: GotoTag, value: "3", modifier: ["modkey", "Control"], key: "3"),
+        (command: GotoTag, value: "4", modifier: ["modkey", "Control"], key: "4"),
+        (command: GotoTag, value: "5", modifier: ["modkey", "Control"], key: "5"),
+        (command: GotoTag, value: "6", modifier: ["modkey", "Control"], key: "6"),
+        (command: GotoTag, value: "7", modifier: ["modkey", "Control"], key: "7"),
+        (command: GotoTag, value: "8", modifier: ["modkey", "Control"], key: "8"),
+        (command: GotoTag, value: "9", modifier: ["modkey", "Control"], key: "9"),
+        // Move to workspace
+        (command: MoveToTag, value: "1", modifier: ["modkey", "Control", "Shift"], key: "1"),
+        (command: MoveToTag, value: "2", modifier: ["modkey", "Control", "Shift"], key: "2"),
+        (command: MoveToTag, value: "3", modifier: ["modkey", "Control", "Shift"], key: "3"),
+        (command: MoveToTag, value: "4", modifier: ["modkey", "Control", "Shift"], key: "4"),
+        (command: MoveToTag, value: "5", modifier: ["modkey", "Control", "Shift"], key: "5"),
+        (command: MoveToTag, value: "6", modifier: ["modkey", "Control", "Shift"], key: "6"),
+        (command: MoveToTag, value: "7", modifier: ["modkey", "Control", "Shift"], key: "7"),
+        (command: MoveToTag, value: "8", modifier: ["modkey", "Control", "Shift"], key: "8"),
+        (command: MoveToTag, value: "9", modifier: ["modkey", "Control", "Shift"], key: "9"),
+        // Other
+        (command: ToggleFullScreen, value: "", modifier: ["modkey", "Control"], key: "f"),
+        (command: CloseWindow, value: "", modifier: ["modkey", "Control"], key: "q"),
+        (command: Execute, value: "alacritty", modifier: ["modkey", "Control"], key: "Return"),
+
+        // Hyper bindings (Tab-hold = Ctrl+Alt+Super+Shift) for app launchers
         (command: Execute, value: "alacritty", modifier: ["modkey", "Control", "Alt", "Shift"], key: "Return"),
         (command: Execute, value: "firefox", modifier: ["modkey", "Control", "Alt", "Shift"], key: "b"),
         (command: Execute, value: "spotify", modifier: ["modkey", "Control", "Alt", "Shift"], key: "m"),
         (command: Execute, value: "obsidian", modifier: ["modkey", "Control", "Alt", "Shift"], key: "o"),
         (command: Execute, value: "slack", modifier: ["modkey", "Control", "Alt", "Shift"], key: "s"),
-        (command: GotoTag, value: "1", modifier: ["modkey", "Control", "Alt", "Shift"], key: "1"),
-        (command: GotoTag, value: "2", modifier: ["modkey", "Control", "Alt", "Shift"], key: "2"),
-        (command: GotoTag, value: "3", modifier: ["modkey", "Control", "Alt", "Shift"], key: "3"),
-        (command: GotoTag, value: "4", modifier: ["modkey", "Control", "Alt", "Shift"], key: "4"),
-        (command: GotoTag, value: "5", modifier: ["modkey", "Control", "Alt", "Shift"], key: "5"),
-        (command: GotoTag, value: "6", modifier: ["modkey", "Control", "Alt", "Shift"], key: "6"),
-        (command: GotoTag, value: "7", modifier: ["modkey", "Control", "Alt", "Shift"], key: "7"),
-        (command: GotoTag, value: "8", modifier: ["modkey", "Control", "Alt", "Shift"], key: "8"),
-        (command: GotoTag, value: "9", modifier: ["modkey", "Control", "Alt", "Shift"], key: "9"),
 
         // Screenshots
         (command: Execute, value: "maim -s $HOME/Pictures/screenshots/\"region-$(date +%Y%m%d-%H%M%S).png\"", modifier: [], key: "Print"),

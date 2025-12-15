@@ -23,6 +23,7 @@
   ;; Space: tap = space, hold = navigation layer
   nav (tap-hold 200 200 spc (layer-toggle navigation))
   acc (layer-toggle accents)
+  wnd (layer-toggle window)
 
   ;; Tap-hold keys (Space Cadet style)
   cap (tap-hold 200 200 esc lctl)       ;; Caps → Esc/Ctrl
@@ -30,6 +31,7 @@
   rspc (tap-hold 200 200 S-0 rsft)      ;; RShift → )/Shift
   lcpc (tap-hold 200 200 S-[ lctl)      ;; LCtrl → {/Ctrl
   hyper (tap-hold 200 200 tab (multi lctl lmet lalt lsft))
+  wineq (tap-hold 200 200 = @wnd)       ;; = → =/Window layer
 
   ;; Key below Esc: tap = `~ (grv), hold = accent layer
   ;; Both keyboards output `~ on tap for consistency
@@ -39,7 +41,7 @@
 
 (deflayer base
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
-  @accg 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  @accg 1    2    3    4    5    6    7    8    9    0    -    @wineq bspc
   @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
   @lspc @accn z    x    c    v    b    n    m    ,    .    /    @rspc
@@ -65,5 +67,17 @@
   _    (unicode ¿) (unicode œ) (unicode é) _    _    _    (unicode ú) (unicode í) (unicode ó) _    _    _    _
   _    (unicode á) (unicode ß) _    _    _    _    _    _    _    (unicode æ) (unicode ü) _
   _    _    _    _    (unicode ç) _    (unicode ñ) _    (unicode µ) _    _    _    _
+  _    _    _              _              _    _    _    _    _    _
+)
+
+;; Window layer: hold = for window management
+;; Sends Ctrl+Cmd combos for aerospace/leftwm
+;; hjkl = focus, Shift+hjkl = move, 1-9 = workspace, f = fullscreen, q = close
+(deflayer window
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    C-M-1 C-M-2 C-M-3 C-M-4 C-M-5 C-M-6 C-M-7 C-M-8 C-M-9 _    _    _    _
+  _    C-M-q _    _    C-M-r _    _    _    _    _    _    _    _    _
+  _    _    _    _    C-M-f _    C-M-h C-M-j C-M-k C-M-l _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _              _              _    _    _    _    _    _
 )

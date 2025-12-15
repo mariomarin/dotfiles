@@ -1,78 +1,57 @@
 # AeroSpace Keybindings
 
-Dual modifier approach: **Hyper** (Tab-hold) avoids tmux conflict, **Alt** works outside tmux.
+i3-style keybindings via window mode (`=`-hold).
 
-## Navigation
+On macOS, `=`-hold acts like `Super` on Linux. Shift passes through for move operations.
 
-| Hyper        | Alt             | Description              |
-| ------------ | --------------- | ------------------------ |
-| `Hyper+hjkl` | `Alt+hjkl`      | Focus left/down/up/right |
-| -            | `Alt+Arrow`     | Focus (arrow keys)       |
+## Window Mode (`=`-hold via kanata)
 
-## Move Windows
+| Binding         | Action              |
+| --------------- | ------------------- |
+| `=+hjkl`        | Focus               |
+| `=+Shift+hjkl`  | Move window         |
+| `=+1-9`         | Workspace           |
+| `=+Shift+1-9`   | Move to workspace   |
+| `=+f`           | Fullscreen          |
+| `=+t`           | Float/tile toggle   |
+| `=+q`           | Close               |
+| `=+Return`      | Terminal            |
+| `=+r`           | Resize mode         |
+| `=+;`           | Service mode        |
 
-| Hyper | Alt               | Description              |
-| ----- | ----------------- | ------------------------ |
-| -     | `Alt+Shift+hjkl`  | Move window              |
-| -     | `Alt+Shift+Arrow` | Move window (arrows)     |
+## App Launchers (Hyper = Tab-hold)
 
-## Workspaces
+| Binding        | App       |
+| -------------- | --------- |
+| `Hyper+Return` | Alacritty |
+| `Hyper+b`      | Firefox   |
+| `Hyper+m`      | Spotify   |
+| `Hyper+o`      | Obsidian  |
+| `Hyper+s`      | Slack     |
 
-| Hyper       | Alt               | Description              |
-| ----------- | ----------------- | ------------------------ |
-| `Hyper+1-9` | `Alt+1-9`         | Switch to workspace      |
-| -           | `Alt+Shift+1-9`   | Move window to workspace |
-| -           | `Alt+Ctrl+h/l`    | Prev/next workspace      |
-| -           | `Alt+Tab`         | Last workspace           |
-| -           | `Alt+Shift+,/.`   | Move window to prev/next |
+## Alt (non-conflicting only)
 
-## Layouts
-
-| Hyper     | Alt           | Description            |
-| --------- | ------------- | ---------------------- |
-| `Hyper+f` | `Alt+f`       | Toggle fullscreen      |
-| `Hyper+t` | `Alt+t`       | Toggle floating/tiling |
-| `Hyper+/` | `Alt+/`       | Cycle tile layouts     |
-| -         | `Alt+Ctrl+j`  | Tiles layout           |
-| -         | `Alt+Ctrl+k`  | Accordion layout       |
-
-## Window Management
-
-| Hyper     | Alt             | Description    |
-| --------- | --------------- | -------------- |
-| `Hyper+q` | `Alt+Shift+q`   | Close window   |
-| -         | `Alt+Shift+Ret` | Open Alacritty |
-
-## App Launchers (Hyper only)
-
-| Keybinding     | App       | Mnemonic     |
-| -------------- | --------- | ------------ |
-| `Hyper+Return` | Alacritty | Terminal     |
-| `Hyper+b`      | Firefox   | **B**rowser  |
-| `Hyper+m`      | Spotify   | **M**usic    |
-| `Hyper+o`      | Obsidian  | **O**bsidian |
-| `Hyper+s`      | Slack     | **S**lack    |
+| Binding   | Action            |
+| --------- | ----------------- |
+| `Alt+f`   | Fullscreen        |
+| `Alt+t`   | Float/tile toggle |
+| `Alt+Tab` | Last workspace    |
+| `Alt+r`   | Resize mode       |
 
 ## Modes
 
-| Hyper     | Alt           | Description        |
-| --------- | ------------- | ------------------ |
-| `Hyper+r` | `Alt+r`       | Enter resize mode  |
-| `Hyper+;` | `Alt+Shift+;` | Enter service mode |
-
 ### Resize Mode
 
-`hjkl` or arrows to resize, `-/=` for smart resize, `Esc/Enter` to exit.
+`hjkl` to resize, `-/=` smart resize, `Esc/Enter` exit.
 
 ### Service Mode
 
-`Esc` reload, `r` flatten, `f` float toggle, `Backspace` close others.
+`Esc` reload, `r` flatten, `f` float, `Backspace` close others.
 
-## Auto-Float Apps
+## Summary
 
-Finder, System Preferences, Calculator, Preview
-
-## Usage Notes
-
-- **In tmux**: Use Hyper (Tab-hold) - Alt goes to tmux-tilish
-- **Outside tmux**: Either works, Alt is faster (no Tab-hold)
+```text
+=-hold = window management (no tmux conflict)
+Tab-hold = Hyper (app launchers)
+Alt = non-conflicting shortcuts only
+```
