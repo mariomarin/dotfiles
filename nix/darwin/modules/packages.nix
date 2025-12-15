@@ -7,5 +7,6 @@
     aerospace # Tiling window manager (i3-like)
     kanata # Keyboard remapping
     karabiner-dk # DriverKit VirtualHIDDevice (driver-only, no full Karabiner-Elements)
+    spotify # Music streaming
   ];
 }
