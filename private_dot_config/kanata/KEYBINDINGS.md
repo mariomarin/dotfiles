@@ -44,6 +44,22 @@ Sends Ctrl+Alt for window management (cross-platform).
 | `Tab` | Last workspace | - |
 | `;` | Service mode | - |
 
+### macOS: Window Mode + Cmd for tmux
+
+On macOS, adding Cmd to window mode keys triggers tmux-tilish bindings instead of AeroSpace.
+The terminal strips Cmd+Ctrl, leaving Alt which tmux-tilish catches.
+
+| Key | Sends | AeroSpace | tmux-tilish |
+| --- | ----- | --------- | ----------- |
+| `=+1` | Ctrl+Alt+1 | workspace 1 | - |
+| `=+Cmd+1` | Alt+1 | - | window 1 |
+| `=+Tab` | Ctrl+Alt+Tab | last workspace | - |
+| `=+Cmd+Tab` | Alt+Tab | - | last window |
+| `=+hjkl` | Ctrl+Alt+hjkl | focus direction | - |
+| `=+Cmd+hjkl` | Alt+hjkl | - | focus pane |
+
+This provides parallel i3-style bindings: AeroSpace for GUI, tmux for terminal.
+
 ## Accent Layer (Hold Grave)
 
 | Key | Output | Key | Output |

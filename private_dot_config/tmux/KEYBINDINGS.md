@@ -113,6 +113,16 @@ Enhanced session picker with icons and preview pane showing session contents.
 | `M-S-e` | Detach from tmux |
 | `M-S-c` | Reload tmux configuration (overrides tilish default) |
 
+**macOS with kanata window mode:** `=+Cmd+key` triggers tilish bindings:
+
+| Key | tmux-tilish action |
+| --- | ------------------ |
+| `=+Cmd+1-9` | Switch to window 1-9 |
+| `=+Cmd+Tab` | Last window (`M-Tab`) |
+| `=+Cmd+hjkl` | Navigate panes |
+
+The terminal strips Cmd+Ctrl from kanata's output, leaving Alt for tmux.
+
 ### tmux-harpoon
 
 | Keybinding | Description |

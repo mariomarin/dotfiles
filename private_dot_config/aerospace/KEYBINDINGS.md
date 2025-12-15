@@ -32,3 +32,16 @@ i3-style keybindings via window mode (`=`-hold via kanata).
 
 - All WM bindings use `Ctrl+Alt` prefix (sent by kanata's `=`-hold)
 - No plain `Alt+*` bindings to avoid tmux-tilish conflicts
+
+## Window Mode + Cmd for tmux
+
+Adding Cmd to window mode keys triggers tmux-tilish instead of AeroSpace:
+
+| Key | Target |
+| --- | ------ |
+| `=+1` | AeroSpace workspace 1 |
+| `=+Cmd+1` | tmux window 1 |
+| `=+Tab` | AeroSpace last workspace |
+| `=+Cmd+Tab` | tmux last window |
+
+See [kanata KEYBINDINGS.md](../kanata/KEYBINDINGS.md) for details.
