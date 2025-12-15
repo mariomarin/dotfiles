@@ -57,11 +57,13 @@ ctrl-alt-shift-7 = 'move-node-to-workspace 7'
 ctrl-alt-shift-8 = 'move-node-to-workspace 8'
 ctrl-alt-shift-9 = 'move-node-to-workspace 9'
 
-# Other window mode bindings
+# Window actions (all under window mode for i3 consistency)
 ctrl-alt-f = 'fullscreen'
 ctrl-alt-q = 'close'
 ctrl-alt-r = 'mode resize'
 ctrl-alt-semicolon = 'mode service'
+ctrl-alt-space = 'layout floating tiling'
+ctrl-alt-tab = 'workspace-back-and-forth'
 ctrl-alt-t = 'exec-and-forget open -na Alacritty'
 ctrl-alt-enter = 'exec-and-forget open -na Alacritty'
 
@@ -71,12 +73,6 @@ ctrl-alt-cmd-shift-b = 'exec-and-forget open -na Firefox'
 ctrl-alt-cmd-shift-m = 'exec-and-forget open -na Spotify'
 ctrl-alt-cmd-shift-o = 'exec-and-forget open -na Obsidian'
 ctrl-alt-cmd-shift-s = 'exec-and-forget open -na Slack'
-
-# Alt - non-conflicting only (no tmux-tilish clash)
-alt-f = 'fullscreen'
-alt-t = 'layout floating tiling'
-alt-tab = 'workspace-back-and-forth'
-alt-r = 'mode resize'
 
 # Resize mode
 [mode.resize.binding]

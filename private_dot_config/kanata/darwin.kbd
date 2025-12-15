@@ -80,8 +80,8 @@
 (deflayer window
   _      _      _      _      _      _      _      _      _      _      _      _      _
   _      C-A-1  C-A-2  C-A-3  C-A-4  C-A-5  C-A-6  C-A-7  C-A-8  C-A-9  _      _      _      _
-  _      C-A-q  _      _      C-A-r  C-A-t  _      _      _      _      _      _      _      _
+  C-A-tab C-A-q _      _      C-A-r  C-A-t  _      _      _      _      _      _      _      _
   _      _      _      _      C-A-f  _      C-A-h  C-A-j  C-A-k  C-A-l  C-A-;  _      C-A-ret
   _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      _      _                    _                    _      _      _      _      _      _
+  _      _      _                    C-A-spc              _      _      _      _      _      _
 )
