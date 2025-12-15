@@ -29,7 +29,7 @@
   lspc (tap-hold 200 200 S-9 lsft)      ;; LShift → (/Shift
   rspc (tap-hold 200 200 S-0 rsft)      ;; RShift → )/Shift
   lcpc (tap-hold 200 200 S-[ lctl)      ;; LCtrl → {/Ctrl
-  hyper (tap-hold 200 200 tab (multi lctl lmet lalt))
+  hyper (tap-hold 200 200 tab (multi lctl lmet lalt lsft))
 
   ;; Key below Esc: tap = `~ (grv), hold = accent layer
   ;; Both keyboards output `~ on tap for consistency

@@ -7,7 +7,7 @@
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl lmet lalt           spc            ralt prnt rctl pgup up   pgdn
+  lctl lmet lalt           spc            ralt ssrq rctl pgup up   pgdn
                                                          left down rght
 )
 
@@ -18,7 +18,7 @@
   rspc (tap-hold 200 200 S-0 rsft)
   lapc (tap-hold 200 200 S-, lalt)
   rapc (tap-hold 200 200 S-. @nav)
-  hyper (tap-hold 200 200 tab (multi lctl lmet lalt))
+  hyper (tap-hold 200 200 tab (multi lctl lmet lalt lsft))
 )
 
 (deflayer base
@@ -27,7 +27,7 @@
   @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
   @cap a    s    d    f    g    h    j    k    l    ;    '    ret
   @lspc z    x    c    v    b    n    m    ,    .    /    @rspc
-  lctl lmet @lapc           spc            @rapc prnt rctl pgup up   pgdn
+  lctl lmet @lapc           spc            @rapc ssrq rctl pgup up   pgdn
                                                          left down rght
 )
 
