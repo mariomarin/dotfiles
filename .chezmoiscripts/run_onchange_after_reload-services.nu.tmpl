@@ -1,9 +1,9 @@
 #!/usr/bin/env nu
 # Unified service reload script
-# Automatically reloads services when their config files change
+# Only reloads services whose config files actually changed
 #
 # Script hash: {{ include ".scripts/reload-services.nu" | sha256sum }}
-# Config checksums (triggers reload on change):
+# Config checksums (triggers chezmoi onchange):
 {{- if eq .chezmoi.os "darwin" }}
 {{- range .services.darwin }}
 # {{ .name }}: {{ include .config | sha256sum }}
@@ -18,26 +18,36 @@
 {{- end }}
 {{- end }}
 
-let script = "{{ .chezmoi.sourceDir }}/.scripts/reload-services.nu"
+let services = '
+{{- if eq .chezmoi.os "darwin" -}}
+[
+{{- range $i, $svc := .services.darwin }}
+{{- if $i }},{{ end }}
+  {"name":"{{ $svc.name }}","hash":"{{ include $svc.config | sha256sum }}","type":"{{ $svc.type }}"
+{{- if eq $svc.type "launchctl" }},"service":"{{ $svc.service }}"{{ end }}
+{{- if eq $svc.type "command" }},"check":"{{ $svc.check }}","reload":"{{ $svc.reload }}"{{ end }}
+{{- if eq $svc.type "windows-task" }},"task":"{{ $svc.task }}","exe":"{{ $svc.exe }}"{{ end -}}
+  }
+{{- end }}
+]
+{{- else if eq .chezmoi.os "linux" -}}
+[
+{{- range $i, $svc := .services.linux }}
+{{- if $i }},{{ end }}
+  {"name":"{{ $svc.name }}","hash":"{{ include $svc.config | sha256sum }}","type":"{{ $svc.type }}"
+{{- if eq $svc.type "systemctl" }},"service":"{{ $svc.service }}"{{ end -}}
+  }
+{{- end }}
+]
+{{- else if eq .chezmoi.os "windows" -}}
+[
+{{- range $i, $svc := .services.windows }}
+{{- if $i }},{{ end }}
+  {"name":"{{ $svc.name }}","hash":"{{ include $svc.config | sha256sum }}","type":"{{ $svc.type }}"
+{{- if eq $svc.type "windows-task" }},"task":"{{ $svc.task }}","exe":"{{ $svc.exe }}"{{ end -}}
+  }
+{{- end }}
+]
+{{- end }}'
 
-{{- if eq .chezmoi.os "darwin" }}
-{{- range .services.darwin }}
-{{- if eq .type "launchctl" }}
-nu $script --type launchctl --service "{{ .service }}"
-{{- else if eq .type "command" }}
-nu $script --type command --check "{{ .check }}" --reload "{{ .reload }}" --name "{{ .name }}"
-{{- end }}
-{{- end }}
-{{- else if eq .chezmoi.os "linux" }}
-{{- range .services.linux }}
-{{- if eq .type "systemctl" }}
-nu $script --type systemctl --service "{{ .service }}"
-{{- end }}
-{{- end }}
-{{- else if eq .chezmoi.os "windows" }}
-{{- range .services.windows }}
-{{- if eq .type "windows-task" }}
-nu $script --type windows-task --task "{{ .task }}" --exe "{{ .exe }}"
-{{- end }}
-{{- end }}
-{{- end }}
+nu "{{ .chezmoi.sourceDir }}/.scripts/reload-services.nu" --services $services
