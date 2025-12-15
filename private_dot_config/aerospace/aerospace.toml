@@ -1,6 +1,5 @@
 # AeroSpace - i3-style keybindings via window mode (=-hold)
-# On macOS: =-hold acts like Super on Linux
-# Shift passes through: =+h = focus, =+Shift+h = move
+# =-hold sends Ctrl+Alt, Shift passes through for move operations
 # Reference: https://nikitabobko.github.io/AeroSpace/guide
 
 start-at-login = true
@@ -23,48 +22,48 @@ outer.right = 10
 
 [mode.main.binding]
 
-# Window mode (=-hold via kanata sends Ctrl+Cmd)
+# Window mode (=-hold via kanata sends Ctrl+Alt)
 # Focus: =+hjkl
-ctrl-cmd-h = 'focus left'
-ctrl-cmd-j = 'focus down'
-ctrl-cmd-k = 'focus up'
-ctrl-cmd-l = 'focus right'
+ctrl-alt-h = 'focus left'
+ctrl-alt-j = 'focus down'
+ctrl-alt-k = 'focus up'
+ctrl-alt-l = 'focus right'
 
 # Move: =+Shift+hjkl
-ctrl-cmd-shift-h = 'move left'
-ctrl-cmd-shift-j = 'move down'
-ctrl-cmd-shift-k = 'move up'
-ctrl-cmd-shift-l = 'move right'
+ctrl-alt-shift-h = 'move left'
+ctrl-alt-shift-j = 'move down'
+ctrl-alt-shift-k = 'move up'
+ctrl-alt-shift-l = 'move right'
 
 # Workspaces: =+1-9
-ctrl-cmd-1 = 'workspace 1'
-ctrl-cmd-2 = 'workspace 2'
-ctrl-cmd-3 = 'workspace 3'
-ctrl-cmd-4 = 'workspace 4'
-ctrl-cmd-5 = 'workspace 5'
-ctrl-cmd-6 = 'workspace 6'
-ctrl-cmd-7 = 'workspace 7'
-ctrl-cmd-8 = 'workspace 8'
-ctrl-cmd-9 = 'workspace 9'
+ctrl-alt-1 = 'workspace 1'
+ctrl-alt-2 = 'workspace 2'
+ctrl-alt-3 = 'workspace 3'
+ctrl-alt-4 = 'workspace 4'
+ctrl-alt-5 = 'workspace 5'
+ctrl-alt-6 = 'workspace 6'
+ctrl-alt-7 = 'workspace 7'
+ctrl-alt-8 = 'workspace 8'
+ctrl-alt-9 = 'workspace 9'
 
 # Move to workspace: =+Shift+1-9
-ctrl-cmd-shift-1 = 'move-node-to-workspace 1'
-ctrl-cmd-shift-2 = 'move-node-to-workspace 2'
-ctrl-cmd-shift-3 = 'move-node-to-workspace 3'
-ctrl-cmd-shift-4 = 'move-node-to-workspace 4'
-ctrl-cmd-shift-5 = 'move-node-to-workspace 5'
-ctrl-cmd-shift-6 = 'move-node-to-workspace 6'
-ctrl-cmd-shift-7 = 'move-node-to-workspace 7'
-ctrl-cmd-shift-8 = 'move-node-to-workspace 8'
-ctrl-cmd-shift-9 = 'move-node-to-workspace 9'
+ctrl-alt-shift-1 = 'move-node-to-workspace 1'
+ctrl-alt-shift-2 = 'move-node-to-workspace 2'
+ctrl-alt-shift-3 = 'move-node-to-workspace 3'
+ctrl-alt-shift-4 = 'move-node-to-workspace 4'
+ctrl-alt-shift-5 = 'move-node-to-workspace 5'
+ctrl-alt-shift-6 = 'move-node-to-workspace 6'
+ctrl-alt-shift-7 = 'move-node-to-workspace 7'
+ctrl-alt-shift-8 = 'move-node-to-workspace 8'
+ctrl-alt-shift-9 = 'move-node-to-workspace 9'
 
 # Other window mode bindings
-ctrl-cmd-f = 'fullscreen'
-ctrl-cmd-q = 'close'
-ctrl-cmd-r = 'mode resize'
-ctrl-cmd-semicolon = 'mode service'
-ctrl-cmd-t = 'exec-and-forget open -na Alacritty'
-ctrl-cmd-return = 'exec-and-forget open -na Alacritty'
+ctrl-alt-f = 'fullscreen'
+ctrl-alt-q = 'close'
+ctrl-alt-r = 'mode resize'
+ctrl-alt-semicolon = 'mode service'
+ctrl-alt-t = 'exec-and-forget open -na Alacritty'
+ctrl-alt-return = 'exec-and-forget open -na Alacritty'
 
 # App launchers (Hyper = Tab-hold, same mnemonics as LeftWM Super+key)
 ctrl-alt-cmd-shift-t = 'exec-and-forget open -na Alacritty'

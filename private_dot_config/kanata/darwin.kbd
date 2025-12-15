@@ -67,13 +67,13 @@
   _      _      _                    _                    _      _      _      _      _      _
 )
 
-;; Window layer: hold = → Ctrl+Cmd combos for aerospace
+;; Window layer: hold = → Ctrl+Alt combos for aerospace
 ;; i3-style: hjkl focus, Shift+hjkl move, 1-9 workspace, Shift+1-9 move-to
 (deflayer window
   _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      C-M-1  C-M-2  C-M-3  C-M-4  C-M-5  C-M-6  C-M-7  C-M-8  C-M-9  _      _      _      _
-  _      C-M-q  _      _      C-M-r  C-M-t  _      _      _      _      _      _      _      _
-  _      _      _      _      C-M-f  _      C-M-h  C-M-j  C-M-k  C-M-l  C-M-;  _      C-M-ret
+  _      C-A-1  C-A-2  C-A-3  C-A-4  C-A-5  C-A-6  C-A-7  C-A-8  C-A-9  _      _      _      _
+  _      C-A-q  _      _      C-A-r  C-A-t  _      _      _      _      _      _      _      _
+  _      _      _      _      C-A-f  _      C-A-h  C-A-j  C-A-k  C-A-l  C-A-;  _      C-A-ret
   _      _      _      _      _      _      _      _      _      _      _      _      _
   _      _      _                    _                    _      _      _      _      _      _
 )

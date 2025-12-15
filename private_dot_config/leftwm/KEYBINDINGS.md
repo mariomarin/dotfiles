@@ -51,7 +51,7 @@ Same bindings as Super for cross-platform consistency.
 ## Summary
 
 ```text
-Super   = standard WM
-=-hold  = cross-platform (Ctrl+Super)
+Super    = standard WM
+=-hold   = cross-platform (Ctrl+Alt)
 Tab-hold = Hyper (app launchers)
 ```

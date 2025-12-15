@@ -40,6 +40,6 @@ Same mnemonics as LeftWM `Super+key`.
 ## Summary
 
 ```text
-=-hold  = WM control (Ctrl+Cmd, no tmux conflict)
+=-hold   = WM control (Ctrl+Alt)
 Tab-hold = Hyper (app launchers)
 ```

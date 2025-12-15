@@ -30,7 +30,7 @@ Space Cadet keys + Layer-based navigation, accents, and window management.
 
 ## Window Layer (Hold `=`)
 
-Sends Ctrl+Cmd (macOS) / Ctrl+Super (Linux) for window management.
+Sends Ctrl+Alt for window management (cross-platform).
 
 | Key | Action | With Shift |
 | --- | ------ | ---------- |
