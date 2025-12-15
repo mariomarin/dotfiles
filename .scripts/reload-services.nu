@@ -112,6 +112,7 @@ def reload-windows-task [task: string, exe: string] {
 def process-service [svc: record, state: record] {
     let name = $svc.name
     let hash = $svc.hash
+    let prev_hash = ($state | get -i $name | default "")
 
     if not (has-changed $name $hash $state) {
         print $"($name): no change"
@@ -129,10 +130,17 @@ def process-service [svc: record, state: record] {
 
     if ($result | get -i skipped | is-not-empty) {
         print $"($name): ($result.skipped)"
-    } else if not $result.ok {
-        print $"($name): reload failed - ($result.error)"
+        # Skipped (not running) - update hash so we don't retry
+        return { name: $name, hash: $hash }
     }
 
+    if not $result.ok {
+        print $"($name): reload failed - ($result.error)"
+        # Failed - keep OLD hash so next run retries
+        return { name: $name, hash: $prev_hash }
+    }
+
+    # Success - update to new hash
     { name: $name, hash: $hash }
 }
 
