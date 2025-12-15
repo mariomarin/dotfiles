@@ -63,7 +63,7 @@ ctrl-alt-q = 'close'
 ctrl-alt-r = 'mode resize'
 ctrl-alt-semicolon = 'mode service'
 ctrl-alt-t = 'exec-and-forget open -na Alacritty'
-ctrl-alt-return = 'exec-and-forget open -na Alacritty'
+ctrl-alt-enter = 'exec-and-forget open -na Alacritty'
 
 # App launchers (Hyper = Tab-hold, same mnemonics as LeftWM Super+key)
 ctrl-alt-cmd-shift-t = 'exec-and-forget open -na Alacritty'
