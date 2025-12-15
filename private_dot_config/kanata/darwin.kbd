@@ -36,6 +36,14 @@
   ;; Accent layer triggers (key below Esc)
   accg  (tap-hold 200 200 grv @acc)                      ;; Kinesis: `~ → accent
   accn  (tap-hold 200 200 grv @acc)                      ;; MacBook: §± → accent
+
+  ;; Unicode characters for accents layer
+  ¡ (unicode ¡)  ² (unicode ²)  ³ (unicode ³)
+  ¿ (unicode ¿)  œ (unicode œ)  é (unicode é)
+  ú (unicode ú)  í (unicode í)  ó (unicode ó)
+  á (unicode á)  ß (unicode ß)  æ (unicode æ)
+  ü (unicode ü)  ç (unicode ç)  ñ (unicode ñ)
+  ø (unicode ø)  å (unicode å)  µ (unicode µ)
 )
 
 (deflayer base
@@ -59,12 +67,12 @@
 
 ;; Accents layer: hold grave → vowels get acute accents
 (deflayer accents
-  _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      (unicode ¡) (unicode ²) (unicode ³) _ _ _ _ _ (unicode ø) (unicode å) _ _ _
-  _      (unicode ¿) (unicode œ) (unicode é) _ _ _ (unicode ú) (unicode í) (unicode ó) _ _ _ _
-  _      (unicode á) (unicode ß) _      _      _      _      _      _      _  (unicode æ) (unicode ü) _
-  _      _      _      _      (unicode ç) _ (unicode ñ) _ (unicode µ) _      _      _      _
-  _      _      _                    _                    _      _      _      _      _      _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    @¡   @²   @³   _    _    _    _    _    @ø   @å   _    _    _
+  _    @¿   @œ   @é   _    _    _    @ú   @í   @ó   _    _    _    _
+  _    @á   @ß   _    _    _    _    _    _    _    @æ   @ü   _
+  _    _    _    _    @ç   _    @ñ   _    @µ   _    _    _    _
+  _    _    _              _              _    _    _    _    _    _
 )
 
 ;; Window layer: hold = → Ctrl+Alt combos for aerospace
