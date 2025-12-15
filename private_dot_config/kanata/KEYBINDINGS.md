@@ -34,12 +34,15 @@ Sends Ctrl+Alt for window management (cross-platform).
 
 | Key | Action | With Shift |
 | --- | ------ | ---------- |
-| `hjkl` | Focus/workspace | Move window |
-| `1-9` | Workspace | Move to workspace |
+| `hjkl` | Focus direction | Move window |
+| `1-9` | Switch workspace | Move to workspace |
 | `f` | Fullscreen | - |
 | `q` | Close | - |
+| `t` / `Return` | Terminal | - |
 | `r` | Resize mode | - |
-| `Return` | Terminal | - |
+| `Space` | Toggle floating | - |
+| `Tab` | Last workspace | - |
+| `;` | Service mode | - |
 
 ## Accent Layer (Hold Grave)
 
