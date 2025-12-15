@@ -1,0 +1,42 @@
+#!/usr/bin/env nu
+# Unified service reload script
+# Automatically reloads services when their config files change
+#
+# Config checksums (triggers reload on change):
+{{- if eq .chezmoi.os "darwin" }}
+{{- range .services.darwin }}
+# {{ .name }}: {{ include .config | sha256sum }}
+{{- end }}
+{{- else if eq .chezmoi.os "linux" }}
+{{- range .services.linux }}
+# {{ .name }}: {{ include .config | sha256sum }}
+{{- end }}
+{{- else if eq .chezmoi.os "windows" }}
+{{- range .services.windows }}
+# {{ .name }}: {{ include .config | sha256sum }}
+{{- end }}
+{{- end }}
+
+let script = "{{ .chezmoi.homeDir }}/.scripts/reload-services.nu"
+
+{{- if eq .chezmoi.os "darwin" }}
+{{- range .services.darwin }}
+{{- if eq .type "launchctl" }}
+nu $script --type launchctl --service "{{ .service }}"
+{{- else if eq .type "command" }}
+nu $script --type command --check "{{ .check }}" --reload "{{ .reload }}" --name "{{ .name }}"
+{{- end }}
+{{- end }}
+{{- else if eq .chezmoi.os "linux" }}
+{{- range .services.linux }}
+{{- if eq .type "systemctl" }}
+nu $script --type systemctl --service "{{ .service }}"
+{{- end }}
+{{- end }}
+{{- else if eq .chezmoi.os "windows" }}
+{{- range .services.windows }}
+{{- if eq .type "windows-task" }}
+nu $script --type windows-task --task "{{ .task }}" --exe "{{ .exe }}"
+{{- end }}
+{{- end }}
+{{- end }}

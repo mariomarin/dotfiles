@@ -1,0 +1,24 @@
+# Service reload configuration
+# Maps config files to services that should be reloaded when they change
+services:
+  darwin:
+    - name: kanata
+      config: private_dot_config/kanata/darwin.kbd
+      type: launchctl
+      service: org.nixos.kanata
+    - name: aerospace
+      config: private_dot_config/aerospace/aerospace.toml
+      type: command
+      check: pgrep -x AeroSpace
+      reload: aerospace reload-config
+  linux:
+    - name: kanata
+      config: private_dot_config/kanata/laptop.kbd
+      type: systemctl
+      service: kanata-laptop
+  windows:
+    - name: kanata
+      config: private_dot_config/kanata/windows.kbd
+      type: windows-task
+      task: Kanata
+      exe: kanata.exe
