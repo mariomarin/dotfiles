@@ -1,5 +1,5 @@
 ;; Kanata configuration for macOS
-;; Space Cadet keys + Layer-based navigation and accents
+;; Space Cadet keys + Layer-based navigation, accents, and window management
 ;; Supports both MacBook (Spanish LatAm) and Kinesis (US) keyboards
 
 (defcfg
@@ -20,64 +20,60 @@
 )
 
 (defalias
-  ;; Space: tap = space, hold = navigation layer
-  nav (tap-hold 200 200 spc (layer-toggle navigation))
-  acc (layer-toggle accents)
-  wnd (layer-toggle window)
+  ;; Layers
+  nav   (tap-hold 200 200 spc (layer-toggle navigation))
+  acc   (layer-toggle accents)
+  wnd   (layer-toggle window)
 
   ;; Tap-hold keys (Space Cadet style)
-  cap (tap-hold 200 200 esc lctl)       ;; Caps → Esc/Ctrl
-  lspc (tap-hold 200 200 S-9 lsft)      ;; LShift → (/Shift
-  rspc (tap-hold 200 200 S-0 rsft)      ;; RShift → )/Shift
-  lcpc (tap-hold 200 200 S-[ lctl)      ;; LCtrl → {/Ctrl
-  hyper (tap-hold 200 200 tab (multi lctl lmet lalt lsft))
-  wineq (tap-hold 200 200 = @wnd)       ;; = → =/Window layer
+  cap   (tap-hold 200 200 esc lctl)                      ;; Caps → Esc/Ctrl
+  lspc  (tap-hold 200 200 S-9 lsft)                      ;; LShift → (/Shift
+  rspc  (tap-hold 200 200 S-0 rsft)                      ;; RShift → )/Shift
+  lcpc  (tap-hold 200 200 S-[ lctl)                      ;; LCtrl → {/Ctrl
+  hyper (tap-hold 200 200 tab (multi lctl lmet lalt lsft)) ;; Tab → Hyper
+  wineq (tap-hold 200 200 = @wnd)                        ;; = → Window layer
 
-  ;; Key below Esc: tap = `~ (grv), hold = accent layer
-  ;; Both keyboards output `~ on tap for consistency
-  accg (tap-hold 200 200 grv @acc)      ;; Kinesis: `~ → `~
-  accn (tap-hold 200 200 grv @acc)      ;; MacBook: §± → `~
+  ;; Accent layer triggers (key below Esc)
+  accg  (tap-hold 200 200 grv @acc)                      ;; Kinesis: `~ → accent
+  accn  (tap-hold 200 200 grv @acc)                      ;; MacBook: §± → accent
 )
 
 (deflayer base
-  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
-  @accg 1    2    3    4    5    6    7    8    9    0    -    @wineq bspc
-  @hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
-  @cap a    s    d    f    g    h    j    k    l    ;    '    ret
-  @lspc @accn z    x    c    v    b    n    m    ,    .    /    @rspc
-  @lcpc lalt lmet           @nav           rmet ralt left down up   rght
+  esc    f1     f2     f3     f4     f5     f6     f7     f8     f9     f10    f11    f12
+  @accg  1      2      3      4      5      6      7      8      9      0      -      @wineq bspc
+  @hyper q      w      e      r      t      y      u      i      o      p      [      ]      \
+  @cap   a      s      d      f      g      h      j      k      l      ;      '      ret
+  @lspc  @accn  z      x      c      v      b      n      m      ,      .      /      @rspc
+  @lcpc  lalt   lmet                 @nav                 rmet   ralt   left   down   up     rght
 )
 
-;; Navigation layer: hold Space
+;; Navigation layer: hold Space → hjkl arrows, yuio home/pgdn/pgup/end
 (deflayer navigation
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    home pgdn pgup end  _    _    _    _
-  _    _    _    _    _    _    left down up   rght _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _    _    _    _
+  _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      home   pgdn   pgup   end    _      _      _      _
+  _      _      _      _      _      _      left   down   up     rght   _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _                    _                    _      _      _      _      _      _
 )
 
-;; Accents layer: hold key below Esc, press key
-;; Vowels = acute (áéíóú), Shift positions = grave (àèìòù)
-;; Also: ñ, ü, ç, ß, ø, å, æ, œ, ¿, ¡
+;; Accents layer: hold grave → vowels get acute accents
 (deflayer accents
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    (unicode ¡) (unicode ²) (unicode ³) _    _    _    _    _    (unicode ø) (unicode å) _    _    _
-  _    (unicode ¿) (unicode œ) (unicode é) _    _    _    (unicode ú) (unicode í) (unicode ó) _    _    _    _
-  _    (unicode á) (unicode ß) _    _    _    _    _    _    _    (unicode æ) (unicode ü) _
-  _    _    _    _    (unicode ç) _    (unicode ñ) _    (unicode µ) _    _    _    _
-  _    _    _              _              _    _    _    _    _    _
+  _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      (unicode ¡) (unicode ²) (unicode ³) _ _ _ _ _ (unicode ø) (unicode å) _ _ _
+  _      (unicode ¿) (unicode œ) (unicode é) _ _ _ (unicode ú) (unicode í) (unicode ó) _ _ _ _
+  _      (unicode á) (unicode ß) _      _      _      _      _      _      _  (unicode æ) (unicode ü) _
+  _      _      _      _      (unicode ç) _ (unicode ñ) _ (unicode µ) _      _      _      _
+  _      _      _                    _                    _      _      _      _      _      _
 )
 
-;; Window layer: hold = for window management
-;; Sends Ctrl+Cmd combos for aerospace/leftwm
-;; hjkl = focus, Shift+hjkl = move, 1-9 = workspace, f = fullscreen, q = close
+;; Window layer: hold = → Ctrl+Cmd combos for aerospace
+;; i3-style: hjkl focus, Shift+hjkl move, 1-9 workspace, Shift+1-9 move-to
 (deflayer window
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    C-M-1 C-M-2 C-M-3 C-M-4 C-M-5 C-M-6 C-M-7 C-M-8 C-M-9 _    _    _    _
-  _    C-M-q _    _    C-M-r _    _    _    _    _    _    _    _    _
-  _    _    _    _    C-M-f _    C-M-h C-M-j C-M-k C-M-l _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _              _              _    _    _    _    _    _
+  _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      C-M-1  C-M-2  C-M-3  C-M-4  C-M-5  C-M-6  C-M-7  C-M-8  C-M-9  _      _      _      _
+  _      C-M-q  _      _      C-M-r  C-M-t  _      _      _      _      _      _      _      _
+  _      _      _      _      C-M-f  _      C-M-h  C-M-j  C-M-k  C-M-l  C-M-;  _      C-M-ret
+  _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _                    _                    _      _      _      _      _      _
 )

@@ -60,14 +60,14 @@ ctrl-cmd-shift-9 = 'move-node-to-workspace 9'
 
 # Other window mode bindings
 ctrl-cmd-f = 'fullscreen'
-ctrl-cmd-t = 'layout floating tiling'
 ctrl-cmd-q = 'close'
 ctrl-cmd-r = 'mode resize'
-ctrl-cmd-return = 'exec-and-forget open -na Alacritty'
 ctrl-cmd-semicolon = 'mode service'
+ctrl-cmd-t = 'exec-and-forget open -na Alacritty'
+ctrl-cmd-return = 'exec-and-forget open -na Alacritty'
 
-# App launchers (Hyper = Tab-hold for cross-platform)
-ctrl-alt-cmd-shift-return = 'exec-and-forget open -na Alacritty'
+# App launchers (Hyper = Tab-hold, same mnemonics as LeftWM Super+key)
+ctrl-alt-cmd-shift-t = 'exec-and-forget open -na Alacritty'
 ctrl-alt-cmd-shift-b = 'exec-and-forget open -na Firefox'
 ctrl-alt-cmd-shift-m = 'exec-and-forget open -na Spotify'
 ctrl-alt-cmd-shift-o = 'exec-and-forget open -na Obsidian'

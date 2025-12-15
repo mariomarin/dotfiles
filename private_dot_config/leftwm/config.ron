@@ -91,10 +91,11 @@
         // Other
         (command: ToggleFullScreen, value: "", modifier: ["modkey", "Control"], key: "f"),
         (command: CloseWindow, value: "", modifier: ["modkey", "Control"], key: "q"),
+        (command: Execute, value: "alacritty", modifier: ["modkey", "Control"], key: "t"),
         (command: Execute, value: "alacritty", modifier: ["modkey", "Control"], key: "Return"),
 
         // Hyper bindings (Tab-hold = Ctrl+Alt+Super+Shift) for app launchers
-        (command: Execute, value: "alacritty", modifier: ["modkey", "Control", "Alt", "Shift"], key: "Return"),
+        (command: Execute, value: "alacritty", modifier: ["modkey", "Control", "Alt", "Shift"], key: "t"),
         (command: Execute, value: "firefox", modifier: ["modkey", "Control", "Alt", "Shift"], key: "b"),
         (command: Execute, value: "spotify", modifier: ["modkey", "Control", "Alt", "Shift"], key: "m"),
         (command: Execute, value: "obsidian", modifier: ["modkey", "Control", "Alt", "Shift"], key: "o"),

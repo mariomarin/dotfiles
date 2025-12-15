@@ -1,59 +1,57 @@
-# LeftWM Keybindings Reference
+# LeftWM Keybindings
 
-**Mod key**: Super/Windows key (Mod4)
+**Mod**: Super (Mod4)
 
-## Standard i3-style (Super)
+## i3-style (Super)
 
-| Binding           | Action              |
-| ----------------- | ------------------- |
-| `Super+hjkl`      | Focus / workspace   |
-| `Super+Shift+hjkl`| Move window         |
-| `Super+1-9`       | Workspace           |
-| `Super+Shift+1-9` | Move to workspace   |
-| `Super+f`         | Fullscreen          |
-| `Super+Shift+q`   | Close               |
-| `Super+Return`    | Move to top         |
-| `Super+Shift+Ret` | Terminal            |
+| Binding            | Action            |
+| ------------------ | ----------------- |
+| `Super+hjkl`       | Focus / workspace |
+| `Super+Shift+hjkl` | Move window       |
+| `Super+1-9`        | Workspace         |
+| `Super+Shift+1-9`  | Move to workspace |
+| `Super+f`          | Fullscreen        |
+| `Super+Shift+q`    | Close             |
+| `Super+Shift+Ret`  | Terminal          |
 
 ## Window Mode (`=`-hold via kanata)
 
-Same as Super, for cross-platform consistency with macOS.
+Same bindings as Super for cross-platform consistency.
 
-| Binding         | Action              |
-| --------------- | ------------------- |
-| `=+hjkl`        | Focus / workspace   |
-| `=+Shift+hjkl`  | Move window         |
-| `=+1-9`         | Workspace           |
-| `=+Shift+1-9`   | Move to workspace   |
-| `=+f`           | Fullscreen          |
-| `=+q`           | Close               |
-| `=+Return`      | Terminal            |
+| Binding        | Action            |
+| -------------- | ----------------- |
+| `=+hjkl`       | Focus / workspace |
+| `=+Shift+hjkl` | Move window       |
+| `=+1-9`        | Workspace         |
+| `=+Shift+1-9`  | Move to workspace |
+| `=+f`          | Fullscreen        |
+| `=+q`          | Close             |
+| `=+t`          | Terminal          |
 
 ## App Launchers
 
-| Super     | Hyper (Tab-hold) | App       |
-| --------- | ---------------- | --------- |
-| `Super+t` | `Hyper+Return`   | Alacritty |
-| `Super+b` | `Hyper+b`        | Firefox   |
-| `Super+m` | `Hyper+m`        | Spotify   |
-| `Super+o` | `Hyper+o`        | Obsidian  |
-| `Super+s` | `Hyper+s`        | Slack     |
+| Super     | Hyper     | App       |
+| --------- | --------- | --------- |
+| `Super+t` | `Hyper+t` | Alacritty |
+| `Super+b` | `Hyper+b` | Firefox   |
+| `Super+m` | `Hyper+m` | Spotify   |
+| `Super+o` | `Hyper+o` | Obsidian  |
+| `Super+s` | `Hyper+s` | Slack     |
 
 ## Other
 
-| Binding         | Action           |
-| --------------- | ---------------- |
-| `Super+Space`   | Rofi             |
-| `Super+Tab`     | Last workspace   |
-| `Super+Ctrl+jk` | Cycle layouts    |
-| `Super+Shift+r` | Reload config    |
-| `Super+Shift+x` | Exit             |
-| `Super+Shift+l` | Lock screen      |
+| Binding         | Action     |
+| --------------- | ---------- |
+| `Super+Space`   | Rofi       |
+| `Super+Tab`     | Last ws    |
+| `Super+Ctrl+jk` | Layouts    |
+| `Super+Shift+r` | Reload     |
+| `Super+Shift+x` | Exit       |
 
 ## Summary
 
 ```text
-Super = standard WM control
-=-hold = same bindings (cross-platform with macOS)
+Super   = standard WM
+=-hold  = cross-platform (Ctrl+Super)
 Tab-hold = Hyper (app launchers)
 ```
