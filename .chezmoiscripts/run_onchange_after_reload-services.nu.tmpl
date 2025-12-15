@@ -2,6 +2,7 @@
 # Unified service reload script
 # Automatically reloads services when their config files change
 #
+# Script hash: {{ include ".scripts/reload-services.nu" | sha256sum }}
 # Config checksums (triggers reload on change):
 {{- if eq .chezmoi.os "darwin" }}
 {{- range .services.darwin }}
@@ -17,7 +18,7 @@
 {{- end }}
 {{- end }}
 
-let script = "{{ .chezmoi.homeDir }}/.scripts/reload-services.nu"
+let script = "{{ .chezmoi.sourceDir }}/.scripts/reload-services.nu"
 
 {{- if eq .chezmoi.os "darwin" }}
 {{- range .services.darwin }}
