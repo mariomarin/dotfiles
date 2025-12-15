@@ -6,16 +6,30 @@
 # Config checksums (triggers chezmoi onchange):
 {{- if eq .chezmoi.os "darwin" }}
 {{- range .services.darwin }}
-# {{ .name }}: {{ include .config | sha256sum }}
+{{- range .configs }}
+# {{ . }}: {{ include . | sha256sum }}
+{{- end }}
 {{- end }}
 {{- else if eq .chezmoi.os "linux" }}
 {{- range .services.linux }}
-# {{ .name }}: {{ include .config | sha256sum }}
+{{- range .configs }}
+# {{ . }}: {{ include . | sha256sum }}
+{{- end }}
 {{- end }}
 {{- else if eq .chezmoi.os "windows" }}
 {{- range .services.windows }}
-# {{ .name }}: {{ include .config | sha256sum }}
+{{- range .configs }}
+# {{ . }}: {{ include . | sha256sum }}
 {{- end }}
+{{- end }}
+{{ end }}
+{{- /* Helper to combine hashes from multiple configs */ -}}
+{{- define "combineHashes" -}}
+{{- $combined := "" -}}
+{{- range . -}}
+{{- $combined = printf "%s%s" $combined (include . | sha256sum) -}}
+{{- end -}}
+{{- $combined | sha256sum -}}
 {{- end }}
 
 let services = '
@@ -23,10 +37,9 @@ let services = '
 [
 {{- range $i, $svc := .services.darwin }}
 {{- if $i }},{{ end }}
-  {"name":"{{ $svc.name }}","hash":"{{ include $svc.config | sha256sum }}","type":"{{ $svc.type }}"
+  {"name":"{{ $svc.name }}","hash":"{{ template "combineHashes" $svc.configs }}","type":"{{ $svc.type }}"
 {{- if eq $svc.type "launchctl" }},"service":"{{ $svc.service }}"{{ end }}
-{{- if eq $svc.type "command" }},"check":"{{ $svc.check }}","reload":"{{ $svc.reload }}"{{ end }}
-{{- if eq $svc.type "windows-task" }},"task":"{{ $svc.task }}","exe":"{{ $svc.exe }}"{{ end -}}
+{{- if eq $svc.type "command" }},"check":"{{ $svc.check }}","reload":"{{ $svc.reload }}"{{ end -}}
   }
 {{- end }}
 ]
@@ -34,7 +47,7 @@ let services = '
 [
 {{- range $i, $svc := .services.linux }}
 {{- if $i }},{{ end }}
-  {"name":"{{ $svc.name }}","hash":"{{ include $svc.config | sha256sum }}","type":"{{ $svc.type }}"
+  {"name":"{{ $svc.name }}","hash":"{{ template "combineHashes" $svc.configs }}","type":"{{ $svc.type }}"
 {{- if eq $svc.type "systemctl" }},"service":"{{ $svc.service }}"{{ end -}}
   }
 {{- end }}
@@ -43,7 +56,7 @@ let services = '
 [
 {{- range $i, $svc := .services.windows }}
 {{- if $i }},{{ end }}
-  {"name":"{{ $svc.name }}","hash":"{{ include $svc.config | sha256sum }}","type":"{{ $svc.type }}"
+  {"name":"{{ $svc.name }}","hash":"{{ template "combineHashes" $svc.configs }}","type":"{{ $svc.type }}"
 {{- if eq $svc.type "windows-task" }},"task":"{{ $svc.task }}","exe":"{{ $svc.exe }}"{{ end -}}
   }
 {{- end }}

@@ -3,22 +3,29 @@
 services:
   darwin:
     - name: kanata
-      config: private_dot_config/kanata/darwin.kbd
+      configs:
+        - private_dot_config/kanata/darwin.kbd
+        - private_dot_config/kanata/core.kbd
       type: launchctl
       service: org.nixos.kanata
     - name: aerospace
-      config: private_dot_config/aerospace/aerospace.toml
+      configs:
+        - private_dot_config/aerospace/aerospace.toml
       type: command
       check: pgrep -x AeroSpace
       reload: aerospace reload-config
   linux:
     - name: kanata
-      config: private_dot_config/kanata/laptop.kbd
+      configs:
+        - private_dot_config/kanata/laptop.kbd
+        - private_dot_config/kanata/core.kbd
       type: systemctl
       service: kanata-laptop
   windows:
     - name: kanata
-      config: private_dot_config/kanata/windows.kbd
+      configs:
+        - private_dot_config/kanata/windows.kbd
+        - private_dot_config/kanata/core.kbd
       type: windows-task
       task: Kanata
       exe: kanata.exe
