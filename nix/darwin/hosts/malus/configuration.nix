@@ -18,6 +18,7 @@ in
     ../../modules/packages.nix # macOS-specific packages
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
     ../../modules/kanata.nix # Kanata keyboard remapping service
+    ../../../common/modules/fonts.nix # Shared Nerd Fonts for Unicode symbols
   ];
 
   # Copy applications instead of symlinking to make Spotlight happy

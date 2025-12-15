@@ -3,6 +3,14 @@
 # See: https://learn.microsoft.com/en-us/windows/package-manager/configuration/
 properties:
   resources:
+    # Fonts (Nerd Fonts for Unicode symbols ⎋ ⭾ ⇪ ⌫ etc. in kanata config, terminal)
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install JetBrains Mono Nerd Font
+        allowPrerelease: true
+      settings:
+        id: DEVCOM.JetBrainsMonoNerdFont
+        source: winget
     # Shell and terminal
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:

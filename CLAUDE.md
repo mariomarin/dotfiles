@@ -760,6 +760,24 @@ We use two approaches for managing systemd user services:
 
 See [docs/USER_SERVICES.md](docs/USER_SERVICES.md) for detailed comparison and guidelines.
 
+## Cross-Platform Font Management
+
+Nerd Fonts are installed on all platforms for Unicode symbols (⎋ ⭾ ⇪ ⌫ ⏎ ␣ etc.) used in kanata configs and terminals.
+
+| Platform | Location | Font Package |
+| -------- | -------- | ------------ |
+| NixOS | `nix/nixos/modules/system/fonts.nix` | `nerd-fonts.*` from nixpkgs |
+| macOS | `nix/common/modules/fonts.nix` | `nerd-fonts.*` from nixpkgs |
+| Windows | `private_dot_config/winget/configuration.dsc.yaml` | `DEVCOM.JetBrainsMonoNerdFont` |
+
+**Core fonts** (shared via `nix/common/modules/fonts.nix`):
+
+- `nerd-fonts.jetbrains-mono` - Primary monospace font
+- `nerd-fonts.iosevka` - Alternative monospace
+- `nerd-fonts.symbols-only` - Standalone symbols fallback
+
+**Adding fonts**: Update the common module for Nix platforms, or winget DSC for Windows.
+
 ## NixOS Integration
 
 See [docs/USER_SERVICES.md](docs/USER_SERVICES.md) for details on systemd user service management.
