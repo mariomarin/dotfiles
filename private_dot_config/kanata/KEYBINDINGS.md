@@ -6,27 +6,27 @@ Space Cadet keys + Layer-based navigation, accents, and window management.
 
 | Physical Key | Tap | Hold | Description |
 | ------------ | --- | ---- | ----------- |
-| Caps Lock | Esc | Ctrl | Escape or Control |
-| Tab | Tab | Hyper | All 4 modifiers (app launchers) |
-| `=` | `=` | Window | Ctrl+Cmd layer (WM control) |
-| Left Shift | `(` | Shift | Parenthesis or Shift |
-| Right Shift | `)` | Shift | Parenthesis or Shift |
-| Left Ctrl | `{` | Ctrl | Brace or Control |
-| Space | Space | Nav | Navigation layer (arrows) |
-| Grave (`) | `` ` `` | Accent | Accented characters |
+| ⇪ Caps Lock | ⎋ | ⎈ | Escape or Control |
+| ⭾ Tab | ⭾ | Hyper | ⎈⌥⌘⇧ (app launchers) |
+| `=` | `=` | Window | ⎈⌥ layer (WM control) |
+| ‹⇧ Left Shift | `(` | ⇧ | Parenthesis or Shift |
+| ⇧› Right Shift | `)` | ⇧ | Parenthesis or Shift |
+| ‹⎈ Left Ctrl | `{` | ⎈ | Brace or Control |
+| ␣ Space | ␣ | Nav | Navigation layer (arrows) |
+| ˋ Grave | ˋ | Accent | Accented characters |
 
-## Navigation Layer (Hold Space)
+## Navigation Layer (Hold ␣)
 
 | Key | Action |
 | --- | ------ |
-| `h` | ← Left Arrow |
-| `j` | ↓ Down Arrow |
-| `k` | ↑ Up Arrow |
-| `l` | → Right Arrow |
-| `y` | Home |
-| `u` | Page Down |
-| `i` | Page Up |
-| `o` | End |
+| `h` | ◀ Left |
+| `j` | ▼ Down |
+| `k` | ▲ Up |
+| `l` | ▶ Right |
+| `y` | ⇤ Home |
+| `u` | ⇟ Page Down |
+| `i` | ⇞ Page Up |
+| `o` | ⇥ End |
 
 ## Window Layer (Hold `=`)
 

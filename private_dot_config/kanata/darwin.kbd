@@ -11,30 +11,30 @@
 ;; - MacBook Spanish LatAm: §± key sends nubs (0x0A ISO Section)
 ;; - Kinesis US: `~ key sends grv (0x32 Grave)
 (defsrc
-  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-  caps a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft nubs z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl lalt lmet           spc            rmet ralt left down up   rght
+  ⎋    f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    ⌫
+  ⭾    q    w    e    r    t    y    u    i    o    p    [    ]    \
+  ⇪    a    s    d    f    g    h    j    k    l    ;    '    ⏎
+  ‹⇧   nubs z    x    c    v    b    n    m    ,    .    /    ⇧›
+  ‹⎈   ‹⌥   ‹⌘                 ␣              ⌘›   ⌥›   ◀    ▼    ▲    ▶
 )
 
 (defalias
   ;; Layers
-  nav   (tap-hold 200 200 spc (layer-toggle navigation))
+  nav   (tap-hold 200 200 ␣ (layer-toggle navigation))
   acc   (layer-toggle accents)
   wnd   (layer-toggle window)
 
   ;; Tap-hold keys (Space Cadet style)
-  cap   (tap-hold 200 200 esc lctl)                      ;; Caps → Esc/Ctrl
-  lspc  (tap-hold 200 200 S-9 lsft)                      ;; LShift → (/Shift
-  rspc  (tap-hold 200 200 S-0 rsft)                      ;; RShift → )/Shift
-  lcpc  (tap-hold 200 200 S-[ lctl)                      ;; LCtrl → {/Ctrl
-  hyper (tap-hold 200 200 tab (multi lctl lmet lalt lsft)) ;; Tab → Hyper
+  cap   (tap-hold 200 200 ⎋ ‹⎈)                          ;; ⇪ → ⎋/⎈
+  lspc  (tap-hold 200 200 S-9 ‹⇧)                        ;; ‹⇧ → (/⇧
+  rspc  (tap-hold 200 200 S-0 ⇧›)                        ;; ⇧› → )/⇧
+  lcpc  (tap-hold 200 200 S-[ ‹⎈)                        ;; ‹⎈ → {/⎈
+  hyper (tap-hold 200 200 ⭾ (multi ‹⎈ ‹⌘ ‹⌥ ‹⇧))        ;; ⭾ → Hyper
   wineq (tap-hold 200 200 = @wnd)                        ;; = → Window layer
 
-  ;; Accent layer triggers (key below Esc)
-  accg  (tap-hold 200 200 grv @acc)                      ;; Kinesis: `~ → accent
+  ;; Accent layer triggers (key below ⎋)
+  accg  (tap-hold 200 200 grv @acc)                      ;; Kinesis: ˋ → accent
   accn  (tap-hold 200 200 grv @acc)                      ;; MacBook: §± → accent
 
   ;; Unicode characters for accents layer
@@ -47,25 +47,25 @@
 )
 
 (deflayer base
-  esc    f1     f2     f3     f4     f5     f6     f7     f8     f9     f10    f11    f12
-  @accg  1      2      3      4      5      6      7      8      9      0      -      @wineq bspc
+  ⎋      f1     f2     f3     f4     f5     f6     f7     f8     f9     f10    f11    f12
+  @accg  1      2      3      4      5      6      7      8      9      0      -      @wineq ⌫
   @hyper q      w      e      r      t      y      u      i      o      p      [      ]      \
-  @cap   a      s      d      f      g      h      j      k      l      ;      '      ret
+  @cap   a      s      d      f      g      h      j      k      l      ;      '      ⏎
   @lspc  @accn  z      x      c      v      b      n      m      ,      .      /      @rspc
-  @lcpc  lalt   lmet                 @nav                 rmet   ralt   left   down   up     rght
+  @lcpc  ‹⌥     ‹⌘                   @nav                 ⌘›     ⌥›     ◀      ▼      ▲      ▶
 )
 
-;; Navigation layer: hold Space → hjkl arrows, yuio home/pgdn/pgup/end
+;; Navigation layer: hold ␣ → hjkl arrows, yuio ⇤/⇟/⇞/⇥
 (deflayer navigation
   _      _      _      _      _      _      _      _      _      _      _      _      _
   _      _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      _      _      _      _      _      home   pgdn   pgup   end    _      _      _      _
-  _      _      _      _      _      _      left   down   up     rght   _      _      _
+  _      _      _      _      _      _      ⇤      ⇟      ⇞      ⇥      _      _      _      _
+  _      _      _      _      _      _      ◀      ▼      ▲      ▶      _      _      _
   _      _      _      _      _      _      _      _      _      _      _      _      _
   _      _      _                    _                    _      _      _      _      _      _
 )
 
-;; Accents layer: hold grave → vowels get acute accents
+;; Accents layer: hold ˋ → vowels get acute accents
 (deflayer accents
   _    _    _    _    _    _    _    _    _    _    _    _    _
   _    @¡   @²   @³   _    _    _    _    _    @ø   @å   _    _    _
@@ -75,13 +75,13 @@
   _    _    _              _              _    _    _    _    _    _
 )
 
-;; Window layer: hold = → Ctrl+Alt combos for aerospace
-;; i3-style: hjkl focus, Shift+hjkl move, 1-9 workspace, Shift+1-9 move-to
+;; Window layer: hold = → ⎈⌥ combos for aerospace
+;; i3-style: hjkl focus, ⇧+hjkl move, 1-9 workspace, ⇧+1-9 move-to
 (deflayer window
   _      _      _      _      _      _      _      _      _      _      _      _      _
   _      C-A-1  C-A-2  C-A-3  C-A-4  C-A-5  C-A-6  C-A-7  C-A-8  C-A-9  _      _      _      _
-  C-A-tab C-A-q _      _      C-A-r  C-A-t  _      _      _      _      _      _      _      _
-  _      _      _      _      C-A-f  _      C-A-h  C-A-j  C-A-k  C-A-l  C-A-;  _      C-A-ret
+  C-A-⭾  C-A-q  _      _      C-A-r  C-A-t  _      _      _      _      _      _      _      _
+  _      _      _      _      C-A-f  _      C-A-h  C-A-j  C-A-k  C-A-l  C-A-;  _      C-A-⏎
   _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      _      _                    C-A-spc              _      _      _      _      _      _
+  _      _      _                    C-A-␣                _      _      _      _      _      _
 )
