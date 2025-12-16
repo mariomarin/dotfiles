@@ -52,7 +52,8 @@ properties:
           if (-not (Test-Path $nupmDir)) {
             New-Item -ItemType Directory -Path $nupmDir -Force | Out-Null
           }
-          git clone https://github.com/nushell/nupm.git "$nupmDir\nupm"
+          # Use --quiet to suppress stderr progress (DSC treats stderr as failure)
+          git clone --quiet https://github.com/nushell/nupm.git "$nupmDir\nupm"
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Alacritty
