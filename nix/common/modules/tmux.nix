@@ -3,8 +3,12 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Get the fingers binary path for keybindings
-  fingersBin = "${pkgs.tmuxPlugins.fingers}/share/tmux-plugins/tmux-fingers/bin/tmux-fingers";
+  # macOS: set default-command BEFORE sensible plugin runs
+  # sensible.tmux sets reattach-to-user-namespace with $SHELL, but $SHELL may be
+  # /bin/sh if tmux starts via continuum-boot at login. Pre-setting prevents this.
+  darwinDefaultCommand = lib.optionalString pkgs.stdenv.isDarwin ''
+    set-option -g default-command "${pkgs.reattach-to-user-namespace}/bin/reattach-to-user-namespace -l ${pkgs.zsh}/bin/zsh"
+  '';
 
   # Plugin packages with their rtp files
   plugins = with pkgs.tmuxPlugins; [
@@ -12,7 +16,7 @@ let
     { pkg = yank; rtp = "yank.tmux"; }
     { pkg = resurrect; rtp = "resurrect.tmux"; }
     { pkg = continuum; rtp = "continuum.tmux"; }
-    { pkg = fingers; rtp = "tmux-fingers.tmux"; }
+    { pkg = tmux-thumbs; rtp = "tmux-thumbs.tmux"; }
     { pkg = tilish; rtp = "tilish.tmux"; }
     { pkg = pkgs.tmux-harpoon; rtp = "harpoon.tmux"; }
     { pkg = fuzzback; rtp = "fuzzback.tmux"; }
@@ -29,6 +33,8 @@ let
 
   # Plugin settings (must come before plugin loading)
   pluginSettings = ''
+    # ── Shell configuration ────────────────────────────────────────────
+    ${darwinDefaultCommand}
     # ── Plugin settings ─────────────────────────────────────────────────
 
     # minimal-tmux-status theme
@@ -48,9 +54,8 @@ let
     set -g @continuum-boot 'on'
     set -g @continuum-systemd-start-cmd 'start-server'
 
-    # tmux-fingers
-    set -g @fingers-use-system-clipboard 1
-    set -g @fingers-pattern-0 'ssh [a-zA-Z0-9]+:[a-zA-Z0-9+/=]+@[a-zA-Z0-9.-]+'
+    # tmux-thumbs (prefix + F to activate)
+    set -g @thumbs-key F
 
     # tmux-tilish
     set -g @tilish-dmenu 'on'
@@ -71,11 +76,6 @@ let
     # Skip "kill-pane 1? (y/n)" prompt
     bind-key x kill-pane
 
-    # ── Custom keybindings ──────────────────────────────────────────────
-
-    # tmux-fingers: Alt+F to start, Alt+J for jump mode
-    bind -n M-f run -b "${fingersBin} start #{pane_id}"
-    bind -n M-j run -b "${fingersBin} start #{pane_id} --mode jump"
   '';
 in
 {
