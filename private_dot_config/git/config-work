@@ -1,2 +1,5 @@
+[include]
+	path = ~/src/bitbucket.org/.gitconfig
+
 [core]
 	excludesFile = ~/.config/git/ignore-work
