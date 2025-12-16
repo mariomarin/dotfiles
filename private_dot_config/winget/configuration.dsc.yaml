@@ -33,6 +33,26 @@ properties:
       settings:
         id: rsteube.Carapace
         source: winget
+    # nupm package manager for Nushell
+    - resource: PSDscResources/Script
+      directives:
+        description: Install nupm package manager
+        dependsOn:
+          - Install Git
+          - Install Nushell
+      settings:
+        GetScript: |
+          $nupmPath = "$env:USERPROFILE\.local\share\nupm\nupm"
+          @{ Result = if (Test-Path $nupmPath) { 'Present' } else { 'Absent' } }
+        TestScript: |
+          $nupmPath = "$env:USERPROFILE\.local\share\nupm\nupm"
+          Test-Path $nupmPath
+        SetScript: |
+          $nupmDir = "$env:USERPROFILE\.local\share\nupm"
+          if (-not (Test-Path $nupmDir)) {
+            New-Item -ItemType Directory -Path $nupmDir -Force | Out-Null
+          }
+          git clone https://github.com/nushell/nupm.git "$nupmDir\nupm"
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Alacritty
