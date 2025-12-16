@@ -17,9 +17,15 @@ def save-state [state: record] {
     $state | save -f $path
 }
 
+# Get value from record or null if missing
+def get-or-null [key: string] {
+    let input = $in
+    if ($key in $input) { $input | get $key } else { null }
+}
+
 # Check if service config changed
 def has-changed [name: string, hash: string, state: record] {
-    let prev = ($state | get -i $name | default "")
+    let prev = ($state | get-or-null $name | default "")
     $prev != $hash
 }
 
@@ -80,8 +86,10 @@ def reload-command [check: string, reload: string, name: string] {
 
 # Reload Windows task-based service
 def reload-windows-task [task: string, exe: string] {
-    let running = (do { tasklist | find $exe } | complete)
-    if $running.exit_code != 0 {
+    # Use tasklist /FI to filter directly - avoids piping to internal commands
+    let running = (do { tasklist /FI $"IMAGENAME eq ($exe)" /NH } | complete)
+    # tasklist returns 0 even if no match, but output contains "No tasks" or "INFO:"
+    if $running.exit_code != 0 or ($running.stdout | str contains "INFO:") {
         return { ok: true, skipped: "not running" }
     }
     print $"Stopping ($task)..."
@@ -112,7 +120,7 @@ def reload-windows-task [task: string, exe: string] {
 def process-service [svc: record, state: record] {
     let name = $svc.name
     let hash = $svc.hash
-    let prev_hash = ($state | get -i $name | default "")
+    let prev_hash = ($state | get-or-null $name | default "")
 
     if not (has-changed $name $hash $state) {
         print $"($name): no change"
@@ -128,7 +136,7 @@ def process-service [svc: record, state: record] {
         _ => { { ok: false, error: $"unknown type: ($svc.type)" } }
     }
 
-    if ($result | get -i skipped | is-not-empty) {
+    if ($result | get-or-null "skipped" | is-not-empty) {
         print $"($name): ($result.skipped)"
         # Skipped (not running) - update hash so we don't retry
         return { name: $name, hash: $hash }
