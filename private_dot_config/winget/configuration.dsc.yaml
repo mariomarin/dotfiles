@@ -179,7 +179,7 @@ properties:
         description: Install Kanata
         allowPrerelease: true
       settings:
-        id: jtroo.kanata
+        id: jtroo.kanata_gui
         source: winget
     # Kanata scheduled task (run at startup)
     - resource: PSDscResources/Script
