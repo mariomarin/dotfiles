@@ -149,13 +149,10 @@ if (-not (Test-CommandExists -CommandName "winget")) { Install-Winget }
 else { Write-Host "✓ winget $(winget --version) already available" -ForegroundColor Green }
 
 # Install packages
-$needsRestart = $false
-foreach ($package in $packages) {
-    $restartNeeded = Install-WingetPackage -PackageId $package.Id -CommandName $package.Command -DisplayName $package.DisplayName
-    if ($restartNeeded) {
-        $needsRestart = $true
-    }
-}
+$needsRestart = $packages | ForEach-Object {
+    Install-WingetPackage -PackageId $_.Id -CommandName $_.Command -DisplayName $_.DisplayName
+} | Where-Object { $_ } | Measure-Object | Select-Object -ExpandProperty Count
+$needsRestart = $needsRestart -gt 0
 
 Write-Host "" -ForegroundColor White
 Write-Host "✅ Tools installed" -ForegroundColor Green
@@ -169,31 +166,29 @@ if ($needsRestart) {
     exit 0
 }
 
+$chezmoiPath = "$env:USERPROFILE/.local/share/chezmoi"
+
 # Clone repository
 Write-Host "" -ForegroundColor Cyan
 Write-Host "==> Clone dotfiles repository" -ForegroundColor Cyan
-$chezmoiPath = "$env:USERPROFILE/.local/share/chezmoi"
-if (Test-Path "$chezmoiPath/.git") { Write-Host "ℹ️  Repository already exists" -ForegroundColor White }
-else { git clone https://github.com/mariomarin/dotfiles.git $chezmoiPath; Write-Host "✅ Repository cloned" -ForegroundColor Green }
+if (Test-Path "$chezmoiPath/.git") { git -C $chezmoiPath pull --quiet }
+else { git clone --quiet https://github.com/mariomarin/dotfiles.git $chezmoiPath }
+Write-Host "✅ Repository ready" -ForegroundColor Green
 
 # Set hostname
 Write-Host "" -ForegroundColor Cyan
 Write-Host "==> Set hostname" -ForegroundColor Cyan
 if (-not $env:HOSTNAME) {
     Write-Host "Available machines:" -ForegroundColor White
-    Push-Location $chezmoiPath
-    yq '.machines | keys | .[]' .chezmoidata/machines.yaml
-    Pop-Location
-    $hostname = Read-Host "`nEnter hostname for this machine"
-    $env:HOSTNAME = $hostname
+    yq '.machines | keys | .[]' "$chezmoiPath/.chezmoidata/machines.yaml"
+    $env:HOSTNAME = Read-Host "`nEnter hostname for this machine"
 }
 Write-Host "✅ Using hostname: $($env:HOSTNAME)" -ForegroundColor Green
 
 # Initialize chezmoi
 Write-Host "" -ForegroundColor Cyan
 Write-Host "==> Initialize chezmoi" -ForegroundColor Cyan
-Push-Location $chezmoiPath
-chezmoi init --force
+chezmoi init --source $chezmoiPath --force
 Write-Host "✅ Chezmoi initialized" -ForegroundColor Green
 
 # Setup Bitwarden
@@ -204,7 +199,9 @@ if (!(bw login --check 2>$null)) {
     bw login
 }
 Write-Host "Unlocking vault..." -ForegroundColor White
+Push-Location $chezmoiPath
 just bw-unlock
+Pop-Location
 
 Write-Host "" -ForegroundColor Green
 Write-Host "✅ Bootstrap complete!" -ForegroundColor Green
@@ -213,6 +210,5 @@ Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "  cd ~/.local/share/chezmoi" -ForegroundColor White
 Write-Host "  just apply" -ForegroundColor White
 Write-Host "" -ForegroundColor White
-Pop-Location
 
 #endregion
