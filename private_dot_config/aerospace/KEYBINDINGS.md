@@ -17,6 +17,7 @@ i3-style keybindings via window mode (`=`-hold via kanata).
 | `=+;` | Service mode |
 | `=+Space` | Toggle floating |
 | `=+Tab` | Last workspace |
+| `=+e` | Cycle layouts (h_tiles → v_tiles → accordion) |
 
 ## App Launchers (Hyper = Tab-hold)
 

@@ -67,6 +67,9 @@ ctrl-alt-tab = 'workspace-back-and-forth'
 ctrl-alt-t = 'exec-and-forget open -na Alacritty'
 ctrl-alt-enter = 'exec-and-forget open -na Alacritty'
 
+# Layout toggle (=+e cycles: h_tiles → v_tiles → accordion → h_tiles)
+ctrl-alt-e = 'layout h_tiles v_tiles h_accordion v_accordion'
+
 # App launchers (Hyper = Tab-hold, same mnemonics as LeftWM Super+key)
 ctrl-alt-cmd-shift-t = 'exec-and-forget open -na Alacritty'
 ctrl-alt-cmd-shift-b = 'exec-and-forget open -na Firefox'

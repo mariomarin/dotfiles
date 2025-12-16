@@ -42,6 +42,7 @@ Sends Ctrl+Alt for window management (cross-platform).
 | `r` | Resize mode | - |
 | `Space` | Toggle floating | - |
 | `Tab` | Last workspace | - |
+| `e` | Cycle layouts | - |
 | `;` | Service mode | - |
 
 ### macOS: Window Mode + Cmd for tmux
