@@ -69,11 +69,8 @@ function Install-Winget {
 
         # Verify winget works
         $version = winget --version 2>$null
-        if ($version) {
-            Write-Host "  ✓ winget $version is ready" -ForegroundColor Green
-        } else {
-            throw "winget not responding after installation"
-        }
+        if (-not $version) { throw "winget not responding after installation" }
+        Write-Host "  ✓ winget $version is ready" -ForegroundColor Green
     } catch {
         Write-Host "  ❌ Failed to setup winget automatically: $_" -ForegroundColor Red
         Write-Host "" -ForegroundColor White
@@ -126,24 +123,17 @@ function Install-WingetPackage {
     try {
         Write-Host "  Installing $DisplayName..." -ForegroundColor Yellow
         winget install --id $PackageId --exact --silent --accept-package-agreements --accept-source-agreements
+        if ($LASTEXITCODE -ne 0) { throw "winget install failed with exit code $LASTEXITCODE" }
 
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "  ✓ $DisplayName installed" -ForegroundColor Green
+        Write-Host "  ✓ $DisplayName installed" -ForegroundColor Green
+        Update-SessionPath
 
-            # Refresh PATH to make command available immediately
-            Update-SessionPath
-
-            # Verify command is now available
-            if (Test-CommandExists -CommandName $CommandName) {
-                Write-Host "  ✓ $CommandName command is ready" -ForegroundColor Green
-                return $false
-            } else {
-                Write-Host "  ⚠️  $CommandName installed but not in PATH yet" -ForegroundColor Yellow
-                return $true  # Restart needed
-            }
-        } else {
-            throw "winget install failed with exit code $LASTEXITCODE"
+        if (Test-CommandExists -CommandName $CommandName) {
+            Write-Host "  ✓ $CommandName command is ready" -ForegroundColor Green
+            return $false
         }
+        Write-Host "  ⚠️  $CommandName installed but not in PATH yet" -ForegroundColor Yellow
+        return $true  # Restart needed
     } catch {
         Write-Host "  ❌ Failed to install $($DisplayName): $_" -ForegroundColor Red
         exit 1
@@ -154,13 +144,9 @@ function Install-WingetPackage {
 
 #region Main Script
 
-# Check if winget is available, install if not
-if (-not (Test-CommandExists -CommandName "winget")) {
-    Install-Winget
-} else {
-    $version = winget --version
-    Write-Host "✓ winget $version already available" -ForegroundColor Green
-}
+# Ensure winget is available
+if (-not (Test-CommandExists -CommandName "winget")) { Install-Winget }
+else { Write-Host "✓ winget $(winget --version) already available" -ForegroundColor Green }
 
 # Install packages
 $needsRestart = $false
@@ -187,12 +173,8 @@ if ($needsRestart) {
 Write-Host "" -ForegroundColor Cyan
 Write-Host "==> Clone dotfiles repository" -ForegroundColor Cyan
 $chezmoiPath = "$env:USERPROFILE/.local/share/chezmoi"
-if (Test-Path "$chezmoiPath/.git") {
-    Write-Host "ℹ️  Repository already exists" -ForegroundColor White
-} else {
-    git clone https://github.com/mariomarin/dotfiles.git $chezmoiPath
-    Write-Host "✅ Repository cloned" -ForegroundColor Green
-}
+if (Test-Path "$chezmoiPath/.git") { Write-Host "ℹ️  Repository already exists" -ForegroundColor White }
+else { git clone https://github.com/mariomarin/dotfiles.git $chezmoiPath; Write-Host "✅ Repository cloned" -ForegroundColor Green }
 
 # Set hostname
 Write-Host "" -ForegroundColor Cyan
