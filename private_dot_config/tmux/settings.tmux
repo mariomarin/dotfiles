@@ -4,7 +4,10 @@
 # set C-a as prefix
 set -g prefix C-a
 
-# Mouse support.
+# Vi-style key bindings in copy mode (enables j/k navigation)
+set-option -g mode-keys vi
+
+# Mouse support
 set-option -g mouse on
 
 # Start window numbers at 1 to match keyboard order with tmux window order.
