@@ -48,12 +48,16 @@ properties:
           $nupmPath = "$env:USERPROFILE\.local\share\nupm\nupm"
           Test-Path $nupmPath
         SetScript: |
-          $nupmDir = "$env:USERPROFILE\.local\share\nupm"
-          if (-not (Test-Path $nupmDir)) {
-            New-Item -ItemType Directory -Path $nupmDir -Force | Out-Null
+          $nupmDir = "$env:USERPROFILE\.local\share\nupm\nupm"
+          if (Test-Path "$nupmDir\.git") {
+            git -C $nupmDir pull --quiet
+          } else {
+            $parentDir = "$env:USERPROFILE\.local\share\nupm"
+            if (-not (Test-Path $parentDir)) {
+              New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+            }
+            git clone --quiet https://github.com/nushell/nupm.git $nupmDir
           }
-          # Use --quiet to suppress stderr progress (DSC treats stderr as failure)
-          git clone --quiet https://github.com/nushell/nupm.git "$nupmDir\nupm"
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Alacritty
