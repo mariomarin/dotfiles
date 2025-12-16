@@ -3,6 +3,9 @@
 { config, pkgs, lib, ... }:
 
 let
+  # Get the fingers binary path for keybindings
+  fingersBin = "${pkgs.tmuxPlugins.fingers}/share/tmux-plugins/tmux-fingers/bin/tmux-fingers";
+
   # Plugin packages with their rtp files
   plugins = with pkgs.tmuxPlugins; [
     { pkg = sensible; rtp = "sensible.tmux"; }
@@ -71,8 +74,8 @@ let
     # ── Custom keybindings ──────────────────────────────────────────────
 
     # tmux-fingers: Alt+F to start, Alt+J for jump mode
-    bind -n M-f run -b "#{@fingers-cli} start #{pane_id}"
-    bind -n M-j run -b "#{@fingers-cli} start #{pane_id} --mode jump"
+    bind -n M-f run -b "${fingersBin} start #{pane_id}"
+    bind -n M-j run -b "${fingersBin} start #{pane_id} --mode jump"
   '';
 in
 {
