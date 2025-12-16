@@ -1,0 +1,10 @@
+# Devenv files
+.devenv/
+.devenv.flake.nix
+devenv.lock
+devenv.nix
+devenv.yaml
+.direnv/
+
+# Claude files
+CLAUDE.md
