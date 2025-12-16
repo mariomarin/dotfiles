@@ -3,6 +3,9 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [
+    ../common/modules/tmux.nix # Shared tmux plugins configuration
+  ];
   # Core system settings
   # Note: system.stateVersion should remain at the version you first installed
   # It does NOT need to be changed when upgrading NixOS versions

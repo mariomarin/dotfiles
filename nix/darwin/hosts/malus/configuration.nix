@@ -19,6 +19,7 @@ in
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
     ../../modules/kanata.nix # Kanata keyboard remapping service
     ../../../common/modules/fonts.nix # Shared Nerd Fonts for Unicode symbols
+    ../../../common/modules/tmux.nix # Shared tmux plugins configuration
   ];
 
   # Copy applications instead of symlinking to make Spotlight happy

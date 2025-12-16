@@ -39,6 +39,22 @@ These commands are SAFE to use when troubleshooting scripts:
 
 These only affect script execution tracking, not your actual files or configuration.
 
+## Architecture Decisions
+
+### Chezmoi over Home Manager
+
+This repository uses **chezmoi** for dotfile management instead of home-manager:
+
+- Chezmoi handles cross-platform dotfiles (NixOS, macOS, Windows)
+- Nix/nix-darwin/NixOS manage system packages and services
+- No home-manager - prefer chezmoi's templating and external data sources
+
+**Do NOT suggest home-manager** for:
+
+- Dotfile management (use chezmoi)
+- User-level configuration (use chezmoi templates)
+- Per-user packages (use nix profile or system packages)
+
 ## Important Chezmoi Concepts
 
 ### Scripts and State Management
