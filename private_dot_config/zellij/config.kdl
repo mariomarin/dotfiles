@@ -1,0 +1,333 @@
+// Zellij configuration with tmux-like Ctrl+a prefix bindings
+// Based on tmux keybindings from private_dot_config/tmux/KEYBINDINGS.md
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+theme "catppuccin-mocha"
+
+// ── General Options ───────────────────────────────────────────────────────────
+pane_frames true
+simplified_ui false
+default_shell "zsh"
+scrollback_editor "nvim"
+mouse_mode true
+copy_on_select true
+scroll_buffer_size 50000
+
+// ── Clipboard ─────────────────────────────────────────────────────────────────
+// OSC52 works by default on modern terminals (macOS, Linux, WSL, SSH)
+// Uncomment copy_command only if your terminal doesn't support OSC52:
+// copy_command "pbcopy"                      // macOS
+// copy_command "wl-copy"                     // Wayland
+// copy_command "xclip -selection clipboard"  // X11
+// copy_command "clip.exe"                    // WSL (Windows clipboard)
+
+// ── Session Serialization (like tmux-resurrect/continuum) ─────────────────────
+session_serialization true
+serialize_pane_viewport true
+scrollback_lines_to_serialize 1000
+
+// ── UI Configuration ──────────────────────────────────────────────────────────
+ui {
+    pane_frames {
+        rounded_corners true
+        hide_session_name false
+    }
+}
+
+// ── Keybindings ───────────────────────────────────────────────────────────────
+// Philosophy: Use Ctrl+a as prefix (like tmux), return to locked mode after action
+// This prevents conflicts with applications like Neovim
+
+keybinds clear-defaults=true {
+    // ── Normal Mode ───────────────────────────────────────────────────────────
+    // Minimal bindings in normal mode - most actions via tmux mode
+    normal {
+        // Lock key: Ctrl+a enters tmux mode (prefix)
+        bind "Ctrl a" { SwitchToMode "tmux"; }
+    }
+
+    // ── Locked Mode ───────────────────────────────────────────────────────────
+    // Default mode - all keys pass through to applications
+    locked {
+        bind "Ctrl a" { SwitchToMode "tmux"; }
+    }
+
+    // ── Tmux Mode (Prefix Mode) ───────────────────────────────────────────────
+    // Mimics tmux Ctrl+a bindings
+    tmux {
+        // Exit tmux mode
+        bind "Esc" { SwitchToMode "locked"; }
+        bind "Ctrl a" { Write 1; SwitchToMode "locked"; }  // Send literal Ctrl+a
+
+        // ── Session Management ────────────────────────────────────────────────
+        bind "d" { Detach; }
+        bind "Ctrl c" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "locked";
+        }
+        bind "Ctrl f" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "locked";
+        }
+        // T for session picker (like sesh)
+        bind "T" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "locked";
+        }
+        // Note: Zellij doesn't have "last session" - use session-manager instead
+
+        // ── Window/Tab Management ─────────────────────────────────────────────
+        bind "c" { NewTab; SwitchToMode "locked"; }
+        bind "w" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "locked";
+        }
+        bind "," { SwitchToMode "RenameTab"; TabNameInput 0; }
+        bind "p" { GoToPreviousTab; SwitchToMode "locked"; }
+        bind "n" { GoToNextTab; SwitchToMode "locked"; }
+        bind "1" { GoToTab 1; SwitchToMode "locked"; }
+        bind "2" { GoToTab 2; SwitchToMode "locked"; }
+        bind "3" { GoToTab 3; SwitchToMode "locked"; }
+        bind "4" { GoToTab 4; SwitchToMode "locked"; }
+        bind "5" { GoToTab 5; SwitchToMode "locked"; }
+        bind "6" { GoToTab 6; SwitchToMode "locked"; }
+        bind "7" { GoToTab 7; SwitchToMode "locked"; }
+        bind "8" { GoToTab 8; SwitchToMode "locked"; }
+        bind "9" { GoToTab 9; SwitchToMode "locked"; }
+
+        // ── Pane Management ───────────────────────────────────────────────────
+        bind "\"" { NewPane "Down"; SwitchToMode "locked"; }
+        bind "-" { NewPane "Down"; SwitchToMode "locked"; }  // Alternative
+        bind "%" { NewPane "Right"; SwitchToMode "locked"; }
+        bind "|" { NewPane "Right"; SwitchToMode "locked"; }  // Alternative
+        bind "x" { CloseFocus; SwitchToMode "locked"; }
+        bind "z" { ToggleFocusFullscreen; SwitchToMode "locked"; }
+        bind "o" { FocusNextPane; SwitchToMode "locked"; }
+        bind "Space" { NextSwapLayout; SwitchToMode "locked"; }
+
+        // Pane navigation (hjkl)
+        bind "h" { MoveFocus "Left"; SwitchToMode "locked"; }
+        bind "j" { MoveFocus "Down"; SwitchToMode "locked"; }
+        bind "k" { MoveFocus "Up"; SwitchToMode "locked"; }
+        bind "l" { MoveFocus "Right"; SwitchToMode "locked"; }
+        bind "Left" { MoveFocus "Left"; SwitchToMode "locked"; }
+        bind "Down" { MoveFocus "Down"; SwitchToMode "locked"; }
+        bind "Up" { MoveFocus "Up"; SwitchToMode "locked"; }
+        bind "Right" { MoveFocus "Right"; SwitchToMode "locked"; }
+
+        // ── Resize Mode ───────────────────────────────────────────────────────
+        bind "H" { Resize "Increase Left"; SwitchToMode "locked"; }
+        bind "J" { Resize "Increase Down"; SwitchToMode "locked"; }
+        bind "K" { Resize "Increase Up"; SwitchToMode "locked"; }
+        bind "L" { Resize "Increase Right"; SwitchToMode "locked"; }
+
+        // ── Copy/Scroll Mode ──────────────────────────────────────────────────
+        bind "[" { SwitchToMode "scroll"; }
+        bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "?" {
+            LaunchOrFocusPlugin "zellij:strider" {
+                floating true
+            };
+            SwitchToMode "locked";
+        }
+
+        // ── Plugin Launchers ──────────────────────────────────────────────────
+        // File browser (like nnn/ranger integration)
+        bind "e" {
+            LaunchOrFocusPlugin "filepicker" {
+                floating true
+            };
+            SwitchToMode "locked";
+        }
+
+        // ── Utility ───────────────────────────────────────────────────────────
+        bind ":" { SwitchToMode "locked"; }  // Command mode (not available in zellij)
+        bind "t" { NewPane; SwitchToMode "locked"; }  // New terminal
+        bind "b" { TogglePaneFrames; SwitchToMode "locked"; }  // Toggle borders
+        bind "r" { SwitchToMode "locked"; }  // Config reload (zellij auto-reloads)
+
+        // Resurrect/Save (like tmux-resurrect) - zellij auto-saves
+        bind "Ctrl s" { SwitchToMode "locked"; }
+        bind "Ctrl r" { SwitchToMode "locked"; }
+    }
+
+    // ── Scroll Mode (Copy Mode) ───────────────────────────────────────────────
+    scroll {
+        bind "Esc" { ScrollToBottom; SwitchToMode "locked"; }
+        bind "Ctrl c" { ScrollToBottom; SwitchToMode "locked"; }
+        bind "q" { ScrollToBottom; SwitchToMode "locked"; }
+
+        // Vi-style navigation
+        bind "j" "Down" { ScrollDown; }
+        bind "k" "Up" { ScrollUp; }
+        bind "Ctrl f" "PageDown" { PageScrollDown; }
+        bind "Ctrl b" "PageUp" { PageScrollUp; }
+        bind "d" { HalfPageScrollDown; }
+        bind "u" { HalfPageScrollUp; }
+        bind "g" { ScrollToTop; }
+        bind "G" { ScrollToBottom; }
+
+        // Search
+        bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "?" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "n" { Search "down"; }
+        bind "N" { Search "up"; }
+
+        // Edit scrollback in $EDITOR
+        bind "e" { EditScrollback; SwitchToMode "locked"; }
+    }
+
+    // ── Search Mode ───────────────────────────────────────────────────────────
+    entersearch {
+        bind "Esc" { SwitchToMode "scroll"; }
+        bind "Ctrl c" { SwitchToMode "scroll"; }
+        bind "Enter" { SwitchToMode "search"; }
+    }
+
+    search {
+        bind "Esc" { ScrollToBottom; SwitchToMode "locked"; }
+        bind "Ctrl c" { ScrollToBottom; SwitchToMode "locked"; }
+        bind "q" { ScrollToBottom; SwitchToMode "locked"; }
+
+        bind "j" "Down" { ScrollDown; }
+        bind "k" "Up" { ScrollUp; }
+        bind "Ctrl f" "PageDown" { PageScrollDown; }
+        bind "Ctrl b" "PageUp" { PageScrollUp; }
+        bind "d" { HalfPageScrollDown; }
+        bind "u" { HalfPageScrollUp; }
+        bind "g" { ScrollToTop; }
+        bind "G" { ScrollToBottom; }
+
+        bind "n" { Search "down"; }
+        bind "N" { Search "up"; }
+        bind "c" { SearchToggleOption "CaseSensitivity"; }
+        bind "w" { SearchToggleOption "Wrap"; }
+        bind "o" { SearchToggleOption "WholeWord"; }
+    }
+
+    // ── Rename Tab Mode ───────────────────────────────────────────────────────
+    RenameTab {
+        bind "Esc" { UndoRenameTab; SwitchToMode "locked"; }
+        bind "Ctrl c" { UndoRenameTab; SwitchToMode "locked"; }
+        bind "Enter" { SwitchToMode "locked"; }
+    }
+
+    // ── Shared Bindings (available in all modes) ──────────────────────────────
+    shared_except "locked" "tmux" {
+        bind "Ctrl a" { SwitchToMode "tmux"; }
+    }
+
+    shared {
+        // Alt+number for quick tab switching (like tmux-tilish)
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        bind "Alt 6" { GoToTab 6; }
+        bind "Alt 7" { GoToTab 7; }
+        bind "Alt 8" { GoToTab 8; }
+        bind "Alt 9" { GoToTab 9; }
+        bind "Alt 0" { GoToTab 10; }
+
+        // Quick pane navigation with Alt (like tmux-tilish)
+        bind "Alt h" { MoveFocus "Left"; }
+        bind "Alt j" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Up"; }
+        bind "Alt l" { MoveFocus "Right"; }
+
+        // Quick new pane
+        bind "Alt Enter" { NewPane; }
+
+        // Quick split
+        bind "Alt -" { NewPane "Down"; }
+        bind "Alt \\" { NewPane "Right"; }
+
+        // Quick close
+        bind "Alt q" { CloseFocus; }
+        bind "Alt Shift q" { CloseFocus; }  // Alias for tilish muscle memory
+
+        // Detach (like M-S-e in tmux-tilish)
+        bind "Alt Shift e" { Detach; }
+
+        // Quick zoom
+        bind "Alt z" { ToggleFocusFullscreen; }
+
+        // Layout cycling
+        bind "Alt Space" { NextSwapLayout; }
+
+        // Move panes (like tmux-tilish)
+        bind "Alt Shift h" { MovePane "Left"; }
+        bind "Alt Shift j" { MovePane "Down"; }
+        bind "Alt Shift k" { MovePane "Up"; }
+        bind "Alt Shift l" { MovePane "Right"; }
+
+        // Tab navigation
+        bind "Alt Tab" { ToggleTab; }  // Last active tab (like M-Tab in tmux)
+        bind "Alt n" { SwitchToMode "RenameTab"; TabNameInput 0; }  // Rename tab
+
+        // Floating pane toggle
+        bind "Alt f" { ToggleFloatingPanes; }
+
+        // Session manager (like sesh)
+        bind "Alt s" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+        }
+
+        // Harpoon - quick pane navigation (like tmux-harpoon)
+        // Ctrl+y to open, then: a=add, d=delete, Enter/l=switch, j/k=navigate
+        bind "Ctrl y" {
+            LaunchOrFocusPlugin "harpoon" {
+                floating true
+                move_to_focused_tab true
+            };
+        }
+
+        // ZSM - zoxide session manager (like sesh + zoxide)
+        bind "Ctrl o" {
+            LaunchOrFocusPlugin "zsm" {
+                floating true
+                move_to_focused_tab true
+            };
+        }
+    }
+}
+
+// ── Plugins ───────────────────────────────────────────────────────────────────
+plugins {
+    // Built-in plugins
+    tab-bar location="zellij:tab-bar"
+    status-bar location="zellij:status-bar"
+    strider location="zellij:strider"
+    compact-bar location="zellij:compact-bar"
+    session-manager location="zellij:session-manager"
+    filepicker location="zellij:strider" {
+        cwd "/"
+    }
+    // External plugins (install .wasm to ~/.config/zellij/plugins/)
+    // harpoon - quick pane navigation (like tmux-harpoon)
+    // https://github.com/Nacho114/harpoon
+    harpoon location="file:~/.config/zellij/plugins/harpoon.wasm"
+    // zsm - zoxide session manager (like sesh)
+    // https://github.com/liam-mackie/zsm
+    zsm location="file:~/.config/zellij/plugins/zsm.wasm"
+}
+
+// ── Default Mode ──────────────────────────────────────────────────────────────
+// Start in locked mode so all keys pass through by default
+default_mode "locked"
