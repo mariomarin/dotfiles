@@ -10,6 +10,13 @@ let
     set-option -g default-command "${pkgs.reattach-to-user-namespace}/bin/reattach-to-user-namespace -l ${pkgs.zsh}/bin/zsh"
   '';
 
+  # Cross-platform open command for URLs/files
+  # macOS: open, WSL: wslview, Linux: xdg-open
+  openCmd =
+    if pkgs.stdenv.isDarwin
+    then "open"
+    else ''$(if [ -n "$WSL_DISTRO_NAME" ]; then echo wslview; else echo xdg-open; fi)'';
+
   # Plugin packages with their rtp files
   plugins = with pkgs.tmuxPlugins; [
     { pkg = sensible; rtp = "sensible.tmux"; }
@@ -54,8 +61,16 @@ let
     set -g @continuum-boot 'on'
     set -g @continuum-systemd-start-cmd 'start-server'
 
+    # tmux-yank: copy to system clipboard and exit copy mode
+    set -g @yank_action 'copy-pipe-and-cancel'
+    set -g @yank_selection 'clipboard'
+    set -g @yank_selection_mouse 'clipboard'
+    set -g @yank_with_mouse 'on'
+
     # tmux-thumbs (prefix + F to activate)
     set -g @thumbs-key F
+    set -g @thumbs-command 'tmux set-buffer -- {} && tmux display-message "Copied {}"'
+    set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message "Opening {}" && ${openCmd} {}'
 
     # tmux-tilish
     set -g @tilish-dmenu 'on'
