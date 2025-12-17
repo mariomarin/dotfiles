@@ -20,3 +20,7 @@ set-option -g history-file ~/.tmux/cache/history
 # Terminal settings for true color support
 set -g default-terminal "tmux-256color"
 set -ag terminal-overrides ",alacritty:RGB"
+
+# OSC 52 clipboard support (copy to local clipboard over SSH)
+set -g set-clipboard on
+set -g allow-passthrough on

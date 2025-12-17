@@ -4,11 +4,16 @@ return {
     "aserowy/tmux.nvim",
     event = "VeryLazy",
     config = function()
+      -- Over SSH, use OSC 52 for clipboard (configured in options.lua)
+      -- Locally, let tmux.nvim sync clipboard via tmux buffers
+      local is_ssh = vim.env.SSH_TTY ~= nil
+
       require("tmux").setup({
         copy_sync = {
-          -- Sync clipboard between neovim and tmux
+          -- Sync registers between neovim instances via tmux buffers
           enable = true,
-          sync_clipboard = true,
+          -- Don't override clipboard over SSH (use OSC 52 instead)
+          sync_clipboard = not is_ssh,
           sync_registers = true,
         },
         navigation = {
