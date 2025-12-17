@@ -318,10 +318,23 @@ This determines:
 - Which scripts run (via `.chezmoiignore` patterns)
 - Machine-specific features (audio, bluetooth, kanata, etc.)
 
-**To override:** Set environment variable before running `chezmoi init`:
+### Overriding Defaults
 
-- Unix/macOS: `export HOSTNAME="malus"`
-- Windows: `$env:HOSTNAME = "prion"`
+**Chezmoi** - edit `~/.config/chezmoi/chezmoi.toml` after init:
+
+```toml
+[data.machineConfig.features]
+    kanata = false
+```
+
+**Nix** - username is read from chezmoi's `{{ .username }}` automatically.
+
+To override, set in `~/.config/chezmoi/chezmoi.toml`:
+
+```toml
+[data]
+    username = "yourname"
+```
 
 **Available Hostnames:**
 
@@ -358,6 +371,7 @@ After hostname is selected/loaded:
 
 **Available template variables:**
 
+- `{{ .username }}` - Current username
 - `{{ .machineConfig.hostname }}` - Selected hostname
 - `{{ .machineConfig.type }}` - Machine type (laptop/server/wsl/desktop/cloud)
 - `{{ .machineConfig.features.desktop }}` - Boolean: has GUI

@@ -1,6 +1,6 @@
 # symbiont - NixOS on WSL (two systems coexisting)
 # Minimal, headless configuration for development via browser/SSH
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, userConfig, ... }:
 
 {
   imports = [
@@ -13,7 +13,7 @@
   # Enable WSL support (nixos-wsl module provides these options)
   wsl = {
     enable = true;
-    defaultUser = "mario";
+    defaultUser = userConfig.username;
     useWindowsDriver = true;
   };
 
@@ -43,7 +43,7 @@
   };
 
   # Add user to docker group
-  users.users.mario.extraGroups = [ "docker" ];
+  users.users.${userConfig.username}.extraGroups = [ "docker" ];
 
   # Firewall - permissive for development
   networking.firewall = {

@@ -1,8 +1,11 @@
 # malus - macOS configuration
 # Biology theme: Malus (apple genus) for macOS
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, userConfig, ... }:
 
 let
+  username = userConfig.username;
+  homeDir = "/Users/${username}";
+
   # Build environment with all system applications
   appEnv = pkgs.buildEnv {
     name = "system-applications";
@@ -56,7 +59,7 @@ in
   };
 
   # Primary user for nix-darwin (required for user-specific options)
-  system.primaryUser = "mario";
+  system.primaryUser = username;
 
   # Allow unfree packages (VSCode, etc.)
   nixpkgs.config.allowUnfree = true;
@@ -85,8 +88,8 @@ in
       KeepAlive = true;
       RunAtLoad = true;
       ProcessType = "Background";
-      StandardOutPath = "/Users/mario/Library/Logs/syncthing.log";
-      StandardErrorPath = "/Users/mario/Library/Logs/syncthing.log";
+      StandardOutPath = "${homeDir}/Library/Logs/syncthing.log";
+      StandardErrorPath = "${homeDir}/Library/Logs/syncthing.log";
     };
   };
 

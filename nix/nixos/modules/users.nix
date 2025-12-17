@@ -1,10 +1,10 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, userConfig, ... }:
 
 {
-  # User configuration
-  users.users.mario = {
+  # User configuration - username from user.nix
+  users.users.${userConfig.username} = {
     isNormalUser = true;
-    description = "mario";
+    description = userConfig.username;
     extraGroups = [
       "adbusers"
       "docker"

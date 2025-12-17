@@ -35,6 +35,19 @@ curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bo
 iwr -useb https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-windows.ps1 | iex
 ```
 
+### Customizing for Your Machine
+
+**Chezmoi** - edit `~/.config/chezmoi/chezmoi.toml`:
+
+```toml
+[data.machineConfig.features]
+    kanata = false  # Disable keyboard remapping
+```
+
+**Nix** - username syncs from chezmoi config automatically.
+
+Kanata is disabled by default for unknown machines.
+
 The bootstrap script will:
 
 - Install Nix package manager (macOS only, if not present)

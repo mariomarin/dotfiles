@@ -1,48 +1,42 @@
-{{- /* Get hostname from HOSTNAME env var or system hostname */ -}}
-{{- $hostname := env "HOSTNAME" | default .chezmoi.hostname -}}
+{{- /* ══════════════════════════════════════════════════════════════════════════
+   Machine detection and defaults
+
+   Override any value by editing ~/.config/chezmoi/chezmoi.toml after init:
+
+   [data]
+       username = "yourname"
+   [data.machineConfig.features]
+       kanata = false
+   ══════════════════════════════════════════════════════════════════════════ */ -}}
+
+{{- $hostname := .chezmoi.hostname -}}
+{{- $username := .chezmoi.username -}}
 
 {{- /* Detect environment */ -}}
 {{- $codespaces := env "CODESPACES" | not | not -}}
-{{- $isServer := false -}}
-{{- $isDesktop := false -}}
-{{- $hasKmonad := false -}}
-{{- $isWSL := false -}}
+{{- $isWSL := env "WSL_DISTRO_NAME" | not | not -}}
 
-{{- /* Detect WSL environment */ -}}
-{{- $wslEnv := env "WSL_DISTRO_NAME" -}}
-{{- if $wslEnv -}}
-  {{- $isWSL = true -}}
-{{- end -}}
+{{- /* Determine machine type and features based on environment */ -}}
+{{- $isServer := or $codespaces $isWSL (hasPrefix "vm-" $hostname) -}}
+{{- $isDesktop := not $isServer -}}
 
-{{- /* Determine machine type based on hostname and environment */ -}}
-{{- if $codespaces -}}
-  {{- $isServer = true -}}
-{{- else if $isWSL -}}
-  {{- $isServer = true -}}
-  {{- /* WSL is treated as a server (headless, CLI-only) */ -}}
-{{- else if eq $hostname "nixos" -}}
-  {{- $isDesktop = true -}}
-  {{- $hasKmonad = true -}}
-{{- else if hasPrefix "vm-" $hostname -}}
-  {{- $isServer = true -}}
-{{- else -}}
-  {{- /* Default to desktop for unknown hosts */ -}}
-  {{- $isDesktop = true -}}
-{{- end -}}
+{{- /* Kanata: enabled on known desktop machines, disabled by default for others */ -}}
+{{- $knownKanataMachines := list "dendrite" "malus" "prion" -}}
+{{- $hasKanata := has $hostname $knownKanataMachines -}}
 
 {{- /* Set machine type string */ -}}
-{{- $machineType := "laptop" -}}
-{{- if $isServer -}}
-  {{- $machineType = "server" -}}
-{{- end -}}
+{{- $machineType := "desktop" -}}
 {{- if $isWSL -}}
   {{- $machineType = "wsl" -}}
+{{- else if $isServer -}}
+  {{- $machineType = "server" -}}
 {{- end -}}
 
 [bitwarden]
     command = "bw"
 
 [data]
+    username = {{ $username | quote }}
     machineType = {{ $machineType | quote }}
     codespaces = {{ $codespaces }}
 
@@ -52,7 +46,7 @@
 
         [data.machineConfig.features]
             desktop = {{ $isDesktop }}
-            kanata = {{ $hasKmonad }}
+            kanata = {{ $hasKanata }}
             audio = {{ and $isDesktop (not $isWSL) }}
             bluetooth = {{ and $isDesktop (not $isWSL) }}
             wsl = {{ $isWSL }}

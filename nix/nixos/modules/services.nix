@@ -1,7 +1,9 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, userConfig, ... }:
 
 let
   isDesktop = config.custom.desktop.enable or false;
+  username = userConfig.username;
+  homeDir = "/home/${username}";
 in
 {
   imports = [
@@ -14,9 +16,9 @@ in
       # Syncthing - file synchronization
       services.syncthing = {
         enable = true;
-        user = "mario";
-        dataDir = "/home/mario";
-        configDir = "/home/mario/.config/syncthing";
+        user = username;
+        dataDir = homeDir;
+        configDir = "${homeDir}/.config/syncthing";
       };
 
       # Topgrade - automatic updates
