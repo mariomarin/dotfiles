@@ -8,6 +8,10 @@ option_as_alt = "Both"
 [general]
 import = ["~/.config/alacritty/themes/themes/ayu_light.toml"]
 
+[terminal]
+# OSC 52 clipboard support - allows remote/tmux to write to local clipboard
+osc52 = "CopyPaste"
+
 # Instead of using: `alacritty --print-events`
 # https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping
 # Open a terminal without Tmux, and get the key you want with the command:
