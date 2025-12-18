@@ -55,7 +55,6 @@ export PATH
 
 # APPS
 export EDITOR=nvim
-export TERM=alacritty
 
 # Editors
 export VISUAL=nvim

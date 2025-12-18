@@ -30,7 +30,4 @@ if (( ${+commands[atuin]} )); then
     bindkey -M vicmd '/' atuin-search-vicmd
     bindkey -M vicmd 'k' atuin-up-search-vicmd
   }
-  
-  # Export the function so it can be called from zsh-vi-mode-config.zsh
-  export -f setup_atuin_bindings 2>/dev/null || true
 fi
