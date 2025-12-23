@@ -103,6 +103,12 @@
         (command: Execute, value: "alacritty", modifier: ["Control", "Alt"], key: "t"),
         // Rofi launcher (like Super+space)
         (command: Execute, value: "rofi -show drun", modifier: ["Control", "Alt"], key: "space"),
+        // Layout cycling (like Super+Ctrl+Up/Down)
+        (command: NextLayout, value: "", modifier: ["Control", "Alt"], key: "Up"),
+        (command: PreviousLayout, value: "", modifier: ["Control", "Alt"], key: "Down"),
+        // Resize (like Super+Shift+Left/Right)
+        (command: DecreaseMainWidth, value: "3", modifier: ["Control", "Alt", "Shift"], key: "Left"),
+        (command: IncreaseMainWidth, value: "3", modifier: ["Control", "Alt", "Shift"], key: "Right"),
 
         // Hyper bindings (Tab-hold = Ctrl+Alt+Super+Shift) for app launchers
         (command: Execute, value: "alacritty", modifier: ["modkey", "Control", "Alt", "Shift"], key: "t"),

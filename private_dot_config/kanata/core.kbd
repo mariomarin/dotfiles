@@ -55,6 +55,6 @@
   _      C-A-q  C-A-w  C-A-e  C-A-r  C-A-t  C-A-y  C-A-u  C-A-i  C-A-o  C-A-p  C-A-[  C-A-]  C-A-\
   _      C-A-a  C-A-s  C-A-d  C-A-f  C-A-g  C-A-h  C-A-j  C-A-k  C-A-l  C-A-;  C-A-'  C-A-ret
   lsft   C-A-z  C-A-x  C-A-c  C-A-v  C-A-b  C-A-n  C-A-m  C-A-,  C-A-.  C-A-/  rsft
-  _      _      _                    C-A-spc                _      _      _      _      _      _
-                                                                        _      _      _
+  _      _      _                    C-A-spc                _      _      _      _      C-A-up   _
+                                                                        C-A-left C-A-down C-A-rght
 )

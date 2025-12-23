@@ -79,11 +79,15 @@ ctrl-alt-shift-enter = 'exec-and-forget open -na Alacritty'
 # Layout toggle (=+e cycles layouts)
 ctrl-alt-e = 'layout h_tiles v_tiles h_accordion v_accordion'
 
-# Resize (Omarchy-style): =+Alt+hjkl
+# Resize (Omarchy-style): =+Cmd+hjkl or =+Shift+arrows
 ctrl-alt-cmd-h = 'resize width -50'
 ctrl-alt-cmd-j = 'resize height +50'
 ctrl-alt-cmd-k = 'resize height -50'
 ctrl-alt-cmd-l = 'resize width +50'
+ctrl-alt-shift-left = 'resize width -50'
+ctrl-alt-shift-right = 'resize width +50'
+ctrl-alt-shift-up = 'resize height -50'
+ctrl-alt-shift-down = 'resize height +50'
 
 # App launchers (Hyper = Tab-hold, same mnemonics as LeftWM Super+key)
 ctrl-alt-cmd-shift-t = 'exec-and-forget open -na Alacritty'
