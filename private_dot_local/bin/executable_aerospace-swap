@@ -1,0 +1,29 @@
+#!/usr/bin/env nu
+# Swap workspaces between monitors (like LeftWM SwapTags)
+
+def main [] {
+    # Get focused workspace
+    let focused = (aerospace list-workspaces --focused | str trim)
+
+    # Get all monitors
+    let monitors = (aerospace list-monitors | lines | where { $in != "" })
+
+    if ($monitors | length) < 2 {
+        return
+    }
+
+    # Focus other monitor and get its workspace
+    aerospace focus-monitor --wrap-around next
+    let other = (aerospace list-workspaces --focused | str trim)
+
+    # Move other workspace to original monitor
+    aerospace move-workspace-to-monitor --wrap-around next
+
+    # Go back to original monitor, focus original workspace, move it
+    aerospace focus-monitor --wrap-around next
+    aerospace workspace $focused
+    aerospace move-workspace-to-monitor --wrap-around next
+
+    # Focus back to where we started (now showing the swapped workspace)
+    aerospace focus-monitor --wrap-around next
+}

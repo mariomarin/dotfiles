@@ -42,7 +42,7 @@ ctrl-alt-shift-comma = 'move-node-to-monitor --wrap-around prev'
 ctrl-alt-shift-period = 'move-node-to-monitor --wrap-around next'
 
 # Swap workspaces between monitors (like Super+w SwapTags)
-ctrl-alt-w = 'move-workspace-to-monitor --wrap-around next'
+ctrl-alt-w = 'exec-and-forget ~/.local/bin/aerospace-swap'
 
 # Workspaces: =+1-9
 ctrl-alt-1 = 'workspace 1'
