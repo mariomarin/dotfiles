@@ -91,14 +91,18 @@
         // Move window to prev/next workspace (like Super+Shift+,/.)
         (command: MoveWindowToPreviousWorkspace, value: "", modifier: ["Control", "Alt", "Shift"], key: "comma"),
         (command: MoveWindowToNextWorkspace, value: "", modifier: ["Control", "Alt", "Shift"], key: "period"),
-        // Swap tags between monitors (like Super+w)
+        // Swap tags between monitors (like Super+w), move to last workspace (like Super+Shift+w)
         (command: SwapTags, value: "", modifier: ["Control", "Alt"], key: "w"),
-        // Other
-        (command: ToggleFullScreen, value: "", modifier: ["Control", "Alt"], key: "f"),
-        (command: CloseWindow, value: "", modifier: ["Control", "Alt"], key: "q"),
-        (command: Execute, value: "alacritty", modifier: ["Control", "Alt"], key: "t"),
-        (command: Execute, value: "alacritty", modifier: ["Control", "Alt"], key: "Return"),
+        (command: MoveToLastWorkspace, value: "", modifier: ["Control", "Alt", "Shift"], key: "w"),
         (command: SwapTags, value: "", modifier: ["Control", "Alt"], key: "Tab"),
+        // Window actions
+        (command: ToggleFullScreen, value: "", modifier: ["Control", "Alt"], key: "f"),
+        (command: CloseWindow, value: "", modifier: ["Control", "Alt", "Shift"], key: "q"),
+        (command: MoveWindowTop, value: "", modifier: ["Control", "Alt"], key: "Return"),
+        (command: Execute, value: "alacritty", modifier: ["Control", "Alt", "Shift"], key: "Return"),
+        (command: Execute, value: "alacritty", modifier: ["Control", "Alt"], key: "t"),
+        // Rofi launcher (like Super+space)
+        (command: Execute, value: "rofi -show drun", modifier: ["Control", "Alt"], key: "space"),
 
         // Hyper bindings (Tab-hold = Ctrl+Alt+Super+Shift) for app launchers
         (command: Execute, value: "alacritty", modifier: ["modkey", "Control", "Alt", "Shift"], key: "t"),

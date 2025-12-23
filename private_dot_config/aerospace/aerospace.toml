@@ -66,15 +66,15 @@ ctrl-alt-shift-7 = 'move-node-to-workspace 7'
 ctrl-alt-shift-8 = 'move-node-to-workspace 8'
 ctrl-alt-shift-9 = 'move-node-to-workspace 9'
 
-# Window actions
+# Window actions (matching LeftWM Super bindings)
 ctrl-alt-f = 'fullscreen'
-ctrl-alt-q = 'close'
+ctrl-alt-shift-q = 'close'
 ctrl-alt-r = 'mode resize'
 ctrl-alt-semicolon = 'mode service'
 ctrl-alt-space = 'layout floating tiling'
 ctrl-alt-tab = 'workspace-back-and-forth'
 ctrl-alt-t = 'exec-and-forget open -na Alacritty'
-ctrl-alt-enter = 'exec-and-forget open -na Alacritty'
+ctrl-alt-shift-enter = 'exec-and-forget open -na Alacritty'
 
 # Layout toggle (=+e cycles layouts)
 ctrl-alt-e = 'layout h_tiles v_tiles h_accordion v_accordion'
