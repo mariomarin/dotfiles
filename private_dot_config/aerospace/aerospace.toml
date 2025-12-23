@@ -1,4 +1,4 @@
-# AeroSpace - i3-style keybindings via window mode (=-hold)
+# AeroSpace - LeftWM-compatible keybindings via window mode (=-hold)
 # =-hold sends Ctrl+Alt, Shift passes through for move operations
 # Reference: https://nikitabobko.github.io/AeroSpace/guide
 
@@ -23,17 +23,26 @@ outer.right = 10
 [mode.main.binding]
 
 # Window mode (=-hold via kanata sends Ctrl+Alt)
-# Focus: =+hjkl
-ctrl-alt-h = 'focus left'
+# Matches LeftWM Super keybindings exactly
+
+# Focus: h/l = workspace (monitor), j/k = window
+ctrl-alt-h = 'workspace --wrap-around prev'
 ctrl-alt-j = 'focus down'
 ctrl-alt-k = 'focus up'
-ctrl-alt-l = 'focus right'
+ctrl-alt-l = 'workspace --wrap-around next'
 
-# Move: =+Shift+hjkl
-ctrl-alt-shift-h = 'move left'
+# Move: Shift variants
+ctrl-alt-shift-h = 'move-node-to-workspace --wrap-around prev'
 ctrl-alt-shift-j = 'move down'
 ctrl-alt-shift-k = 'move up'
-ctrl-alt-shift-l = 'move right'
+ctrl-alt-shift-l = 'move-node-to-workspace --wrap-around next'
+
+# Move window to prev/next monitor (like Super+Shift+,/.)
+ctrl-alt-shift-comma = 'move-node-to-monitor --wrap-around prev'
+ctrl-alt-shift-period = 'move-node-to-monitor --wrap-around next'
+
+# Swap workspaces between monitors (like Super+w SwapTags)
+ctrl-alt-w = 'move-workspace-to-monitor --wrap-around next'
 
 # Workspaces: =+1-9
 ctrl-alt-1 = 'workspace 1'
@@ -57,7 +66,7 @@ ctrl-alt-shift-7 = 'move-node-to-workspace 7'
 ctrl-alt-shift-8 = 'move-node-to-workspace 8'
 ctrl-alt-shift-9 = 'move-node-to-workspace 9'
 
-# Window actions (all under window mode for i3 consistency)
+# Window actions
 ctrl-alt-f = 'fullscreen'
 ctrl-alt-q = 'close'
 ctrl-alt-r = 'mode resize'
@@ -67,8 +76,14 @@ ctrl-alt-tab = 'workspace-back-and-forth'
 ctrl-alt-t = 'exec-and-forget open -na Alacritty'
 ctrl-alt-enter = 'exec-and-forget open -na Alacritty'
 
-# Layout toggle (=+e cycles: h_tiles → v_tiles → accordion → h_tiles)
+# Layout toggle (=+e cycles layouts)
 ctrl-alt-e = 'layout h_tiles v_tiles h_accordion v_accordion'
+
+# Resize (Omarchy-style): =+Alt+hjkl
+ctrl-alt-cmd-h = 'resize width -50'
+ctrl-alt-cmd-j = 'resize height +50'
+ctrl-alt-cmd-k = 'resize height -50'
+ctrl-alt-cmd-l = 'resize width +50'
 
 # App launchers (Hyper = Tab-hold, same mnemonics as LeftWM Super+key)
 ctrl-alt-cmd-shift-t = 'exec-and-forget open -na Alacritty'
@@ -77,7 +92,7 @@ ctrl-alt-cmd-shift-m = 'exec-and-forget open -na Spotify'
 ctrl-alt-cmd-shift-o = 'exec-and-forget open -na Obsidian'
 ctrl-alt-cmd-shift-s = 'exec-and-forget open -na Slack'
 
-# Resize mode
+# Resize mode (=+r to enter)
 [mode.resize.binding]
 h = 'resize width -50'
 j = 'resize height +50'

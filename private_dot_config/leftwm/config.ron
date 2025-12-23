@@ -88,11 +88,17 @@
         (command: MoveToTag, value: "7", modifier: ["Control", "Alt", "Shift"], key: "7"),
         (command: MoveToTag, value: "8", modifier: ["Control", "Alt", "Shift"], key: "8"),
         (command: MoveToTag, value: "9", modifier: ["Control", "Alt", "Shift"], key: "9"),
+        // Move window to prev/next workspace (like Super+Shift+,/.)
+        (command: MoveWindowToPreviousWorkspace, value: "", modifier: ["Control", "Alt", "Shift"], key: "comma"),
+        (command: MoveWindowToNextWorkspace, value: "", modifier: ["Control", "Alt", "Shift"], key: "period"),
+        // Swap tags between monitors (like Super+w)
+        (command: SwapTags, value: "", modifier: ["Control", "Alt"], key: "w"),
         // Other
         (command: ToggleFullScreen, value: "", modifier: ["Control", "Alt"], key: "f"),
         (command: CloseWindow, value: "", modifier: ["Control", "Alt"], key: "q"),
         (command: Execute, value: "alacritty", modifier: ["Control", "Alt"], key: "t"),
         (command: Execute, value: "alacritty", modifier: ["Control", "Alt"], key: "Return"),
+        (command: SwapTags, value: "", modifier: ["Control", "Alt"], key: "Tab"),
 
         // Hyper bindings (Tab-hold = Ctrl+Alt+Super+Shift) for app launchers
         (command: Execute, value: "alacritty", modifier: ["modkey", "Control", "Alt", "Shift"], key: "t"),

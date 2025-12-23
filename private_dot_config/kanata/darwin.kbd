@@ -75,13 +75,14 @@
   _    _    _              _              _    _    _    _    _    _
 )
 
-;; Window layer: hold = → ⎈⌥ combos for aerospace
-;; i3-style: hjkl focus, ⇧+hjkl move, 1-9 workspace, ⇧+1-9 move-to
+;; Window layer: hold = → ⎈⌥ passthrough for WM keybindings
+;; ⇧ passes through naturally for move variants
+;; WM (aerospace) defines the actual actions, matching leftwm
 (deflayer window
   _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      C-A-1  C-A-2  C-A-3  C-A-4  C-A-5  C-A-6  C-A-7  C-A-8  C-A-9  _      _      _      _
-  C-A-⭾  C-A-q  _      C-A-e  C-A-r  C-A-t  _      _      _      _      _      _      _      _
-  _      _      _      _      C-A-f  _      C-A-h  C-A-j  C-A-k  C-A-l  C-A-;  _      C-A-⏎
-  _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      C-A-1  C-A-2  C-A-3  C-A-4  C-A-5  C-A-6  C-A-7  C-A-8  C-A-9  C-A-0  C-A--  _      _
+  C-A-⭾  C-A-q  C-A-w  C-A-e  C-A-r  C-A-t  C-A-y  C-A-u  C-A-i  C-A-o  C-A-p  C-A-[  C-A-]  C-A-\
+  _      C-A-a  C-A-s  C-A-d  C-A-f  C-A-g  C-A-h  C-A-j  C-A-k  C-A-l  C-A-;  C-A-'  C-A-⏎
+  ‹⇧     _      C-A-z  C-A-x  C-A-c  C-A-v  C-A-b  C-A-n  C-A-m  C-A-,  C-A-.  C-A-/  ⇧›
   _      _      _                    C-A-␣                _      _      _      _      _      _
 )
