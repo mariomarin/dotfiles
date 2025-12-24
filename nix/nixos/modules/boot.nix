@@ -1,8 +1,11 @@
 { config, pkgs, lib, ... }:
 
+let
+  isWSL = config.wsl.enable or false;
+in
 {
   # Boot configuration - only for non-WSL systems
-  config = lib.mkIf (!config.wsl.enable or false) {
+  config = lib.mkIf (!isWSL) {
     # Bootloader
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;

@@ -2,6 +2,13 @@
 
 let
   cfg = config.custom.desktop;
+
+  # Portal packages by desktop type
+  portalPackages = {
+    gnome = pkgs.xdg-desktop-portal-gnome;
+    hyprland = pkgs.xdg-desktop-portal-hyprland;
+    leftwm = pkgs.xdg-desktop-portal-gtk;
+  };
 in
 {
   options.custom.desktop = {
@@ -104,11 +111,7 @@ in
     # XDG portal for desktop integration
     xdg.portal = {
       enable = true;
-      extraPortals = with pkgs; [
-        (if cfg.type == "gnome" then xdg-desktop-portal-gnome
-        else if cfg.type == "hyprland" then xdg-desktop-portal-hyprland
-        else xdg-desktop-portal-gtk)
-      ];
+      extraPortals = [ portalPackages.${cfg.type} ];
     };
 
     # Enable GVFS for file manager support
