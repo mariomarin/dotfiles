@@ -223,6 +223,28 @@ $env.config.keybindings = [
     }
 
     # -------------------------------------------------------------------------
+    # CLIPBOARD (system clipboard via nu_plugin_clipboard)
+    # -------------------------------------------------------------------------
+
+    # Ctrl+Shift+C - Copy current line to system clipboard
+    {
+        name: copy_line_to_clipboard
+        modifier: control_shift
+        keycode: char_c
+        mode: [vi_insert, vi_normal]
+        event: { send: executehostcommand cmd: "commandline | clipboard copy; print 'Copied to clipboard'" }
+    }
+
+    # Ctrl+Shift+V - Paste from system clipboard
+    {
+        name: paste_from_clipboard
+        modifier: control_shift
+        keycode: char_v
+        mode: [vi_insert, vi_normal]
+        event: { send: executehostcommand cmd: "commandline edit --insert (clipboard paste)" }
+    }
+
+    # -------------------------------------------------------------------------
     # NORMAL MODE BINDINGS
     # -------------------------------------------------------------------------
 
