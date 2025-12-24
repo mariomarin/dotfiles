@@ -5,20 +5,10 @@
 # ── System clipboard integration ─────────────────────────────────────────────
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 
-# Platform-specific clipboard commands
-if [[ "$OSTYPE" == darwin* ]]; then
-  # macOS: auto-detection works (pbcopy/pbpaste)
-  :
-elif [[ -n "$WSL_DISTRO_NAME" ]]; then
-  # WSL: use Windows clipboard
+# WSL needs manual config (macOS/Wayland/X11 auto-detect)
+if [[ -n "$WSL_DISTRO_NAME" ]]; then
   ZVM_CLIPBOARD_COPY_CMD='clip.exe'
   ZVM_CLIPBOARD_PASTE_CMD='powershell.exe -NoProfile -Command Get-Clipboard'
-elif [[ -n "$WAYLAND_DISPLAY" ]]; then
-  # Wayland: auto-detection works (wl-copy/wl-paste)
-  :
-elif [[ -n "$DISPLAY" ]]; then
-  # X11: auto-detection works (xclip/xsel)
-  :
 fi
 
 # Function to be executed after zsh-vi-mode is initialized
