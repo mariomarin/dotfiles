@@ -11,11 +11,11 @@ let
   '';
 
   # Cross-platform open command for URLs/files
-  # macOS: open, WSL: wslview, Linux: xdg-open
+  isWSL = config.wsl.enable or false;
   openCmd =
-    if pkgs.stdenv.isDarwin
-    then "open"
-    else ''$(if [ -n "$WSL_DISTRO_NAME" ]; then echo wslview; else echo xdg-open; fi)'';
+    if pkgs.stdenv.isDarwin then "open"
+    else if isWSL then "wslview"
+    else "xdg-open";
 
   # Plugin packages with their rtp files
   plugins = with pkgs.tmuxPlugins; [
