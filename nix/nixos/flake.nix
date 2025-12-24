@@ -50,6 +50,7 @@
             config.allowUnfree = true;
           };
           tmux-harpoon = final.callPackage ./pkgs/tmux-harpoon.nix { };
+          tmux-tilish = final.callPackage ./pkgs/tmux-tilish.nix { };
           bitbucket-cli = final.callPackage ./pkgs/bitbucket-cli.nix { };
         })
         claude-code-nix.overlays.default

@@ -24,7 +24,7 @@ let
     { pkg = resurrect; rtp = "resurrect.tmux"; }
     { pkg = continuum; rtp = "continuum.tmux"; }
     { pkg = tmux-thumbs; rtp = "tmux-thumbs.tmux"; }
-    { pkg = tilish; rtp = "tilish.tmux"; }
+    { pkg = pkgs.tmux-tilish; rtp = "tilish.tmux"; }
     { pkg = pkgs.tmux-harpoon; rtp = "harpoon.tmux"; }
     { pkg = fuzzback; rtp = "fuzzback.tmux"; }
     { pkg = extrakto; rtp = "extrakto.tmux"; }
@@ -72,7 +72,10 @@ let
     set -g @thumbs-command 'tmux set-buffer -- {} && tmux display-message "Copied {}"'
     set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message "Opening {}" && ${openCmd} {}'
 
-    # tmux-tilish
+    # tmux-tilish (farzadmf fork with copilot support)
+    # Prefix mode: = layer (C-M) for all tilish bindings
+    # =+hjkl navigates, =+Shift+hjkl moves, =+1-9 windows, etc.
+    set -g @tilish-prefix 'C-M'
     set -g @tilish-dmenu 'on'
     set -g @tilish-new_pane '"'
     set -g @tilish-smart-splits 'on'

@@ -1,4 +1,5 @@
--- Seamless navigation and clipboard sync between Neovim and tmux
+-- Seamless navigation, resize, and clipboard sync between Neovim and tmux
+-- Uses Ctrl+Alt (C-M) via Kanata = layer for LeftWM/tilish compatibility
 return {
   {
     "aserowy/tmux.nvim",
@@ -11,34 +12,35 @@ return {
       require("tmux").setup({
         copy_sync = {
           -- Sync registers between neovim instances via tmux buffers
+          -- dd in nvim1, p in nvim2 - works over SSH without OSC52
           enable = true,
           -- Don't override clipboard over SSH (use OSC 52 instead)
           sync_clipboard = not is_ssh,
           sync_registers = true,
         },
         navigation = {
-          -- Use tilish-style navigation (M-hjkl)
+          -- Use = layer (C-M) for tilish-style navigation
           enable_default_keybindings = false,
-          cycle_navigation = true, -- Cycle to opposite pane when at edge
+          cycle_navigation = true,
           keybindings = {
-            left = "M-h",
-            down = "M-j",
-            up = "M-k",
-            right = "M-l",
-            last_active = "M-\\",
-            next = "M-Space",
+            left = "<C-M-h>",
+            down = "<C-M-j>",
+            up = "<C-M-k>",
+            right = "<C-M-l>",
+            last_active = "<C-M-\\>",
+            next = "<C-M-Space>",
           },
         },
         resize = {
-          -- Use Omarchy-style keybindings to match tmux-tilish config
+          -- Resize via = layer (matches tilish smart-splits)
           enable_default_keybindings = false,
           resize_step_x = 1,
           resize_step_y = 1,
           keybindings = {
-            left = "M-=", -- Alt+Equal: grow left
-            right = "M--", -- Alt+Minus: grow right
-            down = "M-+", -- Alt+Shift+Equal: grow down
-            up = "M-_", -- Alt+Shift+Minus: grow up
+            left = "<C-M-=>",
+            right = "<C-M-->",
+            down = "<C-M-+>",
+            up = "<C-M-_>",
           },
         },
       })

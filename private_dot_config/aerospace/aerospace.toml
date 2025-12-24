@@ -1,5 +1,4 @@
-# AeroSpace - LeftWM-compatible keybindings via window mode (=-hold)
-# =-hold sends Ctrl+Alt, Shift passes through for move operations
+# AeroSpace - Window management with Alt modifier (like LeftWM Super)
 # Reference: https://nikitabobko.github.io/AeroSpace/guide
 
 start-at-login = true
@@ -22,99 +21,72 @@ outer.right = 10
 
 [mode.main.binding]
 
-# Window mode (=-hold via kanata sends Ctrl+Alt)
-# Matches LeftWM Super keybindings exactly
+# Navigation: Alt+hjkl (like Super+hjkl in LeftWM)
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
 
-# Focus: h/l = workspace (monitor), j/k = window
-ctrl-alt-h = 'workspace --wrap-around prev'
-ctrl-alt-j = 'focus down'
-ctrl-alt-k = 'focus up'
-ctrl-alt-l = 'workspace --wrap-around next'
+# Move windows: Alt+Shift+hjkl (like Super+Shift+hjkl in LeftWM)
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
 
-# Move: Shift variants
-ctrl-alt-shift-h = 'move-node-to-workspace --wrap-around prev'
-ctrl-alt-shift-j = 'move down'
-ctrl-alt-shift-k = 'move up'
-ctrl-alt-shift-l = 'move-node-to-workspace --wrap-around next'
+# Workspaces: Alt+1-9 (like Super+1-9 in LeftWM)
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+alt-9 = 'workspace 9'
 
-# Move window to prev/next monitor (like Super+Shift+,/.)
-ctrl-alt-shift-comma = 'move-node-to-monitor --wrap-around prev'
-ctrl-alt-shift-period = 'move-node-to-monitor --wrap-around next'
+# Move to workspace: Alt+Shift+1-9 (like Super+Shift+1-9 in LeftWM)
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-7 = 'move-node-to-workspace 7'
+alt-shift-8 = 'move-node-to-workspace 8'
+alt-shift-9 = 'move-node-to-workspace 9'
 
-# Swap workspaces between monitors (like Super+w SwapTags)
-ctrl-alt-w = 'exec-and-forget ~/.local/bin/aerospace-swap'
+# Monitor: Alt+,/.
+alt-comma = 'focus-monitor --wrap-around prev'
+alt-period = 'focus-monitor --wrap-around next'
+alt-shift-comma = 'move-node-to-monitor --wrap-around prev'
+alt-shift-period = 'move-node-to-monitor --wrap-around next'
 
-# Workspaces: =+1-9
-ctrl-alt-1 = 'workspace 1'
-ctrl-alt-2 = 'workspace 2'
-ctrl-alt-3 = 'workspace 3'
-ctrl-alt-4 = 'workspace 4'
-ctrl-alt-5 = 'workspace 5'
-ctrl-alt-6 = 'workspace 6'
-ctrl-alt-7 = 'workspace 7'
-ctrl-alt-8 = 'workspace 8'
-ctrl-alt-9 = 'workspace 9'
+# Window actions
+alt-f = 'fullscreen'
+alt-shift-q = 'close'
+alt-space = 'layout floating tiling'
+alt-tab = 'workspace-back-and-forth'
+alt-enter = 'exec-and-forget open -na Alacritty'
+alt-e = 'layout h_tiles v_tiles h_accordion v_accordion'
 
-# Move to workspace: =+Shift+1-9
-ctrl-alt-shift-1 = 'move-node-to-workspace 1'
-ctrl-alt-shift-2 = 'move-node-to-workspace 2'
-ctrl-alt-shift-3 = 'move-node-to-workspace 3'
-ctrl-alt-shift-4 = 'move-node-to-workspace 4'
-ctrl-alt-shift-5 = 'move-node-to-workspace 5'
-ctrl-alt-shift-6 = 'move-node-to-workspace 6'
-ctrl-alt-shift-7 = 'move-node-to-workspace 7'
-ctrl-alt-shift-8 = 'move-node-to-workspace 8'
-ctrl-alt-shift-9 = 'move-node-to-workspace 9'
+# Resize mode
+alt-r = 'mode resize'
 
-# Window actions (matching LeftWM Super bindings)
-ctrl-alt-f = 'fullscreen'
-ctrl-alt-shift-q = 'close'
-ctrl-alt-r = 'mode resize'
-ctrl-alt-semicolon = 'mode service'
-ctrl-alt-space = 'layout floating tiling'
-ctrl-alt-tab = 'workspace-back-and-forth'
-ctrl-alt-t = 'exec-and-forget open -na Alacritty'
-ctrl-alt-shift-enter = 'exec-and-forget open -na Alacritty'
+# Swap workspaces between monitors
+alt-w = 'exec-and-forget /run/current-system/sw/bin/nu ~/.local/bin/aerospace-swap'
 
-# Layout toggle (=+e cycles layouts)
-ctrl-alt-e = 'layout h_tiles v_tiles h_accordion v_accordion'
-
-# Resize (Omarchy-style): =+Cmd+hjkl or =+Shift+arrows
-ctrl-alt-cmd-h = 'resize width -50'
-ctrl-alt-cmd-j = 'resize height +50'
-ctrl-alt-cmd-k = 'resize height -50'
-ctrl-alt-cmd-l = 'resize width +50'
-ctrl-alt-shift-left = 'resize width -50'
-ctrl-alt-shift-right = 'resize width +50'
-ctrl-alt-shift-up = 'resize height -50'
-ctrl-alt-shift-down = 'resize height +50'
-
-# App launchers (Hyper = Tab-hold, same mnemonics as LeftWM Super+key)
-ctrl-alt-cmd-shift-t = 'exec-and-forget open -na Alacritty'
-ctrl-alt-cmd-shift-b = 'exec-and-forget open -na Firefox'
-ctrl-alt-cmd-shift-m = 'exec-and-forget open -na Spotify'
-ctrl-alt-cmd-shift-o = 'exec-and-forget open -na Obsidian'
-ctrl-alt-cmd-shift-s = 'exec-and-forget open -na Slack'
-
-# Resize mode (=+r to enter)
+# Resize mode (Alt+r, then hjkl)
 [mode.resize.binding]
+esc = 'mode main'
+enter = 'mode main'
 h = 'resize width -50'
 j = 'resize height +50'
 k = 'resize height -50'
 l = 'resize width +50'
 minus = 'resize smart -50'
 equal = 'resize smart +50'
-enter = 'mode main'
-esc = 'mode main'
 
-# Service mode
-[mode.service.binding]
-esc = ['reload-config', 'mode main']
-r = ['flatten-workspace-tree', 'mode main']
-f = ['layout floating tiling', 'mode main']
-backspace = ['close-all-windows-but-current', 'mode main']
-
-# Float these apps by default
+# Float these apps
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
 run = 'layout floating'

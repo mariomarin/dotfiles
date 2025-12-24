@@ -12,17 +12,11 @@ import = ["~/.config/alacritty/themes/themes/ayu_light.toml"]
 # OSC 52 clipboard support - allows remote/tmux to write to local clipboard
 osc52 = "CopyPaste"
 
-# Instead of using: `alacritty --print-events`
-# https://github.com/alacritty/alacritty/wiki/Keyboard-mappings#how-to-create-a-mapping
-# Open a terminal without Tmux, and get the key you want with the command:
-#
-# ```sh
-# nix-shell -p unixtools.xxd
-# xxd -psd
-# ```
+# Ctrl+Alt bindings for tmux-tilish/Zellij via Kanata = layer
+# CSI u format: \x1b[{ascii};{mod}u where mod=7 for Ctrl+Alt, mod=8 for Ctrl+Alt+Shift
+# https://github.com/alacritty/alacritty/issues/93
 
-# https://github.com/jackMort/ChatGPT.nvim/issues/99#issuecomment-1492668722
-# https://stackoverflow.com/a/42461580/609025
+# Shift+Return and Ctrl+Return
 [[keyboard.bindings]]
 chars = "\u001B[13;2u"
 key = "Return"
@@ -32,3 +26,139 @@ mods = "Shift"
 chars = "\u001B[13;5u"
 key = "Return"
 mods = "Control"
+
+# Navigation: =+hjkl
+[[keyboard.bindings]]
+chars = "\u001B[104;7u"
+key = "H"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[106;7u"
+key = "J"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[107;7u"
+key = "K"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[108;7u"
+key = "L"
+mods = "Control|Alt"
+
+# Tabs/Windows: =+1-9, =+0
+[[keyboard.bindings]]
+chars = "\u001B[49;7u"
+key = "1"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[50;7u"
+key = "2"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[51;7u"
+key = "3"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[52;7u"
+key = "4"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[53;7u"
+key = "5"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[54;7u"
+key = "6"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[55;7u"
+key = "7"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[56;7u"
+key = "8"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[57;7u"
+key = "9"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[48;7u"
+key = "0"
+mods = "Control|Alt"
+
+# Window actions: =+q, =+z, =+f, =+s
+[[keyboard.bindings]]
+chars = "\u001B[113;7u"
+key = "Q"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[122;7u"
+key = "Z"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[102;7u"
+key = "F"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[115;7u"
+key = "S"
+mods = "Control|Alt"
+
+# Splits: =+-, =+\, =+Space, =+Tab
+[[keyboard.bindings]]
+chars = "\u001B[45;7u"
+key = "Minus"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[92;7u"
+key = "Backslash"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[32;7u"
+key = "Space"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[9;7u"
+key = "Tab"
+mods = "Control|Alt"
+
+# New pane: =+" (Ctrl+Alt+Shift+')
+[[keyboard.bindings]]
+chars = "\u001B[39;8u"
+key = "Apostrophe"
+mods = "Control|Alt|Shift"
+
+# Resize: =+= (grow left), =++ (grow down), =+_ (grow up)
+[[keyboard.bindings]]
+chars = "\u001B[61;7u"
+key = "Equals"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[43;8u"
+key = "Equals"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[95;8u"
+key = "Minus"
+mods = "Control|Alt|Shift"

@@ -1,29 +1,56 @@
 #!/usr/bin/env nu
 # Swap workspaces between monitors (like LeftWM SwapTags)
+# Based on: https://github.com/nikitabobko/AeroSpace/discussions/719
 
-def main [] {
-    # Get focused workspace
-    let focused = (aerospace list-workspaces --focused | str trim)
+# Get focused monitor ID
+def get-focused-monitor [] {
+    aerospace list-monitors --focused
+    | parse "{id} | {name}"
+    | get 0?.id?
+    | default null
+}
 
-    # Get all monitors
-    let monitors = (aerospace list-monitors | lines | where { $in != "" })
+# Get focused workspace name
+def get-focused-workspace [] {
+    aerospace list-workspaces --focused | str trim
+}
 
-    if ($monitors | length) < 2 {
+# Check if multi-monitor setup
+def has-multiple-monitors [] {
+    (aerospace list-monitors | lines | where { $in != "" } | length) >= 2
+}
+
+def main [--debug (-d)] {
+    if $debug { print "[debug] Starting swap..." }
+
+    if not (has-multiple-monitors) {
+        if $debug { print "[debug] Only one monitor, exiting" }
         return
     }
 
+    let w1 = (get-focused-workspace)
+    let m1 = (get-focused-monitor)
+    if $debug { print $"[debug] Current: workspace=($w1) monitor=($m1)" }
+
     # Focus other monitor and get its workspace
     aerospace focus-monitor --wrap-around next
-    let other = (aerospace list-workspaces --focused | str trim)
+    let w2 = (get-focused-workspace)
+    let m2 = (get-focused-monitor)
+    if $debug { print $"[debug] Other: workspace=($w2) monitor=($m2)" }
 
-    # Move other workspace to original monitor
-    aerospace move-workspace-to-monitor --wrap-around next
+    # Move w2 to m1
+    if $debug { print $"[debug] Moving workspace ($w2) to monitor ($m1)..." }
+    aerospace move-workspace-to-monitor $m1
 
-    # Go back to original monitor, focus original workspace, move it
-    aerospace focus-monitor --wrap-around next
-    aerospace workspace $focused
-    aerospace move-workspace-to-monitor --wrap-around next
+    # Switch to w1 and move it to m2
+    if $debug { print $"[debug] Switching to workspace ($w1)..." }
+    aerospace workspace $w1
+    if $debug { print $"[debug] Moving workspace ($w1) to monitor ($m2)..." }
+    aerospace move-workspace-to-monitor $m2
 
-    # Focus back to where we started (now showing the swapped workspace)
-    aerospace focus-monitor --wrap-around next
+    # Focus back to original position
+    if $debug { print $"[debug] Focusing monitor ($m1)..." }
+    aerospace focus-monitor $m1
+
+    if $debug { print "[debug] Swap complete!" }
 }
