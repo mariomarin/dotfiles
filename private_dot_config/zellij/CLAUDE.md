@@ -6,15 +6,15 @@ Zellij configured with tmux-like `Ctrl+a` prefix bindings. Default mode is **loc
 
 ## Configuration
 
-- `config.kdl.tmpl` - Main config (template for OS-specific clipboard command)
+- `config.kdl` - Main config with keybindings
 - `KEYBINDINGS.md` - Complete keybindings reference
 
 ## Key Design Decisions
 
 1. **Locked by default**: All keys pass through to applications. `Ctrl+a` enters tmux mode.
 2. **Tmux muscle memory**: Keybindings mirror tmux where possible.
-3. **Alt bindings**: Quick actions without prefix (like tmux-tilish).
-4. **Template for clipboard**: Uses `pbcopy` on macOS, OSC52 on Linux.
+3. **Ctrl+Alt bindings**: Quick actions via Kanata `=` layer (like tmux-tilish).
+4. **OSC52 clipboard**: Works cross-platform (macOS, Linux, WSL, SSH).
 
 ## Feature Gaps vs Tmux
 
@@ -29,7 +29,7 @@ Zellij configured with tmux-like `Ctrl+a` prefix bindings. Default mode is **loc
 
 ### Adding Keybindings
 
-Edit `config.kdl.tmpl`, update `KEYBINDINGS.md`.
+Edit `config.kdl`, update `KEYBINDINGS.md`.
 
 ### Testing Config
 

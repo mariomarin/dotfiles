@@ -1,48 +1,51 @@
 # AeroSpace Keybindings
 
-i3-style keybindings via window mode (`=`-hold via kanata).
+i3/LeftWM-style keybindings using Alt modifier (like Super on Linux).
 
-## Window Mode (`=`-hold)
+## Navigation
 
 | Binding | Action |
 | ------- | ------ |
-| `=+hjkl` | Focus direction |
-| `=+Shift+hjkl` | Move window |
-| `=+1-9` | Switch workspace |
-| `=+Shift+1-9` | Move to workspace |
-| `=+f` | Fullscreen |
-| `=+q` | Close |
-| `=+t` / `=+Enter` | Terminal |
-| `=+r` | Resize mode |
-| `=+;` | Service mode |
-| `=+Space` | Toggle floating |
-| `=+Tab` | Last workspace |
-| `=+e` | Cycle layouts (h_tiles → v_tiles → accordion) |
+| `Alt+hjkl` | Focus direction |
+| `Alt+Shift+hjkl` | Move window |
+| `Alt+1-9` | Switch workspace |
+| `Alt+Shift+1-9` | Move to workspace |
 
-## App Launchers (Hyper = Tab-hold)
+## Window Actions
 
-| Binding | App |
-| ------- | --- |
-| `Hyper+t` | Alacritty |
-| `Hyper+b` | Firefox |
-| `Hyper+m` | Spotify |
-| `Hyper+o` | Obsidian |
-| `Hyper+s` | Slack |
+| Binding | Action |
+| ------- | ------ |
+| `Alt+f` | Fullscreen |
+| `Alt+Shift+q` | Close |
+| `Alt+Enter` | Terminal (Alacritty) |
+| `Alt+Space` | Toggle floating |
+| `Alt+Tab` | Last workspace |
+| `Alt+e` | Cycle layouts (h_tiles → v_tiles → accordion) |
+| `Alt+r` | Resize mode |
+| `Alt+w` | Swap workspaces between monitors |
 
-## Notes
+## Monitor Navigation
 
-- All WM bindings use `Ctrl+Alt` prefix (sent by kanata's `=`-hold)
-- No plain `Alt+*` bindings to avoid tmux-tilish conflicts
+| Binding | Action |
+| ------- | ------ |
+| `Alt+,` | Focus previous monitor |
+| `Alt+.` | Focus next monitor |
+| `Alt+Shift+,` | Move to previous monitor |
+| `Alt+Shift+.` | Move to next monitor |
 
-## Window Mode + Cmd for tmux
+## Resize Mode (`Alt+r`)
 
-Adding Cmd to window mode keys triggers tmux-tilish instead of AeroSpace:
-
-| Key | Target |
+| Key | Action |
 | --- | ------ |
-| `=+1` | AeroSpace workspace 1 |
-| `=+Cmd+1` | tmux window 1 |
-| `=+Tab` | AeroSpace last workspace |
-| `=+Cmd+Tab` | tmux last window |
+| `hjkl` | Resize in direction |
+| `-/=` | Shrink/grow smart |
+| `Esc/Enter` | Exit resize mode |
 
-See [kanata KEYBINDINGS.md](../kanata/KEYBINDINGS.md) for details.
+## Separation from tmux-tilish
+
+| Target | Modifier | Example |
+| ------ | -------- | ------- |
+| AeroSpace (GUI WM) | `Alt` | `Alt+1` → workspace 1 |
+| tmux-tilish (terminal) | `Ctrl+Alt` via Kanata `=` layer | `=+1` → tmux window 1 |
+
+This keeps window management (`Alt`) separate from terminal multiplexer (`Ctrl+Alt`).

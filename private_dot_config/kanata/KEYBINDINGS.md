@@ -30,36 +30,28 @@ Space Cadet keys + Layer-based navigation, accents, and window management.
 
 ## Window Layer (Hold `=`)
 
-Sends Ctrl+Alt for window management (cross-platform).
+Sends `Ctrl+Alt+key`. Used by tmux-tilish and zellij (not AeroSpace).
 
-| Key | Action | With Shift |
-| --- | ------ | ---------- |
-| `hjkl` | Focus direction | Move window |
-| `1-9` | Switch workspace | Move to workspace |
-| `f` | Fullscreen | - |
-| `q` | Close | - |
-| `t` / `Return` | Terminal | - |
-| `r` | Resize mode | - |
-| `Space` | Toggle floating | - |
-| `Tab` | Last workspace | - |
-| `e` | Cycle layouts | - |
-| `;` | Service mode | - |
+| Key | Action |
+| --- | ------ |
+| `hjkl` | Navigate panes |
+| `1-9` | Switch tab/window |
+| `q` | Close pane |
+| `Space` | Cycle layouts |
+| `Tab` | Last tab |
+| `s` | Session manager |
+| `f` | Toggle floating |
+| `-` / `\` | Split horizontal/vertical |
+| `"` | New pane |
 
-### macOS: Window Mode + Cmd for tmux
+### Separation from AeroSpace
 
-On macOS, adding Cmd to window mode keys triggers tmux-tilish bindings instead of AeroSpace.
-The terminal strips Cmd+Ctrl, leaving Alt which tmux-tilish catches.
+| Target | Modifier | Example |
+| ------ | -------- | ------- |
+| AeroSpace (GUI WM) | `Alt` (direct) | `Alt+1` → workspace 1 |
+| tmux/zellij (terminal) | `Ctrl+Alt` via `=` layer | `=+1` → tab 1 |
 
-| Key | Sends | AeroSpace | tmux-tilish |
-| --- | ----- | --------- | ----------- |
-| `=+1` | Ctrl+Alt+1 | workspace 1 | - |
-| `=+Cmd+1` | Alt+1 | - | window 1 |
-| `=+Tab` | Ctrl+Alt+Tab | last workspace | - |
-| `=+Cmd+Tab` | Alt+Tab | - | last window |
-| `=+hjkl` | Ctrl+Alt+hjkl | focus direction | - |
-| `=+Cmd+hjkl` | Alt+hjkl | - | focus pane |
-
-This provides parallel i3-style bindings: AeroSpace for GUI, tmux for terminal.
+AeroSpace uses plain `Alt` bindings directly. The `=` layer is only for terminal multiplexers.
 
 ## Accent Layer (Hold Grave)
 

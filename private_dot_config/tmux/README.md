@@ -39,7 +39,7 @@ For a complete list of keybindings, see **[KEYBINDINGS.md](KEYBINDINGS.md)**.
 - **tmux-yank**: System clipboard integration
 - **tmux-resurrect**: Session persistence across reboots
 - **tmux-continuum**: Automatic session saves
-- **tmux-fingers**: Copy text with hints (like Vimium)
+- **tmux-thumbs**: Copy text with hints (like Vimium)
 - **tmux-tilish**: i3wm-like navigation and layouts
 - **tmux-harpoon**: Quick navigation between saved sessions and panes
 - **tmux-fuzzback**: Search scrollback with FZF

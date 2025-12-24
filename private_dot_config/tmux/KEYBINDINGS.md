@@ -76,12 +76,14 @@ Enhanced session picker with icons and preview pane showing session contents.
 | `%` | Next matching bracket |
 | `Escape` | Exit copy mode |
 
-## Text Selection (tmux-fingers)
+## Text Selection (tmux-thumbs)
 
 | Keybinding | Description |
 | ---------- | ----------- |
-| `M-f` | Start tmux-fingers (highlight text to copy) |
-| `M-j` | Start tmux-fingers in jump mode |
+| `prefix F` | Start tmux-thumbs (highlight text with hints) |
+
+- **Lowercase hint**: Copy to tmux buffer, show "Copied {}"
+- **Uppercase hint**: Copy to buffer + open with system opener
 
 ## Plugin-Specific Keybindings
 
