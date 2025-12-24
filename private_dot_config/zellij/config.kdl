@@ -197,7 +197,8 @@ keybinds clear-defaults=true {
     }
 
     // Ctrl+Alt bindings via Kanata = layer (like tmux-tilish)
-    shared {
+    // Use shared_except "locked" so keys pass through to nvim for zellij-nav.nvim
+    shared_except "locked" {
         // Tab switching: =+1-9
         bind "Ctrl Alt 1" { GoToTab 1; }
         bind "Ctrl Alt 2" { GoToTab 2; }
