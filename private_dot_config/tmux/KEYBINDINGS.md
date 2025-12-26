@@ -31,26 +31,49 @@ Enhanced session picker with icons and preview pane showing session contents.
 
 ## Window Management
 
-| Keybinding | Description |
-| ---------- | ----------- |
-| `M-Tab` | Switch to last active window |
-| `prefix w` | Window tree picker |
-| `prefix x` | Kill current pane (no confirmation) |
+| Keybinding | Prefix | Description |
+| ---------- | ------ | ----------- |
+| `M-Tab` / `C-M-Tab` | `prefix l` | Switch to last active window |
+| | `prefix w` | Window tree picker |
+| | `prefix c` | Create new window |
+| | `prefix n` | Next window |
+| | `prefix p` | Previous window (note: also paste buffer) |
+| | `prefix 0-9` | Switch to window 0-9 |
+| | `prefix ,` | Rename current window |
+| | `prefix &` | Kill window (with confirmation) |
+| | `prefix x` | Kill current pane (no confirmation) |
+| | `prefix ;` | Switch to last pane |
+| | `prefix Space` | Next layout |
 
 ## Pane Management
 
-| Keybinding | Description |
-| ---------- | ----------- |
-| `M-h/j/k/l` | Navigate between panes (unified for both tmux and Neovim) |
-| `M-Arrow` | Resize panes by 1 step (with vim awareness) |
-| `prefix C-g` | Split window and run navi |
+| Keybinding | Prefix | Description |
+| ---------- | ------ | ----------- |
+| `M-h/j/k/l` | | Navigate between panes (works with Neovim) |
+| `M-Arrow` | | Resize panes by 1 step (vim aware) |
+| | `prefix "` | Split pane horizontally |
+| | `prefix %` | Split pane vertically |
+| | `prefix o` | Cycle through panes |
+| | `prefix q` | Display pane numbers |
+| | `prefix m` | Mark current pane |
+| | `prefix M` | Clear marked pane |
+| | `prefix !` | Break pane to new window |
+| | `prefix C-g` | Split window and run navi |
 
-## Clipboard Operations
+## Clipboard & Buffers
 
-| Keybinding | Description |
-| ---------- | ----------- |
+| Prefix | Description |
+| ------ | ----------- |
 | `prefix y` | Copy current command line to clipboard |
 | `prefix Y` | Copy current pane's working directory to clipboard |
+| `prefix [` | Enter copy mode |
+| `prefix ]` | Paste buffer |
+| `prefix p` | Paste buffer (alternative) |
+| `prefix P` | Choose buffer to paste |
+| `prefix B` | List buffers |
+| `prefix =` | Choose buffer interactively |
+| `prefix #` | List buffers (default) |
+| `prefix -` | Delete buffer |
 
 ## Copy Mode
 
@@ -160,15 +183,20 @@ The terminal strips Cmd+Ctrl from kanata's output, leaving Alt for tmux.
 
 ## Utility
 
-| Keybinding | Description |
-| ---------- | ----------- |
+| Prefix | Description |
+| ------ | ----------- |
 | `prefix :` | Enter command prompt |
 | `prefix r` | Reload tmux configuration |
+| `prefix R` | Reload configuration (plugin) |
 | `prefix t` | Show clock |
 | `prefix b` | Toggle status bar |
-| `prefix B` | List paste buffers |
-| `prefix p` | Paste from buffer |
-| `prefix P` | Choose buffer to paste |
+| `prefix i` | Display window info |
+| `prefix d` | Detach client |
+| `prefix D` | Choose client to detach |
+| `prefix C` | Customize mode |
+| `prefix f` | Find window |
+| `prefix s` | Session tree picker |
+| `prefix $` | Rename session |
 
 ## Neovim Integration
 
