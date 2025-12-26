@@ -35,3 +35,17 @@ bind-key -n C-M-r select-layout -E
 # Detach: =+E (C-M-S-e) and reload: =+C (C-M-S-c)
 bind-key -n C-M-S-e detach-client
 bind-key -n C-M-S-c source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"
+
+# Move pane to window with upsert (create if not exists)
+# Override tilish's simple join-pane with fallback logic
+%hidden MOVE_PANE='n=$1; tmux join-pane -t :$n 2>/dev/null || { tmux new-window -dt :$n; tmux join-pane -t :$n; tmux select-pane -t top-left; tmux kill-pane; }; tmux select-layout; tmux select-layout -E'
+bind-key -n C-M-S-0 run-shell "sh -c '$MOVE_PANE' -- 0"
+bind-key -n C-M-S-1 run-shell "sh -c '$MOVE_PANE' -- 1"
+bind-key -n C-M-S-2 run-shell "sh -c '$MOVE_PANE' -- 2"
+bind-key -n C-M-S-3 run-shell "sh -c '$MOVE_PANE' -- 3"
+bind-key -n C-M-S-4 run-shell "sh -c '$MOVE_PANE' -- 4"
+bind-key -n C-M-S-5 run-shell "sh -c '$MOVE_PANE' -- 5"
+bind-key -n C-M-S-6 run-shell "sh -c '$MOVE_PANE' -- 6"
+bind-key -n C-M-S-7 run-shell "sh -c '$MOVE_PANE' -- 7"
+bind-key -n C-M-S-8 run-shell "sh -c '$MOVE_PANE' -- 8"
+bind-key -n C-M-S-9 run-shell "sh -c '$MOVE_PANE' -- 9"
