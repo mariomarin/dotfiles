@@ -121,6 +121,17 @@ Enhanced session picker with icons and preview pane showing session contents.
 
 These bindings work with both `Alt+key` directly or `=+key` via kanata window mode.
 
+#### Extended-keys and tilish prefix limitation
+
+Tilish's `@tilish-prefix` option (set to `C-M`) creates a separate key table activated by
+pressing `Ctrl+Alt`, then a second key. However, with tmux's `extended-keys` enabled and
+Alacritty sending CSI u sequences, `Ctrl+Alt+1` arrives as a **single chord** (`C-M-1`),
+not two keystrokes (`C-M` then `1`).
+
+**Workaround**: Custom `C-M-*` bindings in `mappings/root.tmux` override tilish's simple
+bindings with proper upsert logic (create window if not exists). These run after tilish
+loads and take precedence.
+
 | `=+key` | `Alt+key` | Prefix | Description |
 | ------- | --------- | ------ | ----------- |
 | `=+1-9` | `M-1-9` | `prefix 1-9` | Switch to window 1-9 |
