@@ -159,7 +159,7 @@ mods = "Control|Alt"
 # New pane: =+" (Ctrl+Alt+Shift+')
 [[keyboard.bindings]]
 chars = "\u001B[39;8u"
-key = "Apostrophe"
+key = "'"
 mods = "Control|Alt|Shift"
 
 # Resize: =+= (grow left), =++ (grow down), =+_ (grow up)
