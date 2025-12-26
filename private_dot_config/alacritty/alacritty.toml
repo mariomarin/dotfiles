@@ -5,6 +5,21 @@ blur = true
 # Note: This option is ignored on Linux/Windows
 option_as_alt = "Both"
 
+[font]
+size = 14.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
 [general]
 import = ["~/.config/alacritty/themes/themes/ayu_light.toml"]
 
