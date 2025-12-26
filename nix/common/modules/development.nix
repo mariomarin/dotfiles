@@ -26,14 +26,6 @@
     go-tools
     golangci-lint
 
-    # Python
-    python3
-    python3Packages.pip
-    python3Packages.virtualenv
-    poetry
-    ruff
-    pyright
-
     # Rust
     rustup
     rust-analyzer

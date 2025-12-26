@@ -33,7 +33,7 @@ Enhanced session picker with icons and preview pane showing session contents.
 
 | Keybinding | Prefix | Description |
 | ---------- | ------ | ----------- |
-| `M-Tab` / `C-M-Tab` | `prefix l` | Switch to last active window |
+| `M-Tab` / `C-M-Tab` | `prefix l` / `prefix Tab` | Switch to last active window |
 | | `prefix w` | Window tree picker |
 | | `prefix c` | Create new window |
 | | `prefix n` | Next window |
@@ -168,24 +168,6 @@ loads and take precedence.
 | Keybinding | Description |
 | ---------- | ----------- |
 | `prefix ?` | Search scrollback buffer with fzf |
-
-### extrakto
-
-| Keybinding | Description |
-| ---------- | ----------- |
-| `prefix Tab` | Launch extrakto |
-
-#### Within extrakto mode
-
-| Keybinding | Description |
-| ---------- | ----------- |
-| `Tab` | Insert selection to pane |
-| `Enter` | Copy selection to clipboard |
-| `C-f` | Toggle filter mode |
-| `C-g` | Toggle grab mode |
-| `C-e` | Edit selection in editor |
-| `C-o` | Open selection with system |
-| `C-h` | Show help |
 
 ## Utility
 

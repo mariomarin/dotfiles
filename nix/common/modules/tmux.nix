@@ -27,7 +27,6 @@ let
     { pkg = pkgs.tmux-tilish; rtp = "tilish.tmux"; }
     { pkg = pkgs.tmux-harpoon; rtp = "harpoon.tmux"; }
     { pkg = fuzzback; rtp = "fuzzback.tmux"; }
-    { pkg = extrakto; rtp = "extrakto.tmux"; }
     { pkg = pkgs.unstable.tmuxPlugins."minimal-tmux-status"; rtp = "minimal.tmux"; }
   ];
 
@@ -93,6 +92,9 @@ let
 
     # Skip "kill-pane 1? (y/n)" prompt
     bind-key x kill-pane
+
+    # Last window: prefix + Tab
+    bind-key Tab last-window
 
   '';
 in

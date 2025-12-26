@@ -69,7 +69,6 @@ in
       just # Command runner
       direnv
       age # Encryption (for chezmoi)
-      python3 # Required by tmux extrakto plugin
 
       # ── Kubernetes ──────────────────────────────────────────────────────
       kubectl
