@@ -114,7 +114,7 @@ chars = "\u001B[48;7u"
 key = "0"
 mods = "Control|Alt"
 
-# Window actions: =+q, =+z, =+f, =+s
+# Window actions: =+q, =+z, =+f
 [[keyboard.bindings]]
 chars = "\u001B[113;7u"
 key = "Q"
@@ -130,10 +130,98 @@ chars = "\u001B[102;7u"
 key = "F"
 mods = "Control|Alt"
 
+# Layouts: =+s, =+S, =+v, =+V, =+t, =+r
 [[keyboard.bindings]]
 chars = "\u001B[115;7u"
 key = "S"
 mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[115;8u"
+key = "S"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[118;7u"
+key = "V"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[118;8u"
+key = "V"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[116;7u"
+key = "T"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[114;7u"
+key = "R"
+mods = "Control|Alt"
+
+# Window management: =+n (rename), =+e (detach), =+c (reload)
+[[keyboard.bindings]]
+chars = "\u001B[110;7u"
+key = "N"
+mods = "Control|Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[101;8u"
+key = "E"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[99;8u"
+key = "C"
+mods = "Control|Alt|Shift"
+
+# Move pane to window: =+Shift+1-9
+[[keyboard.bindings]]
+chars = "\u001B[49;8u"
+key = "1"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[50;8u"
+key = "2"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[51;8u"
+key = "3"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[52;8u"
+key = "4"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[53;8u"
+key = "5"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[54;8u"
+key = "6"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[55;8u"
+key = "7"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[56;8u"
+key = "8"
+mods = "Control|Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[57;8u"
+key = "9"
+mods = "Control|Alt|Shift"
 
 # Splits: =+-, =+\, =+Space, =+Tab
 [[keyboard.bindings]]

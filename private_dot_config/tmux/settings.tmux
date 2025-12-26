@@ -21,6 +21,11 @@ set-option -g history-file ~/.tmux/cache/history
 set -g default-terminal "tmux-256color"
 set -ag terminal-overrides ",alacritty:RGB"
 
+# Extended keys support for CSI u sequences (kanata =+key bindings)
+set -s extended-keys on
+set -s extended-keys-format csi-u
+set -as terminal-features 'alacritty:extkeys'
+
 # OSC 52 clipboard support (copy to local clipboard over SSH)
 set -g set-clipboard on
 set -g allow-passthrough on

@@ -132,16 +132,16 @@ These bindings work with both `Alt+key` directly or `=+key` via kanata window mo
 | `=+q` | `M-S-q` | `prefix x` | Close pane |
 | `=+z` | `M-z` | | Zoom (fullscreen) toggle |
 | `=+Space` | | `prefix Space` | Next layout |
-| | `M-s` | | Layout: main-horizontal |
-| | `M-S-s` | | Layout: even-vertical |
-| | `M-v` | | Layout: main-vertical |
-| | `M-S-v` | | Layout: even-horizontal |
-| | `M-t` | | Layout: tiled |
-| | `M-r` | | Refresh current layout |
-| | `M-n` | `prefix ,` | Rename current window |
-| | `M-S-e` | `prefix d` | Detach from tmux |
-| | `M-S-c` | `prefix r` | Reload configuration |
-| | `M-S-1-9` | | Move pane to window 1-9 |
+| `=+s` | `M-s` | | Layout: main-horizontal |
+| `=+S` | `M-S-s` | | Layout: even-vertical |
+| `=+v` | `M-v` | | Layout: main-vertical |
+| `=+V` | `M-S-v` | | Layout: even-horizontal |
+| `=+t` | `M-t` | | Layout: tiled |
+| `=+r` | `M-r` | | Refresh current layout |
+| `=+n` | `M-n` | `prefix ,` | Rename current window |
+| `=+E` | `M-S-e` | `prefix d` | Detach from tmux |
+| `=+C` | `M-S-c` | `prefix r` | Reload configuration |
+| `=+Shift+1-9` | `M-S-1-9` | | Move pane to window 1-9 |
 
 ### tmux-harpoon
 
