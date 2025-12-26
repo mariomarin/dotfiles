@@ -119,34 +119,29 @@ Enhanced session picker with icons and preview pane showing session contents.
 
 ### tmux-tilish (i3wm-style)
 
-| Keybinding | Description |
-| ---------- | ----------- |
-| `M-0` to `M-9` | Switch to workspace 0-9 |
-| `M-S-0` to `M-S-9` | Move pane to workspace 0-9 |
-| `M-h/j/k/l` | Navigate panes (works everywhere now) |
-| `M-S-h/j/k/l` | Move pane in direction |
-| `M-Enter` | Create new pane |
-| `M-s` | Layout: main-horizontal |
-| `M-S-s` | Layout: even-vertical |
-| `M-v` | Layout: main-vertical |
-| `M-S-v` | Layout: even-horizontal |
-| `M-t` | Layout: tiled |
-| `M-z` | Layout: zoom (fullscreen) |
-| `M-r` | Refresh current layout |
-| `M-n` | Rename current window |
-| `M-S-q` | Close pane |
-| `M-S-e` | Detach from tmux |
-| `M-S-c` | Reload tmux configuration (overrides tilish default) |
+These bindings work with both `Alt+key` directly or `=+key` via kanata window mode.
 
-**macOS with kanata window mode:** `=+Cmd+key` triggers tilish bindings:
-
-| Key | tmux-tilish action |
-| --- | ------------------ |
-| `=+Cmd+1-9` | Switch to window 1-9 |
-| `=+Cmd+Tab` | Last window (`M-Tab`) |
-| `=+Cmd+hjkl` | Navigate panes |
-
-The terminal strips Cmd+Ctrl from kanata's output, leaving Alt for tmux.
+| `=+key` | `Alt+key` | Prefix | Description |
+| ------- | --------- | ------ | ----------- |
+| `=+1-9` | `M-1-9` | `prefix 1-9` | Switch to window 1-9 |
+| `=+0` | `M-0` | `prefix 0` | Switch to window 0/10 |
+| `=+Tab` | `M-Tab` | `prefix l` | Last active window |
+| `=+hjkl` | `M-hjkl` | | Navigate panes (vim aware) |
+| `=+HJKL` | `M-S-hjkl` | | Move pane in direction |
+| `=+Enter` | `M-Enter` | | Create new pane |
+| `=+q` | `M-S-q` | `prefix x` | Close pane |
+| `=+z` | `M-z` | | Zoom (fullscreen) toggle |
+| `=+Space` | | `prefix Space` | Next layout |
+| | `M-s` | | Layout: main-horizontal |
+| | `M-S-s` | | Layout: even-vertical |
+| | `M-v` | | Layout: main-vertical |
+| | `M-S-v` | | Layout: even-horizontal |
+| | `M-t` | | Layout: tiled |
+| | `M-r` | | Refresh current layout |
+| | `M-n` | `prefix ,` | Rename current window |
+| | `M-S-e` | `prefix d` | Detach from tmux |
+| | `M-S-c` | `prefix r` | Reload configuration |
+| | `M-S-1-9` | | Move pane to window 1-9 |
 
 ### tmux-harpoon
 
