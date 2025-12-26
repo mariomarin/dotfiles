@@ -36,6 +36,19 @@ bind-key -n C-M-r select-layout -E
 bind-key -n C-M-S-e detach-client
 bind-key -n C-M-S-c source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"
 
+# Select window with upsert (create if not exists)
+# Override tilish's simple select-window with fallback logic
+bind-key -n C-M-0 if-shell "tmux select-window -t :0" '' "new-window -t :0"
+bind-key -n C-M-1 if-shell "tmux select-window -t :1" '' "new-window -t :1"
+bind-key -n C-M-2 if-shell "tmux select-window -t :2" '' "new-window -t :2"
+bind-key -n C-M-3 if-shell "tmux select-window -t :3" '' "new-window -t :3"
+bind-key -n C-M-4 if-shell "tmux select-window -t :4" '' "new-window -t :4"
+bind-key -n C-M-5 if-shell "tmux select-window -t :5" '' "new-window -t :5"
+bind-key -n C-M-6 if-shell "tmux select-window -t :6" '' "new-window -t :6"
+bind-key -n C-M-7 if-shell "tmux select-window -t :7" '' "new-window -t :7"
+bind-key -n C-M-8 if-shell "tmux select-window -t :8" '' "new-window -t :8"
+bind-key -n C-M-9 if-shell "tmux select-window -t :9" '' "new-window -t :9"
+
 # Move pane to window with upsert (create if not exists)
 # Override tilish's simple join-pane with fallback logic
 %hidden MOVE_PANE='n=$1; tmux join-pane -t :$n 2>/dev/null || { tmux new-window -dt :$n; tmux join-pane -t :$n; tmux select-pane -t top-left; tmux kill-pane; }; tmux select-layout; tmux select-layout -E'
