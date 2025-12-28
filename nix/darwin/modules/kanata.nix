@@ -3,49 +3,20 @@
 # See: https://github.com/jtroo/kanata/discussions/1537
 { config, pkgs, lib, ... }:
 
-let
-  karabinerDk = pkgs.karabiner-dk;
-  managerApp = "${karabinerDk}/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager";
-  daemonApp = "${karabinerDk}/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon";
-in
 {
-  # 1. Karabiner VirtualHIDDevice Manager - activates the driver extension
-  # NOTE: This will fail if run from /nix/store (macOS requires /Applications).
-  # The extension must be manually activated once via:
-  #   sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
-  # After that, only the daemon needs to run.
-  launchd.daemons.karabiner-vhidmanager = {
-    serviceConfig = {
-      Label = "org.pqrs.karabiner-vhidmanager";
-      ProgramArguments = [ managerApp "activate" ];
-      RunAtLoad = true;
-      # Don't retry on failure - extension only needs activation once
-      KeepAlive = false;
-      StandardErrorPath = "/tmp/karabiner-vhidmanager.err.log";
-      StandardOutPath = "/tmp/karabiner-vhidmanager.out.log";
-    };
-  };
-
-  # 2. Karabiner VirtualHIDDevice Daemon - creates the virtual HID device
-  # Must run continuously for kanata to connect
-  launchd.daemons.karabiner-vhiddaemon = {
-    serviceConfig = {
-      Label = "org.pqrs.karabiner-vhiddaemon";
-      ProgramArguments = [ daemonApp ];
-      RunAtLoad = true;
-      KeepAlive = true;
-      ProcessType = "Interactive"; # High responsiveness for keyboard input
-      StandardErrorPath = "/tmp/karabiner-vhiddaemon.err.log";
-      StandardOutPath = "/tmp/karabiner-vhiddaemon.out.log";
-    };
-  };
-
-  # 3. Kanata keyboard remapper - connects to Karabiner VirtualHIDDevice
+  # Kanata keyboard remapper
+  # Uses stable /run/current-system path so Input Monitoring permission survives updates
+  #
+  # First-time setup (one-time):
+  # 1. Activate Karabiner extension:
+  #    sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
+  # 2. Approve extension in System Settings > Privacy & Security
+  # 3. Grant Input Monitoring to /run/current-system/sw/bin/kanata
   launchd.daemons.kanata = {
     serviceConfig = {
       Label = "org.nixos.kanata";
       ProgramArguments = [
-        "${pkgs.kanata}/bin/kanata"
+        "/run/current-system/sw/bin/kanata"
         "--cfg"
         "/Users/${config.system.primaryUser}/.config/kanata/darwin.kbd"
       ];

@@ -72,29 +72,15 @@ Kanata runs as a LaunchDaemon via nix-darwin with Karabiner-DriverKit-VirtualHID
    sudo "$MANAGER/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
    ```
 
-2. Approve system extension:
+2. Approve system extension in System Settings > Privacy & Security when prompted.
 
-   ```bash
-   open "x-apple.systempreferences:com.apple.LoginItems-Settings.extension"
-   ```
-
-   Enable the Karabiner extension when prompted.
-
-3. Add kanata to Accessibility:
-
-   ```bash
-   open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
-   ```
-
-   Click `+`, press `Shift+Cmd+G`, enter `/run/current-system/sw/bin`, select `kanata`.
-
-4. Add kanata to Input Monitoring:
+3. Add kanata to Input Monitoring:
 
    ```bash
    open "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent"
    ```
 
-   Same steps as Accessibility.
+   Click `+`, press `Shift+Cmd+G`, enter `/run/current-system/sw/bin`, select `kanata`.
 
 #### 2. Rebuild nix-darwin
 
@@ -102,31 +88,12 @@ Kanata runs as a LaunchDaemon via nix-darwin with Karabiner-DriverKit-VirtualHID
 just darwin
 ```
 
-This creates three LaunchDaemons:
-
-| Service                          | Purpose                       |
-| -------------------------------- | ----------------------------- |
-| `org.pqrs.karabiner-vhiddaemon`  | Virtual HID device (must run) |
-| `org.pqrs.karabiner-vhidmanager` | Driver activation (one-shot)  |
-| `org.nixos.kanata`               | Keyboard remapping            |
-
-#### 3. Verify services
+#### 3. Verify
 
 ```bash
-sudo launchctl list | grep -E 'kanata|karabiner'
+sudo launchctl list | grep kanata  # Should show PID and exit code 0
 tail /tmp/kanata.out.log
 ```
-
-#### 4. Logs and troubleshooting
-
-```bash
-# Check all logs
-tail /tmp/kanata.*.log /tmp/karabiner-*.log
-
-# Emergency exit (physical keys): lctl+spc+esc
-```
-
-**Note**: The vhidmanager may show exit code 1 - this is normal if the extension was already activated.
 
 **Warning**: macOS dead keys (Option+e → e = é) do not work through kanata's virtual keyboard.
 Use macOS Input Sources or add `(unicode é)` aliases in your config for accented characters.

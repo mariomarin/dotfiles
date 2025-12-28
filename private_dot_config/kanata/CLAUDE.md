@@ -60,43 +60,22 @@ Kanata is available on all desktop platforms:
 
 - Configured in `nix/darwin/modules/kanata.nix`
 - Packages in `nix/darwin/modules/packages.nix` (kanata, karabiner-dk)
-- Three LaunchDaemons: vhidmanager, vhiddaemon, kanata
-- Logs: `/tmp/kanata.*.log`, `/tmp/karabiner-*.log`
+- Uses stable path `/run/current-system/sw/bin/kanata` for Input Monitoring permission persistence
+- Logs: `/tmp/kanata.out.log`, `/tmp/kanata.err.log`
 
 **Architecture:**
 
 ```text
-┌─────────────────────┐
-│  Physical Keyboard  │
-└──────────┬──────────┘
-           │
-┌──────────▼──────────┐
-│ Karabiner DriverKit │  (system extension, activated once)
-│   VirtualHIDDevice  │
-└──────────┬──────────┘
-           │
-┌──────────▼──────────┐
-│ karabiner-vhiddaemon│  (LaunchDaemon, runs continuously)
-│   creates socket    │
-└──────────┬──────────┘
-           │
-┌──────────▼──────────┐
-│       kanata        │  (LaunchDaemon, connects to socket)
-│  keyboard remapper  │
-└──────────┬──────────┘
-           │
-┌──────────▼──────────┐
-│  Virtual Keyboard   │  (output to macOS)
-└─────────────────────┘
+Physical Keyboard → Karabiner DriverKit Extension → kanata → Virtual Keyboard
+                    (system extension)              (LaunchDaemon)
 ```
 
-**First-time setup requires manual activation:**
+**First-time setup:**
 
-```bash
-sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
-```
-
-This can't run from `/nix/store` - macOS requires `/Applications` for system extensions.
+1. Activate extension (once):
+   `sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/.../Karabiner-VirtualHIDDevice-Manager" activate`
+2. Approve in System Settings > Privacy & Security
+3. Grant Input Monitoring to `/run/current-system/sw/bin/kanata`
 
 ### Windows
 
@@ -145,13 +124,13 @@ journalctl -u kanata-laptop -f
 
 ```bash
 # Check service status
-sudo launchctl list | grep -E 'kanata|karabiner'
+sudo launchctl list | grep kanata
 
 # View logs
 tail -f /tmp/kanata.out.log /tmp/kanata.err.log
 
-# Restart services
-sudo launchctl stop org.nixos.kanata && sudo launchctl start org.nixos.kanata
+# Restart service
+sudo launchctl kickstart -kp system/org.nixos.kanata
 ```
 
 ## Important Notes
@@ -167,7 +146,6 @@ sudo launchctl stop org.nixos.kanata && sudo launchctl start org.nixos.kanata
 - Karabiner driver extension must be activated once from `/Applications`
 - Cannot activate from `/nix/store` (macOS security restriction)
 - Emergency exit: `lctl+spc+esc` (physical keys)
-- vhidmanager exit code 1 is normal after initial activation
 
 **General:**
 
