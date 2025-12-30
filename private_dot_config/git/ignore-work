@@ -8,3 +8,4 @@ devenv.yaml
 
 # Claude files
 CLAUDE.md
+.claude/
