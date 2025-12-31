@@ -1,2 +1,5 @@
 # Claude Code project settings
 .claude/
+
+# Personal directories
+etc-personal/
