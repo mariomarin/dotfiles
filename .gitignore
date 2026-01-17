@@ -17,9 +17,8 @@ private_login_init.zsh
 .devcontainer.json
 .pre-commit-config.yaml
 
-# Nix store symlinks
-**/nix/store
-nixos/result
+# Nix build outputs
+**/result
 
 # Chezmoi-specific
 dot_git

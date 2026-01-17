@@ -107,6 +107,15 @@ nix/darwin/**
 .chezmoiscripts/linux-autostart-*
 {{ end }}
 
+# linux-apt platform only (apt packages config)
+{{ $platform := "" }}
+{{ if hasKey .machineConfig "platform" }}{{ $platform = .machineConfig.platform }}{{ end }}
+{{ if ne $platform "linux-apt" }}
+.config/apt
+.config/apt/**
+.chezmoiscripts/*linux-apt*
+{{ end }}
+
 # User-managed directory contents (keep directory structure, ignore contents)
 .config/autostart/**
 !.config/autostart/.keep

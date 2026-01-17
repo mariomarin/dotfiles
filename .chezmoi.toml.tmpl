@@ -17,12 +17,33 @@
 {{- $isWSL := env "WSL_DISTRO_NAME" | not | not -}}
 
 {{- /* Determine machine type and features based on environment */ -}}
-{{- $isServer := or $codespaces $isWSL (hasPrefix "vm-" $hostname) -}}
+{{- $knownServers := list "mitosis" "ribosome" -}}
+{{- $isServer := or $codespaces $isWSL (hasPrefix "vm-" $hostname) (has $hostname $knownServers) -}}
 {{- $isDesktop := not $isServer -}}
 
 {{- /* Kanata: enabled on known desktop machines, disabled by default for others */ -}}
-{{- $knownKanataMachines := list "dendrite" "malus" "prion" -}}
+{{- $knownKanataMachines := list "dendrite" "malus" "prion" "axon" -}}
 {{- $hasKanata := has $hostname $knownKanataMachines -}}
+
+{{- /* Platform detection based on hostname and OS */ -}}
+{{- $platform := "" -}}
+{{- if eq .chezmoi.os "darwin" -}}
+  {{- if eq $hostname "axon" -}}
+    {{- $platform = "darwin-brew" -}}
+  {{- else -}}
+    {{- $platform = "darwin" -}}
+  {{- end -}}
+{{- else if eq .chezmoi.os "linux" -}}
+  {{- if eq $hostname "ribosome" -}}
+    {{- $platform = "linux-apt" -}}
+  {{- else if $isWSL -}}
+    {{- $platform = "nixos-wsl" -}}
+  {{- else -}}
+    {{- $platform = "nixos" -}}
+  {{- end -}}
+{{- else if eq .chezmoi.os "windows" -}}
+  {{- $platform = "windows" -}}
+{{- end -}}
 
 {{- /* Set machine type string */ -}}
 {{- $machineType := "desktop" -}}
@@ -43,6 +64,7 @@
     [data.machineConfig]
         hostname = {{ $hostname | quote }}
         type = {{ $machineType | quote }}
+        platform = {{ $platform | quote }}
 
         [data.machineConfig.features]
             desktop = {{ $isDesktop }}

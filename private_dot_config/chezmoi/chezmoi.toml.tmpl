@@ -28,6 +28,7 @@ codespaces = {{ .codespaces }}
 [data.machineConfig]
 hostname = {{ .machineConfig.hostname | quote }}
 type = {{ .machineConfig.type | quote }}
+platform = {{ if hasKey .machineConfig "platform" }}{{ .machineConfig.platform | quote }}{{ else }}""{{ end }}
 
 [data.machineConfig.features]
 desktop = {{ .machineConfig.features.desktop | default false }}

@@ -86,6 +86,33 @@ machines:
       physical_keyboard: false
       kanata: false # No kanata on DevBox
     services: []
+  # axon - macOS with brew-only (nerve signal transmission)
+  axon:
+    type: desktop
+    platform: darwin-brew
+    hostname: axon
+    features:
+      desktop: true
+      audio: true
+      bluetooth: true
+      x11: false
+      physical_keyboard: true
+      kanata: true
+    services:
+      - syncthing
+  # ribosome - Ubuntu dev server (protein synthesis factory)
+  ribosome:
+    type: server
+    platform: linux-apt
+    hostname: ribosome
+    features:
+      desktop: false
+      audio: false
+      bluetooth: false
+      x11: false
+      physical_keyboard: false
+      kanata: false
+    services: [] # Chef manages docker, no syncthing needed
 # Default machine type if no match found
 default:
   type: unknown

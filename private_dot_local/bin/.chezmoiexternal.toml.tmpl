@@ -1,7 +1,197 @@
-# Polybar Pulseaudio Control
+{{- /* GitHub binaries for linux-apt platform (ribosome) */ -}}
+{{- $platform := index .machineConfig "platform" | default "" -}}
+
+{{- if eq $platform "linux-apt" -}}
+{{- $arch := .chezmoi.arch -}}
+{{- $linuxArch := "x86_64" -}}
+{{- if eq $arch "arm64" }}{{ $linuxArch = "aarch64" }}{{ end -}}
+
+# Shells and prompts (nushell from apt.fury.io)
+{{- $ompRelease := gitHubLatestRelease "JanDeDobbeleer/oh-my-posh" }}
+["oh-my-posh"]
+    type = "file"
+    url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/{{ $ompRelease.TagName }}/posh-linux-amd64"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $carapaceRelease := gitHubLatestRelease "carapace-sh/carapace-bin" }}
+["carapace"]
+    type = "archive-file"
+    url = "https://github.com/carapace-sh/carapace-bin/releases/download/{{ $carapaceRelease.TagName }}/carapace_linux_amd64.tar.gz"
+    path = "carapace"
+    executable = true
+    refreshPeriod = "168h"
+
+# Version control (gh managed by Chef)
+{{- $lazygitRelease := gitHubLatestRelease "jesseduffield/lazygit" }}
+{{- $lazygitVersion := trimPrefix "v" $lazygitRelease.TagName }}
+["lazygit"]
+    type = "archive-file"
+    url = "https://github.com/jesseduffield/lazygit/releases/download/{{ $lazygitRelease.TagName }}/lazygit_{{ $lazygitVersion }}_Linux_x86_64.tar.gz"
+    path = "lazygit"
+    executable = true
+    refreshPeriod = "168h"
+
+# Text processing
+{{- $yqRelease := gitHubLatestRelease "mikefarah/yq" }}
+["yq"]
+    type = "file"
+    url = "https://github.com/mikefarah/yq/releases/download/{{ $yqRelease.TagName }}/yq_linux_amd64"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $millerRelease := gitHubLatestRelease "johnkerl/miller" }}
+{{- $millerVersion := trimPrefix "v" $millerRelease.TagName }}
+["mlr"]
+    type = "archive-file"
+    url = "https://github.com/johnkerl/miller/releases/download/{{ $millerRelease.TagName }}/miller-{{ $millerVersion }}-linux-amd64.tar.gz"
+    path = "miller-{{ $millerVersion }}-linux-amd64/mlr"
+    executable = true
+    refreshPeriod = "168h"
+
+# Modern CLI (bat, fd, ripgrep, eza from apt)
+{{- $deltaRelease := gitHubLatestRelease "dandavison/delta" }}
+["delta"]
+    type = "archive-file"
+    url = "https://github.com/dandavison/delta/releases/download/{{ $deltaRelease.TagName }}/delta-{{ $deltaRelease.TagName }}-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
+    path = "delta-{{ $deltaRelease.TagName }}-{{ $linuxArch }}-unknown-linux-gnu/delta"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $sdRelease := gitHubLatestRelease "chmln/sd" }}
+["sd"]
+    type = "archive-file"
+    url = "https://github.com/chmln/sd/releases/download/{{ $sdRelease.TagName }}/sd-{{ $sdRelease.TagName }}-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
+    path = "sd-{{ $sdRelease.TagName }}-{{ $linuxArch }}-unknown-linux-gnu/sd"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $zoxideRelease := gitHubLatestRelease "ajeetdsouza/zoxide" }}
+["zoxide"]
+    type = "archive-file"
+    url = "https://github.com/ajeetdsouza/zoxide/releases/download/{{ $zoxideRelease.TagName }}/zoxide-{{ $zoxideRelease.TagName }}-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
+    path = "zoxide"
+    executable = true
+    refreshPeriod = "168h"
+
+# Development
+{{- $justRelease := gitHubLatestRelease "casey/just" }}
+["just"]
+    type = "archive-file"
+    url = "https://github.com/casey/just/releases/download/{{ $justRelease.TagName }}/just-{{ $justRelease.TagName }}-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
+    path = "just"
+    executable = true
+    refreshPeriod = "168h"
+
+# Kubernetes
+{{- $kubeloginRelease := gitHubLatestRelease "Azure/kubelogin" }}
+["kubelogin"]
+    type = "archive-file"
+    url = "https://github.com/Azure/kubelogin/releases/download/{{ $kubeloginRelease.TagName }}/kubelogin-linux-amd64.zip"
+    path = "bin/linux_amd64/kubelogin"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $krewRelease := gitHubLatestRelease "kubernetes-sigs/krew" }}
+["krew"]
+    type = "archive-file"
+    url = "https://github.com/kubernetes-sigs/krew/releases/download/{{ $krewRelease.TagName }}/krew-linux_amd64.tar.gz"
+    path = "krew-linux_amd64"
+    executable = true
+    refreshPeriod = "168h"
+
+["kubectl"]
+    type = "file"
+    url = "https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl"
+    executable = true
+    refreshPeriod = "720h"
+
+# Shell utilities
+{{- $atuinRelease := gitHubLatestRelease "atuinsh/atuin" }}
+["atuin"]
+    type = "archive-file"
+    url = "https://github.com/atuinsh/atuin/releases/download/{{ $atuinRelease.TagName }}/atuin-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
+    path = "atuin-{{ $linuxArch }}-unknown-linux-gnu/atuin"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $topgradeRelease := gitHubLatestRelease "topgrade-rs/topgrade" }}
+{{- $topgradeVersion := trimPrefix "v" $topgradeRelease.TagName }}
+["topgrade"]
+    type = "archive-file"
+    url = "https://github.com/topgrade-rs/topgrade/releases/download/{{ $topgradeRelease.TagName }}/topgrade-{{ $topgradeVersion }}-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
+    path = "topgrade"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $tealdeerRelease := gitHubLatestRelease "tealdeer-rs/tealdeer" }}
+["tldr"]
+    type = "file"
+    url = "https://github.com/tealdeer-rs/tealdeer/releases/download/{{ $tealdeerRelease.TagName }}/tealdeer-linux-x86_64-musl"
+    executable = true
+    refreshPeriod = "168h"
+
+# Network
+["cloudflared"]
+    type = "file"
+    url = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $viddyRelease := gitHubLatestRelease "sachaos/viddy" }}
+["viddy"]
+    type = "archive-file"
+    url = "https://github.com/sachaos/viddy/releases/download/{{ $viddyRelease.TagName }}/viddy_Linux_x86_64.tar.gz"
+    path = "viddy"
+    executable = true
+    refreshPeriod = "168h"
+
+# Terminal multiplexers
+{{- $zellijRelease := gitHubLatestRelease "zellij-org/zellij" }}
+["zellij"]
+    type = "archive-file"
+    url = "https://github.com/zellij-org/zellij/releases/download/{{ $zellijRelease.TagName }}/zellij-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
+    path = "zellij"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $seshRelease := gitHubLatestRelease "joshmedeski/sesh" }}
+["sesh"]
+    type = "archive-file"
+    url = "https://github.com/joshmedeski/sesh/releases/download/{{ $seshRelease.TagName }}/sesh_Linux_x86_64.tar.gz"
+    path = "sesh"
+    executable = true
+    refreshPeriod = "168h"
+
+# Secrets
+{{- $ageRelease := gitHubLatestRelease "FiloSottile/age" }}
+["age"]
+    type = "archive-file"
+    url = "https://github.com/FiloSottile/age/releases/download/{{ $ageRelease.TagName }}/age-{{ $ageRelease.TagName }}-linux-amd64.tar.gz"
+    path = "age/age"
+    executable = true
+    refreshPeriod = "168h"
+
+["age-keygen"]
+    type = "archive-file"
+    url = "https://github.com/FiloSottile/age/releases/download/{{ $ageRelease.TagName }}/age-{{ $ageRelease.TagName }}-linux-amd64.tar.gz"
+    path = "age/age-keygen"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $bwRelease := gitHubLatestRelease "bitwarden/clients" }}
+["bw"]
+    type = "archive-file"
+    url = "https://github.com/bitwarden/clients/releases/download/cli-{{ $bwRelease.TagName }}/bw-linux-{{ $bwRelease.TagName }}.zip"
+    path = "bw"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- else -}}
+# Non linux-apt platforms
 ["pulseaudio-control"]
     type = "file"
     url = "https://raw.githubusercontent.com/marioortizmanero/polybar-pulseaudio-control/master/pulseaudio-control"
     executable = true
     refreshPeriod = "168h"
-
+{{- end }}
