@@ -16,7 +16,11 @@ is_chef_managed() { [ -d /opt/chef ] || command -v chef-client > /dev/null 2>&1;
 is_nixos() { grep -q "ID=nixos" /etc/os-release 2> /dev/null; }
 is_darwin() { [ "$(uname -s)" = "Darwin" ]; }
 
-# Auto-detect platform from environment
+# Platform detection
+# - Darwin + chef → darwin-brew (no nix)
+# - Darwin + no chef → darwin (nix-darwin)
+# - Linux + NixOS → nixos
+# - Linux + other → linux-apt (apt/WSL/codespaces)
 detect_platform() {
     if is_darwin; then
         is_chef_managed && echo "darwin-brew" || echo "darwin"
@@ -56,14 +60,6 @@ ensure_chezmoi() {
     error "chezmoi not found - install via package manager"
 }
 
-ensure_nixos() {
-    is_nixos && {
-                  success "NixOS detected"
-                                            return 0
-  }
-    error "NixOS required"
-}
-
 # Repository management
 clone_or_update_repo() {
     step "Clone dotfiles repository"
@@ -77,20 +73,16 @@ clone_or_update_repo() {
 }
 
 # Chezmoi operations
-init_chezmoi() {
+init_and_apply() {
     step "Initialize chezmoi"
     chezmoi init --force
-    success "Initialized for $HOSTNAME"
-}
-
-apply_chezmoi() {
     step "Apply dotfiles"
     chezmoi apply -v
     success "Dotfiles applied"
 }
 
-# Platform-specific setup
-setup_nix_shell() {
+# Nix-based setup (requires Bitwarden)
+setup_nix_env() {
     step "Setup with nix-shell"
     # shellcheck disable=SC2016
     nix-shell .install/shell.nix --run '
@@ -103,37 +95,34 @@ setup_nix_shell() {
     '
 }
 
-apply_darwin() {
+# Bootstrap flows
+bootstrap_simple() {
+    ensure_chezmoi && init_and_apply
+    printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
+}
+
+bootstrap_darwin() {
+    ensure_nix && ensure_homebrew && setup_nix_env
     # shellcheck disable=SC2016
     nix-shell .install/shell.nix --run 'cd nix/darwin && just first-time'
     printf "\n✅ Bootstrap complete! Future updates: just darwin\n"
 }
 
-apply_nixos() {
+bootstrap_nixos() {
+    is_nixos || error "NixOS required"
+    setup_nix_env
     # shellcheck disable=SC2016
     nix-shell .install/shell.nix --run 'cd nix/nixos && just first-time'
     printf "\n✅ Bootstrap complete! Future updates: just nixos\n"
 }
-
-apply_chef_managed() {
-    init_chezmoi
-    apply_chezmoi
-    printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
-}
-
-# Bootstrap flows per platform
-bootstrap_chef()   { ensure_chezmoi && apply_chef_managed; }
-bootstrap_darwin() { ensure_nix && ensure_homebrew && setup_nix_shell && apply_darwin; }
-bootstrap_nixos()  { ensure_nixos && setup_nix_shell && apply_nixos; }
 
 # Main
 main() {
     printf "🚀 Dotfiles Bootstrap\n\n" >&2
 
     PLATFORM=$(detect_platform)
-    printf "Detected platform: %s\n" "$PLATFORM" >&2
+    printf "Detected: %s\n" "$PLATFORM" >&2
 
-    # Get hostname if not set
     [ -z "${HOSTNAME:-}" ] && HOSTNAME=$(hostname -s)
     export HOSTNAME
     printf "Hostname: %s\n\n" "$HOSTNAME" >&2
@@ -142,7 +131,7 @@ main() {
     cd "$HOME/.local/share/chezmoi"
 
     case "$PLATFORM" in
-        darwin-brew | linux-apt) bootstrap_chef ;;
+        darwin-brew | linux-apt) bootstrap_simple ;;
         darwin)                bootstrap_darwin ;;
         nixos)                 bootstrap_nixos ;;
   esac

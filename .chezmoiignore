@@ -111,13 +111,13 @@ nix/darwin/**
 {{ $platform := "" }}
 {{ if hasKey .machineConfig "platform" }}{{ $platform = .machineConfig.platform }}{{ end }}
 
-# Chef-managed hosts: SSH handled externally, no Bitwarden access
+# Simple hosts (no Nix): SSH handled externally, no Bitwarden access
 {{ if or (eq $platform "darwin-brew") (eq $platform "linux-apt") }}
 .ssh
 .ssh/**
 {{ end }}
 
-# linux-apt platform only
+# linux-apt platform only (apt packages)
 {{ if ne $platform "linux-apt" }}
 .config/apt
 .config/apt/**
