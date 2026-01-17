@@ -117,11 +117,11 @@ nix/darwin/**
 .ssh/**
 {{ end }}
 
-# linux-apt platform only (apt packages config)
+# linux-apt platform only
 {{ if ne $platform "linux-apt" }}
 .config/apt
 .config/apt/**
-.chezmoiscripts/*linux-apt*
+.chezmoiscripts/run_after_linux-apt-install-packages.nu
 {{ end }}
 
 # User-managed directory contents (keep directory structure, ignore contents)
