@@ -1,6 +1,7 @@
 #!/bin/sh
 # Bootstrap script for Unix-like systems
-# Usage: curl -sfL .../bootstrap-unix.sh | HOSTNAME=ribosome sh
+# Usage: curl -sfL .../bootstrap-unix.sh | sh
+#        curl -sfL .../bootstrap-unix.sh | HOSTNAME=myhost sh
 set -eu
 
 # Output helpers
@@ -11,15 +12,18 @@ error() {
 success() { printf "✅ %s\n" "$1" >&2; }
 step() { printf "\n==> %s\n" "$1" >&2; }
 
-# Platform detection
-get_platform() {
-    case "$1" in
-        axon)                          echo "darwin-brew" ;;
-        ribosome)                      echo "linux-apt" ;;
-        malus)                         echo "darwin" ;;
-        dendrite | symbiont | mitosis) echo "nixos" ;;
-        *)                             echo "unknown" ;;
-  esac
+# Detection helpers
+is_chef_managed() { [ -d /opt/chef ] || command -v chef-client > /dev/null 2>&1; }
+is_nixos() { grep -q "ID=nixos" /etc/os-release 2> /dev/null; }
+is_darwin() { [ "$(uname -s)" = "Darwin" ]; }
+
+# Auto-detect platform from environment
+detect_platform() {
+    if is_darwin; then
+        is_chef_managed && echo "darwin-brew" || echo "darwin"
+  else
+        is_nixos && echo "nixos" || echo "linux-apt"
+  fi
 }
 
 # Idempotent installers
@@ -50,13 +54,13 @@ ensure_chezmoi() {
                                        success "chezmoi found"
                                                                 return 0
   }
-    error "chezmoi not found - install via Chef"
+    error "chezmoi not found - install via package manager"
 }
 
 ensure_nixos() {
-    grep -q "ID=nixos" /etc/os-release 2> /dev/null && {
-                                                        success "NixOS detected"
-                                                                                  return 0
+    is_nixos && {
+                  success "NixOS detected"
+                                            return 0
   }
     error "NixOS required"
 }
@@ -73,7 +77,7 @@ clone_or_update_repo() {
     success "Repository cloned"
 }
 
-# Chezmoi initialization
+# Chezmoi operations
 init_chezmoi() {
     step "Initialize chezmoi"
     chezmoi init --force
@@ -119,33 +123,29 @@ apply_chef_managed() {
 }
 
 # Bootstrap flows per platform
-bootstrap_darwin_brew() { ensure_chezmoi && apply_chef_managed; }
-bootstrap_linux_apt()   { ensure_chezmoi && apply_chef_managed; }
-bootstrap_darwin()      { ensure_nix && ensure_homebrew && setup_nix_shell && apply_darwin; }
-bootstrap_nixos()       { ensure_nixos && setup_nix_shell && apply_nixos; }
+bootstrap_chef()   { ensure_chezmoi && apply_chef_managed; }
+bootstrap_darwin() { ensure_nix && ensure_homebrew && setup_nix_shell && apply_darwin; }
+bootstrap_nixos()  { ensure_nixos && setup_nix_shell && apply_nixos; }
 
 # Main
 main() {
     printf "🚀 Dotfiles Bootstrap\n\n" >&2
 
-    [ -z "${HOSTNAME:-}" ] && {
-        printf "Available: malus, dendrite, symbiont, mitosis, axon, ribosome\n"
-        printf "Enter hostname: " && read -r HOSTNAME
-  }
-    export HOSTNAME
+    PLATFORM=$(detect_platform)
+    printf "Detected platform: %s\n" "$PLATFORM" >&2
 
-    PLATFORM=$(get_platform "$HOSTNAME")
-    printf "Platform: %s (%s)\n" "$HOSTNAME" "$PLATFORM" >&2
+    # Get hostname if not set
+    [ -z "${HOSTNAME:-}" ] && HOSTNAME=$(hostname -s)
+    export HOSTNAME
+    printf "Hostname: %s\n\n" "$HOSTNAME" >&2
 
     clone_or_update_repo
     cd "$HOME/.local/share/chezmoi"
 
     case "$PLATFORM" in
-        darwin-brew) bootstrap_darwin_brew ;;
-        linux-apt)   bootstrap_linux_apt ;;
-        darwin)      bootstrap_darwin ;;
-        nixos)       bootstrap_nixos ;;
-        *)           error "Unknown platform: $HOSTNAME" ;;
+        darwin-brew | linux-apt) bootstrap_chef ;;
+        darwin)                bootstrap_darwin ;;
+        nixos)                 bootstrap_nixos ;;
   esac
 }
 
