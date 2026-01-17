@@ -1,7 +1,6 @@
 #!/bin/sh
 # Bootstrap script for Unix-like systems
 # Usage: curl -sfL .../bootstrap-unix.sh | sh
-#        curl -sfL .../bootstrap-unix.sh | HOSTNAME=myhost sh
 set -eu
 
 # Output helpers
