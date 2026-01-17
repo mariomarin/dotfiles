@@ -1,124 +1,140 @@
 #!/bin/sh
 # Bootstrap script for Unix-like systems (macOS, Linux)
-# Run via: curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh | sh
+# Usage: curl -sfL .../bootstrap-unix.sh | sh
+#        curl -sfL .../bootstrap-unix.sh | HOSTNAME=ribosome sh
 
 set -eu
 
-# Helper functions
 error() {
-  _msg="$1"
-  shift
-  printf "\n❌ %s\n" "$_msg" >&2
-  for _line in "$@"; do
-    printf "   %s\n" "$_line" >&2
-  done
-  printf "\n" >&2
-  exit 1
+    printf "\n❌ %s\n" "$1" >&2
+    shift
+    for line in "$@"; do printf "   %s\n" "$line" >&2; done
+    exit 1
 }
-
-info() { printf "ℹ️  %s\n" "$1" >&2; }
 success() { printf "✅ %s\n" "$1" >&2; }
 step() { printf "\n==> %s\n" "$1" >&2; }
 
-# Main bootstrap
-printf "🚀 Dotfiles Bootstrap for Unix\n\n" >&2
+# Detect platform from hostname
+get_platform() {
+    case "$1" in
+        axon)     echo "darwin-brew" ;;
+        ribosome) echo "linux-apt" ;;
+        malus)    echo "darwin" ;;
+        dendrite | symbiont | mitosis) echo "nixos" ;;
+        *) echo "unknown" ;;
+  esac
+}
 
-case "$(uname -s)" in
-  Darwin)
-    step "Install Nix"
-    if ! command -v nix > /dev/null 2>&1; then
-      printf "Installing Nix package manager...\n"
-      curl -sfL https://install.determinate.systems/nix | sh -s -- install
+printf "🚀 Dotfiles Bootstrap\n\n" >&2
 
-      # Source nix profile to make nix available in current shell
-      if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
-        # shellcheck source=/dev/null
-        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-      fi
+# Get or prompt for hostname
+if [ -z "${HOSTNAME:-}" ]; then
+    printf "Available machines: malus, dendrite, symbiont, mitosis, axon, ribosome\n"
+    printf "Enter hostname for this machine: "
+    read -r HOSTNAME
+fi
+export HOSTNAME
 
-      success "Nix installed"
-    else
-      success "Nix already installed"
-    fi
+PLATFORM=$(get_platform "$HOSTNAME")
+printf "Platform: %s (%s)\n\n" "$HOSTNAME" "$PLATFORM" >&2
 
-    step "Install Homebrew"
-    if command -v brew > /dev/null 2>&1; then
-      success "Homebrew already installed"
-    else
-      printf "Installing Homebrew...\n"
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      success "Homebrew installed"
-    fi
-    ;;
-
-  Linux)
-    step "Verify NixOS"
-    if [ ! -f /etc/os-release ] || ! grep -q "ID=nixos" /etc/os-release; then
-      error "This configuration only supports NixOS on Linux" \
-        "For other distributions, use NixOS or WSL with NixOS"
-    fi
-    success "NixOS detected"
-    ;;
-
-  *)
-    error "Unsupported OS: $(uname -s)"
-    ;;
-esac
-
-# Clone repository if needed
+# Clone repository
 step "Clone dotfiles repository"
 if [ -d "$HOME/.local/share/chezmoi/.git" ]; then
-  info "Repository already exists"
+    git -C "$HOME/.local/share/chezmoi" pull --ff-only 2> /dev/null || true
+    success "Repository updated"
 else
-  git clone https://github.com/mariomarin/dotfiles.git "$HOME/.local/share/chezmoi"
-  success "Repository cloned"
+    git clone https://github.com/mariomarin/dotfiles.git "$HOME/.local/share/chezmoi"
+    success "Repository cloned"
 fi
 
-# Enter nix-shell and run remaining setup
-step "Enter nix-shell environment"
 cd "$HOME/.local/share/chezmoi"
-# shellcheck disable=SC2016
-nix-shell .install/shell.nix --run '
-  set -eu
 
-  printf "\n==> Setup Bitwarden\n"
-  if ! bw login --check >/dev/null 2>&1; then
-    printf "⚠️  Please login to Bitwarden:\n"
-    bw login
-  fi
+# Platform-specific bootstrap
+case "$PLATFORM" in
+    darwin-brew | linux-apt)
+        # Chef-managed: no Nix, no Bitwarden
+        step "Verify chezmoi"
+        command -v chezmoi > /dev/null 2>&1 || error "chezmoi not found - install via Chef"
+        success "chezmoi found"
 
-  printf "Unlocking vault...\n"
-  just bw-unlock
+        step "Initialize chezmoi"
+        chezmoi init --force
+        success "Initialized for $HOSTNAME"
 
-  printf "\n==> Initialize chezmoi\n"
+        step "Apply dotfiles"
+        chezmoi apply -v
+        success "Dotfiles applied"
 
-  # Check if HOSTNAME is set
-  if [ -z "${HOSTNAME:-}" ]; then
-    printf "Available machines:\n"
-    yq ".machines | keys | .[]" .chezmoidata/machines.yaml
-    printf "\nEnter hostname for this machine: "
-    read -r HOSTNAME
-    export HOSTNAME
-  fi
+        printf "\n✅ Bootstrap complete!\n"
+        printf "Future updates: chezmoi apply\n"
+        ;;
 
-  printf "✅ Using hostname: %s\n" "$HOSTNAME"
-  chezmoi init --force
+    darwin)
+        step "Install Nix"
+        if ! command -v nix > /dev/null 2>&1; then
+            curl -sfL https://install.determinate.systems/nix | sh -s -- install
+            # shellcheck source=/dev/null
+            [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ] &&
+                . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+            success "Nix installed"
+    else
+            success "Nix already installed"
+    fi
 
-  printf "\n==> Apply system configuration\n"
-  case "$(uname -s)" in
-    Darwin)
-      printf "Applying nix-darwin configuration...\n"
-      cd nix/darwin && just first-time
-      ;;
-    Linux)
-      printf "Applying NixOS configuration...\n"
-      cd nix/nixos && just first-time
-      ;;
-  esac
+        step "Install Homebrew"
+        if ! command -v brew > /dev/null 2>&1; then
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            success "Homebrew installed"
+    else
+            success "Homebrew already installed"
+    fi
 
-  printf "\n✅ Bootstrap complete!\n"
-  printf "\nYour system is now configured!\n"
-  printf "\nFuture updates:\n"
-  printf "  macOS:  cd ~/.local/share/chezmoi && just darwin\n"
-  printf "  NixOS:  cd ~/.local/share/chezmoi && just nixos\n"
-'
+        step "Setup with nix-shell"
+        # shellcheck disable=SC2016
+        nix-shell .install/shell.nix --run '
+            set -eu
+            printf "\n==> Setup Bitwarden\n"
+            bw login --check >/dev/null 2>&1 || bw login
+            just bw-unlock
+
+            printf "\n==> Initialize chezmoi\n"
+            chezmoi init --force
+
+            printf "\n==> Apply nix-darwin\n"
+            cd nix/darwin && just first-time
+
+            printf "\n✅ Bootstrap complete!\n"
+            printf "Future updates: just darwin\n"
+        '
+        ;;
+
+    nixos)
+        step "Verify NixOS"
+        grep -q "ID=nixos" /etc/os-release 2> /dev/null ||
+            error "NixOS required" "Use NixOS or WSL with NixOS"
+        success "NixOS detected"
+
+        step "Setup with nix-shell"
+        # shellcheck disable=SC2016
+        nix-shell .install/shell.nix --run '
+            set -eu
+            printf "\n==> Setup Bitwarden\n"
+            bw login --check >/dev/null 2>&1 || bw login
+            just bw-unlock
+
+            printf "\n==> Initialize chezmoi\n"
+            chezmoi init --force
+
+            printf "\n==> Apply NixOS\n"
+            cd nix/nixos && just first-time
+
+            printf "\n✅ Bootstrap complete!\n"
+            printf "Future updates: just nixos\n"
+        '
+        ;;
+
+    *)
+        error "Unknown platform for hostname: $HOSTNAME"
+        ;;
+esac
