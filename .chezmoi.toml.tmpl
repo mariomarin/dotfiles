@@ -1,51 +1,52 @@
-{{- /* ══════════════════════════════════════════════════════════════════════════
-   Machine detection and defaults
-
-   Override any value by editing ~/.config/chezmoi/chezmoi.toml after init:
-
-   [data]
-       username = "yourname"
-   [data.machineConfig.features]
-       kanata = false
-   ══════════════════════════════════════════════════════════════════════════ */ -}}
+{{- /* Machine detection - environment-based with hostname overrides for Nix machines */ -}}
 
 {{- $hostname := .chezmoi.hostname -}}
 {{- $username := .chezmoi.username -}}
 
-{{- /* Detect environment */ -}}
+{{- /* Environment detection */ -}}
 {{- $codespaces := env "CODESPACES" | not | not -}}
 {{- $isWSL := env "WSL_DISTRO_NAME" | not | not -}}
+{{- $isNixOS := and (hasKey .chezmoi "osRelease") (eq (index .chezmoi.osRelease "id" | default "") "nixos") -}}
+{{- $hasChef := or (stat "/opt/chef") (lookPath "chef-client") -}}
 
-{{- /* Determine machine type and features based on environment */ -}}
-{{- $knownServers := list "mitosis" "ribosome" -}}
-{{- $isServer := or $codespaces $isWSL (hasPrefix "vm-" $hostname) (has $hostname $knownServers) -}}
-{{- $isDesktop := not $isServer -}}
-
-{{- /* Kanata: enabled on known desktop machines, disabled by default for others */ -}}
-{{- $knownKanataMachines := list "dendrite" "malus" "prion" "axon" -}}
-{{- $hasKanata := has $hostname $knownKanataMachines -}}
-
-{{- /* Platform detection based on hostname and OS */ -}}
+{{- /* Platform detection: environment first, then known hostnames for Nix */ -}}
 {{- $platform := "" -}}
+{{- $knownNixHosts := list "malus" "dendrite" "symbiont" "mitosis" -}}
+
 {{- if eq .chezmoi.os "darwin" -}}
-  {{- if eq $hostname "axon" -}}
+  {{- if $hasChef -}}
     {{- $platform = "darwin-brew" -}}
   {{- else -}}
     {{- $platform = "darwin" -}}
   {{- end -}}
 {{- else if eq .chezmoi.os "linux" -}}
-  {{- if eq $hostname "ribosome" -}}
-    {{- $platform = "linux-apt" -}}
-  {{- else if $isWSL -}}
-    {{- $platform = "nixos-wsl" -}}
-  {{- else -}}
+  {{- if $isNixOS -}}
+    {{- if $isWSL -}}
+      {{- $platform = "nixos-wsl" -}}
+    {{- else -}}
+      {{- $platform = "nixos" -}}
+    {{- end -}}
+  {{- else if has $hostname $knownNixHosts -}}
+    {{- /* Known Nix host but not detected as NixOS - probably first run */ -}}
     {{- $platform = "nixos" -}}
+  {{- else -}}
+    {{- $platform = "linux-apt" -}}
   {{- end -}}
 {{- else if eq .chezmoi.os "windows" -}}
   {{- $platform = "windows" -}}
 {{- end -}}
 
-{{- /* Set machine type string */ -}}
+{{- /* Machine type */ -}}
+{{- $isServer := or $codespaces (not (or (eq .chezmoi.os "darwin") (eq .chezmoi.os "windows"))) -}}
+{{- if eq $platform "darwin" "darwin-brew" -}}
+  {{- $isServer = false -}}
+{{- end -}}
+{{- $isDesktop := not $isServer -}}
+
+{{- /* Kanata: only on personal desktops with physical keyboards */ -}}
+{{- $hasKanata := and $isDesktop (not $hasChef) (not $codespaces) (not $isWSL) -}}
+
+{{- /* Machine type string */ -}}
 {{- $machineType := "desktop" -}}
 {{- if $isWSL -}}
   {{- $machineType = "wsl" -}}
@@ -69,6 +70,6 @@
         [data.machineConfig.features]
             desktop = {{ $isDesktop }}
             kanata = {{ $hasKanata }}
-            audio = {{ and $isDesktop (not $isWSL) }}
-            bluetooth = {{ and $isDesktop (not $isWSL) }}
+            audio = {{ and $isDesktop (not $isWSL) (not $codespaces) }}
+            bluetooth = {{ and $isDesktop (not $isWSL) (not $codespaces) }}
             wsl = {{ $isWSL }}
