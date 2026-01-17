@@ -121,6 +121,7 @@ nix/darwin/**
 {{ if ne $platform "linux-apt" }}
 .config/apt
 .config/apt/**
+.chezmoiscripts/run_before_linux-apt-bootstrap-nushell.sh
 .chezmoiscripts/run_after_linux-apt-install-packages.nu
 {{ end }}
 
