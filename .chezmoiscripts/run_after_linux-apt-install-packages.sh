@@ -6,7 +6,12 @@ CONFIG="$HOME/.config/apt/packages.conf"
 [[ -f "$CONFIG" ]] || exit 0
 
 parse_section() {
-    sed -n "/^\[$1\]/,/^\[/p" "$CONFIG" | grep -v '^\[' | grep -v '^#' | grep -v '^$'
+    local section=$1 in_section=false
+    while IFS= read -r line; do
+        [[ $line == "[$section]" ]] && in_section=true && continue
+        [[ $line == "["* ]] && in_section=false
+        $in_section && [[ -n $line && $line != "#"* ]] && echo "$line"
+  done   < "$CONFIG"
 }
 
 add_ppas() {
