@@ -303,105 +303,74 @@ $path | validate-exists | read-config | apply-settings
 This is a chezmoi-managed dotfiles repository that uses templating and external data sources to manage system
 configurations across different machines.
 
-## Machine Configuration and Hostname Selection
+## Machine Configuration and Platform Detection
 
-### Automatic Hostname Detection
+### Automatic Platform Detection
 
-Hostname is automatically detected from:
+Platform is auto-detected from environment, no hostname configuration needed:
 
-1. **HOSTNAME environment variable** (if set)
-2. **System hostname** (`.chezmoi.hostname`)
+| Detection | Platform | Description |
+| --------- | -------- | ----------- |
+| Darwin + `/opt/chef` or `chef-client` | `darwin-brew` | Chef-managed Mac (no Nix) |
+| Darwin + no chef | `darwin` | Personal Mac with nix-darwin |
+| Linux + NixOS (`osRelease.id`) | `nixos` | NixOS system |
+| Linux + WSL | `nixos-wsl` | NixOS on WSL |
+| Linux + other | `linux-apt` | Ubuntu/Debian (WSL, codespaces, servers) |
+| Windows | `windows` | Native Windows |
 
-This determines:
+### For NixOS: Setting Hostname
 
-- Which configuration files are applied (desktop vs headless)
-- Which scripts run (via `.chezmoiignore` patterns)
-- Machine-specific features (audio, bluetooth, kanata, etc.)
+NixOS machines need a hostname for nix-darwin/NixOS configuration:
 
-### Overriding Defaults
+```bash
+# Set hostname in NixOS configuration.nix
+networking.hostName = "dendrite";
 
-**Chezmoi** - edit `~/.config/chezmoi/chezmoi.toml` after init:
+# Or set temporarily before chezmoi init
+export HOSTNAME=dendrite && chezmoi init --force
+```
+
+Known Nix hostnames: `malus`, `dendrite`, `symbiont`, `mitosis`
+
+### Feature Flags
+
+Features are auto-detected but can be overridden in `~/.config/chezmoi/chezmoi.toml`:
 
 ```toml
 [data.machineConfig.features]
-    kanata = false
+    kanata = false      # Disable keyboard remapping
+    desktop = true      # Force desktop mode
+    audio = false       # Disable audio config
 ```
 
-**Nix** - username is read from chezmoi's `{{ .username }}` automatically.
+**Auto-detection rules:**
 
-To override, set in `~/.config/chezmoi/chezmoi.toml`:
+| Feature | Enabled when |
+| ------- | ------------ |
+| `kanata` | Desktop + not chef-managed + not cloud |
+| `desktop` | Darwin, Windows, or NixOS with X11 |
+| `audio` | Desktop + not WSL + not codespaces |
 
-```toml
-[data]
-    username = "yourname"
-```
+### Template Variables
 
-**Available Hostnames:**
-
-| Hostname | Platform | Type | Description |
-| -------- | -------- | ---- | ----------- |
-| **dendrite** | NixOS | Laptop | ThinkPad T470 portable workstation (desktop with Kanata) |
-| **mitosis** | NixOS | VM | Virtual machine for testing (headless server) |
-| **symbiont** | NixOS-WSL | WSL | NixOS on Windows Subsystem for Linux (headless) |
-| **malus** | macOS | Desktop | macOS workstation |
-| **prion** | Windows | Desktop | Native Windows workstation with GUI |
-| **spore** | Windows | Cloud | M365 DevBox environment (headless, minimal) |
-
-### How It Works
-
-1. **Init**: User runs `chezmoi init` (or sets HOSTNAME env var to override)
-2. **Template processing**: `.chezmoi.toml.tmpl` reads hostname via `{{ env "HOSTNAME" | default .chezmoi.hostname }}`
-3. **Application**: chezmoi applies appropriate configs based on detected/overridden hostname
-
-### Machine Detection Logic (`.chezmoi.toml.tmpl`)
-
-After hostname is selected/loaded:
-
-```toml
-{{- if eq $hostname "nixos" -}}
-  {{- $isDesktop = true -}}
-  {{- $hasKmonad = true -}}
-{{- else if hasPrefix "vm-" $hostname -}}
-  {{- $isServer = true -}}
-{{- else -}}
-  {{- /* Default to desktop for unknown hosts */ -}}
-  {{- $isDesktop = true -}}
-{{- end -}}
-```
-
-**Available template variables:**
-
-- `{{ .username }}` - Current username
-- `{{ .machineConfig.hostname }}` - Selected hostname
-- `{{ .machineConfig.type }}` - Machine type (laptop/server/wsl/desktop/cloud)
-- `{{ .machineConfig.features.desktop }}` - Boolean: has GUI
-- `{{ .machineConfig.features.kanata }}` - Boolean: uses Kanata
-- `{{ .machineConfig.features.audio }}` - Boolean: has audio
-- `{{ .machineConfig.features.bluetooth }}` - Boolean: has bluetooth
-
-### For AI: Important Notes
-
-1. **ALWAYS check `.chezmoidata/machines.yaml`** for current hostname list
-2. **Never assume** hostname - it's user-selected during first init
-3. **Test commands** to check current machine config:
-   - `chezmoi data | grep -A10 machineConfig`
-   - `chezmoi execute-template '{{ .machineConfig.hostname }}'`
-4. **Script filtering** happens via `.chezmoiignore` based on `machineConfig.features`
-5. **Adding new hosts**: Update `.chezmoidata/machines.yaml` AND the prompt in `.chezmoi.toml.tmpl`
+- `{{ .machineConfig.platform }}` - Platform type (darwin, darwin-brew, nixos, linux-apt, etc.)
+- `{{ .machineConfig.hostname }}` - System hostname
+- `{{ .machineConfig.features.desktop }}` - Has GUI
+- `{{ .machineConfig.features.kanata }}` - Uses Kanata keyboard remapping
 
 ### Troubleshooting
 
-**User reports wrong configuration applied:**
+**Check current config:**
 
-1. Check detected hostname: `chezmoi data | grep hostname`
-2. Check if it matches expected machine in `machines.yaml`
-3. If wrong, set `HOSTNAME` env var and re-init: `export HOSTNAME="correct-name" && chezmoi init --force`
+```bash
+chezmoi data | grep -A10 machineConfig
+```
 
-**Bootstrap didn't run:**
+**Force re-detection:**
 
-- Check that `hooks.read-source-state.pre` is configured in `chezmoi.toml.tmpl`
-- Verify hostname was selected (prompt should show during `chezmoi init`)
-- Bootstrap should run BEFORE templates are evaluated
+```bash
+chezmoi init --force
+```
 
 ## Bootstrap Architecture
 
