@@ -1,0 +1,88 @@
+# Homebrew packages for darwin-brew
+# Install with: brew bundle --file=~/.config/brew/Brewfile
+
+tap "homebrew/bundle"
+tap "homebrew/services"
+tap "nikitabobko/tap"
+
+# Shells
+brew "zsh"
+brew "bash"
+brew "nushell"
+
+# Terminal
+brew "tmux"
+brew "zellij"
+
+# Editor
+brew "vim"
+brew "neovim"
+
+# Version control
+brew "git"
+brew "git-lfs"
+brew "gh"
+brew "lazygit"
+brew "git-branchless"
+
+# Search and text
+brew "fzf"
+brew "jq"
+brew "yq"
+brew "miller"
+
+# Network
+brew "curl"
+brew "wget"
+brew "cloudflared"
+
+# System
+brew "htop"
+brew "viddy"
+
+# Development
+brew "just"
+brew "direnv"
+brew "age"
+
+# Kubernetes
+brew "kubectl"
+brew "krew"
+brew "kubelogin"
+
+# Shell utilities
+brew "atuin"
+brew "topgrade"
+brew "tealdeer"
+brew "cheat"
+brew "navi"
+
+# Modern CLI
+brew "bat"
+brew "bottom"
+brew "git-delta"
+brew "difftastic"
+brew "dua-cli"
+brew "eza"
+brew "fd"
+brew "lsd"
+brew "ripgrep"
+brew "sd"
+brew "zoxide"
+
+# Prompt
+brew "oh-my-posh"
+brew "carapace"
+brew "sesh"
+
+# macOS services
+brew "aerospace"
+brew "kanata"
+brew "syncthing"
+
+# Casks
+cask "alacritty"
+cask "firefox"
+cask "spotify"
+cask "bitwarden"
+cask "karabiner-driverkit"

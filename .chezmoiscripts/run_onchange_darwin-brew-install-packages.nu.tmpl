@@ -1,6 +1,6 @@
 #!/usr/bin/env nu
 # Install Homebrew packages from Brewfile
-# hash: {{ include "private_dot_config/brew/Brewfile.tmpl" | sha256sum }}
+# hash: {{ include "private_dot_config/brew/Brewfile" | sha256sum }}
 
 let brewfile = $"($env.HOME)/.config/brew/Brewfile"
 
