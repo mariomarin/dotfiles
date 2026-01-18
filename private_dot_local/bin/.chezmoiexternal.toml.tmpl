@@ -163,6 +163,13 @@
     executable = true
     refreshPeriod = "168h"
 
+{{- $zeshRelease := gitHubLatestRelease "roberte777/zesh" }}
+["zesh"]
+    type = "file"
+    url = "https://github.com/roberte777/zesh/releases/download/{{ $zeshRelease.TagName }}/zesh"
+    executable = true
+    refreshPeriod = "168h"
+
 # Secrets
 {{- $ageRelease := gitHubLatestRelease "FiloSottile/age" }}
 ["age"]
@@ -187,8 +194,17 @@
     executable = true
     refreshPeriod = "168h"
 
+{{- else if eq $platform "darwin-brew" -}}
+# GitHub binaries for darwin-brew platform (not in Homebrew)
+{{- $zeshRelease := gitHubLatestRelease "roberte777/zesh" }}
+["zesh"]
+    type = "file"
+    url = "https://github.com/roberte777/zesh/releases/download/{{ $zeshRelease.TagName }}/zesh-macos"
+    executable = true
+    refreshPeriod = "168h"
+
 {{- else -}}
-# Non linux-apt platforms
+# Non linux-apt/darwin-brew platforms (NixOS, etc.)
 ["pulseaudio-control"]
     type = "file"
     url = "https://raw.githubusercontent.com/marioortizmanero/polybar-pulseaudio-control/master/pulseaudio-control"

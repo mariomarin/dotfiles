@@ -1,4 +1,5 @@
-# AeroSpace - Window management with Alt modifier (like LeftWM Super)
+# AeroSpace - Window management with Ctrl+Alt modifier
+# Alt reserved for tmux/zellij tilish bindings
 # Reference: https://nikitabobko.github.io/AeroSpace/guide
 
 start-at-login = true
@@ -21,59 +22,59 @@ outer.right = 10
 
 [mode.main.binding]
 
-# Navigation: Alt+hjkl (like Super+hjkl in LeftWM)
-alt-h = 'focus left'
-alt-j = 'focus down'
-alt-k = 'focus up'
-alt-l = 'focus right'
+# Navigation: Ctrl+Alt+hjkl
+ctrl-alt-h = 'focus left'
+ctrl-alt-j = 'focus down'
+ctrl-alt-k = 'focus up'
+ctrl-alt-l = 'focus right'
 
-# Move windows: Alt+Shift+hjkl (like Super+Shift+hjkl in LeftWM)
-alt-shift-h = 'move left'
-alt-shift-j = 'move down'
-alt-shift-k = 'move up'
-alt-shift-l = 'move right'
+# Move windows: Ctrl+Alt+Shift+hjkl
+ctrl-alt-shift-h = 'move left'
+ctrl-alt-shift-j = 'move down'
+ctrl-alt-shift-k = 'move up'
+ctrl-alt-shift-l = 'move right'
 
-# Workspaces: Alt+1-9 (like Super+1-9 in LeftWM)
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
-alt-7 = 'workspace 7'
-alt-8 = 'workspace 8'
-alt-9 = 'workspace 9'
+# Workspaces: Ctrl+Alt+1-9
+ctrl-alt-1 = 'workspace 1'
+ctrl-alt-2 = 'workspace 2'
+ctrl-alt-3 = 'workspace 3'
+ctrl-alt-4 = 'workspace 4'
+ctrl-alt-5 = 'workspace 5'
+ctrl-alt-6 = 'workspace 6'
+ctrl-alt-7 = 'workspace 7'
+ctrl-alt-8 = 'workspace 8'
+ctrl-alt-9 = 'workspace 9'
 
-# Move to workspace: Alt+Shift+1-9 (like Super+Shift+1-9 in LeftWM)
-alt-shift-1 = 'move-node-to-workspace 1'
-alt-shift-2 = 'move-node-to-workspace 2'
-alt-shift-3 = 'move-node-to-workspace 3'
-alt-shift-4 = 'move-node-to-workspace 4'
-alt-shift-5 = 'move-node-to-workspace 5'
-alt-shift-6 = 'move-node-to-workspace 6'
-alt-shift-7 = 'move-node-to-workspace 7'
-alt-shift-8 = 'move-node-to-workspace 8'
-alt-shift-9 = 'move-node-to-workspace 9'
+# Move to workspace: Ctrl+Alt+Shift+1-9
+ctrl-alt-shift-1 = 'move-node-to-workspace 1'
+ctrl-alt-shift-2 = 'move-node-to-workspace 2'
+ctrl-alt-shift-3 = 'move-node-to-workspace 3'
+ctrl-alt-shift-4 = 'move-node-to-workspace 4'
+ctrl-alt-shift-5 = 'move-node-to-workspace 5'
+ctrl-alt-shift-6 = 'move-node-to-workspace 6'
+ctrl-alt-shift-7 = 'move-node-to-workspace 7'
+ctrl-alt-shift-8 = 'move-node-to-workspace 8'
+ctrl-alt-shift-9 = 'move-node-to-workspace 9'
 
-# Monitor: Alt+,/.
-alt-comma = 'focus-monitor --wrap-around prev'
-alt-period = 'focus-monitor --wrap-around next'
-alt-shift-comma = 'move-node-to-monitor --wrap-around prev'
-alt-shift-period = 'move-node-to-monitor --wrap-around next'
+# Monitor: Ctrl+Alt+,/.
+ctrl-alt-comma = 'focus-monitor --wrap-around prev'
+ctrl-alt-period = 'focus-monitor --wrap-around next'
+ctrl-alt-shift-comma = 'move-node-to-monitor --wrap-around prev'
+ctrl-alt-shift-period = 'move-node-to-monitor --wrap-around next'
 
 # Window actions
-alt-f = 'fullscreen'
-alt-shift-q = 'close'
-alt-space = 'layout floating tiling'
-alt-tab = 'workspace-back-and-forth'
-alt-enter = 'exec-and-forget open -na Alacritty'
-alt-e = 'layout h_tiles v_tiles h_accordion v_accordion'
+ctrl-alt-f = 'fullscreen'
+ctrl-alt-shift-q = 'close'
+ctrl-alt-space = 'layout floating tiling'
+ctrl-alt-tab = 'workspace-back-and-forth'
+ctrl-alt-enter = 'exec-and-forget open -na Alacritty'
+ctrl-alt-e = 'layout h_tiles v_tiles h_accordion v_accordion'
 
 # Resize mode
-alt-r = 'mode resize'
+ctrl-alt-r = 'mode resize'
 
 # Swap workspaces between monitors
-alt-w = 'exec-and-forget /run/current-system/sw/bin/nu ~/.local/bin/aerospace-swap'
+ctrl-alt-w = 'exec-and-forget /run/current-system/sw/bin/nu ~/.local/bin/aerospace-swap'
 
 # Resize mode (Alt+r, then hjkl)
 [mode.resize.binding]

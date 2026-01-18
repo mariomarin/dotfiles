@@ -48,8 +48,8 @@ if-shell "uname | grep -q Linux && ! test -f /proc/sys/fs/binfmt_misc/WSLInterop
     "set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message \"Opening {}\" && xdg-open {}'"
 
 # tmux-tilish (farzadmf fork with copilot support)
-# Prefix mode: = layer (C-M) for all tilish bindings
-set -g @tilish-prefix 'C-M'
+# Alt for all tilish bindings (aerospace uses Ctrl+Alt)
+set -g @tilish-prefix 'M'
 set -g @tilish-dmenu 'on'
 set -g @tilish-new_pane '"'
 set -g @tilish-smart-splits 'on'

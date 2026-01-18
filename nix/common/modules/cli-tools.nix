@@ -29,6 +29,7 @@ in
       tmux
       zellij # Modern terminal multiplexer (Rust)
       sesh # Smart session manager for tmux
+      zesh # Smart session manager for zellij (custom pkg)
 
       # ── Editor ──────────────────────────────────────────────────────────
       vim

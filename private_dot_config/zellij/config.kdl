@@ -1,5 +1,5 @@
 // Zellij configuration with tmux-like Ctrl+a prefix bindings
-// Ctrl+Alt bindings via Kanata = layer for tilish compatibility
+// Alt bindings for tilish compatibility (aerospace uses Ctrl+Alt)
 
 theme "catppuccin-mocha"
 
@@ -196,51 +196,51 @@ keybinds clear-defaults=true {
         bind "Ctrl a" { SwitchToMode "tmux"; }
     }
 
-    // Ctrl+Alt bindings via Kanata = layer (like tmux-tilish)
+    // Alt bindings (like tmux-tilish)
     // Use shared_except "locked" so keys pass through to nvim for zellij-nav.nvim
     shared_except "locked" {
-        // Tab switching: =+1-9
-        bind "Ctrl Alt 1" { GoToTab 1; }
-        bind "Ctrl Alt 2" { GoToTab 2; }
-        bind "Ctrl Alt 3" { GoToTab 3; }
-        bind "Ctrl Alt 4" { GoToTab 4; }
-        bind "Ctrl Alt 5" { GoToTab 5; }
-        bind "Ctrl Alt 6" { GoToTab 6; }
-        bind "Ctrl Alt 7" { GoToTab 7; }
-        bind "Ctrl Alt 8" { GoToTab 8; }
-        bind "Ctrl Alt 9" { GoToTab 9; }
-        bind "Ctrl Alt 0" { GoToTab 10; }
+        // Tab switching: Alt+1-9
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        bind "Alt 6" { GoToTab 6; }
+        bind "Alt 7" { GoToTab 7; }
+        bind "Alt 8" { GoToTab 8; }
+        bind "Alt 9" { GoToTab 9; }
+        bind "Alt 0" { GoToTab 10; }
 
-        // Navigation: =+hjkl
-        bind "Ctrl Alt h" { MoveFocus "Left"; }
-        bind "Ctrl Alt j" { MoveFocus "Down"; }
-        bind "Ctrl Alt k" { MoveFocus "Up"; }
-        bind "Ctrl Alt l" { MoveFocus "Right"; }
+        // Navigation: Alt+hjkl
+        bind "Alt h" { MoveFocus "Left"; }
+        bind "Alt j" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Up"; }
+        bind "Alt l" { MoveFocus "Right"; }
 
-        // New pane: =+"
-        bind "Ctrl Alt \"" { NewPane; }
+        // New pane: Alt+"
+        bind "Alt \"" { NewPane; }
 
-        // Split: =+- and =+|
-        bind "Ctrl Alt -" { NewPane "Down"; }
-        bind "Ctrl Alt \\" { NewPane "Right"; }
+        // Split: Alt+- and Alt+|
+        bind "Alt -" { NewPane "Down"; }
+        bind "Alt \\" { NewPane "Right"; }
 
-        // Close: =+q
-        bind "Ctrl Alt q" { CloseFocus; }
+        // Close: Alt+q
+        bind "Alt q" { CloseFocus; }
 
-        // Fullscreen: =+z
-        bind "Ctrl Alt z" { ToggleFocusFullscreen; }
+        // Fullscreen: Alt+z
+        bind "Alt z" { ToggleFocusFullscreen; }
 
-        // Layout: =+Space
-        bind "Ctrl Alt Space" { NextSwapLayout; }
+        // Layout: Alt+Space
+        bind "Alt Space" { NextSwapLayout; }
 
-        // Last tab: =+Tab
-        bind "Ctrl Alt Tab" { ToggleTab; }
+        // Last tab: Alt+Tab
+        bind "Alt Tab" { ToggleTab; }
 
         // Floating panes
-        bind "Ctrl Alt f" { ToggleFloatingPanes; }
+        bind "Alt f" { ToggleFloatingPanes; }
 
         // Session manager
-        bind "Ctrl Alt s" {
+        bind "Alt s" {
             LaunchOrFocusPlugin "session-manager" {
                 floating true
                 move_to_focused_tab true
