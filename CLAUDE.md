@@ -77,6 +77,50 @@ This repository uses **chezmoi** for dotfile management instead of home-manager:
   - `{{ .chezmoi.homeDir }}` - User's home directory
   - Custom data from `.chezmoidata.toml`
 
+### Avoid Template Abuse
+
+**Prefer runtime detection over chezmoi templates** for platform differences:
+
+| Instead of | Use |
+| ---------- | --- |
+| `{{ if eq .chezmoi.os "darwin" }}...{{ end }}` in every file | `.chezmoiignore` for platform filtering |
+| Templates just to swap one value | Runtime if-shell or env detection |
+| Complex template logic | Separate config files per platform |
+
+**Examples:**
+
+```bash
+# ❌ Template abuse - chezmoi template for runtime value
+set -g @thumbs-command '{{ if eq .chezmoi.os "darwin" }}open{{ else }}xdg-open{{ end }}'
+
+# ✅ Runtime detection - tmux if-shell
+if-shell "uname | grep -q Darwin" "set -g @thumbs-command 'open'"
+if-shell "uname | grep -q Linux" "set -g @thumbs-command 'xdg-open'"
+
+# ✅ Platform filtering - use .chezmoiignore
+# In .chezmoiignore:
+{{ if ne $platform "darwin-brew" }}
+.config/brew
+{{ end }}
+```
+
+### Script Language Preference
+
+**Prefer Nushell over Bash** for chezmoi scripts (except `.install/` bootstrap):
+
+| Script Type | Language | Reason |
+| ----------- | -------- | ------ |
+| `.install/*.sh` | Bash/POSIX | Must run before nushell is installed |
+| `.chezmoiscripts/*.nu` | Nushell | Validated by git hooks, better data handling |
+| Complex package install | Nushell | Native YAML/JSON parsing with `open` |
+
+**Benefits of Nushell scripts:**
+
+- Validated by `nushell-check` pre-commit hook
+- Native YAML/JSON parsing (`open file.yaml`)
+- Better error handling and pipelines
+- Structured data throughout
+
 ### Debugging Templates
 
 When a template fails to render:

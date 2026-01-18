@@ -47,13 +47,6 @@ devenv.yaml
 .chezmoiscripts/linux-*
 {{ end }}
 
-# Platform-specific validation scripts
-{{ if eq .chezmoi.os "windows" }}
-.chezmoiscripts/00-validate-hostname.sh
-{{ else }}
-.chezmoiscripts/00-validate-hostname.ps1
-{{ end }}
-
 # Unix-only configurations (ignore on Windows)
 {{ if eq .chezmoi.os "windows" }}
 .config/zim
@@ -121,7 +114,6 @@ nix/darwin/**
 {{ if ne $platform "linux-apt" }}
 .config/apt
 .config/apt/**
-.chezmoiscripts/run_before_linux-apt-bootstrap-nushell.sh
 .chezmoiscripts/run_after_linux-apt-install-packages.nu
 {{ end }}
 

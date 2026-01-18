@@ -32,14 +32,32 @@ detect_platform() {
 # Idempotent installers
 ensure_nix() {
     command -v nix > /dev/null && {
-                                   success "Nix installed"
-                                                            return 0
+        success "Nix installed"
+        return 0
   }
     step "Install Nix"
     curl -sfL https://install.determinate.systems/nix | sh -s -- install
     # shellcheck source=/dev/null
     . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     success "Nix installed"
+}
+
+ensure_nushell() {
+    command -v nu > /dev/null && {
+        success "Nushell installed"
+        return 0
+  }
+    step "Install Nushell from Gemfury"
+    KEY_FILE="/etc/apt/keyrings/fury-nushell.gpg"
+    if [ ! -f "$KEY_FILE" ]; then
+        sudo mkdir -p /etc/apt/keyrings
+        wget -qO- https://apt.fury.io/nushell/gpg.key | sudo gpg --dearmor -o "$KEY_FILE"
+        echo "deb [signed-by=$KEY_FILE] https://apt.fury.io/nushell/ /" |
+            sudo tee /etc/apt/sources.list.d/nushell.list > /dev/null
+        sudo apt-get update -qq
+  fi
+    sudo apt-get install -y -qq nushell
+    success "Nushell installed"
 }
 
 ensure_homebrew() {
@@ -96,8 +114,13 @@ setup_nix_env() {
 }
 
 # Bootstrap flows
-bootstrap_simple() {
-    ensure_chezmoi && init_and_apply
+bootstrap_linux_apt() {
+    ensure_nushell && ensure_chezmoi && init_and_apply
+    printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
+}
+
+bootstrap_darwin_brew() {
+    ensure_homebrew && ensure_chezmoi && init_and_apply
     printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
 }
 
@@ -131,9 +154,10 @@ main() {
     cd "$HOME/.local/share/chezmoi"
 
     case "$PLATFORM" in
-        darwin-brew | linux-apt) bootstrap_simple ;;
-        darwin)                bootstrap_darwin ;;
-        nixos)                 bootstrap_nixos ;;
+        linux-apt)    bootstrap_linux_apt ;;
+        darwin-brew)  bootstrap_darwin_brew ;;
+        darwin)       bootstrap_darwin ;;
+        nixos)        bootstrap_nixos ;;
   esac
 }
 
