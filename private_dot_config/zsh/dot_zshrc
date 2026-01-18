@@ -49,18 +49,30 @@ npm config set prefix "$NPM_CONFIG_PREFIX"
 
 # SSH agent: find best available socket
 _find_ssh_sock() {
-  local uid=$(id -u) sock
+  local uid=$(id -u)
+
   # Forwarded agent (VMs) - prefer newest socket in /tmp
-  sock=$(find /tmp -maxdepth 2 -type s -name "agent.*" -user "$USER" 2>/dev/null \
+  local forwarded=$(find /tmp -maxdepth 2 -type s -name "agent.*" -user "$USER" 2>/dev/null \
     | xargs -r ls -t 2>/dev/null | head -1)
-  [[ -S "$sock" ]] && { echo "$sock"; return; }
+  if [[ -S "$forwarded" ]]; then
+    echo "$forwarded"
+    return
+  fi
+
   # Desktop: GNOME Keyring
-  for sock in "/run/user/$uid/gcr/ssh" "/run/user/$uid/keyring/ssh"; do
-    [[ -S "$sock" ]] && { echo "$sock"; return; }
-  done
+  if [[ -S "/run/user/$uid/gcr/ssh" ]]; then
+    echo "/run/user/$uid/gcr/ssh"
+    return
+  fi
+  if [[ -S "/run/user/$uid/keyring/ssh" ]]; then
+    echo "/run/user/$uid/keyring/ssh"
+    return
+  fi
+
   # Headless: systemd ssh-agent
-  sock="/run/user/$uid/ssh-agent"
-  [[ -S "$sock" ]] && echo "$sock"
+  if [[ -S "/run/user/$uid/ssh-agent" ]]; then
+    echo "/run/user/$uid/ssh-agent"
+  fi
 }
 
 _update_ssh_sock() {
