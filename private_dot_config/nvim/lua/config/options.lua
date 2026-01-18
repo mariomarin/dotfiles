@@ -5,6 +5,14 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- Sync yanks with system clipboard (set after LazyVim loads to override its detection)
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  callback = function()
+    vim.opt.clipboard = "unnamedplus"
+  end,
+})
+
 -- NixOS compatibility
 if vim.fn.has("unix") == 1 and vim.fn.executable("nix") == 1 then
   -- Disable automatic LSP installation on NixOS
