@@ -16,7 +16,8 @@ bind-key "T" run-shell "sesh connect \"$(
 		--preview 'sesh preview {}'
 )\""
 
-bind -N "last-session (via sesh) " L run-shell "sesh last"
+# Last session: try sesh last, fall back to tmux's last-session, then session picker
+bind -N "last-session (via sesh) " L run-shell "sesh last || tmux switch-client -l 2>/dev/null || tmux display-popup -E 'sesh connect \"$(sesh list -t --icons | fzf --ansi --no-sort)\"'"
 
 # Reload tmux configuration (override tmux-tilish default)
 bind-key -n M-S-c source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"

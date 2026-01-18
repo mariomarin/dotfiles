@@ -35,15 +35,46 @@ For a complete list of keybindings, see **[KEYBINDINGS.md](KEYBINDINGS.md)**.
 
 ## Plugin List
 
-- **tmux-sensible**: Sensible tmux defaults
-- **tmux-yank**: System clipboard integration
-- **tmux-resurrect**: Session persistence across reboots
-- **tmux-continuum**: Automatic session saves
-- **tmux-thumbs**: Copy text with hints (like Vimium)
-- **tmux-tilish**: i3wm-like navigation and layouts
-- **tmux-harpoon**: Quick navigation between saved sessions and panes
-- **tmux-fuzzback**: Search scrollback with FZF
-- **extrakto**: Extract and insert text from panes
+| Plugin              | Description                         |
+| ------------------- | ----------------------------------- |
+| tmux-sensible       | Sensible defaults                   |
+| tmux-yank           | System clipboard integration        |
+| tmux-resurrect      | Session persistence                 |
+| tmux-continuum      | Auto-save + auto-start              |
+| tmux-thumbs         | Copy text with hints (like Vimium)  |
+| tmux-tilish         | i3wm-style navigation and layouts   |
+| tmux-harpoon        | Quick jump to saved sessions/panes  |
+| tmux-fuzzback       | Search scrollback with fzf          |
+| minimal-tmux-status | Clean status bar theme              |
+
+## Session Persistence & Auto-Start
+
+Two plugins work together to persist sessions across reboots:
+
+| Plugin             | Role                                                    |
+| ------------------ | ------------------------------------------------------- |
+| **tmux-resurrect** | Saves/restores session state (windows, panes, layouts)  |
+| **tmux-continuum** | Auto-saves periodically + auto-starts tmux at login     |
+
+### How It Works
+
+1. **Login**: continuum's LaunchAgent (macOS) or systemd service (Linux) starts tmux
+2. **Auto-restore**: `@continuum-restore 'on'` triggers resurrect to restore last saved state
+3. **Auto-save**: continuum saves session state every 15 minutes (default)
+
+### Platform-Specific Auto-Start
+
+| Platform        | Method                                  | Config                                |
+| --------------- | --------------------------------------- | ------------------------------------- |
+| macOS           | LaunchAgent (`~/Library/LaunchAgents`)  | `@continuum-boot-options 'alacritty'` |
+| Linux (systemd) | User service (`~/.config/systemd/user`) | `@continuum-systemd-start-cmd`        |
+
+### Manual Save/Restore
+
+| Keybinding     | Action                |
+| -------------- | --------------------- |
+| `prefix C-s`   | Save session state    |
+| `prefix C-r`   | Restore session state |
 
 ## Neovim Integration
 

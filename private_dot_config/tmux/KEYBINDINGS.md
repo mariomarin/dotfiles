@@ -11,7 +11,7 @@ Complete keybinding reference for the tmux configuration.
 | `prefix C-c` | Create new session |
 | `prefix C-f` | Find and switch to session |
 | `prefix T` | **Session picker (sesh)** - Interactive session management with preview |
-| `prefix L` | Switch to last session (via sesh) |
+| `prefix L` | Switch to last session (sesh → tmux → picker fallback) |
 
 ### Sesh Session Picker (`prefix T`)
 

@@ -1,0 +1,5 @@
+# TPM (Tmux Plugin Manager) - manages tmux plugins on non-Nix platforms
+["tpm"]
+type = "git-repo"
+url = "https://github.com/tmux-plugins/tpm.git"
+refreshPeriod = "168h"
