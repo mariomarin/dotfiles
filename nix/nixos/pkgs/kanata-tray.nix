@@ -10,11 +10,11 @@ let
     };
     "x86_64-darwin" = {
       name = "kanata-tray-macos";
-      hash = "sha256-ZF4q08LCVGJCY1PHIhjhrLjelotZGxU5OEwOb3kvfDk=";
+      hash = "sha256-ZF4q08LFRiYsWTxHIY4YrLjelr0ZG1OTgkwOD3JMY/k=";
     };
     "aarch64-darwin" = {
       name = "kanata-tray-macos";
-      hash = "sha256-ZF4q08LCVGJCY1PHIhjhrLjelotZGxU5OEwOb3kvfDk=";
+      hash = "sha256-ZF4q08LFRiYsWTxHIY4YrLjelr0ZG1OTgkwOD3JMY/k=";
     };
   };
   asset = assets.${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
