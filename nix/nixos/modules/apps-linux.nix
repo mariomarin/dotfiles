@@ -17,17 +17,17 @@
   };
 
   # Enable Firefox with NixOS integration
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+    nativeMessagingHosts.packages = [ pkgs.tridactyl-native ];
+  };
 
   # System packages (Linux-specific desktop apps)
   # Common cross-platform apps are in common/modules/apps.nix
   environment.systemPackages = with pkgs; [
-    # Web browser (Linux-only in nixpkgs, macOS uses homebrew)
-    firefox
     # Linux Desktop Applications
     baobab # Disk usage analyzer with graphical interface
     gnome-disk-utility # Disk management utility
-    tridactyl-native # Native messaging host for Tridactyl Firefox addon
     zathura # PDF/document viewer
 
     # Window Manager & Desktop Environment

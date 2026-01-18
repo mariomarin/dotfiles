@@ -8,5 +8,6 @@
     kanata # Keyboard remapping
     karabiner-dk # DriverKit VirtualHIDDevice (driver-only, no full Karabiner-Elements)
     spotify # Music streaming
+    tridactyl-native # Native messenger for Tridactyl Firefox addon
   ];
 }

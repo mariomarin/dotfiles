@@ -55,6 +55,8 @@ devenv.yaml
 .config/tmux/**
 .config/zsh
 .config/zsh/**
+.config/tridactyl
+.config/tridactyl/**
 .config/autorandr
 .config/autorandr/**
 .config/leftwm
@@ -125,6 +127,11 @@ nix/darwin/**
 .config/launchd/**
 .chezmoiscripts/run_onchange_darwin-brew-install-packages.nu
 .chezmoiscripts/run_onchange_after_darwin-brew-setup-services.nu
+{{ end }}
+
+# darwin with nix only (tridactyl-native from nix)
+{{ if eq $platform "darwin-brew" }}
+.chezmoiscripts/run_onchange_darwin-setup-tridactyl-native.nu
 {{ end }}
 
 # User-managed directory contents (keep directory structure, ignore contents)

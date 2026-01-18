@@ -1,0 +1,39 @@
+#!/usr/bin/env nu
+# Register tridactyl-native with Firefox on macOS
+# hash: {{ include "private_dot_config/tridactyl/tridactylrc" | sha256sum }}
+
+let hosts_dir = $"($env.HOME)/Library/Application Support/Mozilla/NativeMessagingHosts"
+let manifest = $"($hosts_dir)/tridactyl.json"
+
+# Find tridactyl-native in nix profile
+let native_result = (which native_main)
+if ($native_result | is-empty) {
+    print "tridactyl-native not found in PATH, skipping"
+    exit 0
+}
+
+let native_bin = ($native_result | first | get path)
+let nix_manifest = ($native_bin | path dirname | path dirname | path join "lib/mozilla/native-messaging-hosts/tridactyl.json")
+
+if not ($nix_manifest | path exists) {
+    print $"Manifest not found at ($nix_manifest), skipping"
+    exit 0
+}
+
+mkdir $hosts_dir
+
+# Create manifest with correct path
+let manifest_content = {
+    name: "tridactyl"
+    description: "Tridactyl native command handler"
+    path: $native_bin
+    type: "stdio"
+    allowed_extensions: [
+        "tridactyl.vim@cmcaine.co.uk"
+        "tridactyl.vim.betas@cmcaine.co.uk"
+        "tridactyl.vim.betas.nonewtab@cmcaine.co.uk"
+    ]
+}
+
+$manifest_content | to json | save -f $manifest
+print $"Tridactyl native messenger registered at ($manifest)"

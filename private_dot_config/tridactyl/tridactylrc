@@ -1,0 +1,77 @@
+" Tridactyl configuration
+" Vim-like Firefox browsing with DuckDuckGo
+
+" Reset to defaults
+sanitize tridactyllocal tridactylsync
+
+" === Search engines ===
+" Set DuckDuckGo as default
+set searchengine duckduckgo
+
+" Additional search engines
+set searchurls.g https://www.google.com/search?q=%s
+set searchurls.gh https://github.com/search?q=%s
+set searchurls.nix https://search.nixos.org/packages?query=%s
+set searchurls.crates https://crates.io/search?q=%s
+set searchurls.npm https://www.npmjs.com/search?q=%s
+set searchurls.mdn https://developer.mozilla.org/en-US/search?q=%s
+set searchurls.yt https://www.youtube.com/results?search_query=%s
+set searchurls.w https://en.wikipedia.org/wiki/Special:Search?search=%s
+
+" === Appearance ===
+" Use dark theme
+colors dark
+
+" Smooth scrolling
+set smoothscroll true
+
+" === Hints ===
+" Use home row keys for hints
+set hintchars hjklasdfgyuiopqwertnmzxcvb
+
+" Faster hints
+set hintdelay 100
+
+" === Keybindings ===
+" Navigation
+bind j scrollline 5
+bind k scrollline -5
+bind J tabnext
+bind K tabprev
+bind d tabclose
+bind u undo
+
+" Tab management
+bind gd tabdetach
+bind gD composite tabduplicate; tabdetach
+
+" Clipboard
+bind yy clipboard yank
+bind ym clipboard yankmd
+bind yt clipboard yanktitle
+
+" Open in new tab
+bind F hint -t
+
+" Reader mode
+bind gr reader
+
+" View source
+bind gv viewsource
+
+" === Site-specific settings ===
+" Disable on some sites where it conflicts
+blacklistadd mail.google.com
+blacklistadd docs.google.com
+blacklistadd sheets.google.com
+blacklistadd slides.google.com
+blacklistadd calendar.google.com
+blacklistadd meet.google.com
+
+" === Editor ===
+" Use neovim in terminal for editing
+set editorcmd alacritty -e nvim %f
+
+" === New tab ===
+" Open new tabs with DuckDuckGo
+set newtab about:blank
