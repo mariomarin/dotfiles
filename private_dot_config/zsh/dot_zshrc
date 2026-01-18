@@ -47,9 +47,6 @@ fi
 # node
 npm config set prefix "$NPM_CONFIG_PREFIX"
 
-# SSH agent
-source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/ssh-agent.zsh"
-
 # zoxide (fasd replacement)
 eval "$(zoxide init zsh)"
 

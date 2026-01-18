@@ -9,7 +9,6 @@ private_dot_config/zsh/
 ├── dot_zshenv              # Environment variables (sourced first)
 ├── dot_zshrc               # Interactive shell configuration
 ├── atuin-config.zsh        # Atuin history search configuration
-├── ssh-agent.zsh           # SSH agent socket detection
 ├── zsh-vi-mode-config.zsh  # Vi mode configuration
 └── README-vi-mode.md       # User documentation for vi mode
 ```
@@ -54,18 +53,11 @@ The configuration uses [Zim](https://zimfw.sh/) for plugin management. Key modul
 - `atuinsh/atuin`
 - `fzf`
 
-## SSH Agent Configuration (`ssh-agent.zsh`)
+## SSH Agent Configuration
 
-Finds the best available SSH socket in priority order:
+Managed by zim module at `~/.config/zim/modules/ssh-agent/`.
 
-1. Forwarded agent in `/tmp` (newest by mtime) - for VMs with SSH forwarding
-2. GNOME Keyring (`/run/user/$uid/gcr/ssh` or `keyring/ssh`) - for desktop
-3. systemd ssh-agent (`/run/user/$uid/ssh-agent`) - for headless
-
-Functions:
-
-- `_find_ssh_sock` - returns best socket path
-- `_update_ssh_sock` - updates `SSH_AUTH_SOCK` (call manually after SSH reconnect)
+See [zim CLAUDE.md](../zim/CLAUDE.md#ssh-agent-module) for details.
 
 ## Key Bindings
 

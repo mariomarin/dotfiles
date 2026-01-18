@@ -26,6 +26,8 @@ zmodule gitster
 zmodule zsh-users/zsh-completions --fpath src
 
 # Custom modules
+# ssh-agent - SSH agent socket detection (forwarded → GNOME → systemd)
+zmodule ${ZIM_CONFIG_FILE:h}/modules/ssh-agent
 # sesh - Smart session manager with tmux integration
 zmodule ${ZIM_CONFIG_FILE:h}/modules/sesh
 # claude-helpers - Claude Code helper functions

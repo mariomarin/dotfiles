@@ -65,9 +65,22 @@ Zim is a modular Zsh framework that provides:
   - `fzf` - Fuzzy finder integration
 
 - **Custom Modules**:
-  - `container-use` - Completions for container-use tool
-  - `git-branchless` - Completions for git-branchless commands
+  - `ssh-agent` - SSH agent socket detection
+  - `sesh` - Smart session manager with tmux integration
   - `claude-helpers` - Claude Code helper functions
+
+## SSH Agent Module
+
+Finds the best available SSH socket in priority order:
+
+1. Forwarded agent in `/tmp` (newest by mtime) - for VMs with SSH forwarding
+2. GNOME Keyring (`/run/user/$uid/gcr/ssh` or `keyring/ssh`) - for desktop
+3. systemd ssh-agent (`/run/user/$uid/ssh-agent`) - for headless
+
+Functions:
+
+- `_find_ssh_sock` - returns best socket path
+- `_update_ssh_sock` - updates `SSH_AUTH_SOCK` (call manually after SSH reconnect)
 
 ## Custom Completion Modules
 
