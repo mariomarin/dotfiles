@@ -1,0 +1,39 @@
+# APT packages for linux-apt platform (Ubuntu/Debian without Nix)
+repos:
+  - name: neovim
+    type: ppa
+    ppa: ppa:neovim-ppa/unstable
+  - name: eza
+    type: deb
+    key_url: https://raw.githubusercontent.com/eza-community/eza/main/deb.asc
+    key_file: /etc/apt/keyrings/gierens.gpg
+    repo: "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main"
+  - name: nushell
+    type: deb
+    key_url: https://apt.fury.io/nushell/gpg.key
+    key_file: /etc/apt/keyrings/fury-nushell.gpg
+    repo: "deb [signed-by=/etc/apt/keyrings/fury-nushell.gpg] https://apt.fury.io/nushell/ /"
+packages:
+  - zsh
+  - bash
+  - vim
+  - neovim
+  - git
+  - git-lfs
+  - curl
+  - wget
+  - rsync
+  - file
+  - tree
+  - unzip
+  - htop
+  - jq
+  - fzf
+  - tmux
+  - direnv
+  - bat
+  - ripgrep
+  - fd-find
+  - eza
+  - nushell
+  - atuin
