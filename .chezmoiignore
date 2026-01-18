@@ -131,8 +131,8 @@ nix/darwin/**
 .config/brew/**
 .config/launchd
 .config/launchd/**
-.chezmoiscripts/run_onchange_darwin-brew-install-packages.sh
-.chezmoiscripts/run_onchange_after_darwin-brew-setup-services.sh
+.chezmoiscripts/run_onchange_darwin-brew-install-packages.nu
+.chezmoiscripts/run_onchange_after_darwin-brew-setup-services.nu
 {{ end }}
 
 # User-managed directory contents (keep directory structure, ignore contents)

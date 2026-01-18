@@ -1,0 +1,77 @@
+#!/usr/bin/env nu
+# Setup LaunchDaemons and LaunchAgents for darwin-brew
+# hash: {{ include "private_dot_config/launchd/org.local.kanata.plist.tmpl" | sha256sum }}
+# hash: {{ include "private_dot_config/launchd/org.local.aerospace.plist" | sha256sum }}
+# hash: {{ include "private_dot_config/launchd/org.local.syncthing.plist.tmpl" | sha256sum }}
+
+let launchd_dir = $"($env.HOME)/.config/launchd"
+let user_agents = $"($env.HOME)/Library/LaunchAgents"
+let system_daemons = "/Library/LaunchDaemons"
+
+mkdir $user_agents
+
+def setup-kanata [] {
+    let src = $"($launchd_dir)/org.local.kanata.plist"
+    let dest = $"($system_daemons)/org.local.kanata.plist"
+
+    if not ($src | path exists) {
+        return
+    }
+
+    # Copy kanata binary to stable path (preserves Input Monitoring permission)
+    let kanata_path = (which kanata | get -i 0.path)
+    if ($kanata_path | is-not-empty) {
+        print "Copying kanata to /usr/local/bin..."
+        sudo cp -f $kanata_path /usr/local/bin/kanata
+        sudo chmod 755 /usr/local/bin/kanata
+    }
+
+    # Create Karabiner socket directory
+    sudo mkdir -p "/Library/Application Support/org.pqrs/tmp"
+    sudo chmod 1777 "/Library/Application Support/org.pqrs/tmp"
+
+    # Install plist if changed
+    let needs_update = if ($dest | path exists) {
+        (open $src) != (open $dest)
+    } else {
+        true
+    }
+
+    if $needs_update {
+        print "Installing kanata LaunchDaemon..."
+        sudo cp $src $dest
+        sudo chown root:wheel $dest
+        sudo chmod 644 $dest
+        do { sudo launchctl bootout system $dest } | complete | ignore
+        sudo launchctl bootstrap system $dest
+    }
+}
+
+def setup-user-agent [name: string] {
+    let src = $"($launchd_dir)/org.local.($name).plist"
+    let dest = $"($user_agents)/org.local.($name).plist"
+
+    if not ($src | path exists) {
+        return
+    }
+
+    let needs_update = if ($dest | path exists) {
+        (open $src) != (open $dest)
+    } else {
+        true
+    }
+
+    if $needs_update {
+        print $"Installing ($name) LaunchAgent..."
+        cp $src $dest
+        let uid = (id -u)
+        do { launchctl bootout $"gui/($uid)" $dest } | complete | ignore
+        launchctl bootstrap $"gui/($uid)" $dest
+    }
+}
+
+setup-kanata
+setup-user-agent aerospace
+setup-user-agent syncthing
+
+print "Services setup complete."
