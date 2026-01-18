@@ -170,6 +170,14 @@
     executable = true
     refreshPeriod = "168h"
 
+# Kanata tray icon
+{{- $kanataTrayRelease := gitHubLatestRelease "rszyma/kanata-tray" }}
+["kanata-tray"]
+    type = "file"
+    url = "https://github.com/rszyma/kanata-tray/releases/download/{{ $kanataTrayRelease.TagName }}/kanata-tray-linux"
+    executable = true
+    refreshPeriod = "168h"
+
 # Secrets
 {{- $ageRelease := gitHubLatestRelease "FiloSottile/age" }}
 ["age"]
@@ -200,6 +208,13 @@
 ["zesh"]
     type = "file"
     url = "https://github.com/roberte777/zesh/releases/download/{{ $zeshRelease.TagName }}/zesh-macos"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $kanataTrayRelease := gitHubLatestRelease "rszyma/kanata-tray" }}
+["kanata-tray"]
+    type = "file"
+    url = "https://github.com/rszyma/kanata-tray/releases/download/{{ $kanataTrayRelease.TagName }}/kanata-tray-macos"
     executable = true
     refreshPeriod = "168h"
 

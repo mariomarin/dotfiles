@@ -137,6 +137,12 @@ nix/darwin/**
 # User-managed directory contents (keep directory structure, ignore contents)
 .config/autostart/**
 !.config/autostart/.keep
+!.config/autostart/kanata-tray.desktop
+
+# Kanata tray autostart (only on Linux desktops with kanata)
+{{ if not (and (eq .chezmoi.os "linux") .machineConfig.features.desktop .machineConfig.features.kanata) }}
+.config/autostart/kanata-tray.desktop
+{{ end }}
 .local/share/applications/**
 !.local/share/applications/.keep
 Pictures/Wallpapers/**

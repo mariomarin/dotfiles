@@ -30,6 +30,9 @@
     gnome-disk-utility # Disk management utility
     zathura # PDF/document viewer
 
+    # Keyboard remapping
+    kanata-tray # System tray for kanata (custom pkg)
+
     # Window Manager & Desktop Environment
     autorandr # Automatic display configuration
     conky # System monitor for X

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Kanata Tray
+Comment=System tray for kanata keyboard remapper
+Exec=kanata-tray
+Icon=input-keyboard
+Terminal=false
+Categories=Utility;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true

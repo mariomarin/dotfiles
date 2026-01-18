@@ -53,6 +53,7 @@
           tmux-tilish = final.callPackage ./pkgs/tmux-tilish.nix { };
           bitbucket-cli = final.callPackage ./pkgs/bitbucket-cli.nix { };
           zesh = final.callPackage ./pkgs/zesh.nix { };
+          kanata-tray = final.callPackage ./pkgs/kanata-tray.nix { };
         })
         claude-code-nix.overlays.default
       ];
