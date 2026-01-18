@@ -58,11 +58,21 @@ if [[ -n "$DISPLAY" ]] || [[ -n "$WAYLAND_DISPLAY" ]]; then
     export SSH_AUTH_SOCK="/run/user/$(id -u)/keyring/ssh"
   fi
 else
-  # Headless (WSL/VMs): Use systemd SSH agent
+  # Headless (WSL/VMs): Use systemd SSH agent or forwarded agent
   if [[ -S "/run/user/$(id -u)/ssh-agent" ]]; then
     export SSH_AUTH_SOCK="/run/user/$(id -u)/ssh-agent"
   fi
 fi
+
+# SSH agent forwarding: update socket if newer one exists in /tmp
+# (common in VMs where SSH connection changes frequently)
+_update_ssh_sock() {
+  local newest
+  newest=$(find /tmp -maxdepth 2 -type s -name "agent.*" -user "$USER" -newer "${SSH_AUTH_SOCK:-/}" 2>/dev/null | head -1)
+  [[ -S "$newest" ]] && export SSH_AUTH_SOCK="$newest"
+}
+# Run on shell init and make available for manual refresh
+_update_ssh_sock
 
 # Test SSH agent connection
 if [[ -n "$SSH_AUTH_SOCK" ]] && command -v ssh-add >/dev/null 2>&1; then
