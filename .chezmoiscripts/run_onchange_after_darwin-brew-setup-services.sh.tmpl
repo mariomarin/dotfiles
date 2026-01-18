@@ -1,0 +1,70 @@
+{{- if eq (index .machineConfig "platform" | default "") "darwin-brew" -}}
+#!/usr/bin/env bash
+# Setup LaunchDaemons and LaunchAgents for darwin-brew
+# hash: {{ include "private_dot_config/launchd/org.local.kanata.plist.tmpl" | sha256sum }}
+# hash: {{ include "private_dot_config/launchd/org.local.aerospace.plist.tmpl" | sha256sum }}
+# hash: {{ include "private_dot_config/launchd/org.local.syncthing.plist.tmpl" | sha256sum }}
+
+set -euo pipefail
+
+LAUNCHD_DIR="${HOME}/.config/launchd"
+USER_AGENTS="${HOME}/Library/LaunchAgents"
+SYSTEM_DAEMONS="/Library/LaunchDaemons"
+
+mkdir -p "$USER_AGENTS"
+
+# Kanata (system daemon - requires sudo)
+setup_kanata() {
+  local src="$LAUNCHD_DIR/org.local.kanata.plist"
+  local dest="$SYSTEM_DAEMONS/org.local.kanata.plist"
+
+  if [[ ! -f "$src" ]]; then
+    return
+  fi
+
+  # Copy kanata binary to stable path (preserves Input Monitoring permission)
+  if command -v kanata &>/dev/null; then
+    echo "Copying kanata to /usr/local/bin..."
+    sudo cp -f "$(which kanata)" /usr/local/bin/kanata
+    sudo chmod 755 /usr/local/bin/kanata
+  fi
+
+  # Create Karabiner socket directory
+  sudo mkdir -p "/Library/Application Support/org.pqrs/tmp"
+  sudo chmod 1777 "/Library/Application Support/org.pqrs/tmp"
+
+  # Install plist
+  if ! diff -q "$src" "$dest" &>/dev/null 2>&1; then
+    echo "Installing kanata LaunchDaemon..."
+    sudo cp "$src" "$dest"
+    sudo chown root:wheel "$dest"
+    sudo chmod 644 "$dest"
+    sudo launchctl bootout system "$dest" 2>/dev/null || true
+    sudo launchctl bootstrap system "$dest"
+  fi
+}
+
+# User agents (aerospace, syncthing)
+setup_user_agent() {
+  local name="$1"
+  local src="$LAUNCHD_DIR/org.local.${name}.plist"
+  local dest="$USER_AGENTS/org.local.${name}.plist"
+
+  if [[ ! -f "$src" ]]; then
+    return
+  fi
+
+  if ! diff -q "$src" "$dest" &>/dev/null 2>&1; then
+    echo "Installing $name LaunchAgent..."
+    cp "$src" "$dest"
+    launchctl bootout "gui/$(id -u)" "$dest" 2>/dev/null || true
+    launchctl bootstrap "gui/$(id -u)" "$dest"
+  fi
+}
+
+setup_kanata
+setup_user_agent aerospace
+setup_user_agent syncthing
+
+echo "Services setup complete."
+{{- end }}

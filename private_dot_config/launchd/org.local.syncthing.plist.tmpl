@@ -1,0 +1,26 @@
+{{- if eq (index .machineConfig "platform" | default "") "darwin-brew" -}}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>org.local.syncthing</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/syncthing</string>
+        <string>-no-browser</string>
+        <string>-no-restart</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>StandardErrorPath</key>
+    <string>{{ .chezmoi.homeDir }}/Library/Logs/syncthing.log</string>
+    <key>StandardOutPath</key>
+    <string>{{ .chezmoi.homeDir }}/Library/Logs/syncthing.log</string>
+</dict>
+</plist>
+{{- end -}}

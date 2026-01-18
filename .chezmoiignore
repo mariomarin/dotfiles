@@ -125,6 +125,16 @@ nix/darwin/**
 .chezmoiscripts/run_after_linux-apt-install-packages.nu
 {{ end }}
 
+# darwin-brew platform only (Homebrew packages and services)
+{{ if ne $platform "darwin-brew" }}
+.config/brew
+.config/brew/**
+.config/launchd
+.config/launchd/**
+.chezmoiscripts/run_onchange_darwin-brew-install-packages.sh
+.chezmoiscripts/run_onchange_after_darwin-brew-setup-services.sh
+{{ end }}
+
 # User-managed directory contents (keep directory structure, ignore contents)
 .config/autostart/**
 !.config/autostart/.keep

@@ -1,0 +1,23 @@
+{{- if eq (index .machineConfig "platform" | default "") "darwin-brew" -}}
+#!/usr/bin/env bash
+# Install Homebrew packages from Brewfile
+# hash: {{ include "private_dot_config/brew/Brewfile.tmpl" | sha256sum }}
+
+set -euo pipefail
+
+BREWFILE="${HOME}/.config/brew/Brewfile"
+
+if [[ ! -f "$BREWFILE" ]]; then
+  echo "Brewfile not found at $BREWFILE"
+  exit 0
+fi
+
+# Install Homebrew if not present
+if ! command -v brew &>/dev/null; then
+  echo "Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+echo "Installing Homebrew packages..."
+brew bundle --file="$BREWFILE" --no-lock
+{{- end }}
