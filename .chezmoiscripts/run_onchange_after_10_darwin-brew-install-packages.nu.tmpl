@@ -31,8 +31,15 @@ if not ($driverkit_app | path exists) {
     print "  Run: /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate"
 }
 
+# Initialize rustup if needed (installs cargo)
+if (which cargo | is-empty) and (which rustup-init | is-not-empty) {
+    print "Initializing rustup..."
+    rustup-init -y --no-modify-path
+    $env.PATH = ($env.PATH | prepend $"($env.HOME)/.cargo/bin")
+}
+
 # Install pay-respects via cargo (not in Homebrew)
-if (which pay-respects | is-empty) {
+if (which cargo | is-not-empty) and (which pay-respects | is-empty) {
     print "Installing pay-respects via cargo..."
     cargo install pay-respects
     print "✓ pay-respects installed"
