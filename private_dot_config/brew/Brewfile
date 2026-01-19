@@ -85,4 +85,4 @@ cask "alacritty"
 cask "firefox"
 cask "spotify"
 cask "bitwarden"
-cask "karabiner-driverkit"
+# karabiner-driverkit: install manually from https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases
