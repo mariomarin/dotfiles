@@ -31,8 +31,18 @@ def add-repos [] {
 def install-packages [] {
     let packages = $config.packages
     if ($packages | is-empty) { return }
+
+    print "Updating apt cache..."
     sudo apt-get update -qq
-    sudo apt-get install -y -qq ...$packages
+
+    print $"Installing packages: ($packages | str join ', ')"
+    let result = do { sudo apt-get install -y ...$packages } | complete
+
+    if $result.exit_code != 0 {
+        print $"Warning: Some packages may have failed to install"
+        print $result.stderr
+        # Don't fail the script - some packages might not be available
+    }
 }
 
 def create-symlinks [] {
