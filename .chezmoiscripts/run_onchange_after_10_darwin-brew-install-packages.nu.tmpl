@@ -16,3 +16,17 @@ if (which brew | is-empty) {
 
 print "Installing Homebrew packages..."
 brew bundle --file $brewfile
+
+# Install Karabiner-DriverKit (required for kanata)
+let driverkit_app = "/Applications/.Karabiner-VirtualHIDDevice-Manager.app"
+if not ($driverkit_app | path exists) {
+    print "Installing Karabiner-DriverKit..."
+    let release = http get https://api.github.com/repos/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/latest
+    let pkg_url = $release.assets | where name =~ '\.pkg$' | first | get browser_download_url
+    let tmp_pkg = $"/tmp/karabiner-driverkit.pkg"
+    http get $pkg_url | save -f $tmp_pkg
+    sudo installer -pkg $tmp_pkg -target /
+    rm $tmp_pkg
+    print "✓ Karabiner-DriverKit installed"
+    print "  Run: /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate"
+}
