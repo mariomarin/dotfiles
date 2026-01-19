@@ -17,12 +17,16 @@ repos:
     type: deb
     repo: "deb [trusted=yes] https://apt.fury.io/rsteube/ /"
 packages:
+  # Shells
   - zsh
   - bash
+  # Editors
   - vim
   - neovim
+  # Version control
   - git
   - git-lfs
+  # Core utils
   - curl
   - wget
   - rsync
@@ -34,10 +38,15 @@ packages:
   - fzf
   - tmux
   - direnv
+  # Modern CLI
   - bat
   - ripgrep
   - fd-find
   - eza
+  # From repos
   - nushell
   - carapace-bin
   - atuin
+  # Development
+  - nodejs
+  - npm
