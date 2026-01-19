@@ -59,10 +59,34 @@
 {{- /* nixos-wsl is fine - it's a personal NixOS machine */ -}}
 {{- $needsBitwarden := and (ne $platform "darwin-brew") (ne $platform "linux-apt") (not $codespaces) -}}
 
+sourceDir = "~/.local/share/chezmoi"
+
+{{- if eq .chezmoi.os "windows" }}
+
+[cd]
+    command = "pwsh"
+{{- end }}
+
 {{- if $needsBitwarden }}
+
 [bitwarden]
     command = "bw"
 {{- end }}
+
+[diff]
+    command = "delta"
+    args = ["--syntax-theme", "Dracula", "--line-numbers"]
+    exclude = ["scripts"]
+
+[status]
+    exclude = ["scripts"]
+
+[merge]
+    command = "nvim -d"
+
+[git]
+    autoCommit = false
+    autoPush = false
 
 [data]
     username = {{ $username | quote }}
