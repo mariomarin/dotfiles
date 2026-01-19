@@ -62,20 +62,44 @@ ensure_nushell() {
 
 ensure_homebrew() {
     command -v brew > /dev/null && {
-                                    success "Homebrew installed"
-                                                                  return 0
+        success "Homebrew installed"
+        return 0
   }
     step "Install Homebrew"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv 2> /dev/null || /usr/local/bin/brew shellenv)"
     success "Homebrew installed"
 }
 
-ensure_chezmoi() {
-    command -v chezmoi > /dev/null && {
-                                       success "chezmoi found"
-                                                                return 0
+ensure_nushell_brew() {
+    command -v nu > /dev/null && {
+        success "Nushell installed"
+        return 0
   }
-    error "chezmoi not found - install via package manager"
+    step "Install Nushell via Homebrew"
+    brew install nushell
+    success "Nushell installed"
+}
+
+ensure_chezmoi_brew() {
+    command -v chezmoi > /dev/null && {
+        success "chezmoi installed"
+        return 0
+  }
+    step "Install chezmoi via Homebrew"
+    brew install chezmoi
+    success "chezmoi installed"
+}
+
+ensure_chezmoi_apt() {
+    command -v chezmoi > /dev/null && {
+        success "chezmoi installed"
+        return 0
+  }
+    step "Install chezmoi"
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+    export PATH="$HOME/.local/bin:$PATH"
+    success "chezmoi installed"
 }
 
 # Repository management
@@ -115,12 +139,12 @@ setup_nix_env() {
 
 # Bootstrap flows
 bootstrap_linux_apt() {
-    ensure_nushell && ensure_chezmoi && init_and_apply
+    ensure_nushell && ensure_chezmoi_apt && init_and_apply
     printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
 }
 
 bootstrap_darwin_brew() {
-    ensure_homebrew && ensure_chezmoi && init_and_apply
+    ensure_homebrew && ensure_nushell_brew && ensure_chezmoi_brew && init_and_apply
     printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
 }
 
