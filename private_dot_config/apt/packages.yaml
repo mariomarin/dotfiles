@@ -33,6 +33,7 @@ packages:
   - file
   - tree
   - unzip
+  - zstd
   - htop
   - jq
   - fzf

@@ -186,6 +186,16 @@
     executable = true
     refreshPeriod = "168h"
 
+# Shell helpers
+{{- $payRespectsRelease := gitHubLatestRelease "iffse/pay-respects" }}
+{{- $payRespectsVersion := trimPrefix "v" $payRespectsRelease.TagName }}
+["pay-respects"]
+    type = "archive-file"
+    url = "https://github.com/iffse/pay-respects/releases/download/{{ $payRespectsRelease.TagName }}/pay-respects-{{ $payRespectsVersion }}-{{ $linuxArch }}-unknown-linux-musl.tar.zst"
+    path = "pay-respects"
+    executable = true
+    refreshPeriod = "168h"
+
 {{- else if eq $platform "darwin-brew" -}}
 # GitHub binaries for darwin-brew platform (not in Homebrew)
 {{- $zeshRelease := gitHubLatestRelease "roberte777/zesh" }}
