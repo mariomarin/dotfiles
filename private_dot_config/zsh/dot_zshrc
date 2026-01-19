@@ -91,7 +91,9 @@ unalias gt 2>/dev/null
 source <(kubectl completion zsh)
 
 # help me to fix wrong typed commands
-eval "$(pay-respects zsh --alias)"
+if (( $+commands[pay-respects] )); then
+  eval "$(pay-respects zsh --alias)"
+fi
 
 # Cloudflare Tunnel SSH helper
 # Set CLOUDFLARE_TUNNEL_HOST to your tunnel URL, then run cf-ssh
