@@ -194,14 +194,6 @@
     executable = true
     refreshPeriod = "168h"
 
-{{- $bwRelease := gitHubLatestRelease "bitwarden/clients" }}
-["bw"]
-    type = "archive-file"
-    url = "https://github.com/bitwarden/clients/releases/download/cli-{{ $bwRelease.TagName }}/bw-linux-{{ $bwRelease.TagName }}.zip"
-    path = "bw"
-    executable = true
-    refreshPeriod = "168h"
-
 {{- else if eq $platform "darwin-brew" -}}
 # GitHub binaries for darwin-brew platform (not in Homebrew)
 {{- $zeshRelease := gitHubLatestRelease "roberte777/zesh" }}
