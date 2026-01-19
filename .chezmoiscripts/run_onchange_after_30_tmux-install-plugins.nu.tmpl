@@ -1,0 +1,22 @@
+#!/usr/bin/env nu
+# Install TPM plugins when plugins.tmux changes
+# plugins.tmux hash: {{ include "private_dot_config/tmux/plugins.tmux" | sha256sum }}
+
+let home = ($env.HOME? | default $env.USERPROFILE?)
+let tpm_dir = ($home | path join '.local' 'share' 'tmux' 'plugins' 'tpm')
+let install_script = ($tpm_dir | path join 'bin' 'install_plugins')
+
+# Skip if tmux not installed yet
+if (which tmux | is-empty) {
+    print "tmux not installed yet, skipping plugin installation"
+    exit 0
+}
+
+# Skip if TPM not installed yet
+if not ($install_script | path exists) {
+    print "TPM not installed yet, skipping plugin installation"
+    exit 0
+}
+
+print "Installing tmux plugins via TPM..."
+^$install_script
