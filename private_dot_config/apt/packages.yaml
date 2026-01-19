@@ -15,9 +15,7 @@ repos:
     repo: "deb [signed-by=/etc/apt/keyrings/fury-nushell.gpg] https://apt.fury.io/nushell/ /"
   - name: carapace
     type: deb
-    key_url: https://apt.fury.io/rsteube/gpg.key
-    key_file: /etc/apt/keyrings/fury-rsteube.gpg
-    repo: "deb [signed-by=/etc/apt/keyrings/fury-rsteube.gpg] https://apt.fury.io/rsteube/ /"
+    repo: "deb [trusted=yes] https://apt.fury.io/rsteube/ /"
 packages:
   - zsh
   - bash

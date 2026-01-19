@@ -15,10 +15,14 @@ def add-repos [] {
                 sudo add-apt-repository -y $repo.ppa
             }
         } else if $repo.type == "deb" {
-            if not ($repo.key_file | path exists) {
-                sudo mkdir -p /etc/apt/keyrings
-                http get $repo.key_url | sudo gpg --dearmor -o $repo.key_file
-                $repo.repo | sudo tee $"/etc/apt/sources.list.d/($repo.name).list" | ignore
+            let list_file = $"/etc/apt/sources.list.d/($repo.name).list"
+            if not ($list_file | path exists) {
+                # Only setup GPG key if key_url is provided
+                if ($repo.key_url? | is-not-empty) {
+                    sudo mkdir -p /etc/apt/keyrings
+                    http get $repo.key_url | sudo gpg --dearmor -o $repo.key_file
+                }
+                $repo.repo | sudo tee $list_file | ignore
             }
         }
     }
