@@ -4,8 +4,9 @@
 # NixOS/Darwin get plugins from nixpkgs (nushellPlugins.*)
 # plugins.nuon hash: {{ include "private_dot_config/nushell/plugins.nuon" | sha256sum }}
 
-let nupm_path = ($nu.home-path | path join '.local' 'share' 'nupm' 'nupm')
-let plugins_file = ($nu.home-path | path join '.config' 'nushell' 'plugins.nuon')
+let home = ($env.HOME? | default $env.USERPROFILE?)
+let nupm_path = ($home | path join '.local' 'share' 'nupm' 'nupm')
+let plugins_file = ($home | path join '.config' 'nushell' 'plugins.nuon')
 
 # Check if nupm is installed
 if not ($nupm_path | path exists) {

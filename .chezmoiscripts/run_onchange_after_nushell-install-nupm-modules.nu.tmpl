@@ -5,8 +5,9 @@
 # claude-helpers hash: {{ include "private_dot_config/nushell/modules/claude-helpers/nupm.nuon" | sha256sum }}
 # sesh hash: {{ include "private_dot_config/nushell/modules/sesh/nupm.nuon" | sha256sum }}
 
-let modules_dir = ($nu.home-path | path join '.config' 'nushell' 'modules')
-let nupm_path = ($nu.home-path | path join '.local' 'share' 'nupm' 'nupm')
+let home = ($env.HOME? | default $env.USERPROFILE?)
+let modules_dir = ($home | path join '.config' 'nushell' 'modules')
+let nupm_path = ($home | path join '.local' 'share' 'nupm' 'nupm')
 
 # Check if nupm is installed
 if not ($nupm_path | path exists) {
