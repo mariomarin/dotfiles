@@ -76,6 +76,7 @@ brew "carapace"
 brew "sesh"
 
 # macOS services
+brew "kanata"
 brew "syncthing"
 
 # Casks
