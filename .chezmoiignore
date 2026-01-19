@@ -125,8 +125,8 @@ nix/darwin/**
 .config/brew/**
 .config/launchd
 .config/launchd/**
-.chezmoiscripts/run_onchange_darwin-brew-install-packages.nu
-.chezmoiscripts/run_onchange_after_darwin-brew-setup-services.nu
+.chezmoiscripts/run_onchange_after_10_darwin-brew-install-packages.nu
+.chezmoiscripts/run_onchange_after_20_darwin-brew-setup-services.nu
 {{ end }}
 
 # darwin with nix only (tridactyl-native from nix)
