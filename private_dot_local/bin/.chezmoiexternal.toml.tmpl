@@ -84,11 +84,10 @@
     executable = true
     refreshPeriod = "168h"
 
-{{- $krewRelease := gitHubLatestRelease "kubernetes-sigs/krew" }}
 ["krew"]
     type = "archive-file"
-    url = "https://github.com/kubernetes-sigs/krew/releases/download/{{ $krewRelease.TagName }}/krew-linux_amd64.tar.gz"
-    path = "krew-linux_amd64"
+    url = "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew-linux_amd64.tar.gz"
+    path = "krew"
     executable = true
     refreshPeriod = "168h"
 
