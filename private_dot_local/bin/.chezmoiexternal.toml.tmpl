@@ -108,10 +108,9 @@
     refreshPeriod = "168h"
 
 {{- $topgradeRelease := gitHubLatestRelease "topgrade-rs/topgrade" }}
-{{- $topgradeVersion := trimPrefix "v" $topgradeRelease.TagName }}
 ["topgrade"]
     type = "archive-file"
-    url = "https://github.com/topgrade-rs/topgrade/releases/download/{{ $topgradeRelease.TagName }}/topgrade-{{ $topgradeVersion }}-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
+    url = "https://github.com/topgrade-rs/topgrade/releases/download/{{ $topgradeRelease.TagName }}/topgrade-{{ $topgradeRelease.TagName }}-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
     path = "topgrade"
     executable = true
     refreshPeriod = "168h"
