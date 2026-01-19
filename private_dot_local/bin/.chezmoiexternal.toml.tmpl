@@ -59,9 +59,10 @@
     refreshPeriod = "168h"
 
 {{- $zoxideRelease := gitHubLatestRelease "ajeetdsouza/zoxide" }}
+{{- $zoxideVersion := trimPrefix "v" $zoxideRelease.TagName }}
 ["zoxide"]
     type = "archive-file"
-    url = "https://github.com/ajeetdsouza/zoxide/releases/download/{{ $zoxideRelease.TagName }}/zoxide-{{ $zoxideRelease.TagName }}-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
+    url = "https://github.com/ajeetdsouza/zoxide/releases/download/{{ $zoxideRelease.TagName }}/zoxide-{{ $zoxideVersion }}-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
     path = "zoxide"
     executable = true
     refreshPeriod = "168h"
@@ -132,7 +133,7 @@
 {{- $viddyRelease := gitHubLatestRelease "sachaos/viddy" }}
 ["viddy"]
     type = "archive-file"
-    url = "https://github.com/sachaos/viddy/releases/download/{{ $viddyRelease.TagName }}/viddy_Linux_x86_64.tar.gz"
+    url = "https://github.com/sachaos/viddy/releases/download/{{ $viddyRelease.TagName }}/viddy-{{ $viddyRelease.TagName }}-linux-x86_64.tar.gz"
     path = "viddy"
     executable = true
     refreshPeriod = "168h"
