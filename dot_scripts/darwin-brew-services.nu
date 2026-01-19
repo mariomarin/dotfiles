@@ -25,10 +25,10 @@ def setup-daemon [daemon: record] {
     }
 
     # Copy binary if configured
-    if ($daemon | get --ignore-errors copy_binary | default false) {
+    if ($daemon.copy_binary? | default false) {
         let binary_name = $daemon.binary_name
         let binary_dest = $daemon.binary_dest
-        let binary_path = (which $binary_name | get --ignore-errors 0.path)
+        let binary_path = (which $binary_name).0?.path?
         if ($binary_path | is-not-empty) {
             print $"Copying ($binary_name) to ($binary_dest)..."
             sudo cp -f $binary_path $binary_dest
@@ -37,7 +37,7 @@ def setup-daemon [daemon: record] {
     }
 
     # Create setup directories if configured
-    if ($daemon | get --ignore-errors setup_dirs | is-not-empty) {
+    if ($daemon.setup_dirs? | is-not-empty) {
         $daemon.setup_dirs | each { |dir|
             sudo mkdir -p $dir.path
             sudo chmod $dir.mode $dir.path
@@ -86,12 +86,12 @@ def setup-agent [name: string] {
 
 def main [] {
     # Setup daemons
-    if ($config | get --ignore-errors daemons | is-not-empty) {
+    if ($config.daemons? | is-not-empty) {
         $config.daemons | each { |daemon| setup-daemon $daemon }
     }
 
     # Setup agents
-    if ($config | get --ignore-errors agents | is-not-empty) {
+    if ($config.agents? | is-not-empty) {
         $config.agents | each { |agent| setup-agent $agent.name }
     }
 

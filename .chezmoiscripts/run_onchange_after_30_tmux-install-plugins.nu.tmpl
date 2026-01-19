@@ -20,5 +20,4 @@ if not ($install_script | path exists) {
 }
 
 print "Installing tmux plugins via TPM..."
-$env.TMUX_PLUGIN_MANAGER_PATH = $plugin_path
-^$install_script
+with-env { TMUX_PLUGIN_MANAGER_PATH: $plugin_path } { ^$install_script }
