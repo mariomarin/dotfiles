@@ -29,7 +29,7 @@ def setup-daemon [daemon: record] {
         let binary_name = $daemon.binary_name
         let binary_dest = $daemon.binary_dest
         let binary_path = (which $binary_name).0?.path?
-        if ($binary_path | is-not-empty) {
+        if ($binary_path | is-not-empty) and ($binary_path != $binary_dest) {
             print $"Copying ($binary_name) to ($binary_dest)..."
             sudo cp -f $binary_path $binary_dest
             sudo chmod 755 $binary_dest
