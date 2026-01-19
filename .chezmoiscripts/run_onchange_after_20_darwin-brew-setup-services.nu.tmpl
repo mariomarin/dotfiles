@@ -24,7 +24,7 @@ def setup-kanata [] {
     }
 
     # Copy kanata binary to stable path (preserves Input Monitoring permission)
-    let kanata_path = (which kanata | get -o 0.path)
+    let kanata_path = (which kanata | get --ignore-errors 0.path)
     if ($kanata_path | is-not-empty) {
         print "Copying kanata to /usr/local/bin..."
         sudo cp -f $kanata_path /usr/local/bin/kanata
