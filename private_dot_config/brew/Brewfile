@@ -76,11 +76,10 @@ brew "carapace"
 brew "sesh"
 
 # macOS services
-brew "aerospace"
-brew "kanata"
 brew "syncthing"
 
 # Casks
+cask "nikitabobko/tap/aerospace"
 cask "alacritty"
 cask "firefox"
 cask "spotify"
