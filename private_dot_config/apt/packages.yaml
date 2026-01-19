@@ -41,5 +41,5 @@ packages:
   - fd-find
   - eza
   - nushell
-  - carapace
+  - carapace-bin
   - atuin
