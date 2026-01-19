@@ -1,8 +1,10 @@
 #!/usr/bin/env nu
 # Setup LaunchDaemons and LaunchAgents for darwin-brew
-# hash: {{ include "private_dot_config/launchd/org.local.kanata.plist.tmpl" | sha256sum }}
 # hash: {{ include "private_dot_config/launchd/org.local.aerospace.plist" | sha256sum }}
 # hash: {{ include "private_dot_config/launchd/org.local.syncthing.plist.tmpl" | sha256sum }}
+{{- if .machineConfig.features.kanata }}
+# hash: {{ include "private_dot_config/launchd/org.local.kanata.plist.tmpl" | sha256sum }}
+{{- end }}
 
 let launchd_dir = $"($env.HOME)/.config/launchd"
 let user_agents = $"($env.HOME)/Library/LaunchAgents"
@@ -10,16 +12,19 @@ let system_daemons = "/Library/LaunchDaemons"
 
 mkdir $user_agents
 
+{{- if .machineConfig.features.kanata }}
+
 def setup-kanata [] {
     let src = $"($launchd_dir)/org.local.kanata.plist"
     let dest = $"($system_daemons)/org.local.kanata.plist"
 
     if not ($src | path exists) {
+        print "Skipping kanata: plist not found"
         return
     }
 
     # Copy kanata binary to stable path (preserves Input Monitoring permission)
-    let kanata_path = (which kanata | get -i 0.path)
+    let kanata_path = (which kanata | get -o 0.path)
     if ($kanata_path | is-not-empty) {
         print "Copying kanata to /usr/local/bin..."
         sudo cp -f $kanata_path /usr/local/bin/kanata
@@ -46,6 +51,7 @@ def setup-kanata [] {
         sudo launchctl bootstrap system $dest
     }
 }
+{{- end }}
 
 def setup-user-agent [name: string] {
     let src = $"($launchd_dir)/org.local.($name).plist"
@@ -70,7 +76,9 @@ def setup-user-agent [name: string] {
     }
 }
 
+{{- if .machineConfig.features.kanata }}
 setup-kanata
+{{- end }}
 setup-user-agent aerospace
 setup-user-agent syncthing
 
