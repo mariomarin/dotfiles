@@ -42,6 +42,16 @@ ensure_nix() {
     success "Nix installed"
 }
 
+ensure_devenv() {
+    command -v devenv > /dev/null && {
+        success "devenv installed"
+        return 0
+  }
+    step "Install devenv"
+    curl -sfL https://install.determinate.systems/devenv | sh -s -- install
+    success "devenv installed"
+}
+
 ensure_nushell() {
     command -v nu > /dev/null && {
         success "Nushell installed"
@@ -139,7 +149,7 @@ setup_nix_env() {
 
 # Bootstrap flows
 bootstrap_linux_apt() {
-    ensure_nushell && ensure_chezmoi_apt && init_and_apply
+    ensure_nix && ensure_devenv && ensure_nushell && ensure_chezmoi_apt && init_and_apply
     printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
 }
 
