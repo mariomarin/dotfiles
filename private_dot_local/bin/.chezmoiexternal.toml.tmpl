@@ -14,15 +14,6 @@
     executable = true
     refreshPeriod = "168h"
 
-{{- $carapaceRelease := gitHubLatestRelease "carapace-sh/carapace-bin" }}
-{{- $carapaceVersion := trimPrefix "v" $carapaceRelease.TagName }}
-["carapace"]
-    type = "archive-file"
-    url = "https://github.com/carapace-sh/carapace-bin/releases/download/{{ $carapaceRelease.TagName }}/carapace_{{ $carapaceVersion }}_linux_amd64.tar.gz"
-    path = "carapace"
-    executable = true
-    refreshPeriod = "168h"
-
 # Version control (gh managed by Chef)
 {{- $lazygitRelease := gitHubLatestRelease "jesseduffield/lazygit" }}
 {{- $lazygitVersion := trimPrefix "v" $lazygitRelease.TagName }}

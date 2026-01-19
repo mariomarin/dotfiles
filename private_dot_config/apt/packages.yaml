@@ -13,6 +13,11 @@ repos:
     key_url: https://apt.fury.io/nushell/gpg.key
     key_file: /etc/apt/keyrings/fury-nushell.gpg
     repo: "deb [signed-by=/etc/apt/keyrings/fury-nushell.gpg] https://apt.fury.io/nushell/ /"
+  - name: carapace
+    type: deb
+    key_url: https://apt.fury.io/carapace-bin/gpg.key
+    key_file: /etc/apt/keyrings/fury-carapace.gpg
+    repo: "deb [signed-by=/etc/apt/keyrings/fury-carapace.gpg] https://apt.fury.io/carapace-bin/ /"
 packages:
   - zsh
   - bash
@@ -36,4 +41,5 @@ packages:
   - fd-find
   - eza
   - nushell
+  - carapace
   - atuin
