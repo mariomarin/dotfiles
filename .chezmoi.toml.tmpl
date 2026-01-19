@@ -43,8 +43,8 @@
 {{- end -}}
 {{- $isDesktop := not $isServer -}}
 
-{{- /* Kanata: only on personal desktops with physical keyboards */ -}}
-{{- $hasKanata := and $isDesktop (not $hasChef) (not $codespaces) (not $isWSL) -}}
+{{- /* Kanata: desktops with physical keyboards */ -}}
+{{- $hasKanata := and $isDesktop (not $codespaces) (not $isWSL) -}}
 
 {{- /* Machine type string */ -}}
 {{- $machineType := "desktop" -}}
