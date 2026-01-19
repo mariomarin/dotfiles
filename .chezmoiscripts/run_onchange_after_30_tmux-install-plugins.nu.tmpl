@@ -20,4 +20,20 @@ if not ($install_script | path exists) {
 }
 
 print "Installing tmux plugins via TPM..."
-with-env { TMUX_PLUGIN_MANAGER_PATH: $plugin_path } { ^$install_script }
+let result = with-env { TMUX_PLUGIN_MANAGER_PATH: $plugin_path } {
+    do { ^$install_script } | complete
+}
+
+if $result.exit_code != 0 {
+    # TPM install can fail if tmux server isn't running - that's OK
+    let is_expected_error = (($result.stderr | str contains "Tmux Plugin Manager not configured") or ($result.stderr | str contains "Unknown variable"))
+    if $is_expected_error {
+        print "TPM install skipped (tmux server not running or not configured)"
+        print "Plugins will be installed on first tmux start with prefix+I"
+        exit 0
+    }
+    print $result.stderr
+    exit $result.exit_code
+}
+
+print $result.stdout

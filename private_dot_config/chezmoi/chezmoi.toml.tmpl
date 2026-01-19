@@ -22,16 +22,18 @@ autoCommit = false
 autoPush = false
 
 [data]
-machineType = {{ .machineType | quote }}
-codespaces = {{ .codespaces }}
+    username = {{ .chezmoi.username | quote }}
+    machineType = {{ .machineType | quote }}
+    codespaces = {{ .codespaces }}
 
-[data.machineConfig]
-hostname = {{ .machineConfig.hostname | quote }}
-type = {{ .machineConfig.type | quote }}
-platform = {{ if hasKey .machineConfig "platform" }}{{ .machineConfig.platform | quote }}{{ else }}""{{ end }}
+    [data.machineConfig]
+        hostname = {{ .machineConfig.hostname | quote }}
+        type = {{ .machineConfig.type | quote }}
+        platform = {{ .machineConfig.platform | default "" | quote }}
 
-[data.machineConfig.features]
-desktop = {{ .machineConfig.features.desktop | default false }}
-kanata = {{ if hasKey .machineConfig.features "kanata" }}{{ .machineConfig.features.kanata }}{{ else }}false{{ end }}
-audio = {{ .machineConfig.features.audio | default false }}
-bluetooth = {{ .machineConfig.features.bluetooth | default false }}
+        [data.machineConfig.features]
+            desktop = {{ .machineConfig.features.desktop | default false }}
+            kanata = {{ .machineConfig.features.kanata | default false }}
+            audio = {{ .machineConfig.features.audio | default false }}
+            bluetooth = {{ .machineConfig.features.bluetooth | default false }}
+            wsl = {{ index .machineConfig.features "wsl" | default false }}
