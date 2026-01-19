@@ -46,7 +46,6 @@ packages:
   # From repos
   - nushell
   - carapace-bin
-  - atuin
   # Development
   - nodejs
   - npm
