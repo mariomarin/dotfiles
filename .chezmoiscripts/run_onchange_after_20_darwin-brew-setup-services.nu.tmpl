@@ -1,39 +1,54 @@
 #!/usr/bin/env nu
 # Setup LaunchDaemons and LaunchAgents for darwin-brew
+# config hash: {{ include "private_dot_config/launchd/services.yaml.tmpl" | sha256sum }}
 # hash: {{ include "private_dot_config/launchd/org.local.aerospace.plist" | sha256sum }}
 # hash: {{ include "private_dot_config/launchd/org.local.syncthing.plist.tmpl" | sha256sum }}
 {{- if .machineConfig.features.kanata }}
 # hash: {{ include "private_dot_config/launchd/org.local.kanata.plist.tmpl" | sha256sum }}
 {{- end }}
 
+let config_file = $"($env.HOME)/.config/launchd/services.yaml"
+if not ($config_file | path exists) {
+    print "No services config found, skipping"
+    exit 0
+}
+
+let config = open $config_file
 let launchd_dir = $"($env.HOME)/.config/launchd"
 let user_agents = $"($env.HOME)/Library/LaunchAgents"
 let system_daemons = "/Library/LaunchDaemons"
 
 mkdir $user_agents
 
-{{- if .machineConfig.features.kanata }}
-
-def setup-kanata [] {
-    let src = $"($launchd_dir)/org.local.kanata.plist"
-    let dest = $"($system_daemons)/org.local.kanata.plist"
+def setup-daemon [daemon: record] {
+    let name = $daemon.name
+    let src = $"($launchd_dir)/org.local.($name).plist"
+    let dest = $"($system_daemons)/org.local.($name).plist"
 
     if not ($src | path exists) {
-        print "Skipping kanata: plist not found"
+        print $"Skipping ($name): plist not found"
         return
     }
 
-    # Copy kanata binary to stable path (preserves Input Monitoring permission)
-    let kanata_path = (which kanata | get --ignore-errors 0.path)
-    if ($kanata_path | is-not-empty) {
-        print "Copying kanata to /usr/local/bin..."
-        sudo cp -f $kanata_path /usr/local/bin/kanata
-        sudo chmod 755 /usr/local/bin/kanata
+    # Copy binary if configured
+    if ($daemon | get --ignore-errors copy_binary | default false) {
+        let binary_name = $daemon.binary_name
+        let binary_dest = $daemon.binary_dest
+        let binary_path = (which $binary_name | get --ignore-errors 0.path)
+        if ($binary_path | is-not-empty) {
+            print $"Copying ($binary_name) to ($binary_dest)..."
+            sudo cp -f $binary_path $binary_dest
+            sudo chmod 755 $binary_dest
+        }
     }
 
-    # Create Karabiner socket directory
-    sudo mkdir -p "/Library/Application Support/org.pqrs/tmp"
-    sudo chmod 1777 "/Library/Application Support/org.pqrs/tmp"
+    # Create setup directories if configured
+    if ($daemon | get --ignore-errors setup_dirs | is-not-empty) {
+        $daemon.setup_dirs | each { |dir|
+            sudo mkdir -p $dir.path
+            sudo chmod $dir.mode $dir.path
+        }
+    }
 
     # Install plist if changed
     let needs_update = if ($dest | path exists) {
@@ -43,7 +58,7 @@ def setup-kanata [] {
     }
 
     if $needs_update {
-        print "Installing kanata LaunchDaemon..."
+        print $"Installing ($name) LaunchDaemon..."
         sudo cp $src $dest
         sudo chown root:wheel $dest
         sudo chmod 644 $dest
@@ -51,9 +66,8 @@ def setup-kanata [] {
         sudo launchctl bootstrap system $dest
     }
 }
-{{- end }}
 
-def setup-user-agent [name: string] {
+def setup-agent [name: string] {
     let src = $"($launchd_dir)/org.local.($name).plist"
     let dest = $"($user_agents)/org.local.($name).plist"
 
@@ -76,10 +90,14 @@ def setup-user-agent [name: string] {
     }
 }
 
-{{- if .machineConfig.features.kanata }}
-setup-kanata
-{{- end }}
-setup-user-agent aerospace
-setup-user-agent syncthing
+# Setup daemons
+if ($config | get --ignore-errors daemons | is-not-empty) {
+    $config.daemons | each { |daemon| setup-daemon $daemon }
+}
+
+# Setup agents
+if ($config | get --ignore-errors agents | is-not-empty) {
+    $config.agents | each { |agent| setup-agent $agent.name }
+}
 
 print "Services setup complete."
