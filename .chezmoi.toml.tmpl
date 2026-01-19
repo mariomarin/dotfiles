@@ -55,7 +55,9 @@
 {{- end -}}
 
 {{- /* Bitwarden: only for platforms with Nix (secrets managed via bw) */ -}}
-{{- $needsBitwarden := and (ne $platform "darwin-brew") (ne $platform "linux-apt") (not $isWSL) (not $codespaces) -}}
+{{- /* darwin-brew uses chef, linux-apt has no Nix, codespaces are ephemeral */ -}}
+{{- /* nixos-wsl is fine - it's a personal NixOS machine */ -}}
+{{- $needsBitwarden := and (ne $platform "darwin-brew") (ne $platform "linux-apt") (not $codespaces) -}}
 
 {{- if $needsBitwarden }}
 [bitwarden]
