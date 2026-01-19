@@ -1,8 +1,6 @@
 # Homebrew packages for darwin-brew
 # Install with: brew bundle --file=~/.config/brew/Brewfile
 
-tap "homebrew/bundle"
-tap "homebrew/services"
 tap "nikitabobko/tap"
 
 # Shells
