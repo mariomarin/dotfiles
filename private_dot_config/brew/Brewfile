@@ -2,6 +2,7 @@
 # Install with: brew bundle --file=~/.config/brew/Brewfile
 
 tap "nikitabobko/tap"
+tap "timescam/tap"
 
 # Shells
 brew "zsh"
@@ -43,7 +44,6 @@ brew "just"
 brew "direnv"
 brew "age"
 brew "node"
-brew "rustup"
 
 # Kubernetes
 brew "kubectl"
@@ -56,6 +56,7 @@ brew "topgrade"
 brew "tealdeer"
 brew "cheat"
 brew "navi"
+brew "timescam/tap/pay-respects"
 
 # Modern CLI
 brew "bat"
