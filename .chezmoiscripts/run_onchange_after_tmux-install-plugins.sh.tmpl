@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
-# Install TPM plugins on first chezmoi apply
+# Install TPM plugins when plugins.tmux changes
+# plugins.tmux hash: {{ include "private_dot_config/tmux/plugins.tmux" | sha256sum }}
 
 set -euo pipefail
 
 TPM_DIR="${HOME}/.local/share/tmux/plugins/tpm"
 INSTALL_SCRIPT="${TPM_DIR}/bin/install_plugins"
+
+# Skip if tmux not installed yet
+if ! command -v tmux &> /dev/null; then
+  echo "tmux not installed yet, skipping plugin installation"
+  exit 0
+fi
 
 # Skip if TPM not installed yet (chezmoi external hasn't run)
 if [[ ! -x "$INSTALL_SCRIPT" ]]; then
