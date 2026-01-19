@@ -31,9 +31,9 @@ if not ($driverkit_app | path exists) {
     print "  Run: /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate"
 }
 
-# Install devenv.sh (provides direnv integration)
+# Install devenv (Determinate Systems installer)
 if (which devenv | is-empty) {
-    print "Installing devenv.sh..."
-    curl -fsSL https://devenv.sh/install.sh | bash
+    print "Installing devenv..."
+    bash -c 'curl -fsSL https://install.determinate.systems/devenv | bash'
     print "✓ devenv installed"
 }
