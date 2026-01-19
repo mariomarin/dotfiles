@@ -30,3 +30,10 @@ if not ($driverkit_app | path exists) {
     print "✓ Karabiner-DriverKit installed"
     print "  Run: /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate"
 }
+
+# Install pay-respects via cargo (not in Homebrew)
+if (which pay-respects | is-empty) {
+    print "Installing pay-respects via cargo..."
+    cargo install pay-respects
+    print "✓ pay-respects installed"
+}
