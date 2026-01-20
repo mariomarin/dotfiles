@@ -140,6 +140,8 @@ nix/darwin/**
 {{ end }}
 
 # User-managed directory contents (keep directory structure, ignore contents)
+.kube/**
+!.kube/.keep
 .config/autostart/**
 !.config/autostart/.keep
 !.config/autostart/kanata-tray.desktop
