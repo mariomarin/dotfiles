@@ -198,6 +198,10 @@
 
 {{- else if eq $platform "darwin-brew" -}}
 # GitHub binaries for darwin-brew platform (not in Homebrew)
+{{- $arch := .chezmoi.arch -}}
+{{- $darwinArch := "x86_64" -}}
+{{- if eq $arch "arm64" }}{{ $darwinArch = "aarch64" }}{{ end -}}
+
 {{- $zeshRelease := gitHubLatestRelease "roberte777/zesh" }}
 ["zesh"]
     type = "file"
@@ -209,6 +213,15 @@
 ["kanata-tray"]
     type = "file"
     url = "https://github.com/rszyma/kanata-tray/releases/download/{{ $kanataTrayRelease.TagName }}/kanata-tray-macos"
+    executable = true
+    refreshPeriod = "168h"
+
+{{- $payRespectsRelease := gitHubLatestRelease "iffse/pay-respects" }}
+{{- $payRespectsVersion := trimPrefix "v" $payRespectsRelease.TagName }}
+["pay-respects"]
+    type = "archive-file"
+    url = "https://github.com/iffse/pay-respects/releases/download/{{ $payRespectsRelease.TagName }}/pay-respects-{{ $payRespectsVersion }}-{{ $darwinArch }}-apple-darwin.tar.zst"
+    path = "pay-respects"
     executable = true
     refreshPeriod = "168h"
 
