@@ -1,5 +1,10 @@
 # Bitwarden utilities module for Nushell
 
+# Check if bw is available (used by commands that need it)
+def bw-available [] {
+    which bw | is-not-empty
+}
+
 # Store session in .env.local file
 def store_session [session: string] {
     $"BW_SESSION=($session)" | save -f .env.local
@@ -23,8 +28,9 @@ def clear_stored_session [] {
     if (".env.local" | path exists) { rm .env.local }
 }
 
-# Get bw status safely (returns null on failure)
+# Get bw status safely (returns null on failure or if bw not available)
 def get-bw-status [session?: string] {
+    if not (bw-available) { return null }
     let result = if ($session | is-not-empty) {
         do { BW_SESSION=$session bw status } | complete
     } else {
@@ -36,6 +42,11 @@ def get-bw-status [session?: string] {
 
 # Unlock Bitwarden vault and save session token
 export def unlock [] {
+    if not (bw-available) {
+        print "❌ Bitwarden CLI (bw) not found. Skipping."
+        return
+    }
+
     # Check for existing session in .env.local
     let stored_session = get_stored_session
 
@@ -80,6 +91,10 @@ export def unlock [] {
 
 # Lock vault and clear session
 export def lock [] {
+    if not (bw-available) {
+        print "❌ Bitwarden CLI (bw) not found. Skipping."
+        return
+    }
     bw lock
     clear_stored_session
     $env.BW_SESSION = null
@@ -88,6 +103,11 @@ export def lock [] {
 
 # Load session from .env.local into environment
 export def reload [] {
+    if not (bw-available) {
+        print "❌ Bitwarden CLI (bw) not found. Skipping."
+        return
+    }
+
     let stored_session = get_stored_session
 
     if ($stored_session | is-empty) {
@@ -112,6 +132,7 @@ export def reload [] {
 
 # Get an item from Bitwarden (returns null if not found)
 export def "get item" [name: string] {
+    if not (bw-available) { return null }
     if ($env.BW_SESSION? | default "" | is-empty) {
         print "❌ BW_SESSION not set. Run 'bitwarden unlock' first"
         exit 1
@@ -132,11 +153,15 @@ export def "get field" [item: string, field: string] {
     if ($custom_field | is-not-empty) { return $custom_field }
 
     # Fall back to standard fields
-    $item_data | get -i $field
+    $item_data | get --ignore-errors $field
 }
 
-# Check Bitwarden status (returns null on failure)
+# Check Bitwarden status (returns null on failure or if bw not available)
 export def status [] {
+    if not (bw-available) {
+        print "❌ Bitwarden CLI (bw) not found"
+        return null
+    }
     get-bw-status
 }
 

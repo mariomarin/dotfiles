@@ -1,0 +1,6 @@
+{{- /* Machine features for conditional module loading */ -}}
+{
+    bitwarden: {{ and (ne .machineConfig.platform "darwin-brew") (ne .machineConfig.platform "linux-apt") (not .codespaces) }}
+    desktop: {{ .machineConfig.features.desktop }}
+    kanata: {{ .machineConfig.features.kanata }}
+}
