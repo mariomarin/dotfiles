@@ -112,6 +112,11 @@ nix/darwin/**
 .ssh/**
 {{ end }}
 
+# Kube config symlink only for WSL (symlinks to Windows host config)
+{{ if not (and (eq .chezmoi.os "linux") (env "WSL_DISTRO_NAME")) }}
+.kube/config
+{{ end }}
+
 # linux-apt platform only (apt packages)
 {{ if ne $platform "linux-apt" }}
 .config/apt
