@@ -1,0 +1,33 @@
+{{- if and (eq .chezmoi.os "linux") (env "WSL_DISTRO_NAME") }}
+#!/usr/bin/env nu
+# Warn about kubeconfig in WSL
+
+let wsl_config = $"($env.HOME)/.kube/config"
+let win_user = (do { ^cmd.exe /c "echo %USERNAME%" } | complete | get stdout | str trim)
+let win_config = $"/mnt/c/Users/($win_user)/.kube/config"
+
+print "⚠️  WSL Kubeconfig Notice"
+print "========================="
+print ""
+print $"WSL config:     ($wsl_config)"
+print $"Windows config: ($win_config)"
+print ""
+
+let wsl_exists = ($wsl_config | path exists)
+let win_exists = ($win_config | path exists)
+
+if $wsl_exists and $win_exists {
+    print "Both configs exist. Consider symlinking or merging them manually:"
+    print $"  ln -sf ($win_config) ($wsl_config)"
+} else if $win_exists and not $wsl_exists {
+    print "Windows config found. To use it in WSL:"
+    print $"  ln -s ($win_config) ($wsl_config)"
+} else if $wsl_exists and not $win_exists {
+    print "WSL config found. To share with Windows:"
+    print $"  cp ($wsl_config) ($win_config)"
+} else {
+    print "No kubeconfig found. Create one with:"
+    print "  kubectl config set-cluster ..."
+}
+print ""
+{{- end }}
