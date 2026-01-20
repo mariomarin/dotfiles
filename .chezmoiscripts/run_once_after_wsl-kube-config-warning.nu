@@ -1,4 +1,3 @@
-{{- if and (eq .chezmoi.os "linux") (env "WSL_DISTRO_NAME") }}
 #!/usr/bin/env nu
 # Warn about kubeconfig in WSL
 
@@ -30,4 +29,3 @@ if $wsl_exists and $win_exists {
     print "  kubectl config set-cluster ..."
 }
 print ""
-{{- end }}
