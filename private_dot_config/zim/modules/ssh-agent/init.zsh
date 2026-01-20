@@ -1,12 +1,12 @@
 # SSH agent socket detection
 # Priority: forwarded agent (VMs) → GNOME Keyring → systemd
-
 _find_ssh_sock() {
   local uid=$(id -u)
 
-  # Forwarded agent (VMs) - prefer newest socket in /tmp
-  local forwarded=$(find /tmp -maxdepth 2 -type s -name "agent.*" -user "$USER" 2>/dev/null \
-    | xargs -r ls -t 2>/dev/null | head -1)
+  # Forwarded agent (VMs) - find newest socket by modification time
+  local forwarded=$(find /tmp -maxdepth 2 -type s -name "agent.*" -user "$USER" -printf '%T@ %p\n' 2>/dev/null \
+    | sort -rn | head -1 | cut -d' ' -f2-)
+
   if [[ -S "$forwarded" ]]; then
     echo "$forwarded"
     return
