@@ -28,18 +28,15 @@ bw-unlock:
 bw-reload:
     use ~/.config/nushell/modules/bitwarden; bitwarden reload
 
-# Git operations with HTTPS authentication
+# Git operations using gh CLI authentication
 
-# Push to remote using GITHUB_TOKEN (requires GITHUB_TOKEN in .env)
+# Push to remote using gh CLI credentials
 git-push BRANCH="main":
     #!/usr/bin/env nu
-    if ($env | get -i GITHUB_TOKEN | is-empty) {
-        print "❌ GITHUB_TOKEN not set"
-        print "Make sure GITHUB_TOKEN is in .env or .env.local"
-        exit 1
-    }
     print $"Pushing (ansi blue){{ BRANCH }}(ansi reset) to origin..."
-    git push origin {{ BRANCH }}
+    with-env {GIT_ASKPASS: "gh", GIT_CREDENTIAL_HELPER: ""} {
+        git push origin {{ BRANCH }}
+    }
 
 # Pull from remote
 git-pull BRANCH="main":
