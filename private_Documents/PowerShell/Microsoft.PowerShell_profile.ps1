@@ -94,6 +94,14 @@ Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
 # -----------------------------------------------------------------------------
+# JUJUTSU (JJ) COMPLETIONS
+# -----------------------------------------------------------------------------
+
+if (Get-Command jj -ErrorAction SilentlyContinue) {
+    jj util completion power-shell --enable-dynamic | Out-String | Invoke-Expression
+}
+
+# -----------------------------------------------------------------------------
 # EZA ALIASES (matching nushell/zsh exa module)
 # -----------------------------------------------------------------------------
 

@@ -502,6 +502,15 @@ use ($nu.default-config-dir | path join 'modules' 'aws-sso-cli-completions') *
 # Git branchless completions
 use ($nu.default-config-dir | path join 'modules' 'git-branchless-completions') *
 
+# Jujutsu (jj) completions module (provides 'jj update-completions' command)
+use ($nu.default-config-dir | path join 'modules' 'jj-completions.nu') *
+
+# Source jj completions if available (generate with: jj update-completions)
+let jj_completions = ([$nu.default-config-dir, '..', 'cache', 'nushell', 'jj-completions.nu'] | path join | path expand)
+if ($jj_completions | path exists) {
+    source ~/.cache/nushell/jj-completions.nu
+}
+
 # -----------------------------------------------------------------------------
 # PLUGIN REGISTRATION
 # -----------------------------------------------------------------------------
