@@ -1,4 +1,16 @@
 ## Atuin shell history configuration
+## See: https://docs.atuin.sh/configuration/config/
+
+## Sync configuration
+## Set these in ~/.local/share/chezmoi/.env.work (NOT tracked in git):
+##   ATUIN_SYNC_ADDRESS=https://your-server.com
+##   ATUIN_SYNC_KEY=your-encryption-key
+## Generate sync key with: atuin key
+## Set up server: https://docs.atuin.sh/self-hosting/server-setup/
+
+## Sync settings
+auto_sync = true
+sync_frequency = "5m"
 
 ## Allow editing commands before execution
 ## When false, pressing Enter in search will put the command in your shell for editing
@@ -23,3 +35,7 @@ show_preview = true
 ## What to do when escape is pressed
 ## Options: return-original, return-query
 exit_mode = "return-original"
+
+## History import
+## Import existing shell history on first run
+sync_address = "" # Set via ATUIN_SYNC_ADDRESS environment variable

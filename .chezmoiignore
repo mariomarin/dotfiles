@@ -34,6 +34,10 @@ devenv.yaml
 .claude
 .claude/**
 
+# Environment files with secrets (loaded by direnv/devenv)
+.env.local
+.env.work
+
 # OS-specific scripts (ignore scripts for other operating systems)
 {{ if ne .chezmoi.os "darwin" }}
 .chezmoiscripts/darwin-*
