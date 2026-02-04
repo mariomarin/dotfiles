@@ -28,6 +28,30 @@ bw-unlock:
 bw-reload:
     use ~/.config/nushell/modules/bitwarden; bitwarden reload
 
+# Git operations with HTTPS authentication
+
+# Push to remote using GITHUB_TOKEN (requires GITHUB_TOKEN in .env)
+git-push BRANCH="main":
+    #!/usr/bin/env nu
+    if ($env | get -i GITHUB_TOKEN | is-empty) {
+        print "❌ GITHUB_TOKEN not set"
+        print "Make sure GITHUB_TOKEN is in .env or .env.local"
+        exit 1
+    }
+    print $"Pushing (ansi blue){{ BRANCH }}(ansi reset) to origin..."
+    git push origin {{ BRANCH }}
+
+# Pull from remote
+git-pull BRANCH="main":
+    #!/usr/bin/env nu
+    print $"Pulling (ansi blue){{ BRANCH }}(ansi reset) from origin..."
+    git pull origin {{ BRANCH }}
+
+# Sync (pull then push)
+git-sync BRANCH="main":
+    just git-pull {{ BRANCH }}
+    just git-push {{ BRANCH }}
+
 # Cloudflare Quick Tunnels (temporary, anonymous, no auth required)
 
 # Start SSH tunnel (default port 22)
@@ -214,6 +238,9 @@ alias update := topgrade-update
 alias update-status := topgrade-status
 alias update-plugins := topgrade-plugins
 alias update-system := topgrade-system
+alias push := git-push
+alias pull := git-pull
+alias sync := git-sync
 
 # Multi-machine deployment
 vm-switch:
