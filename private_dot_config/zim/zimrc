@@ -32,6 +32,8 @@ zmodule ${ZIM_CONFIG_FILE:h}/modules/ssh-agent
 zmodule ${ZIM_CONFIG_FILE:h}/modules/sesh
 # claude-helpers - Claude Code helper functions
 zmodule ${ZIM_CONFIG_FILE:h}/modules/claude-helpers
+# ai-cli - AI CLI tool wrappers with tunnel detection
+zmodule ${ZIM_CONFIG_FILE:h}/modules/ai-cli
 
 # Enables and configures smart and extensive tab completion.
 # Must load before carapace
