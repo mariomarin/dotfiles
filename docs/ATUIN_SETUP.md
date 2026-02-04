@@ -121,10 +121,7 @@ Create `~/.local/share/chezmoi/.env.work` (NOT tracked in git):
 ```bash
 # Atuin sync configuration
 export ATUIN_SYNC_ADDRESS="http://your-server:8888"
-export ATUIN_SYNC_KEY="atuin_1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd"
-
-# Example with internal domain:
-# export ATUIN_SYNC_ADDRESS="http://hostname.internal.example.com:8888"
+export ATUIN_SYNC_KEY="atuin_your_key_here"
 ```
 
 ### 3. Reload Environment
