@@ -82,6 +82,13 @@ properties:
       settings:
         id: GitHub.cli
         source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Jujutsu (jj)
+        allowPrerelease: true
+      settings:
+        id: martinvonz.jj
+        source: winget
     # Search and text processing
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:

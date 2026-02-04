@@ -41,6 +41,7 @@ in
       gh # GitHub CLI
       bitbucket-cli # Bitbucket CLI (custom pkg)
       git-branchless
+      jujutsu # Modern VCS (jj command)
       lazygit # TUI for git
 
       # ── File management ─────────────────────────────────────────────────

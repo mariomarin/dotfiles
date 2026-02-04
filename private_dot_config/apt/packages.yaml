@@ -26,6 +26,7 @@ packages:
   # Version control
   - git
   - git-lfs
+  # jj: install from pre-built binaries (see install script)
   # Core utils
   - curl
   - wget

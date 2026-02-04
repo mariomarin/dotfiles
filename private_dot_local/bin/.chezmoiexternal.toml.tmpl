@@ -24,6 +24,14 @@
     executable = true
     refreshPeriod = "168h"
 
+{{- $jjRelease := gitHubLatestRelease "martinvonz/jj" }}
+["jj"]
+    type = "archive-file"
+    url = "https://github.com/martinvonz/jj/releases/download/{{ $jjRelease.TagName }}/jj-{{ $jjRelease.TagName }}-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
+    path = "jj"
+    executable = true
+    refreshPeriod = "168h"
+
 # Text processing
 {{- $yqRelease := gitHubLatestRelease "mikefarah/yq" }}
 ["yq"]

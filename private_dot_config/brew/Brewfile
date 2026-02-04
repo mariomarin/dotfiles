@@ -23,6 +23,7 @@ brew "git-lfs"
 brew "gh"
 brew "lazygit"
 brew "git-branchless"
+brew "jj"
 
 # Search and text
 brew "fzf"
