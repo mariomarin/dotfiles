@@ -3,3 +3,14 @@
 
 # Personal directories
 etc-personal/
+
+# Environment files
+.env
+
+# Devenv
+.envrc
+.devenv.flake.nix
+devenv.nix
+devenv.yaml
+devenv.lock
+.devenv/
