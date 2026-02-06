@@ -14,13 +14,18 @@ zmodule termtitle
 zmodule utility
 zmodule exa
 zmodule fzf
+# zsh-async - async job execution for fast prompts
+zmodule mafredri/zsh-async@main
 # wakatime
 zmodule sobolevn/wakatime-zsh-plugin
 
 # Prompt theme
 zmodule prompt-pwd
 zmodule git-info
-zmodule gitster
+# jj-info - provides jj repository information
+zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-info
+# jj-gitster - gitster with jj support (replaces gitster)
+zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-gitster
 
 # Additional completion definitions for Zsh.
 zmodule zsh-users/zsh-completions --fpath src
