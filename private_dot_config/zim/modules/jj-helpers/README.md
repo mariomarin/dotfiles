@@ -11,6 +11,73 @@ This module provides git-branchless style workflows for Jujutsu, including:
 - **Navigation** - Move through commit history with prev/next
 - **Branchless workflow** - Work without local branches, push directly
 
+## Quick Start: Common Workflows
+
+### Daily Development
+
+```bash
+jsl                 # View commit graph (smartlog)
+jn -m "new work"    # Create new change
+jd -m "description" # Describe current change
+jdiff               # View changes
+```
+
+### Navigate Stack
+
+```bash
+jprev               # Move to parent commit
+jnext               # Move to child commit
+jsl                 # See where you are
+```
+
+### Edit Old Commit
+
+```bash
+je <commit>         # Edit old commit (descendants auto-rebase!)
+# ... make changes ...
+jd -m "updated"     # Describe changes
+```
+
+### Squash Changes
+
+```bash
+jsq                 # Squash current into parent
+jsqi                # Interactive squash
+je <commit>         # Edit commit, make changes, jj auto-squashes
+```
+
+### Move Commits
+
+```bash
+jmove feature-2 feature-1    # Move feature-2 after feature-1 (with descendants)
+jmove -r fix main            # Move single fix to main
+```
+
+### Sync and Push
+
+```bash
+jjsync              # Fetch and rebase on main
+jbc my-feature      # Create bookmark
+jpr -c              # Create PR
+jpr                 # Update existing PR
+jpush               # Push bookmark to remote
+```
+
+### Undo Mistakes
+
+```bash
+jundo               # Undo last operation
+joplog              # View operation history
+jredo               # Redo operation
+```
+
+### Hide Experiments
+
+```bash
+jab <commit>        # Abandon/hide failed experiment
+junhide <commit>    # Restore if needed
+```
+
 ## Aliases
 
 ### Navigation
