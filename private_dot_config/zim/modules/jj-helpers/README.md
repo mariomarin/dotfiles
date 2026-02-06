@@ -2,46 +2,95 @@
 
 Zim module providing aliases and helper functions for Jujutsu (jj) version control, mirroring the structure of the git module.
 
+## Overview
+
+This module provides git-branchless style workflows for Jujutsu, including:
+
+- **Divergent development** - Make speculative commits, backtrack, try different approaches
+- **Stack editing** - Edit commits in the middle of a stack
+- **Navigation** - Move through commit history with prev/next
+- **Branchless workflow** - Work without local branches, push directly
+
 ## Aliases
+
+### Navigation
+
+| Alias   | Command     | Description        |
+| ------- | ----------- | ------------------ |
+| `jprev` | `jj prev`   | Move to parent     |
+| `jnext` | `jj next`   | Move to child      |
+
+### Viewing
+
+| Alias   | Command                        | Description            |
+| ------- | ------------------------------ | ---------------------- |
+| `jsl`   | `jj log -r "all()" --limit 20` | Smartlog view          |
+| `jl`    | `jj log`                       | Log view               |
+| `jlg`   | `jj log --graph`               | Log with graph         |
+| `jdiff` | `jj diff`                      | Show diff              |
+| `jde`   | `jj diffedit`                  | Interactive diff edit  |
 
 ### Bookmark Operations
 
-| Alias  | Command               | Description            |
-| ------ | --------------------- | ---------------------- |
-| `jb`   | `jj bookmark`         | Bookmark commands      |
-| `jbc`  | `jj bookmark create`  | Create a bookmark      |
-| `jbd`  | `jj bookmark delete`  | Delete a bookmark      |
-| `jbl`  | `jj bookmark list`    | List bookmarks         |
-| `jbm`  | `jj bookmark move`    | Move a bookmark        |
+| Alias    | Command               | Description            |
+| -------- | --------------------- | ---------------------- |
+| `jb`     | `jj bookmark`         | Bookmark commands      |
+| `jbc`    | `jj bookmark create`  | Create a bookmark      |
+| `jbd`    | `jj bookmark delete`  | Delete a bookmark      |
+| `jbl`    | `jj bookmark list`    | List bookmarks         |
+| `jbm`    | `jj bookmark move`    | Move a bookmark        |
+| `jbset`  | `jj bookmark set`     | Set bookmark to @      |
+| `jbtrack`| `jj bookmark track`   | Track remote bookmark  |
 
 ### Change Operations
 
-| Alias  | Command        | Description             |
-| ------ | -------------- | ----------------------- |
-| `jc`   | `jj commit`    | Commit changes          |
-| `jd`   | `jj describe`  | Describe current change |
-| `jn`   | `jj new`       | Create new change       |
+| Alias  | Command            | Description             |
+| ------ | ------------------ | ----------------------- |
+| `jc`   | `jj commit`        | Commit changes          |
+| `jd`   | `jj describe`      | Describe/reword commit  |
+| `jn`   | `jj new`           | Create new change       |
+| `je`   | `jj edit`          | Edit old commit         |
+| `jsq`  | `jj squash`        | Squash into parent      |
+| `jsqi` | `jj squash -i`     | Interactive squash      |
+| `jsqf` | `jj squash --from` | Squash from commit      |
 
-### Diff and Status
+### Status
 
-| Alias   | Command      | Description  |
-| ------- | ------------ | ------------ |
-| `jdiff` | `jj diff`    | Show diff    |
-| `jst`   | `jj status`  | Show status  |
+| Alias  | Command     | Description  |
+| ------ | ----------- | ------------ |
+| `jst`  | `jj status` | Show status  |
 
-### Log
+### Rebase/Move Operations
 
-| Alias  | Command            | Description          |
-| ------ | ------------------ | -------------------- |
-| `jl`   | `jj log`           | Show log             |
-| `jlg`  | `jj log --graph`   | Show log with graph  |
+| Alias  | Command            | Description                    |
+| ------ | ------------------ | ------------------------------ |
+| `jrb`  | `jj rebase`        | Rebase changes                 |
+| `jrbi` | `jj rebase -d`     | Rebase to destination          |
+| `jrbs` | `jj rebase -s`     | Rebase source + descendants    |
+| `jrbr` | `jj rebase -r`     | Rebase single commit only      |
 
-### Rebase
+### Insert Operations
 
-| Alias   | Command         | Description            |
-| ------- | --------------- | ---------------------- |
-| `jrb`   | `jj rebase`     | Rebase changes         |
-| `jrbi`  | `jj rebase -d`  | Rebase to destination  |
+| Alias  | Command                  | Description            |
+| ------ | ------------------------ | ---------------------- |
+| `jins` | `jj new --insert-after`  | Insert after commit    |
+| `jinb` | `jj new --insert-before` | Insert before commit   |
+
+### Hide/Abandon
+
+| Alias     | Command       | Description            |
+| --------- | ------------- | ---------------------- |
+| `jab`     | `jj abandon`  | Abandon/hide commits   |
+| `junhide` | `jj restore`  | Restore abandoned      |
+
+### Undo/Redo
+
+| Alias    | Command          | Description         |
+| -------- | ---------------- | ------------------- |
+| `jundo`  | `jj op undo`     | Undo operation      |
+| `jredo`  | `jj op restore`  | Redo operation      |
+| `jop`    | `jj op`          | Operation commands  |
+| `joplog` | `jj op log`      | Operation log       |
 
 ### Git Operations
 
@@ -51,6 +100,46 @@ Zim module providing aliases and helper functions for Jujutsu (jj) version contr
 | `jgp`  | `jj git push`    | Push to git remote    |
 
 ## Functions
+
+### jmove
+
+Move commits in the stack (git-branchless `move` equivalent).
+
+```bash
+jmove [-s|-r] <commit> <dest>
+```
+
+**Options:**
+
+- `-s, --source` - Move commit and descendants (default)
+- `-r, -x, --exact` - Move single commit only
+
+**Examples:**
+
+```bash
+jmove feature-3 feature-2      # Move feature-3 + descendants after feature-2
+jmove -r fix-typo feature-1    # Move single commit into stack
+```
+
+### jpush
+
+Push current bookmark to remote.
+
+```bash
+jpush [additional git push options]
+```
+
+Detects current bookmark and pushes it. Errors if no bookmark exists.
+
+### jpush-main
+
+Set main bookmark to current change and push.
+
+```bash
+jpush-main
+```
+
+Equivalent to: `jj bookmark set main && jj git push --bookmark main`
 
 ### jpr
 
@@ -180,6 +269,105 @@ jpr -a -c
 # Later, update all PRs after rebasing
 jjsync -a
 jpr -a
+```
+
+## Workflows
+
+### Divergent Development
+
+Make speculative commits and try different approaches (git-branchless style).
+
+```bash
+# Make speculative changes
+jn -m "temp: approach 1"
+jn -m "temp: approach 2"
+jsl                    # View the tree
+
+# Backtrack to try different approach
+jprev 2
+jn -m "temp: different approach"
+jsl
+
+# Hide abandoned approach
+jab <commit-id>
+
+# Undo if needed
+jundo
+```
+
+**Key benefits:**
+
+- Jujutsu doesn't need `git checkout --detach` - works detachless by default
+- No `git restack` needed - descendants auto-rebase
+- Use `jundo` to time-travel
+
+### Editing Old Commits
+
+Edit commits in the middle of a stack.
+
+```bash
+# View your stack
+jsl
+
+# Approach 1: Edit commit directly
+je <commit-id>        # Edit old commit
+# ...make changes...
+jd -m "updated"       # Describe changes
+# Descendants auto-rebase! No manual restack needed
+
+# Approach 2: Make child commit, squash later
+jn <commit-id>        # New change at commit
+# ...make changes...
+jd -m "temp: address feedback"
+jsq                   # Squash into parent
+
+# Approach 3: Commute patch upward
+jn -m "temp: fix for earlier commit"
+jmove -r @ <target-commit>  # Move fix to target
+jsq                         # Squash into target
+```
+
+### Branchless Workflow
+
+Work without local branches, push directly.
+
+```bash
+# Sync with main
+jjsync              # Fetch + rebase on main
+
+# Option 1: Push to main directly
+jpush-main          # Set main to @ and push
+
+# Option 2: Work with remote main
+jjsync              # Sync with origin/main
+jpr -c              # Create PR from bookmark
+
+# Option 3: Create temporary bookmark for PR
+jbc temp            # Create bookmark
+jpr -c              # Create PR
+```
+
+### Stack Manipulation
+
+Insert and move commits within stacks.
+
+```bash
+# Create stack
+jn -m "feature 1" && jbc feature-1
+jn -m "feature 2" && jbc feature-2
+jn -m "feature 3" && jbc feature-3
+
+# Insert commit in middle
+je feature-1        # Edit feature-1
+jn -m "new work"    # Create after feature-1
+jmove -s feature-2  # Move feature-2+ after new work
+
+# Move single commit
+jmove -r feature-3 feature-1  # Insert feature-3 after feature-1
+
+# Sync and push all
+jjsync -a           # Sync all bookmarks
+jpr -a -c           # Create PRs for all
 ```
 
 ## Installation

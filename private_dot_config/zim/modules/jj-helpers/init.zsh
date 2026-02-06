@@ -59,7 +59,7 @@ alias jrbr='jj rebase -r'
 alias jins='jj new --insert-after'
 alias jinb='jj new --insert-before'
 
-# Abandon (a)
+# Abandon/hide (a)
 alias jab='jj abandon'
 alias junhide='jj restore'
 
@@ -261,6 +261,9 @@ jjco() {
 }
 
 # Move commits (git-branchless style)
+# Usage: jmove [-s|-r] <commit> <dest>
+# -s: move commit and descendants (source)
+# -r: move single commit only (revisions)
 jmove() {
     local mode="-s"
     local commit=""
@@ -305,6 +308,33 @@ jpush() {
     echo "Pushing bookmark: $bookmark"
     jj git push --bookmark "$bookmark" "$@"
 }
+
+# Help function
+jj-help() {
+    cat << 'EOF'
+Jujutsu Helper Module (git-branchless style)
+
+Key Functions:
+  jpr [options] [bookmark]      Create or update PR (-c to create, -d for draft, -a for all)
+  jjsync [options] [bookmark]   Sync with remote (-a for all, -b <branch> for base)
+  jmove [-s|-r] <commit> <dest> Move commits (-s with descendants, -r single commit)
+  jpush [options]               Push current bookmark to remote
+  jpush-main                    Set main bookmark and push
+  jjst                          Status with recent log
+  jjco                          Interactive bookmark checkout (requires fzf)
+
+Common Aliases:
+  jl, jsl, jlg      Log views          jb*, jbc, jbd     Bookmark operations
+  jst, jdiff        Status/diff        je, jsq, jsqi     Edit/squash changes
+  jrb*, jins, jinb  Rebase/insert      jprev, jnext      Navigate commits
+  jundo, jredo      Undo/redo ops      jgf, jgp          Git fetch/push
+
+Run 'jjhelp' to see this help. See README.md for detailed examples.
+EOF
+}
+
+# Alias for help
+alias jjhelp='jj-help'
 
 # Source local customizations if they exist
 [[ -f "${0:h}/local.zsh" ]] && source "${0:h}/local.zsh"
