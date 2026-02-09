@@ -95,7 +95,7 @@ source <(kubectl completion zsh)
 
 # jujutsu
 if (( $+commands[jj] )); then
-  source <(jj util completion zsh --enable-dynamic)
+  source <(jj util completion zsh)
 fi
 
 # help me to fix wrong typed commands
