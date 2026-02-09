@@ -179,6 +179,7 @@ jpr() {
 }
 
 # Sync with remote: fetch and rebase on default branch
+# Usage: jjsync [-p|--pull] [-a|--all] [-b|--base <branch>] [bookmark]
 jjsync() {
     local pull=true
     local all=false
@@ -200,13 +201,16 @@ jjsync() {
         jj git fetch || return
     fi
 
+    # Detect default branch if not specified
     if [[ -z "$base_branch" ]]; then
         local remote_bookmark
         remote_bookmark=$(jj log -r @ --no-graph -T 'bookmarks' 2>/dev/null)
 
+        # Check if tracked remote bookmark exists
         if [[ -n "$remote_bookmark" ]] && [[ "$remote_bookmark" != *"@"* ]]; then
             base_branch="${remote_bookmark}@origin"
         else
+            # Detect default branch
             local remote
             remote=$(_jj-get-remote)
             base_branch=$(_jj-detect-default-branch "$remote") || {
@@ -218,6 +222,7 @@ jjsync() {
 
     echo "Base branch: $base_branch"
 
+    # Get bookmark(s) to sync
     if [[ "$all" == true ]]; then
         echo "Syncing all bookmarks..."
         local bookmarks
