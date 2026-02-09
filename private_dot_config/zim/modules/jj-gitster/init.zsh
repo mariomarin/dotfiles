@@ -19,6 +19,9 @@ prompt_jj_gitster_precmd() {
 
 # Setup function for prompt
 prompt_jj_gitster_setup() {
+    # Ensure prompt function is available
+    autoload -Uz promptinit && promptinit
+
     # Load gitster first
     prompt gitster
 
