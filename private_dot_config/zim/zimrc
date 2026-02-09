@@ -15,7 +15,7 @@ zmodule utility
 zmodule exa
 zmodule fzf
 # zsh-async - async job execution for fast prompts
-zmodule mafredri/zsh-async@main
+zmodule mafredri/zsh-async -b main
 # wakatime
 zmodule sobolevn/wakatime-zsh-plugin
 
