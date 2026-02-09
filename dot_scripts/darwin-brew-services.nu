@@ -16,8 +16,9 @@ mkdir $user_agents
 
 def setup-daemon [daemon: record] {
     let name = $daemon.name
-    let src = $"($launchd_dir)/org.local.($name).plist"
-    let dest = $"($system_daemons)/org.local.($name).plist"
+    let prefix = ($daemon.label_prefix? | default "org.local")
+    let src = $"($launchd_dir)/($prefix).($name).plist"
+    let dest = $"($system_daemons)/($prefix).($name).plist"
 
     if not ($src | path exists) {
         print $"Skipping ($name): plist not found"
