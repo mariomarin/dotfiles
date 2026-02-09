@@ -48,6 +48,9 @@ packages:
   # From repos
   - nushell
   - carapace-bin
+  # Kubernetes
+  - kubectl
+  - helm
   # Development
   - nodejs
   - npm

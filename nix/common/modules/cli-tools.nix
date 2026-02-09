@@ -76,6 +76,7 @@ in
       kubectl
       krew
       kubelogin
+      kubernetes-helm
 
       # ── Password and secrets ────────────────────────────────────────────
       bitwarden-cli

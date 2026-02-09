@@ -50,6 +50,7 @@ brew "node"
 brew "kubectl"
 brew "krew"
 brew "kubelogin"
+brew "helm"
 
 # Shell utilities
 brew "atuin"

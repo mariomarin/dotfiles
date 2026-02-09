@@ -191,6 +191,13 @@ properties:
       settings:
         id: ahmetb.kubectx
         source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Helm
+        allowPrerelease: true
+      settings:
+        id: Helm.Helm
+        source: winget
     # System utilities
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
