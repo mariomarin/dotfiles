@@ -10,7 +10,7 @@ default:
 HOST := env_var_or_default("HOST", `hostname`)
 
 # Get username from chezmoi config (SUDO_USER fallback for when running under sudo)
-USER := env_var_or_default("NIX_USER", env_var_or_default("SUDO_USER", `chezmoi data --format json | from json | get -i username | default (whoami)`))
+USER := env_var_or_default("NIX_USER", env_var_or_default("SUDO_USER", `chezmoi data --format json | from json | get -o username | default (whoami)`))
 
 # First-time NixOS setup (use this after fresh NixOS install)
 first-time:
