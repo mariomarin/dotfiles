@@ -35,8 +35,9 @@ prompt_jj_gitster_setup() {
     # Modify PROMPT to include jj_info
     # Insert jj info after prompt_pwd, before git_info
     # gitster PROMPT looks like: ${prompt_pwd} ${git_info} ${editor_info}
+    setopt PROMPT_SUBST
     PROMPT='${prompt_pwd}${jj_info_prompt:+ ${jj_info_prompt}} ${git_info}${editor_info}'
 }
 
-# Make this available as a prompt theme
-prompt_jj_gitster_setup "$@"
+# Auto-initialize when module loads
+prompt_jj_gitster_setup
