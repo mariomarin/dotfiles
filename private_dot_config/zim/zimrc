@@ -24,7 +24,9 @@ zmodule prompt-pwd
 zmodule git-info
 # jj-info - provides jj repository information
 zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-info
-# jj-gitster - gitster with jj support (replaces gitster)
+# gitster - base prompt theme
+zmodule gitster
+# jj-gitster - extends gitster with jj support
 zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-gitster
 
 # Additional completion definitions for Zsh.
