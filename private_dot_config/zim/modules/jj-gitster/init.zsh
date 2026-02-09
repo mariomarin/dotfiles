@@ -8,36 +8,13 @@ if (( ! ${+functions[jj_prompt_info]} )); then
     return 1
 fi
 
-# Wrapper around gitster's precmd to add jj info
-prompt_jj_gitster_precmd() {
-    # Update jj info
-    jj_prompt_info
+# Source gitster theme
+source ${ZIM_HOME}/modules/gitster/gitster.zsh-theme
 
-    # Call original gitster setup if it exists
-    (( ${+functions[prompt_gitster_setup]} )) && prompt_gitster_setup
-}
+# Add jj info to precmd (after git-info)
+autoload -Uz add-zsh-hook && add-zsh-hook precmd jj_prompt_info
 
-# Setup function for prompt
-prompt_jj_gitster_setup() {
-    # Ensure prompt function is available
-    autoload -Uz promptinit && promptinit
-
-    # Load gitster first
-    prompt gitster
-
-    # Replace gitster's precmd with our wrapper
-    if (( ${+functions[prompt_gitster_precmd]} )); then
-        autoload -Uz add-zsh-hook
-        add-zsh-hook -d precmd prompt_gitster_precmd
-        add-zsh-hook precmd prompt_jj_gitster_precmd
-    fi
-
-    # Modify PROMPT to include jj_info
-    # Insert jj info after prompt_pwd, before git_info
-    # gitster PROMPT looks like: ${prompt_pwd} ${git_info} ${editor_info}
-    setopt PROMPT_SUBST
-    PROMPT='${prompt_pwd}${jj_info_prompt:+ ${jj_info_prompt}} ${git_info}${editor_info}'
-}
-
-# Auto-initialize when module loads
-prompt_jj_gitster_setup
+# Modify PS1 to include jj_info_prompt
+# Original: %B%(?:%F{green}:%F{red})%{%G➜%} %F{white}$(prompt-pwd)${(e)git_info[prompt]}%f%b
+# Modified: Add ${jj_info_prompt:+ ${jj_info_prompt}} after prompt-pwd
+PS1='%B%(?:%F{green}:%F{red})%{%G➜%} %F{white}$(prompt-pwd)${jj_info_prompt:+ ${jj_info_prompt}}${(e)git_info[prompt]}%f%b '
