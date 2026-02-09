@@ -9,6 +9,7 @@ def "test module parses" [] {
 
 def "test session file operations" [] {
     let test_dir = mktemp -d
+    let cwd = $env.PWD
     cd $test_dir
 
     let token = "test-session-12345"
@@ -17,5 +18,6 @@ def "test session file operations" [] {
     assert (".env.local" | path exists)
     open .env.local | str replace "BW_SESSION=" "" | str trim | assert equal $in $token
 
+    cd $cwd
     rm -rf $test_dir
 }
