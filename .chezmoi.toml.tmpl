@@ -73,6 +73,15 @@ sourceDir = "~/.local/share/chezmoi"
     command = "bw"
 {{- end }}
 
+{{- $githubToken := env "GITHUB_TOKEN" }}
+{{- if $githubToken }}
+
+[gitHub]
+    refreshPeriod = "24h"
+[gitHub.private]
+    accessToken = {{ $githubToken | quote }}
+{{- end }}
+
 [diff]
     command = "delta"
     args = ["--syntax-theme", "Dracula", "--line-numbers"]
