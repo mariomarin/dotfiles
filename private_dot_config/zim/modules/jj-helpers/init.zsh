@@ -78,6 +78,60 @@ alias jgf='jj git fetch'
 alias jgp='jj git push'
 
 #
+# Helper Functions
+#
+
+# Get current bookmark or return error
+_jj_get_current_bookmark() {
+    local bookmark
+    bookmark=$(jj log -r @ --no-graph -T 'bookmarks' 2>/dev/null)
+
+    if [[ -z "$bookmark" ]]; then
+        echo "Error: No bookmark found for current change (@)" >&2
+        echo "Create a bookmark first: jj bookmark create <name>" >&2
+        return 1
+    fi
+
+    echo "$bookmark"
+}
+
+# Get all bookmarks
+_jj_get_all_bookmarks() {
+    jj bookmark list | awk '{print $1}'
+}
+
+# Detect default branch for remote
+_jj_detect_default_branch() {
+    local remote="${1:-origin}"
+
+    # Try git symbolic-ref first
+    local default_ref
+    default_ref=$(git symbolic-ref "refs/remotes/${remote}/HEAD" 2>/dev/null | sed "s|refs/remotes/${remote}/||")
+
+    if [[ -n "$default_ref" ]]; then
+        echo "${remote}/${default_ref}"
+        return 0
+    fi
+
+    # Fallback: try common default branches
+    for candidate in "${remote}/main" "${remote}/master" "main" "master"; do
+        if jj log -r "$candidate" --limit 1 &>/dev/null; then
+            echo "$candidate"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+# Get remote name (default to origin)
+_jj_get_remote() {
+    local remote
+    remote=$(jj git remote list 2>/dev/null | head -1 | awk '{print $1}')
+    echo "${remote:-origin}"
+}
+
+#
 # Functions
 #
 
@@ -93,47 +147,23 @@ jpr() {
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -c|--create)
-                create=true
-                shift
-                ;;
-            -d|--draft)
-                draft=true
-                gh_args+=(--draft)
-                shift
-                ;;
-            -a|--all)
-                all=true
-                shift
-                ;;
-            -*)
-                # Pass other flags to gh
-                gh_args+=("$1")
-                shift
-                ;;
-            *)
-                bookmark="$1"
-                shift
-                ;;
+            -c|--create) create=true; shift ;;
+            -d|--draft) draft=true; gh_args+=(--draft); shift ;;
+            -a|--all) all=true; shift ;;
+            -*) gh_args+=("$1"); shift ;;
+            *) bookmark="$1"; shift ;;
         esac
     done
 
-    # Get bookmark(s) to process
+    # Resolve bookmarks to process
     local bookmarks=()
     if [[ "$all" == true ]]; then
-        # Get all bookmarks
-        bookmarks=($(jj bookmark list | awk '{print $1}'))
+        bookmarks=($(_jj_get_all_bookmarks))
     elif [[ -n "$bookmark" ]]; then
         bookmarks=("$bookmark")
     else
-        # Get current bookmark
         local current
-        current=$(jj log -r @ --no-graph -T 'bookmarks')
-        if [[ -z "$current" ]]; then
-            echo "Error: No bookmark found for current change (@)" >&2
-            echo "Create a bookmark first: jj bookmark create <name>" >&2
-            return 1
-        fi
+        current=$(_jj_get_current_bookmark) || return 1
         bookmarks=("$current")
     fi
 
@@ -142,16 +172,13 @@ jpr() {
     for bm in "${bookmarks[@]}"; do
         echo "Processing bookmark: $bm"
 
-        # Check if PR already exists
         local pr_exists
         pr_exists=$(gh pr list --head "$bm" --json number --jq '.[0].number' 2>/dev/null)
 
         if [[ -n "$pr_exists" ]]; then
-            # Update existing PR by pushing
             echo "  PR #$pr_exists exists, updating..."
             jj git push --bookmark "$bm" --force || exit_code=$?
         elif [[ "$create" == true ]]; then
-            # Create new PR
             echo "  Creating new PR..."
             gh pr create --head "$bm" --fill "${gh_args[@]}" || exit_code=$?
         else
@@ -174,77 +201,46 @@ jjsync() {
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -p|--pull|--no-pull)
-                if [[ "$1" == "--no-pull" ]]; then
-                    pull=false
-                fi
-                shift
-                ;;
-            -a|--all)
-                all=true
-                shift
-                ;;
-            -b|--base)
-                base_branch="$2"
-                shift 2
-                ;;
-            *)
-                bookmark="$1"
-                shift
-                ;;
+            -p|--pull) pull=true; shift ;;
+            --no-pull) pull=false; shift ;;
+            -a|--all) all=true; shift ;;
+            -b|--base) base_branch="$2"; shift 2 ;;
+            *) bookmark="$1"; shift ;;
         esac
     done
 
     # Fetch if requested
     if [[ "$pull" == true ]]; then
         echo "Fetching from remote..."
-        jj git fetch || return $?
+        jj git fetch || return
     fi
 
-    # Detect default branch if not specified
+    # Detect base branch if not specified
     if [[ -z "$base_branch" ]]; then
-        # Try to get tracked remote bookmark for current change
         local remote_bookmark
         remote_bookmark=$(jj log -r @ --no-graph -T 'bookmarks' 2>/dev/null)
 
-        # If no tracked bookmark, use the default remote branch
-        if [[ -z "$remote_bookmark" ]] || [[ "$remote_bookmark" == *"@"* ]]; then
-            # Get remote name (default to origin)
-            local remote
-            remote=$(jj git remote list 2>/dev/null | head -1 | awk '{print $1}')
-            if [[ -z "$remote" ]]; then
-                remote="origin"
-            fi
-
-            # Try to detect actual default branch from git remote HEAD
-            local default_ref
-            default_ref=$(git symbolic-ref "refs/remotes/${remote}/HEAD" 2>/dev/null | sed "s|refs/remotes/${remote}/||")
-
-            if [[ -n "$default_ref" ]]; then
-                # Use detected default branch
-                base_branch="${remote}/${default_ref}"
-            else
-                # Fallback: try common default branches
-                for candidate in "${remote}/main" "${remote}/master" "main" "master"; do
-                    if jj log -r "$candidate" --limit 1 &>/dev/null; then
-                        base_branch="$candidate"
-                        break
-                    fi
-                done
-            fi
-        else
-            # Use the remote tracking branch
+        # Check if tracked remote bookmark exists
+        if [[ -n "$remote_bookmark" ]] && [[ "$remote_bookmark" != *"@"* ]]; then
             base_branch="${remote_bookmark}@origin"
+        else
+            # Detect default branch
+            local remote
+            remote=$(_jj_get_remote)
+            base_branch=$(_jj_detect_default_branch "$remote") || {
+                echo "Error: Could not detect default branch" >&2
+                return 1
+            }
         fi
     fi
 
     echo "Base branch: $base_branch"
 
-    # Get bookmark(s) to sync
+    # Sync bookmarks
     if [[ "$all" == true ]]; then
         echo "Syncing all bookmarks..."
         local bookmarks
-        bookmarks=($(jj bookmark list | awk '{print $1}'))
+        bookmarks=($(_jj_get_all_bookmarks))
 
         local exit_code=0
         for bm in "${bookmarks[@]}"; do
@@ -278,31 +274,21 @@ jjco() {
     local bookmark
     bookmark=$(jj bookmark list | fzf --height=20 --reverse | awk '{print $1}')
 
-    if [[ -n "$bookmark" ]]; then
-        jj new "$bookmark"
-    fi
+    [[ -n "$bookmark" ]] && jj new "$bookmark"
 }
 
 # Move commits (git-branchless style)
 # Usage: jmove [-s|-r] <commit> <dest>
-# -s: move commit and descendants (source)
-# -r: move single commit only (revisions)
 jmove() {
-    local mode="-s"  # default: source (with descendants)
+    local mode="-s"
     local commit=""
     local dest=""
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -s|--source)
-                mode="-s"
-                shift
-                ;;
-            -r|-x|--exact)
-                mode="-r"
-                shift
-                ;;
+            -s|--source) mode="-s"; shift ;;
+            -r|-x|--exact) mode="-r"; shift ;;
             *)
                 if [[ -z "$commit" ]]; then
                     commit="$1"
@@ -318,6 +304,7 @@ jmove() {
         esac
     done
 
+    # Validate required arguments
     if [[ -z "$commit" ]] || [[ -z "$dest" ]]; then
         echo "Error: Missing required arguments" >&2
         echo "Usage: jmove [-s|-r] <commit> <dest>" >&2
@@ -333,24 +320,17 @@ jmove() {
 # Push to main branch
 jpush-main() {
     echo "Setting main bookmark to current change and pushing..."
-    jj bookmark set main || return $?
+    jj bookmark set main || return
     jj git push --bookmark main
 }
 
 # Push current change to its bookmark
 jpush() {
-    local current_bookmark
-    current_bookmark=$(jj log -r @ --no-graph -T 'bookmarks')
+    local bookmark
+    bookmark=$(_jj_get_current_bookmark) || return
 
-    if [[ -z "$current_bookmark" ]]; then
-        echo "Error: No bookmark found for current change (@)" >&2
-        echo "Create a bookmark first: jj bookmark create <name>" >&2
-        echo "Or push to main: jpush-main" >&2
-        return 1
-    fi
-
-    echo "Pushing bookmark: $current_bookmark"
-    jj git push --bookmark "$current_bookmark" "$@"
+    echo "Pushing bookmark: $bookmark"
+    jj git push --bookmark "$bookmark" "$@"
 }
 
 # Help function
