@@ -10,9 +10,16 @@ def main [] {
 def "main sync" [] {
     print "🔄 Syncing krew plugins from ~/.krewfile..."
 
-    if (which krew | is-empty) {
-        print "❌ krew not found. Install with: kubectl krew install krew"
-        return
+    # Check if krew is bootstrapped (exists in $KREW_ROOT/bin)
+    let krew_bin = $"($env.HOME)/.local/share/krew/bin/kubectl-krew"
+    if not ($krew_bin | path exists) {
+        print "🔧 Bootstrapping krew..."
+        let result = (do { kubectl krew install krew } | complete)
+        if $result.exit_code != 0 {
+            print $"❌ Failed to bootstrap krew: ($result.stderr)"
+            return
+        }
+        print "✅ Krew bootstrapped successfully"
     }
 
     let krewfile = $"($nu.home-path)/.krewfile"
@@ -34,7 +41,7 @@ def "main sync" [] {
     # Install each plugin
     for plugin in $plugins {
         print $"  Installing ($plugin)..."
-        krew install $plugin
+        kubectl krew install $plugin
     }
 
     print "✅ Krew plugins synced"
@@ -42,13 +49,13 @@ def "main sync" [] {
 
 # List installed krew plugins
 def "main list" [] {
-    krew list
+    kubectl krew list
 }
 
 # Install a plugin and add to Krewfile
 def "main install" [plugin: string] {
     print $"📦 Installing ($plugin)..."
-    krew install $plugin
+    kubectl krew install $plugin
 
     let krewfile = $"($nu.home-path)/.krewfile"
     print $"📝 Adding ($plugin) to ($krewfile)..."
