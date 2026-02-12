@@ -46,6 +46,8 @@ cleanup = true
 {{- if ne .chezmoi.os "windows" }}
 # Update tmux plugins via TPM
 "Tmux Plugins" = "~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
+# Sync krew plugins from Krewfile
+"Krew Plugins" = "cd $(chezmoi source-path) && just krew-sync"
 # Update Nix flake.lock then rebuild
 "Nix Flake Update" = "cd $(chezmoi source-path)/nix/nixos && nix flake update"
 {{- if eq .chezmoi.os "darwin" }}
