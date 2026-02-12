@@ -34,6 +34,8 @@ zmodule ${ZIM_CONFIG_FILE:h}/modules/sesh
 zmodule ${ZIM_CONFIG_FILE:h}/modules/claude-helpers
 # ai-cli - AI CLI tool wrappers with tunnel detection
 zmodule ${ZIM_CONFIG_FILE:h}/modules/ai-cli
+# jj-helpers - Jujutsu (jj) helper functions and aliases
+zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-helpers
 
 # Enables and configures smart and extensive tab completion.
 # Must load before carapace
