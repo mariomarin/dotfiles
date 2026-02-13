@@ -157,7 +157,7 @@ jpr() {
         echo "Processing bookmark: $bm"
 
         local pr_exists
-        pr_exists=$(gh pr list --head "$bm" --json number --jq '.[0].number' 2>/dev/null)
+        pr_exists=$(command gh pr list --head "$bm" --json number --jq '.[0].number' 2>/dev/null)
 
         if [[ -n "$pr_exists" ]]; then
             echo "  PR #$pr_exists exists, updating..."
@@ -172,7 +172,7 @@ jpr() {
         }
 
         echo "  Creating new PR..."
-        gh pr create --head "$bm" --fill "${gh_args[@]}" || exit_code=$?
+        command gh pr create --head "$bm" --fill "${gh_args[@]}" || exit_code=$?
     done
 
     return $exit_code
