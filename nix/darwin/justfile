@@ -34,13 +34,13 @@ build: gen-user
 
 # Flake management (runs in nixos directory where actual flake.nix lives)
 update:
-    cd ../nixos && nix flake update
+    cd ../nixos; nix flake update
 
 check:
-    cd ../nixos && nix flake check
+    cd ../nixos; nix flake check
 
 show:
-    cd ../nixos && nix flake show
+    cd ../nixos; nix flake show
 
 # Show available hosts
 hosts:

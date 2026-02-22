@@ -1,12 +1,27 @@
 # Kanata keyboard remapping service for macOS
 # Requires Karabiner-DriverKit-VirtualHIDDevice for virtual keyboard support
 # See: https://github.com/jtroo/kanata/discussions/1537
-{ config, pkgs, lib, ... }:
+{ config, pkgs, pkgs-unstable, lib, ... }:
 
 let
   kanataStablePath = "/usr/local/bin/kanata";
+  karabinerDaemon = "${pkgs.karabiner-dk}/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon";
 in
 {
+  # Karabiner VirtualHIDDevice daemon (creates the socket kanata connects to)
+  # Must start before kanata
+  launchd.daemons.karabiner-vhid = {
+    serviceConfig = {
+      Label = "org.pqrs.Karabiner-VirtualHIDDevice-Daemon";
+      ProgramArguments = [ karabinerDaemon ];
+      RunAtLoad = true;
+      KeepAlive = true;
+      ProcessType = "Interactive";
+      StandardErrorPath = "/tmp/karabiner-vhid.err.log";
+      StandardOutPath = "/tmp/karabiner-vhid.out.log";
+    };
+  };
+
   # Kanata keyboard remapper
   # Binary is copied to stable path so Input Monitoring permission survives updates
   #
@@ -33,7 +48,7 @@ in
   # Copy kanata to stable path and create Karabiner socket directory
   system.activationScripts.postActivation.text = ''
     # Copy kanata binary to stable path (preserves Input Monitoring permission)
-    cp -f ${pkgs.kanata}/bin/kanata ${kanataStablePath}
+    cp -f ${pkgs-unstable.kanata}/bin/kanata ${kanataStablePath}
     chmod 755 ${kanataStablePath}
 
     # Create required directory for Karabiner socket
