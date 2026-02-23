@@ -57,7 +57,7 @@ def create-symlinks [] {
 
     $symlinks | where { $in.src | path exists } | each { |link|
         ln -sf $link.src ($bin_dir | path join $link.dest)
-    }
+    } | ignore
 }
 
 add-repos
