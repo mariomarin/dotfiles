@@ -48,8 +48,7 @@ packages:
   # From repos
   - nushell
   - carapace-bin
-  # Kubernetes
-  - kubectl
+  # Kubernetes (kubectl installed via .chezmoiexternal.toml.tmpl)
   - helm
   # Development
   - nodejs
