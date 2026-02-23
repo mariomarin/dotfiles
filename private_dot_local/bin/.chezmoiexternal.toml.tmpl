@@ -26,10 +26,10 @@
 
 {{- $jjRelease := gitHubLatestRelease "jj-vcs/jj" }}
 ["jj"]
-    type = "archive-file"
+    type = "archive"
     url = "https://github.com/jj-vcs/jj/releases/download/{{ $jjRelease.TagName }}/jj-{{ $jjRelease.TagName }}-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
-    path = "jj"
-    executable = true
+    stripComponents = 0
+    include = ["jj"]
     refreshPeriod = "168h"
 
 # Text processing
