@@ -203,11 +203,13 @@ jjsync() {
     echo "♻️  Rebasing all local work onto trunk..."
 
     # Choose revset based on --mine flag
+    # Note: -s handles descendants automatically, so we don't need roots()
+    # Using roots() causes "all:roots(...)" syntax error since all: doesn't work with functions
     local revset
     if [[ "$mine_only" == true ]]; then
-        revset="roots(${base_bookmark}..mine())"
+        revset="${base_bookmark}..mine()"
     else
-        revset="roots(${base_bookmark}..mutable())"
+        revset="${base_bookmark}..mutable()"
     fi
 
     # Single rebase operation for all local commit stacks
