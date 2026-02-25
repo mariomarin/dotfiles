@@ -121,11 +121,13 @@ nix/darwin/**
 .kube/config
 {{ end }}
 
-# linux-apt platform only (apt packages)
+# linux-apt platform only (apt packages and atuin daemon service)
 {{ if ne $platform "linux-apt" }}
 .config/apt
 .config/apt/**
+.config/systemd/user/atuin.service
 .chezmoiscripts/run_after_linux-apt-install-packages.nu
+.chezmoiscripts/run_after_linux-enable-atuin-daemon.nu
 {{ end }}
 
 # darwin-brew platform only (Homebrew packages and services)

@@ -1,0 +1,22 @@
+[Unit]
+Description=Atuin shell history sync daemon
+Documentation=https://github.com/atuinsh/atuin
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/atuin daemon
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening
+PrivateTmp=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.local/share/atuin
+
+[Install]
+WantedBy=default.target
