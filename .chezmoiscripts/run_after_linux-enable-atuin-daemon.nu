@@ -2,6 +2,14 @@
 # Enable and start atuin daemon systemd service
 
 if (which atuin | is-not-empty) and (which systemctl | is-not-empty) {
+    # Check if systemd user bus is available (fails in SSH sessions without lingering)
+    let bus_check = (do -i { systemctl --user status } | complete)
+    if $bus_check.exit_code != 0 {
+        print "⚠️  Systemd user bus not available (SSH session or lingering not enabled)"
+        print "   Run manually after login: systemctl --user enable --now atuin.service"
+        exit 0
+    }
+
     # Check if service file changed before reloading
     let needs_reload = (do -i { systemctl --user show atuin.service --property=NeedDaemonReload --value } | complete | get stdout | str trim) == "yes"
 
