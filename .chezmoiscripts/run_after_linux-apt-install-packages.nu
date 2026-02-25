@@ -33,7 +33,11 @@ def install-packages [] {
     if ($packages | is-empty) { return }
 
     print "Updating apt cache..."
-    sudo apt-get update -qq
+    let update_result = do { sudo apt-get update -qq } | complete
+    if $update_result.exit_code != 0 and $update_result.exit_code != 100 {
+        print $"Warning: apt-get update failed with exit code ($update_result.exit_code)"
+        # Continue anyway - tolerate upstream repo issues (exit code 100)
+    }
 
     print $"Installing packages: ($packages | str join ', ')"
     let result = do { sudo apt-get install -y ...$packages } | complete
