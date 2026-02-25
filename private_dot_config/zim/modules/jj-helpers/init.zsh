@@ -91,36 +91,13 @@ _jj-get-current-bookmark() {
 }
 
 _jj-get-all-bookmarks() {
-    jj bookmark list | awk '{print $1}'
+    # Get local bookmarks only (not indented), strip trailing colon
+    local -a lines
+    lines=(${(f)"$(jj bookmark list)"})
+    # Filter non-indented lines, extract first field, strip colon
+    print -l ${${${(M)lines:#[^[:space:]]*}%% *}%:}
 }
 
-_jj-detect-default-branch() {
-    local remote="${1:-origin}"
-    local default_ref
-
-    # Try git symbolic-ref first
-    default_ref=$(git symbolic-ref "refs/remotes/${remote}/HEAD" 2>/dev/null | sed "s|refs/remotes/${remote}/||")
-    [[ -n "$default_ref" ]] && {
-        echo "${remote}/${default_ref}"
-        return 0
-    }
-
-    # Fallback: try common default branches
-    for candidate in "${remote}/main" "${remote}/master" "main" "master"; do
-        jj log -r "$candidate" --limit 1 &>/dev/null && {
-            echo "$candidate"
-            return 0
-        }
-    done
-
-    return 1
-}
-
-_jj-get-remote() {
-    local remote
-    remote=$(jj git remote list 2>/dev/null | head -1 | awk '{print $1}')
-    echo "${remote:-origin}"
-}
 
 #
 # Functions
@@ -178,72 +155,75 @@ jpr() {
     return $exit_code
 }
 
-# Sync with remote: fetch and rebase on default branch
-# Usage: jjsync [-p|--pull] [-a|--all] [-b|--base <branch>] [bookmark]
+# Sync with remote: fetch and rebase all local work on trunk (idiomatic jj way)
+# Usage: jjsync [-p|--pull] [-c|--current] [-m|--mine] [-b|--base <bookmark>] [bookmark]
 jjsync() {
     local pull=true
-    local all=false
+    local current_only=false
+    local mine_only=false
     local bookmark=""
-    local base_branch=""
+    local base_bookmark="trunk()"
 
     while [[ $# -gt 0 ]]; do
         case $1 in
             -p|--pull) pull=true; shift ;;
             --no-pull) pull=false; shift ;;
-            -a|--all) all=true; shift ;;
-            -b|--base) base_branch="$2"; shift 2 ;;
+            -c|--current) current_only=true; shift ;;
+            -m|--mine) mine_only=true; shift ;;
+            -b|--base) base_bookmark="$2"; shift 2 ;;
             *) bookmark="$1"; shift ;;
         esac
     done
 
     if [[ "$pull" == true ]]; then
-        echo "Fetching from remote..."
-        jj git fetch || return
+        echo "⏬ Fetching from remote..."
+        jj git fetch --all-remotes || return
     fi
 
-    # Detect default branch if not specified
-    if [[ -z "$base_branch" ]]; then
-        local remote_bookmark
-        remote_bookmark=$(jj log -r @ --no-graph -T 'bookmarks' 2>/dev/null)
+    # Show what trunk() resolved to for transparency
+    local trunk_info
+    trunk_info=$(jj log -r "$base_bookmark" --no-graph -T 'bookmarks ++ " " ++ commit_id.short(8)' --limit 1 2>/dev/null)
+    [[ -n "$trunk_info" ]] && echo "🎯 Base: ${trunk_info}"
 
-        # Check if tracked remote bookmark exists
-        if [[ -n "$remote_bookmark" ]] && [[ "$remote_bookmark" != *"@"* ]]; then
-            base_branch="${remote_bookmark}@origin"
-        else
-            # Detect default branch
-            local remote
-            remote=$(_jj-get-remote)
-            base_branch=$(_jj-detect-default-branch "$remote") || {
-                echo "Error: Could not detect default branch" >&2
-                return 1
-            }
-        fi
-    fi
-
-    echo "Base branch: $base_branch"
-
-    # Get bookmark(s) to sync
-    if [[ "$all" == true ]]; then
-        echo "Syncing all bookmarks..."
-        local bookmarks
-        bookmarks=($(_jj-get-all-bookmarks))
-
-        local exit_code=0
-        for bm in "${bookmarks[@]}"; do
-            echo "  Syncing: $bm"
-            jj rebase -b "$bm" -d "$base_branch" || exit_code=$?
-        done
-        return $exit_code
-    fi
-
+    # Sync specific bookmark if provided
     if [[ -n "$bookmark" ]]; then
         echo "Syncing bookmark: $bookmark"
-        jj rebase -b "$bookmark" -d "$base_branch"
+        jj rebase -b "$bookmark" -d "$base_bookmark"
         return
     fi
 
-    echo "Syncing current change (@)"
-    jj rebase -d "$base_branch"
+    # Sync only current change if -c/--current flag
+    if [[ "$current_only" == true ]]; then
+        echo "Syncing current change (@)"
+        jj rebase -d "$base_bookmark"
+        return
+    fi
+
+    # Default: sync all local work using idiomatic jj revsets
+    echo "♻️  Rebasing all local work onto trunk..."
+
+    # Choose revset based on --mine flag
+    local revset
+    if [[ "$mine_only" == true ]]; then
+        revset="all:roots(${base_bookmark}..mine())"
+    else
+        revset="all:roots(${base_bookmark}..mutable())"
+    fi
+
+    # Single rebase operation for all local commit stacks
+    if jj rebase -s "$revset" -d "$base_bookmark" 2>&1; then
+        echo "✅ Sync complete"
+        echo ""
+        echo "📊 Current state:"
+        jj log -r "${base_bookmark}..mutable()" --limit 10 2>/dev/null || jj log --limit 10
+        return 0
+    else
+        echo "⚠️  Some commits have conflicts (deferred in graph)"
+        echo ""
+        echo "📊 Current state:"
+        jj log -r "${base_bookmark}..mutable()" --limit 10 2>/dev/null || jj log --limit 10
+        return 1
+    fi
 }
 
 # Quick status with log
@@ -261,7 +241,9 @@ jjco() {
     }
 
     local bookmark
-    bookmark=$(jj bookmark list | fzf --height=20 --reverse | awk '{print $1}')
+    bookmark=$(jj bookmark list | fzf --height=20 --reverse)
+    # Extract first field and strip colon
+    bookmark=${${bookmark%% *}%:}
     [[ -n "$bookmark" ]] && jj new "$bookmark"
 }
 
@@ -321,7 +303,7 @@ Jujutsu Helper Module (git-branchless style)
 
 Key Functions:
   jpr [options] [bookmark]      Create or update PR (-c to create, -d for draft, -a for all)
-  jjsync [options] [bookmark]   Sync with remote (-a for all, -b <branch> for base)
+  jjsync [options] [bookmark]   Sync all local work with trunk() (-c current, -m mine, -b <base>)
   jmove [-s|-r] <commit> <dest> Move commits (-s with descendants, -r single commit)
   jpush [options]               Push current bookmark to remote
   jpush-main                    Set main bookmark and push

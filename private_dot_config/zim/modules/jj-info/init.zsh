@@ -9,12 +9,14 @@ _jj_in_repo() {
 
 # Get the closest bookmark (local or remote)
 _jj_closest_bookmark() {
-    jj log --no-graph --limit 1 --color never \
+    local -a output
+    output=(${(f)"$(jj log --no-graph --limit 1 --color never \
         -r "coalesce(
             heads(::@ & bookmarks()),
             heads(::@ & remote_bookmarks()),
             trunk()
-        )" -T "separate(' ', bookmarks)" 2>/dev/null | head -1
+        )" -T "separate(' ', bookmarks)" 2>/dev/null)"})
+    echo "${output[1]}"
 }
 
 # Get distance from bookmark (how many commits after)
@@ -22,9 +24,11 @@ _jj_bookmark_distance() {
     local bookmark=$1
     [[ -z "$bookmark" ]] && return
 
-    jj log --no-graph --color never \
+    local output
+    output=$(jj log --no-graph --color never \
         -r "$bookmark..@ & (~empty() | merges())" \
-        -T '"n"' 2>/dev/null | wc -c | tr -d ' '
+        -T '"n"' 2>/dev/null)
+    echo ${#output}
 }
 
 # Main prompt info function
@@ -66,22 +70,27 @@ if (( ${+functions[async_init]} )); then
         local workspace=$1
         local bookmark distance
 
-        # Run jj commands
-        bookmark=$(jj log --repository "$workspace" --no-graph --limit 1 --color never \
+        # Run jj commands - get first line of output
+        local -a bookmark_output
+        bookmark_output=(${(f)"$(jj log --repository "$workspace" --no-graph --limit 1 --color never \
             -r "coalesce(
                 heads(::@ & bookmarks()),
                 heads(::@ & remote_bookmarks()),
                 trunk()
-            )" -T "separate(' ', bookmarks)" 2>/dev/null | head -1)
+            )" -T "separate(' ', bookmarks)" 2>/dev/null)"})
+        bookmark="${bookmark_output[1]}"
 
         if [[ -z "$bookmark" ]]; then
             echo "[jj]"
             return
         fi
 
-        distance=$(jj log --repository "$workspace" --no-graph --color never \
+        # Get distance using string length
+        local distance_output
+        distance_output=$(jj log --repository "$workspace" --no-graph --color never \
             -r "$bookmark..@ & (~empty() | merges())" \
-            -T '"n"' 2>/dev/null | wc -c | tr -d ' ')
+            -T '"n"' 2>/dev/null)
+        distance=${#distance_output}
 
         if [[ "$distance" -gt 0 ]]; then
             echo "${bookmark}›${distance}"

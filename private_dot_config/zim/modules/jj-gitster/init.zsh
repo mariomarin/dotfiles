@@ -1,5 +1,5 @@
 # jj-gitster - Extends gitster prompt with jj information
-# Shows jj bookmark info before git status when in jj repository
+# Prefers jj status over git status when in jj repository
 # This is a Zsh module - no shebang needed as it's sourced, not executed
 
 # This module requires jj-info to be loaded first
@@ -14,7 +14,14 @@ source ${ZIM_HOME}/modules/gitster/gitster.zsh-theme
 # Add jj info to precmd (after git-info)
 autoload -Uz add-zsh-hook && add-zsh-hook precmd jj_prompt_info
 
-# Modify PS1 to include jj_info_prompt
-# Original: %B%(?:%F{green}:%F{red})%{%G➜%} %F{white}$(prompt-pwd)${(e)git_info[prompt]}%f%b
-# Modified: Add ${jj_info_prompt:+ ${jj_info_prompt}} after prompt-pwd
-PS1='%B%(?:%F{green}:%F{red})%{%G➜%} %F{white}$(prompt-pwd)${jj_info_prompt:+ ${jj_info_prompt}}${(e)git_info[prompt]}%f%b '
+# Helper function to show jj or git info (prefers jj)
+_jj_or_git_info() {
+    if [[ -n "$jj_info_prompt" ]]; then
+        echo " ${jj_info_prompt}"
+    else
+        echo "${(e)git_info[prompt]}"
+    fi
+}
+
+# Modify PS1 to prefer jj over git using helper function
+PS1='%B%(?:%F{green}:%F{red})%{%G➜%} %F{white}$(prompt-pwd)$(_jj_or_git_info)%f%b '
