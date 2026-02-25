@@ -205,9 +205,9 @@ jjsync() {
     # Choose revset based on --mine flag
     local revset
     if [[ "$mine_only" == true ]]; then
-        revset="all:roots(${base_bookmark}..mine())"
+        revset="roots(${base_bookmark}..mine())"
     else
-        revset="all:roots(${base_bookmark}..mutable())"
+        revset="roots(${base_bookmark}..mutable())"
     fi
 
     # Single rebase operation for all local commit stacks
