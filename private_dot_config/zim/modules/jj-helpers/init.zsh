@@ -118,20 +118,14 @@ _jj-get-all-bookmarks() {
     print -l ${${${(M)lines:#[^[:space:]]*}%% *}%:}
 }
 
-_jj-check-conflicts() {
-    # Check for conflicts in given revset scope
-    # Args: $1 = revset scope (default: "mutable()")
-    # Returns: List of conflicted commit IDs, one per line
-    local scope="${1:-mutable()}"
-    jj log -r "$scope & conflicted()" --no-graph -T 'commit_id.short() ++ "\n"' 2>/dev/null
-}
-
 _jj-show-status() {
     # Display current state of local work
     # Args: $1 = base bookmark (default: "trunk()")
     local base="${1:-trunk()}"
+    local revset
+    revset=$(_jj_revset_all_local "$base")
     echo "📊 Current state:"
-    jj log -r "${base}..mutable()" --limit 10 2>/dev/null || jj log --limit 10
+    jj log -r "$revset" --limit 10 2>/dev/null || jj log --limit 10
 }
 
 _jj-get-pr-number() {
@@ -261,19 +255,13 @@ jjsync() {
     # Default: sync all local work using idiomatic jj revsets
     echo "♻️  Rebasing all local work onto trunk..."
 
-    # Choose revset based on --mine flag
-    # Note: -s handles descendants automatically, so we don't need roots()
-    # Using roots() causes "all:roots(...)" syntax error since all: doesn't work with functions
+    # Build revset using jj-core
     local revset
-    if [[ "$mine_only" == true ]]; then
-        revset="${base_bookmark}..mine()"
-    else
-        revset="${base_bookmark}..mutable()"
-    fi
+    revset=$(_jj_revset_local_work "$base_bookmark" "$mine_only")
 
     # Check for existing conflicts before rebasing
     local existing_conflicts
-    existing_conflicts=$(_jj-check-conflicts)
+    existing_conflicts=$(_jj_query_conflicted)
     if [[ -n "$existing_conflicts" ]]; then
         echo "❌ Cannot sync: existing conflicts detected" >&2
         echo "Conflicted changes:" >&2
@@ -291,13 +279,13 @@ jjsync() {
     if [[ $rebase_exit -eq 0 ]]; then
         # Check if rebase created new conflicts
         local new_conflicts
-        new_conflicts=$(_jj-check-conflicts)
+        new_conflicts=$(_jj_query_conflicted)
 
         if [[ -n "$new_conflicts" ]]; then
             echo "❌ Rebase created conflicts - undoing" >&2
             echo "Conflicted changes:" >&2
             echo "$new_conflicts" >&2
-            jj op undo
+            _jj_operation_undo
             echo "" >&2
             echo "Sync aborted to prevent conflict mess" >&2
             return 1
