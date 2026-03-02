@@ -81,27 +81,33 @@ _jj-get-current-bookmark() {
     local bookmark
     bookmark=$(jj log -r @ --no-graph -T 'bookmarks' 2>/dev/null)
 
-    # If current change has no bookmark, check if it's an empty commit on top of a bookmarked parent
-    if [[ -z "$bookmark" ]]; then
-        local is_empty
-        is_empty=$(jj log -r @ --no-graph -T 'if(empty, "true", "")' 2>/dev/null)
+    # Return immediately if current change has a bookmark
+    if [[ -n "$bookmark" ]]; then
+        echo "$bookmark"
+        return 0
+    fi
 
-        if [[ "$is_empty" == "true" ]]; then
-            # Try parent's bookmark
-            bookmark=$(jj log -r '@-' --no-graph -T 'bookmarks' 2>/dev/null)
-            if [[ -n "$bookmark" ]]; then
-                echo "Note: Using parent bookmark ($bookmark) since @ is empty" >&2
-                echo "$bookmark"
-                return 0
-            fi
-        fi
+    # Check if it's an empty commit on top of a bookmarked parent
+    local is_empty
+    is_empty=$(jj log -r @ --no-graph -T 'if(empty, "true", "")' 2>/dev/null)
 
-        echo "Error: No bookmark found for current change (@) or parent (@-)" >&2
+    if [[ "$is_empty" != "true" ]]; then
+        echo "Error: No bookmark found for current change (@)" >&2
         echo "Create a bookmark first: jj bookmark create <name>" >&2
         return 1
-    }
+    fi
 
-    echo "$bookmark"
+    # Try parent's bookmark
+    bookmark=$(jj log -r '@-' --no-graph -T 'bookmarks' 2>/dev/null)
+    if [[ -n "$bookmark" ]]; then
+        echo "Note: Using parent bookmark ($bookmark) since @ is empty" >&2
+        echo "$bookmark"
+        return 0
+    fi
+
+    echo "Error: No bookmark found for current change (@) or parent (@-)" >&2
+    echo "Create a bookmark first: jj bookmark create <name>" >&2
+    return 1
 }
 
 _jj-get-all-bookmarks() {
