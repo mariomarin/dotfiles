@@ -1,21 +1,21 @@
 # jj-core
 
-Core Jujutsu utilities for zim modules. Provides shared revset builders (functional core) and query executors (imperative shell).
+Core Jujutsu utilities for zim modules. Provides shared revset builders (string composition) and query executors (jj commands).
 
 ## Design Philosophy
 
-This module follows the **functional core / imperative shell** pattern:
+This module separates revset construction from execution:
 
-- **Functional Core**: Revset builders - pure functions that construct revset expressions
-- **Imperative Shell**: Query executors - impure functions that execute jj commands
+- **Revset Builders**: Construct revset expressions through string composition (no I/O)
+- **Query Executors**: Execute jj commands (I/O operations)
 
-### Why This Pattern?
+### Why This Separation?
 
-Jujutsu revsets are naturally functional:
-- Declarative (describe WHAT, not HOW)
-- Composable: `mine() & conflicted()`, `trunk()..mutable()`
-- Pure: same revset → same result (for given repo state)
-- Can be constructed/validated without I/O
+Jujutsu revsets are declarative and composable:
+- Describe WHAT to query, not HOW to execute
+- Compose complex queries: `mine() & conflicted()`, `trunk()..mutable()`
+- Same revset → same result (for given repo state)
+- Can be constructed and validated without executing jj
 
 ## API
 
@@ -27,9 +27,9 @@ JJ_PROMPT_NO_BOOKMARK="[jj]"
 JJ_PROMPT_SEPARATOR="›"
 ```
 
-### Functional Core - Revset Builders
+### Revset Builders
 
-Pure functions that construct revset expressions:
+Construct revset expressions (string composition, no I/O):
 
 ```zsh
 _jj_revset_conflicts [scope]
@@ -55,9 +55,9 @@ _jj_revset_all_local [base]
   # Build revset for all local changes in range
 ```
 
-### Imperative Shell - Query Executors
+### Query Executors
 
-Impure functions that execute jj commands:
+Execute jj commands (I/O operations):
 
 ```zsh
 _jj_in_repo
@@ -91,7 +91,7 @@ _jj_query_distance <from> [to]
   # Calculate distance from bookmark to commit
 ```
 
-### Imperative Shell - Repository Operations
+### Repository Operations
 
 ```zsh
 _jj_rebase <mode> <source> <destination>
@@ -115,10 +115,10 @@ zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-helpers
 ## Example
 
 ```zsh
-# Build revset (functional)
+# Build revset (string composition)
 local revset=$(_jj_revset_conflicts "mutable()")
 
-# Execute query (imperative)
+# Execute query (I/O operation)
 local conflicts=$(_jj_query "$revset" 'commit_id.short()')
 
 # Composed operations
@@ -128,8 +128,8 @@ local distance=$(_jj_query_distance "$closest")
 
 ## Benefits
 
-- **Testable**: Revset builders can be tested without running jj
-- **Reusable**: Same builders work for query, rebase, diff, etc.
+- **Testable**: Revset builders work without executing jj
+- **Reusable**: Same builders work for query, rebase, diff operations
 - **Composable**: Build complex revsets from simple ones
-- **Clear separation**: Revset logic vs execution logic
+- **Separated concerns**: Query construction vs execution
 - **DRY**: Shared across all jj modules

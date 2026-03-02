@@ -1,5 +1,5 @@
 # jj-core - Core Jujutsu utilities for zim modules
-# Provides revset builders (functional core) and query executors (imperative shell)
+# Provides revset builders (string composition) and query executors (jj commands)
 # Shared by jj-info, jj-helpers, and jj-gitster modules
 
 # Only proceed if jj command exists
@@ -23,8 +23,8 @@ typeset -g JJ_PROMPT_NO_BOOKMARK="[jj]"
 typeset -g JJ_PROMPT_SEPARATOR="›"
 
 #
-# Functional Core - Revset Builders
-# Pure functions that construct revset expressions
+# Revset Builders
+# Construct revset expressions (string composition, no I/O)
 #
 
 _jj_revset_conflicts() {
@@ -88,8 +88,8 @@ _jj_revset_all_local() {
 }
 
 #
-# Imperative Shell - Query Executors
-# Impure functions that execute jj commands
+# Query Executors
+# Execute jj commands (I/O operations)
 #
 
 _jj_in_repo() {
@@ -175,7 +175,7 @@ _jj_query_distance() {
 }
 
 #
-# Imperative Shell - Repository Operations
+# Repository Operations
 #
 
 _jj_rebase() {
