@@ -81,8 +81,22 @@ _jj-get-current-bookmark() {
     local bookmark
     bookmark=$(jj log -r @ --no-graph -T 'bookmarks' 2>/dev/null)
 
-    [[ -n "$bookmark" ]] || {
-        echo "Error: No bookmark found for current change (@)" >&2
+    # If current change has no bookmark, check if it's an empty commit on top of a bookmarked parent
+    if [[ -z "$bookmark" ]]; then
+        local is_empty
+        is_empty=$(jj log -r @ --no-graph -T 'if(empty, "true", "")' 2>/dev/null)
+
+        if [[ "$is_empty" == "true" ]]; then
+            # Try parent's bookmark
+            bookmark=$(jj log -r '@-' --no-graph -T 'bookmarks' 2>/dev/null)
+            if [[ -n "$bookmark" ]]; then
+                echo "Note: Using parent bookmark ($bookmark) since @ is empty" >&2
+                echo "$bookmark"
+                return 0
+            fi
+        fi
+
+        echo "Error: No bookmark found for current change (@) or parent (@-)" >&2
         echo "Create a bookmark first: jj bookmark create <name>" >&2
         return 1
     }
@@ -212,18 +226,46 @@ jjsync() {
         revset="${base_bookmark}..mutable()"
     fi
 
+    # Check for existing conflicts before rebasing
+    local existing_conflicts
+    existing_conflicts=$(jj log -r "mutable() & conflicted()" --no-graph -T 'commit_id.short() ++ "\n"' 2>/dev/null)
+    if [[ -n "$existing_conflicts" ]]; then
+        echo "❌ Cannot sync: existing conflicts detected" >&2
+        echo "Conflicted changes:" >&2
+        echo "$existing_conflicts" >&2
+        echo "" >&2
+        echo "Resolve conflicts first with: jj new <conflicted-change-id>" >&2
+        return 1
+    fi
+
     # Single rebase operation for all local commit stacks
-    if jj rebase -s "$revset" -d "$base_bookmark" 2>&1; then
+    local rebase_output
+    rebase_output=$(jj rebase -s "$revset" -d "$base_bookmark" 2>&1)
+    local rebase_exit=$?
+
+    if [[ $rebase_exit -eq 0 ]]; then
+        # Check if rebase created new conflicts
+        local new_conflicts
+        new_conflicts=$(jj log -r "mutable() & conflicted()" --no-graph -T 'commit_id.short() ++ "\n"' 2>/dev/null)
+
+        if [[ -n "$new_conflicts" ]]; then
+            echo "❌ Rebase created conflicts - undoing" >&2
+            echo "Conflicted changes:" >&2
+            echo "$new_conflicts" >&2
+            jj op undo
+            echo "" >&2
+            echo "Sync aborted to prevent conflict mess" >&2
+            return 1
+        fi
+
         echo "✅ Sync complete"
         echo ""
         echo "📊 Current state:"
         jj log -r "${base_bookmark}..mutable()" --limit 10 2>/dev/null || jj log --limit 10
         return 0
     else
-        echo "⚠️  Some commits have conflicts (deferred in graph)"
-        echo ""
-        echo "📊 Current state:"
-        jj log -r "${base_bookmark}..mutable()" --limit 10 2>/dev/null || jj log --limit 10
+        echo "❌ Rebase failed" >&2
+        echo "$rebase_output" >&2
         return 1
     fi
 }
