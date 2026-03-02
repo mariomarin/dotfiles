@@ -1,35 +1,7 @@
 # jj-info - Jujutsu repository information for zim prompts
 # Provides jj_prompt_info function similar to git-info
 # This is a Zsh module - no shebang needed as it's sourced, not executed
-
-# Check if we're in a jj repository
-_jj_in_repo() {
-    jj workspace root &>/dev/null
-}
-
-# Get the closest bookmark (local or remote)
-_jj_closest_bookmark() {
-    local -a output
-    output=(${(f)"$(jj log --no-graph --limit 1 --color never \
-        -r "coalesce(
-            heads(::@ & bookmarks()),
-            heads(::@ & remote_bookmarks()),
-            trunk()
-        )" -T "separate(' ', bookmarks)" 2>/dev/null)"})
-    echo "${output[1]}"
-}
-
-# Get distance from bookmark (how many commits after)
-_jj_bookmark_distance() {
-    local bookmark=$1
-    [[ -z "$bookmark" ]] && return
-
-    local output
-    output=$(jj log --no-graph --color never \
-        -r "$bookmark..@ & (~empty() | merges())" \
-        -T '"n"' 2>/dev/null)
-    echo ${#output}
-}
+# Uses jj-core for shared utilities
 
 # Main prompt info function
 # Sets jj_info_prompt with bookmark and distance
@@ -41,21 +13,21 @@ jj_prompt_info() {
     _jj_in_repo || return
 
     local bookmark distance
-    bookmark=$(_jj_closest_bookmark)
+    bookmark=$(_jj_query_closest_bookmark)
 
     # If no bookmark found, just show [jj]
     if [[ -z "$bookmark" ]]; then
-        jj_info_prompt="%F{cyan}[jj]%f"
+        jj_info_prompt="%F{cyan}${JJ_PROMPT_NO_BOOKMARK}%f"
         return
     fi
 
-    distance=$(_jj_bookmark_distance "$bookmark")
+    distance=$(_jj_query_distance "$bookmark")
 
     # Build prompt: bookmark›distance or just bookmark
     jj_info_prompt="%F{green}${bookmark}%f"
 
     if [[ "$distance" -gt 0 ]]; then
-        jj_info_prompt+="%F{yellow}›${distance}%f"
+        jj_info_prompt+="%F{yellow}${JJ_PROMPT_SEPARATOR}${distance}%f"
     fi
 }
 
@@ -66,6 +38,8 @@ if (( ${+functions[async_init]} )); then
     typeset -g _jj_info_workspace=""
 
     # Async worker function
+    # Note: Runs in subprocess, can't use jj-core functions
+    # Duplicates query logic for performance
     _jj_info_async_worker() {
         local workspace=$1
         local bookmark distance
@@ -138,12 +112,12 @@ if (( ${+functions[async_init]} )); then
 
         # Return cached value (colored)
         if [[ -n "$_jj_info_prompt" ]]; then
-            if [[ "$_jj_info_prompt" == "[jj]" ]]; then
+            if [[ "$_jj_info_prompt" == "$JJ_PROMPT_NO_BOOKMARK" ]]; then
                 jj_info_prompt="%F{cyan}${_jj_info_prompt}%f"
-            elif [[ "$_jj_info_prompt" == *"›"* ]]; then
-                local bm=${_jj_info_prompt%%›*}
-                local dist=${_jj_info_prompt##*›}
-                jj_info_prompt="%F{green}${bm}%f%F{yellow}›${dist}%f"
+            elif [[ "$_jj_info_prompt" == *"${JJ_PROMPT_SEPARATOR}"* ]]; then
+                local bm=${_jj_info_prompt%%${JJ_PROMPT_SEPARATOR}*}
+                local dist=${_jj_info_prompt##*${JJ_PROMPT_SEPARATOR}}
+                jj_info_prompt="%F{green}${bm}%f%F{yellow}${JJ_PROMPT_SEPARATOR}${dist}%f"
             else
                 jj_info_prompt="%F{green}${_jj_info_prompt}%f"
             fi
