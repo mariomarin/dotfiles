@@ -22,6 +22,8 @@ zmodule sobolevn/wakatime-zsh-plugin
 # Prompt theme
 zmodule prompt-pwd
 zmodule git-info
+# jj-core - core jj utilities (revset builders and executors)
+zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-core
 # jj-info - provides jj repository information
 zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-info
 # gitster - base prompt theme
