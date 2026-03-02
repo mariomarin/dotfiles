@@ -32,7 +32,7 @@ _jj_revset_conflicts() {
     # Args: $1 = scope (default: "mutable()")
     # Returns: revset string
     local scope="${1:-mutable()}"
-    echo "$scope & conflicted()"
+    echo "$scope & conflicts()"
 }
 
 _jj_revset_local_work() {
