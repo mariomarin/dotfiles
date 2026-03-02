@@ -134,6 +134,29 @@ _jj-show-status() {
     jj log -r "${base}..mutable()" --limit 10 2>/dev/null || jj log --limit 10
 }
 
+_jj-get-pr-number() {
+    # Get PR number for a bookmark, if it exists
+    # Args: $1 = bookmark name
+    # Returns: PR number or empty string
+    local bookmark="$1"
+    command gh pr list --head "$bookmark" --json number --jq '.[0].number' 2>/dev/null
+}
+
+_jj-update-pr() {
+    # Update existing PR by force-pushing bookmark
+    # Args: $1 = bookmark name
+    local bookmark="$1"
+    jj git push --bookmark "$bookmark" --force
+}
+
+_jj-create-pr() {
+    # Create new PR for bookmark
+    # Args: $1 = bookmark name, $2+ = additional gh args
+    local bookmark="$1"
+    shift
+    command gh pr create --head "$bookmark" --fill "$@"
+}
+
 
 #
 # Functions
@@ -169,23 +192,23 @@ jpr() {
     for bm in "${bookmarks[@]}"; do
         echo "Processing bookmark: $bm"
 
-        local pr_exists
-        pr_exists=$(command gh pr list --head "$bm" --json number --jq '.[0].number' 2>/dev/null)
+        local pr_number
+        pr_number=$(_jj-get-pr-number "$bm")
 
-        if [[ -n "$pr_exists" ]]; then
-            echo "  PR #$pr_exists exists, updating..."
-            jj git push --bookmark "$bm" --force || exit_code=$?
+        if [[ -n "$pr_number" ]]; then
+            echo "  PR #$pr_number exists, updating..."
+            _jj-update-pr "$bm" || exit_code=$?
             continue
         fi
 
-        [[ "$create" != true ]] && {
+        if [[ "$create" != true ]]; then
             echo "  No PR found. Use --create to create one." >&2
             exit_code=1
             continue
-        }
+        fi
 
         echo "  Creating new PR..."
-        command gh pr create --head "$bm" --fill "${gh_args[@]}" || exit_code=$?
+        _jj-create-pr "$bm" "${gh_args[@]}" || exit_code=$?
     done
 
     return $exit_code
