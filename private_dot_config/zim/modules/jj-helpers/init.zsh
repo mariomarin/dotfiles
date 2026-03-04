@@ -276,11 +276,11 @@ jjsync() {
 
     # Check for conflicts (normal in jj, not an error)
     local conflict_revset="${base_bookmark}..mutable() & conflicts()"
-    local conflict_count
-    conflict_count=$(jj log -r "$conflict_revset" --no-graph -T 'change_id.short()' 2>/dev/null | wc -l | tr -d ' ')
+    local -a conflicted_commits
+    conflicted_commits=(${(f)"$(jj log -r "$conflict_revset" --no-graph -T 'change_id.short()' 2>/dev/null)"})
 
-    if [[ "$conflict_count" -gt 0 ]]; then
-        echo "⚠️  $conflict_count commit(s) have conflicts (resolve at your leisure):"
+    if [[ ${#conflicted_commits[@]} -gt 0 ]]; then
+        echo "⚠️  ${#conflicted_commits[@]} commit(s) have conflicts (resolve at your leisure):"
         jj log -r "$conflict_revset"
     else
         echo "✅ Sync complete - no conflicts"
