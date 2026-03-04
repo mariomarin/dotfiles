@@ -1,0 +1,16 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+[user]
+name = "Mario Marin"
+email = "mmarin@pinterest.com"
+
+[ui]
+pager = ":builtin"
+
+[ui.diff]
+format = "git"
+
+[aliases]
+s = ["show", "--git"]
+f = ["git", "fetch", "--tracked"]
+p = ["git", "push", "--tracked"]

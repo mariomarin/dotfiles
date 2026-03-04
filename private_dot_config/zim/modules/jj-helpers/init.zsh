@@ -70,8 +70,8 @@ alias jundo='jj op undo'
 alias jredo='jj op restore'
 
 # Git operations (g)
-alias jgf='jj git fetch'
-alias jgp='jj git push'
+alias jgf='jj git fetch --tracked'
+alias jgp='jj git push --tracked'
 
 #
 # Helper Functions
@@ -361,6 +361,32 @@ jpush() {
     jj git push --bookmark "$bookmark" "$@"
 }
 
+# Clean up empty commits with no description
+jclean() {
+    local scope="${1:-mutable()}"
+
+    # Find empty commits with no description
+    local -a empty_commits
+    empty_commits=(${(f)"$(jj log -r "$scope & empty()" --no-graph -T 'if(description, "", change_id.short() ++ "\n")' 2>/dev/null)"})
+
+    if [[ ${#empty_commits[@]} -eq 0 ]]; then
+        echo "No empty commits without description found"
+        return 0
+    fi
+
+    echo "Found ${#empty_commits[@]} empty commit(s) with no description:"
+    for commit in "${empty_commits[@]}"; do
+        echo "  $commit"
+    done
+
+    echo ""
+    echo "Abandon these commits? [y/N]"
+    read -q || return 0
+    echo ""
+
+    jj abandon "${empty_commits[@]}"
+}
+
 # Help function
 jj-help() {
     cat << 'EOF'
@@ -374,6 +400,7 @@ Key Functions:
   jpush-main                    Set main bookmark and push
   jjst                          Status with recent log
   jjco                          Interactive bookmark checkout (requires fzf)
+  jclean [scope]                Abandon empty commits with no description (default: mutable())
 
 Common Aliases:
   jl, jsl, jlg      Log views          jb*, jbc, jbd     Bookmark operations
