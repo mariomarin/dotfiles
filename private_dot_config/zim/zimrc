@@ -45,6 +45,8 @@ zmodule ${ZIM_CONFIG_FILE:h}/modules/claude-helpers
 zmodule ${ZIM_CONFIG_FILE:h}/modules/ai-cli
 # jj-helpers - Jujutsu (jj) helper functions and aliases
 zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-helpers
+# hastepaste - Hastebin-compatible paste functions
+zmodule ${ZIM_CONFIG_FILE:h}/modules/hastepaste
 
 # Enables and configures smart and extensive tab completion.
 # Must load before carapace

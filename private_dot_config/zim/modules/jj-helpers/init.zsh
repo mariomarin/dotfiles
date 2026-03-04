@@ -281,7 +281,10 @@ jjsync() {
 
     if [[ ${#conflicted_commits[@]} -gt 0 ]]; then
         printf "⚠️  %d commit(s) have conflicts (resolve at your leisure):\n" "${#conflicted_commits[@]}"
-        jj log -r "$conflict_revset"
+        # Use the collected change IDs instead of re-evaluating the revset
+        # Join array with | to create a revset union: "id1 | id2 | id3"
+        local conflict_ids="${(j: | :)conflicted_commits}"
+        [[ -n "$conflict_ids" ]] && jj log -r "$conflict_ids" 2>/dev/null
     else
         printf "✅ Sync complete - no conflicts\n"
     fi
