@@ -5,6 +5,9 @@
 (defcfg
   process-unmapped-keys yes
   danger-enable-cmd no
+  macos-dev-names-include (
+    "KB800 Kinesis Freestyle"
+  )
 )
 
 ;; Include both grv and nubs to support multiple keyboards:
