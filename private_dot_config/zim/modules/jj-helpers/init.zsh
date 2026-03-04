@@ -124,7 +124,7 @@ _jj-show-status() {
     local base="${1:-trunk()}"
     local revset
     revset=$(_jj_revset_all_local "$base")
-    echo "📊 Current state:"
+    printf "📊 Current state:\n"
     jj log -r "$revset" --limit 10 2>/dev/null || jj log --limit 10
 }
 
@@ -184,24 +184,24 @@ jpr() {
 
     local exit_code=0
     for bm in "${bookmarks[@]}"; do
-        echo "Processing bookmark: $bm"
+        printf "Processing bookmark: %s\n" "$bm"
 
         local pr_number
         pr_number=$(_jj-get-pr-number "$bm")
 
         if [[ -n "$pr_number" ]]; then
-            echo "  PR #$pr_number exists, updating..."
+            printf "  PR #%s exists, updating...\n" "$pr_number"
             _jj-update-pr "$bm" || exit_code=$?
             continue
         fi
 
         if [[ "$create" != true ]]; then
-            echo "  No PR found. Use --create to create one." >&2
+            printf "  No PR found. Use --create to create one.\n" >&2
             exit_code=1
             continue
         fi
 
-        echo "  Creating new PR..."
+        printf "  Creating new PR...\n"
         _jj-create-pr "$bm" "${gh_args[@]}" || exit_code=$?
     done
 
@@ -229,31 +229,31 @@ jjsync() {
     done
 
     if [[ "$pull" == true ]]; then
-        echo "⏬ Fetching from remote..."
+        printf "⏬ Fetching from remote...\n"
         jj git fetch --all-remotes || return
     fi
 
     # Show what trunk() resolved to for transparency
     local trunk_info
     trunk_info=$(jj log -r "$base_bookmark" --no-graph -T 'bookmarks ++ " " ++ commit_id.short(8)' --limit 1 2>/dev/null)
-    [[ -n "$trunk_info" ]] && echo "🎯 Base: ${trunk_info}"
+    [[ -n "$trunk_info" ]] && printf "🎯 Base: %s\n" "$trunk_info"
 
     # Sync specific bookmark if provided
     if [[ -n "$bookmark" ]]; then
-        echo "Syncing bookmark: $bookmark"
+        printf "Syncing bookmark: %s\n" "$bookmark"
         jj rebase -b "$bookmark" -d "$base_bookmark"
         return
     fi
 
     # Sync only current change if -c/--current flag
     if [[ "$current_only" == true ]]; then
-        echo "Syncing current change (@)"
+        printf "Syncing current change (@)\n"
         jj rebase -d "$base_bookmark"
         return
     fi
 
     # Default: sync all local work using idiomatic jj revsets
-    echo "♻️  Rebasing all local work onto trunk..."
+    printf "♻️  Rebasing all local work onto trunk...\n"
 
     # Build revset for stack roots only - preserves linear topology
     local revset
@@ -269,8 +269,8 @@ jjsync() {
     local rebase_exit=$?
 
     if [[ $rebase_exit -ne 0 ]]; then
-        echo "❌ Rebase failed" >&2
-        echo "$rebase_output" >&2
+        printf "❌ Rebase failed\n" >&2
+        printf "%s\n" "$rebase_output" >&2
         return 1
     fi
 
@@ -280,13 +280,13 @@ jjsync() {
     conflicted_commits=(${(f)"$(jj log -r "$conflict_revset" --no-graph -T 'change_id.short()' 2>/dev/null)"})
 
     if [[ ${#conflicted_commits[@]} -gt 0 ]]; then
-        echo "⚠️  ${#conflicted_commits[@]} commit(s) have conflicts (resolve at your leisure):"
+        printf "⚠️  %d commit(s) have conflicts (resolve at your leisure):\n" "${#conflicted_commits[@]}"
         jj log -r "$conflict_revset"
     else
-        echo "✅ Sync complete - no conflicts"
+        printf "✅ Sync complete - no conflicts\n"
     fi
 
-    echo ""
+    printf "\n"
     _jj-show-status "$base_bookmark"
     return 0
 }
@@ -301,7 +301,7 @@ jjst() {
 # Interactive bookmark selection
 jjco() {
     (( ${+commands[fzf]} )) || {
-        echo "Error: fzf is required" >&2
+        printf "Error: fzf is required\n" >&2
         return 1
     }
 
@@ -328,26 +328,26 @@ jmove() {
             *)
                 [[ -z "$commit" ]] && { commit="$1"; shift; continue; }
                 [[ -z "$dest" ]] && { dest="$1"; shift; continue; }
-                echo "Error: Too many arguments" >&2
-                echo "Usage: jmove [-s|-r] <commit> <dest>" >&2
+                printf "Error: Too many arguments\n" >&2
+                printf "Usage: jmove [-s|-r] <commit> <dest>\n" >&2
                 return 1
                 ;;
         esac
     done
 
     [[ -z "$commit" || -z "$dest" ]] && {
-        echo "Error: Missing required arguments" >&2
-        echo "Usage: jmove [-s|-r] <commit> <dest>" >&2
+        printf "Error: Missing required arguments\n" >&2
+        printf "Usage: jmove [-s|-r] <commit> <dest>\n" >&2
         return 1
     }
 
-    echo "Moving $commit (mode: $mode) to $dest"
+    printf "Moving %s (mode: %s) to %s\n" "$commit" "$mode" "$dest"
     jj rebase "$mode" "$commit" -d "$dest"
 }
 
 # Push to main branch
 jpush-main() {
-    echo "Setting main bookmark to current change and pushing..."
+    printf "Setting main bookmark to current change and pushing...\n"
     jj bookmark set main || return
     jj git push --bookmark main
 }
@@ -357,7 +357,7 @@ jpush() {
     local bookmark
     bookmark=$(_jj-get-current-bookmark) || return
 
-    echo "Pushing bookmark: $bookmark"
+    printf "Pushing bookmark: %s\n" "$bookmark"
     jj git push --bookmark "$bookmark" "$@"
 }
 
@@ -370,19 +370,18 @@ jclean() {
     empty_commits=(${(f)"$(jj log -r "$scope & empty()" --no-graph -T 'if(description, "", change_id.short() ++ "\n")' 2>/dev/null)"})
 
     if [[ ${#empty_commits[@]} -eq 0 ]]; then
-        echo "No empty commits without description found"
+        printf "No empty commits without description found\n"
         return 0
     fi
 
-    echo "Found ${#empty_commits[@]} empty commit(s) with no description:"
+    printf "Found %d empty commit(s) with no description:\n" "${#empty_commits[@]}"
     for commit in "${empty_commits[@]}"; do
-        echo "  $commit"
+        printf "  %s\n" "$commit"
     done
 
-    echo ""
-    echo "Abandon these commits? [y/N]"
+    printf "\nAbandon these commits? [y/N] "
     read -q || return 0
-    echo ""
+    printf "\n"
 
     jj abandon "${empty_commits[@]}"
 }
