@@ -255,51 +255,40 @@ jjsync() {
     # Default: sync all local work using idiomatic jj revsets
     echo "♻️  Rebasing all local work onto trunk..."
 
-    # Build revset using jj-core
+    # Build revset for stack roots only - preserves linear topology
     local revset
-    revset=$(_jj_revset_local_work "$base_bookmark" "$mine_only")
-
-    # Check for existing conflicts before rebasing
-    local existing_conflicts
-    existing_conflicts=$(_jj_query_conflicted)
-    if [[ -n "$existing_conflicts" ]]; then
-        echo "❌ Cannot sync: existing conflicts detected" >&2
-        echo "Conflicted changes:" >&2
-        echo "$existing_conflicts" >&2
-        echo "" >&2
-        echo "Resolve conflicts first with: jj new <conflicted-change-id>" >&2
-        return 1
+    if [[ "$mine_only" == true ]]; then
+        revset="roots(${base_bookmark}..mine())"
+    else
+        revset="roots(${base_bookmark}..mutable())"
     fi
 
-    # Single rebase operation for all local commit stacks
+    # Rebase stack roots - descendants follow automatically
     local rebase_output
     rebase_output=$(jj rebase -s "$revset" -d "$base_bookmark" 2>&1)
     local rebase_exit=$?
 
-    if [[ $rebase_exit -eq 0 ]]; then
-        # Check if rebase created new conflicts
-        local new_conflicts
-        new_conflicts=$(_jj_query_conflicted)
-
-        if [[ -n "$new_conflicts" ]]; then
-            echo "❌ Rebase created conflicts - undoing" >&2
-            echo "Conflicted changes:" >&2
-            echo "$new_conflicts" >&2
-            _jj_operation_undo
-            echo "" >&2
-            echo "Sync aborted to prevent conflict mess" >&2
-            return 1
-        fi
-
-        echo "✅ Sync complete"
-        echo ""
-        _jj-show-status "$base_bookmark"
-        return 0
-    else
+    if [[ $rebase_exit -ne 0 ]]; then
         echo "❌ Rebase failed" >&2
         echo "$rebase_output" >&2
         return 1
     fi
+
+    # Check for conflicts (normal in jj, not an error)
+    local new_conflicts
+    new_conflicts=$(jj log -r "${base_bookmark}..mutable() & conflicts()" \
+        --no-graph -T 'change_id.short()' 2>/dev/null)
+
+    if [[ -n "$new_conflicts" ]]; then
+        echo "⚠️  Some commits have conflicts (resolve at your leisure):"
+        jj log -r "$new_conflicts"
+    else
+        echo "✅ Sync complete - no conflicts"
+    fi
+
+    echo ""
+    _jj-show-status "$base_bookmark"
+    return 0
 }
 
 # Quick status with log
