@@ -16,7 +16,7 @@ PrivateTmp=yes
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=read-only
-ReadWritePaths=%h/.local/share/atuin
+ReadWritePaths=%h/.local/share/atuin %t
 
 [Install]
 WantedBy=default.target
