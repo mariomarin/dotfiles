@@ -20,10 +20,32 @@ fi
 # Paste content to Haste server
 # Usage: hastepaste [extension]
 hastepaste() {
-  local S="https" H="${HASTE_SERVER}" P="" L="$1"
-  local SHP="${S}://${H}${P}/"
-  curl -X POST -s --data-binary @- "${SHP}documents" \
-    | awk -F '"' 'b{ b="."b }; {print a$4b}' a="${SHP}" b="${L}"
+  local extension=${1:+.$1}
+  local base_url="${HASTE_SERVER}"
+
+  # Strip trailing slash if present
+  base_url="${base_url%/}"
+
+  # Add https:// if no protocol specified (for compatibility)
+  if [[ ! "${base_url}" =~ ^https?:// ]]; then
+    base_url="https://${base_url}"
+  fi
+
+  local response
+  response=$(curl -X POST -s --data-binary @- "${base_url}/documents") || {
+    print -P "%F{red}Error: Failed to upload to ${base_url}%f" >&2
+    return 1
+  }
+
+  # Extract key from JSON response: {"key":"abc123"}
+  local key="${${response##*\"key\":\"}%%\"*}"
+
+  if [[ -n "${key}" ]]; then
+    print "${base_url}/${key}${extension}"
+  else
+    print -P "%F{red}Error: Invalid response from server%f" >&2
+    return 1
+  fi
 }
 
 # Execute command and paste output to Haste server

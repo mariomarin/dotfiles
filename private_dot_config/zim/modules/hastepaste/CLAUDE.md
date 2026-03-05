@@ -48,8 +48,14 @@ This module provides a clean, zsh-idiomatic interface for pasting content to Has
 Add to `.env.work`:
 
 ```bash
+# Simple domain (https:// assumed)
 export HASTE_SERVER="paste.example.com"
+
+# Or full URL (compatible with haste Ruby gem)
+export HASTE_SERVER="https://paste.example.com/"
 ```
+
+Both formats supported for compatibility with existing `haste` gem installations.
 
 ## Dependencies
 

@@ -12,8 +12,14 @@ It requires the `HASTE_SERVER` environment variable to be set with your server d
 Set the `HASTE_SERVER` environment variable in your `.env.work` file:
 
 ```bash
+# Simple domain (https:// assumed)
 export HASTE_SERVER="paste.example.com"
+
+# Or full URL (compatible with haste gem)
+export HASTE_SERVER="https://paste.example.com/"
 ```
+
+Both formats are supported for compatibility with the `haste` Ruby gem.
 
 ## Functions
 
