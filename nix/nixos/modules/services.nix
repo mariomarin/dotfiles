@@ -21,6 +21,18 @@ in
         configDir = "${homeDir}/.config/syncthing";
       };
 
+      # Clipper - clipboard over SSH (localhost only, no network dependency)
+      systemd.user.services.clipper = {
+        description = "Clipper clipboard service";
+        wantedBy = [ "default.target" ];
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = "${pkgs.clipper}/bin/clipper --address 127.0.0.1 --port 8377";
+          Restart = "on-failure";
+          RestartSec = 5;
+        };
+      };
+
       # Topgrade - automatic updates
       systemd.user.services.topgrade = {
         description = "Run topgrade to update all packages and plugins";

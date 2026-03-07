@@ -1,0 +1,27 @@
+[Unit]
+Description=Clipper clipboard service
+Documentation=https://github.com/wincent/clipper
+# No network dependency needed - binds to localhost only
+# Note: NixOS users get clipper.service via nix/nixos/modules/services.nix
+# This file is for apt-based Linux systems only
+
+[Service]
+Type=simple
+# Uses %h/.local/bin for user installation (no sudo required)
+# For system-wide install, change to /usr/bin/clipper
+ExecStart=%h/.local/bin/clipper --address 127.0.0.1 --port 8377
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening
+PrivateTmp=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+# Note: ProtectHome=read-only may block X11/Wayland clipboard access on some systems
+# If clipboard writes fail, try removing this or changing to ProtectHome=no
+ProtectHome=read-only
+
+[Install]
+WantedBy=default.target

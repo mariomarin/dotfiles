@@ -81,6 +81,7 @@ brew "sesh"
 # macOS services
 brew "kanata"
 brew "syncthing"
+brew "clipper"
 
 # Casks
 cask "nikitabobko/tap/aerospace"

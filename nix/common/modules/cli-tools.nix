@@ -30,6 +30,7 @@ in
       zellij # Modern terminal multiplexer (Rust)
       sesh # Smart session manager for tmux
       zesh # Smart session manager for zellij (custom pkg)
+      clipper # Clipboard over SSH
 
       # ── Editor ──────────────────────────────────────────────────────────
       vim
