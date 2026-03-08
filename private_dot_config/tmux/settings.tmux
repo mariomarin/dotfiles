@@ -4,6 +4,13 @@
 # set C-a as prefix
 set -g prefix C-a
 
+# Escape time for Alt/Meta key sequences (10ms allows ESC+key to be recognized as M-key)
+# Override tmux-sensible's escape-time 0 which breaks Alt bindings:
+# - At 0ms, tmux interprets ESC immediately, so "ESC j" becomes "Escape, j" not "M-j"
+# - 10ms is imperceptible to humans but enough for the two-byte sequence to arrive
+# - Recommended by Neovim's :checkhealth
+set -sg escape-time 10
+
 # Vi-style key bindings in copy mode (enables j/k navigation)
 set-option -g mode-keys vi
 
