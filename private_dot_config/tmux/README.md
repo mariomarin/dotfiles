@@ -29,8 +29,9 @@ For a complete list of keybindings, see **[KEYBINDINGS.md](KEYBINDINGS.md)**.
 **Quick reference**:
 
 - **Prefix key**: `C-a` (Ctrl+a)
+- **Tilish modal**: `M-Space` (Alt+Space) - i3wm-style modal prefix
 - **Session picker**: `prefix T` (sesh with preview)
-- **Pane navigation**: `M-h/j/k/l` (works in both tmux and Neovim)
+- **Pane navigation**: `M-Space h/j/k/l` (works in both tmux and Neovim)
 - **Copy mode**: `prefix /` to enter and search
 
 ## Plugin List
@@ -80,10 +81,12 @@ Two plugins work together to persist sessions across reboots:
 
 Using **aserowy/tmux.nvim** for seamless tmux/neovim integration:
 
-- **Navigation**: `M-h/j/k/l` to move between tmux panes and Neovim splits
+- **Navigation**: `M-Space h/j/k/l` to move between tmux panes and Neovim splits
   - Provided by tmux-tilish with built-in vim awareness
+  - Modal prefix: `M-Space` (Alt+Space) followed by direction key
   - Works seamlessly in both tmux and Neovim
 - **Resizing**: Omarchy-style keybindings for pane resizing
+  - `M-Space =/-/+/_` for directional resizing
   - Configured in both tmux (tmux-tilish) and Neovim (tmux.nvim)
   - Vim-aware resizing that works in both environments
 - **Clipboard Sync**: Automatic synchronization of registers between Neovim instances and tmux

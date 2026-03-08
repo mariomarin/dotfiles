@@ -44,8 +44,12 @@ private_dot_config/tmux/
 - Plugin declarations and settings
 - Custom keybindings for plugins
 - Plugin-specific configuration
+- **Note**: tmux-tilish configured with modal prefix `M-Space`
+  - All tilish commands require `M-Space` first (e.g., `M-Space h` not `M-h`)
+  - Frees up all `M-<key>` bindings for other plugins and tools
+  - Follows i3wm-style modal pattern
 - **Note**: tmux-harpoon replaced tmux-fzf for session navigation
-  - Custom bindings to avoid conflicts: `M-a` instead of `M-h`
+  - Custom bindings: `M-a` and `C-S-a` (no conflicts with modal tilish)
 
 ### mappings/
 
@@ -71,15 +75,19 @@ Currently using **aserowy/tmux.nvim** for seamless integration:
 - tmux-resurrect configured to restore nvim without special session commands
 - Sessions are saved automatically by persistence.nvim
 
-- Navigation: `M-h/j/k/l` between tmux panes and Neovim splits (unified with tmux-tilish)
+### Modal Navigation & Resizing
+
+- Navigation: `M-Space h/j/k/l` between tmux panes and Neovim splits (unified with tmux-tilish)
+  - Modal prefix: `M-Space` (Alt+Space) followed by direction key
+  - Works seamlessly in both tmux and Neovim with vim awareness
 - Resizing: Omarchy-style keybindings (tmux-tilish smart splits + tmux.nvim)
-  - `M-=` (Alt+Equal): Grow pane to the left
-  - `M--` (Alt+Minus): Grow pane to the right
-  - `M-+` (Alt+Shift+Equal): Grow pane down
-  - `M-_` (Alt+Shift+Minus): Grow pane up
+  - `M-Space =` (Alt+Space, then =): Grow pane to the left
+  - `M-Space -` (Alt+Space, then -): Grow pane to the right
+  - `M-Space +` (Alt+Space, then Shift+=): Grow pane down
+  - `M-Space _` (Alt+Space, then Shift+-): Grow pane up
 - Clipboard sync between Neovim instances
 - Configured in Neovim's `lua/plugins/tmux-navigation.lua`
-- tmux-tilish configured with custom resize keys in `plugins.tmux`
+- tmux-tilish configured with modal prefix in `plugins.tmux`
 
 ## Common Tasks
 

@@ -48,8 +48,10 @@ if-shell "uname | grep -q Linux && ! test -f /proc/sys/fs/binfmt_misc/WSLInterop
     "set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message \"Opening {}\" && xdg-open {}'"
 
 # tmux-tilish (farzadmf fork with copilot support)
-# Don't set @tilish-prefix - when empty, tilish creates M-hjkl bindings in root table
-# (setting it creates a prefix-based key table instead)
+# M-Space as modal modifier (like i3wm $mod key)
+# Setting @tilish-prefix creates a key table accessed via M-Space
+# (when empty, tilish would create M-hjkl bindings in root table instead)
+set -g @tilish-prefix 'M-Space'
 set -g @tilish-dmenu 'on'
 set -g @tilish-new_pane '"'
 set -g @tilish-smart-splits 'on'

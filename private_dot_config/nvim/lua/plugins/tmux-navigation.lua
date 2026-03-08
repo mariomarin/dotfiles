@@ -39,28 +39,28 @@ return {
           sync_registers = true,
         },
         navigation = {
-          -- Use Alt for tilish-style navigation (matches tmux-tilish)
+          -- Modal prefix: M-Space (matches tmux-tilish modal prefix)
           enable_default_keybindings = false,
           cycle_navigation = true,
           keybindings = {
-            left = "<M-h>",
-            down = "<M-j>",
-            up = "<M-k>",
-            right = "<M-l>",
-            last_active = "<M-\\>",
-            next = "<M-Space>",
+            left = "<M-Space>h",
+            down = "<M-Space>j",
+            up = "<M-Space>k",
+            right = "<M-Space>l",
+            last_active = "<M-Space>\\",
+            next = "<M-Space><Space>",
           },
         },
         resize = {
-          -- Resize via Alt (matches tilish smart-splits)
+          -- Modal prefix: M-Space (matches tilish smart-splits)
           enable_default_keybindings = false,
           resize_step_x = 1,
           resize_step_y = 1,
           keybindings = {
-            left = "<M-=>",
-            right = "<M-->",
-            down = "<M-+>",
-            up = "<M-_>",
+            left = "<M-Space>=",
+            right = "<M-Space>-",
+            down = "<M-Space>+",
+            up = "<M-Space>_",
           },
         },
       })
