@@ -90,3 +90,6 @@ cask "firefox"
 cask "spotify"
 cask "bitwarden"
 # karabiner-driverkit: install manually from https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases
+
+# Fonts
+cask "font-jetbrains-mono-nerd-font"
