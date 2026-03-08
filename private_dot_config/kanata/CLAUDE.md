@@ -99,9 +99,11 @@ Physical Keyboard → Kanata → Hammerspoon → macOS Spaces API
 ### Setup
 
 1. **Install Hammerspoon**: Already in `Brewfile`, install with `brew bundle`
-2. **Config location**: `~/.hammerspoon/init.lua` (managed by chezmoi)
-3. **Grant permissions**: Accessibility permission for Hammerspoon on first launch
-4. **Create desktops**: Manually create 9 desktops in Mission Control (macOS doesn't allow programmatic creation)
+2. **Config location**: `~/.config/hammerspoon/init.lua` (managed by chezmoi, auto-reloads on change)
+   - Hammerspoon configured to use XDG path via `defaults write`
+3. **Auto-start**: Configured automatically via `run_onchange_after_darwin-brew-setup-hammerspoon.nu`
+4. **Grant permissions**: Accessibility permission for Hammerspoon on first launch
+5. **Create desktops**: Manually create 9 desktops in Mission Control (macOS doesn't allow programmatic creation)
 
 ### Window Layer Keybindings
 

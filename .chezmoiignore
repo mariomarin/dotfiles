@@ -132,10 +132,13 @@ nix/darwin/**
 {{ if ne $platform "darwin-brew" }}
 .config/brew
 .config/brew/**
+.config/hammerspoon
+.config/hammerspoon/**
 .config/launchd
 .config/launchd/**
 .chezmoiscripts/run_onchange_after_10_darwin-brew-install-packages.nu
 .chezmoiscripts/run_onchange_after_20_darwin-brew-setup-services.nu
+.chezmoiscripts/run_onchange_after_30_darwin-brew-setup-hammerspoon.nu
 {{ end }}
 
 # darwin with nix only (tridactyl-native from nix)
