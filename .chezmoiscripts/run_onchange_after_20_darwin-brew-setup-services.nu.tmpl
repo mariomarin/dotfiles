@@ -1,7 +1,6 @@
 #!/usr/bin/env nu
 # Setup LaunchDaemons and LaunchAgents for darwin-brew
 # config hash: {{ include "private_dot_config/launchd/services.yaml.tmpl" | sha256sum }}
-# hash: {{ include "private_dot_config/launchd/org.local.aerospace.plist" | sha256sum }}
 # hash: {{ include "private_dot_config/launchd/org.local.syncthing.plist.tmpl" | sha256sum }}
 {{- if .machineConfig.features.kanata }}
 # hash: {{ include "private_dot_config/launchd/org.local.kanata.plist.tmpl" | sha256sum }}

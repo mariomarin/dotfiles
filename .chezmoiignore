@@ -80,8 +80,6 @@ devenv.yaml
 {{ if ne .chezmoi.os "darwin" }}
 nix/darwin
 nix/darwin/**
-.config/aerospace
-.config/aerospace/**
 {{ end }}
 
 # Linux-only window managers (ignore on macOS)

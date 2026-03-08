@@ -1,6 +1,6 @@
 # Kanata Keybindings
 
-Space Cadet keys + Layer-based navigation, accents, and window management.
+Space Cadet keys + Layer-based navigation and accents.
 
 ## Primary Remappings
 
@@ -8,7 +8,6 @@ Space Cadet keys + Layer-based navigation, accents, and window management.
 | ------------ | --- | ---- | ----------- |
 | ⇪ Caps Lock | ⎋ | ⎈ | Escape or Control |
 | ⭾ Tab | ⭾ | Hyper | ⎈⌥⌘⇧ (app launchers) |
-| `=` | `=` | Window | ⎈⌥ layer (WM control) |
 | ‹⇧ Left Shift | `(` | ⇧ | Parenthesis or Shift |
 | ⇧› Right Shift | `)` | ⇧ | Parenthesis or Shift |
 | ‹⎈ Left Ctrl | `{` | ⎈ | Brace or Control |
@@ -27,30 +26,6 @@ Space Cadet keys + Layer-based navigation, accents, and window management.
 | `u` | ⇟ Page Down |
 | `i` | ⇞ Page Up |
 | `o` | ⇥ End |
-
-## Window Layer (Hold `=`)
-
-Sends `Ctrl+Alt+key`. Used by AeroSpace window manager.
-
-| Key | Action |
-| --- | ------ |
-| `hjkl` | Focus direction (AeroSpace) |
-| `1-9` | Switch workspace (AeroSpace) |
-| `q` | Close window |
-| `Space` | Toggle floating |
-| `Tab` | Last workspace |
-| `s` | Session manager |
-| `f` | Toggle fullscreen |
-| `Enter` | Launch terminal |
-
-### Separation from Terminal Multiplexers
-
-| Target | Modifier | Example |
-| ------ | -------- | ------- |
-| AeroSpace (GUI WM) | `Ctrl+Alt` via `=` layer | `=+1` → workspace 1 |
-| tmux/zellij (terminal) | `Alt` (direct) | `Alt+1` → tmux window/zellij tab |
-
-Terminal multiplexers (tmux-tilish, zellij) use plain `Alt` bindings directly. The `=` layer is for AeroSpace window management.
 
 ## Accent Layer (Hold Grave)
 

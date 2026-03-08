@@ -4,7 +4,6 @@
 
 {
   environment.systemPackages = with pkgs; [
-    aerospace # Tiling window manager (i3-like)
     pkgs-unstable.kanata # Keyboard remapping (unstable: V6 karabiner-dk compat)
     kanata-tray # System tray for kanata (custom pkg)
     karabiner-dk # DriverKit VirtualHIDDevice (driver-only, no full Karabiner-Elements)

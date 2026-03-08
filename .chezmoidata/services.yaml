@@ -8,12 +8,6 @@ services:
         - private_dot_config/kanata/core.kbd
       type: launchctl
       service: org.nixos.kanata
-    - name: aerospace
-      configs:
-        - private_dot_config/aerospace/aerospace.toml
-      type: command
-      check: pgrep -x AeroSpace
-      reload: aerospace reload-config
   linux:
     - name: kanata
       configs:

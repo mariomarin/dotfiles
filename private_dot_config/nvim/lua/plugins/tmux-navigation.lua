@@ -1,22 +1,6 @@
--- Seamless navigation between Neovim and terminal multiplexers (tmux/zellij)
--- Uses Alt (M) for tilish-style navigation
+-- Seamless navigation between Neovim and tmux
+-- Modal prefix: M-Space (matches tmux-tilish)
 return {
-  -- Zellij navigation (when running inside zellij)
-  {
-    "swaits/zellij-nav.nvim",
-    lazy = true,
-    event = "VeryLazy",
-    keys = {
-      { "<M-h>", "<cmd>ZellijNavigateLeftTab<cr>", desc = "Zellij left", silent = true },
-      { "<M-j>", "<cmd>ZellijNavigateDown<cr>", desc = "Zellij down", silent = true },
-      { "<M-k>", "<cmd>ZellijNavigateUp<cr>", desc = "Zellij up", silent = true },
-      { "<M-l>", "<cmd>ZellijNavigateRightTab<cr>", desc = "Zellij right", silent = true },
-    },
-    cond = function()
-      return vim.env.ZELLIJ ~= nil
-    end,
-  },
-
   -- Tmux navigation (when running inside tmux)
   {
     "aserowy/tmux.nvim",
