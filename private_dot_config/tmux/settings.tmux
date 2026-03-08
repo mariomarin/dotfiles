@@ -4,6 +4,10 @@
 # set C-a as prefix
 set -g prefix C-a
 
+# Force zsh as default shell for new windows/panes
+# Works even if login shell is bash (corporate environments)
+set -g default-shell /usr/bin/zsh
+
 # Escape time for Alt/Meta key sequences (10ms allows ESC+key to be recognized as M-key)
 # Override tmux-sensible's escape-time 0 which breaks Alt bindings:
 # - At 0ms, tmux interprets ESC immediately, so "ESC j" becomes "Escape, j" not "M-j"
