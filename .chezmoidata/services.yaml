@@ -7,7 +7,7 @@ services:
         - private_dot_config/kanata/darwin.kbd
         - private_dot_config/kanata/core.kbd
       type: launchctl
-      service: org.nixos.kanata
+      service: org.local.kanata
   linux:
     - name: kanata
       configs:

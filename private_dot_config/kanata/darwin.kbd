@@ -26,6 +26,7 @@
   ;; Layers
   nav   (tap-hold 200 200 ␣ (layer-toggle navigation))
   acc   (layer-toggle accents)
+  wnd   (layer-toggle window)
 
   ;; Tap-hold keys (Space Cadet style)
   cap   (tap-hold 200 200 ⎋ ‹⎈)                          ;; ⇪ → ⎋/⎈
@@ -33,6 +34,7 @@
   rspc  (tap-hold 200 200 S-0 ⇧›)                        ;; ⇧› → )/⇧
   lcpc  (tap-hold 200 200 S-[ ‹⎈)                        ;; ‹⎈ → {/⎈
   hyper (tap-hold 200 200 ⭾ (multi ‹⎈ ‹⌘ ‹⌥ ‹⇧))        ;; ⭾ → Hyper
+  wineq (tap-hold 200 200 = @wnd)                        ;; = → Window layer
 
   ;; Accent layer triggers (key below ⎋)
   accg  (tap-hold 200 200 grv @acc)                      ;; Kinesis: ˋ → accent
@@ -49,7 +51,7 @@
 
 (deflayer base
   ⎋      f1     f2     f3     f4     f5     f6     f7     f8     f9     f10    f11    f12
-  @accg  1      2      3      4      5      6      7      8      9      0      -      =      ⌫
+  @accg  1      2      3      4      5      6      7      8      9      0      -      @wineq ⌫
   @hyper q      w      e      r      t      y      u      i      o      p      [      ]      \
   @cap   a      s      d      f      g      h      j      k      l      ;      '      ⏎
   @lspc  @accn  z      x      c      v      b      n      m      ,      .      /      @rspc
@@ -74,4 +76,19 @@
   _    @á   @ß   _    _    _    _    _    _    _    @æ   @ü   _
   _    _    _    _    @ç   _    @ñ   _    @µ   _    _    _    _
   _    _    _              _              _    _    _    _    _    _
+)
+
+;; Window layer: hold = → Workspace management via Hammerspoon
+;; Numbers: Switch to Desktop 1-9 (Ctrl+Alt+1-9)
+;; Shift+Numbers: Move window to Desktop 1-9 (Ctrl+Alt+Shift+1-9)
+;; hjkl: Navigate spaces and focus windows (Ctrl+Alt+hjkl)
+;; w: Swap workspaces between monitors (Ctrl+Alt+w)
+;; ,/.: Move window to prev/next monitor (Ctrl+Alt+Shift+,/.)
+(deflayer window
+  _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      C-A-1  C-A-2  C-A-3  C-A-4  C-A-5  C-A-6  C-A-7  C-A-8  C-A-9  _      _      _      _
+  _      _      C-A-w  _      _      _      _      _      C-A-i  _      _      _      _      _
+  _      _      _      _      _      _      C-A-h  C-A-j  C-A-k  C-A-l  _      _      _
+  ‹⇧     _      _      _      _      _      _      _      _      C-A-,  C-A-.  _      ⇧›
+  _      _      _                    _                    _      _      _      _      _      _
 )

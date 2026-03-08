@@ -84,6 +84,51 @@ Physical Keyboard → Karabiner DriverKit Extension → kanata → Virtual Keybo
 - Uses `low-level-hook` for input, `send-event-sink` for output
 - Can be configured to run at startup via Task Scheduler
 
+## Hammerspoon Integration (macOS)
+
+Kanata's window layer (= key) integrates with Hammerspoon for workspace management on macOS.
+
+### Architecture
+
+```text
+Physical Keyboard → Kanata → Hammerspoon → macOS Spaces API
+                    (sends     (intercepts    (switches
+                   Ctrl+Alt)   Ctrl+Alt)       spaces)
+```
+
+### Setup
+
+1. **Install Hammerspoon**: Already in `Brewfile`, install with `brew bundle`
+2. **Config location**: `~/.hammerspoon/init.lua` (managed by chezmoi)
+3. **Grant permissions**: Accessibility permission for Hammerspoon on first launch
+4. **Create desktops**: Manually create 9 desktops in Mission Control (macOS doesn't allow programmatic creation)
+
+### Window Layer Keybindings
+
+| User Action | Kanata Sends | Hammerspoon Action |
+|-------------|--------------|-------------------|
+| `=+1-9` | `Ctrl+Alt+1-9` | Switch to desktop 1-9 |
+| `=+Shift+1-9` | `Ctrl+Alt+Shift+1-9` | Move window to desktop 1-9 |
+| `=+h` | `Ctrl+Alt+h` | Previous space |
+| `=+l` | `Ctrl+Alt+l` | Next space |
+| `=+j` | `Ctrl+Alt+j` | Focus window below |
+| `=+k` | `Ctrl+Alt+k` | Focus window above |
+| `=+w` | `Ctrl+Alt+w` | Swap workspaces (multi-monitor) |
+| `=+Shift+,` | `Ctrl+Alt+Shift+,` | Move window to prev monitor |
+| `=+Shift+.` | `Ctrl+Alt+Shift+.` | Move window to next monitor |
+| `=+i` | `Ctrl+Alt+i` | Show desktop info (debug) |
+
+**Design**: Matches LeftWM keybindings for cross-platform muscle memory.
+
+### Reload Hammerspoon
+
+After editing `~/.hammerspoon/init.lua`:
+
+```bash
+# Hammerspoon auto-reloads when files change
+# Or manually: open Hammerspoon, click "Reload Config"
+```
+
 ## Common Tasks
 
 ### Testing Configuration
@@ -130,7 +175,10 @@ sudo launchctl list | grep kanata
 tail -f /tmp/kanata.out.log /tmp/kanata.err.log
 
 # Restart service
+# nix-darwin:
 sudo launchctl kickstart -kp system/org.nixos.kanata
+# darwin-brew:
+sudo launchctl kickstart -k system/org.local.kanata
 ```
 
 ## Important Notes
