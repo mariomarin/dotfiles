@@ -33,7 +33,7 @@ Enhanced session picker with icons and preview pane showing session contents.
 
 | Keybinding | Prefix | Description |
 | ---------- | ------ | ----------- |
-| `M-Tab` / `C-M-Tab` | `prefix l` / `prefix Tab` | Switch to last active window |
+| `M-Tab` | `prefix l` / `prefix Tab` | Switch to last active window |
 | | `prefix w` | Window tree picker |
 | | `prefix c` | Create new window |
 | | `prefix n` | Next window |
@@ -119,40 +119,26 @@ Enhanced session picker with icons and preview pane showing session contents.
 
 ### tmux-tilish (i3wm-style)
 
-These bindings work with both `Alt+key` directly or `=+key` via kanata window mode.
-
-#### Extended-keys and tilish prefix limitation
-
-Tilish's `@tilish-prefix` option (set to `C-M`) creates a separate key table activated by
-pressing `Ctrl+Alt`, then a second key. However, with tmux's `extended-keys` enabled and
-Alacritty sending CSI u sequences, `Ctrl+Alt+1` arrives as a **single chord** (`C-M-1`),
-not two keystrokes (`C-M` then `1`).
-
-**Workaround**: Custom `C-M-*` bindings in `mappings/root.tmux` override tilish's simple
-bindings with proper upsert logic (create window if not exists). These run after tilish
-loads and take precedence.
-
-| `=+key` | `Alt+key` | Prefix | Description |
-| ------- | --------- | ------ | ----------- |
-| `=+1-9` | `M-1-9` | `prefix 1-9` | Switch to window 1-9 |
-| `=+0` | `M-0` | `prefix 0` | Switch to window 0/10 |
-| `=+Tab` | `M-Tab` | `prefix l` | Last active window |
-| `=+hjkl` | `M-hjkl` | | Navigate panes (vim aware) |
-| `=+HJKL` | `M-S-hjkl` | | Move pane in direction |
-| `=+Enter` | `M-Enter` | | Create new pane |
-| `=+q` | `M-S-q` | `prefix x` | Close pane |
-| `=+z` | `M-z` | | Zoom (fullscreen) toggle |
-| `=+Space` | | `prefix Space` | Next layout |
-| `=+s` | `M-s` | | Layout: main-horizontal |
-| `=+S` | `M-S-s` | | Layout: even-vertical |
-| `=+v` | `M-v` | | Layout: main-vertical |
-| `=+V` | `M-S-v` | | Layout: even-horizontal |
-| `=+t` | `M-t` | | Layout: tiled |
-| `=+r` | `M-r` | | Refresh current layout |
-| `=+n` | `M-n` | `prefix ,` | Rename current window |
-| `=+E` | `M-S-e` | `prefix d` | Detach from tmux |
-| `=+C` | `M-S-c` | `prefix r` | Reload configuration |
-| `=+Shift+1-9` | `M-S-1-9` | | Move pane to window 1-9 |
+| `Alt+key` | Prefix | Description |
+| --------- | ------ | ----------- |
+| `M-1-9` | `prefix 1-9` | Switch to window 1-9 |
+| `M-0` | `prefix 0` | Switch to window 0/10 |
+| `M-Tab` | `prefix l` | Last active window |
+| `M-hjkl` | | Navigate panes (vim aware) |
+| `M-S-hjkl` | | Move pane in direction |
+| `M-Enter` | | Create new pane |
+| `M-S-q` | `prefix x` | Close pane |
+| `M-z` | | Zoom (fullscreen) toggle |
+| `M-s` | | Layout: main-horizontal |
+| `M-S-s` | | Layout: even-vertical |
+| `M-v` | | Layout: main-vertical |
+| `M-S-v` | | Layout: even-horizontal |
+| `M-t` | | Layout: tiled |
+| `M-r` | | Refresh current layout |
+| `M-n` | `prefix ,` | Rename current window |
+| `M-S-e` | `prefix d` | Detach from tmux |
+| `M-S-c` | `prefix r` | Reload configuration |
+| `M-S-1-9` | | Move pane to window 1-9 |
 
 ### tmux-harpoon
 

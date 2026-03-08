@@ -12,7 +12,7 @@ Tmux-like keybindings with `Ctrl+a` prefix. Default mode is **locked** (keys pas
 | `prefix Ctrl+c` | Session manager (create/switch) |
 | `prefix Ctrl+f` | Session manager (find) |
 | `prefix T` | Session picker (like sesh) |
-| `Ctrl+Alt+s` | Quick session manager (via Kanata `=` layer) |
+| `Alt+s` | Quick session manager |
 
 ## Tab Management
 
@@ -23,8 +23,8 @@ Tmux-like keybindings with `Ctrl+a` prefix. Default mode is **locked** (keys pas
 | `prefix ,` | Rename current tab |
 | `prefix p` / `prefix n` | Previous/next tab |
 | `prefix 1-9` | Go to tab 1-9 |
-| `Ctrl+Alt+1-9` | Quick tab switch (via Kanata `=` layer) |
-| `Ctrl+Alt+Tab` | Toggle last tab |
+| `Alt+1-9` | Quick tab switch |
+| `Alt+Tab` | Toggle last tab |
 
 ## Pane Management
 
@@ -36,13 +36,13 @@ Tmux-like keybindings with `Ctrl+a` prefix. Default mode is **locked** (keys pas
 | `prefix z` | Toggle fullscreen |
 | `prefix o` | Focus next pane |
 | `prefix Space` | Cycle layouts |
-| `Ctrl+Alt+"` | New pane (via Kanata `=` layer) |
-| `Ctrl+Alt+-` | Split down |
-| `Ctrl+Alt+\` | Split right |
-| `Ctrl+Alt+q` | Close pane |
-| `Ctrl+Alt+z` | Toggle fullscreen |
-| `Ctrl+Alt+Space` | Cycle layouts |
-| `Ctrl+Alt+f` | Toggle floating panes |
+| `Alt+"` | New pane |
+| `Alt+-` | Split down |
+| `Alt+\` | Split right |
+| `Alt+q` | Close pane |
+| `Alt+z` | Toggle fullscreen |
+| `Alt+Space` | Cycle layouts |
+| `Alt+f` | Toggle floating panes |
 
 ## Pane Navigation
 
@@ -50,7 +50,7 @@ Tmux-like keybindings with `Ctrl+a` prefix. Default mode is **locked** (keys pas
 | ---------- | ----------- |
 | `prefix h/j/k/l` | Navigate panes |
 | `prefix H/J/K/L` | Resize panes |
-| `Ctrl+Alt+h/j/k/l` | Quick pane navigation (via Kanata `=` layer) |
+| `Alt+h/j/k/l` | Quick pane navigation (works with Neovim) |
 
 ## Copy/Scroll Mode
 
@@ -74,7 +74,7 @@ Enter with `prefix [` or `prefix /` (search).
 | `prefix e` | File picker (strider) |
 | `prefix ?` | File browser |
 | `prefix b` | Toggle pane frames |
-| `Ctrl+Alt+s` | Session manager (via Kanata `=` layer) |
+| `Alt+s` | Session manager |
 | `Ctrl+y` | Harpoon (quick pane jump) |
 | `Ctrl+o` | ZSM (zoxide session manager) |
 
@@ -108,7 +108,7 @@ Zoxide-integrated session manager like sesh. [GitHub](https://github.com/liam-ma
 | **resurrect** | Save/restore sessions | `session_serialization` | ✅ Auto |
 | **continuum** | Auto-save sessions | `session_serialization` | ✅ Auto |
 | **fingers** | Hint-based text copy | ❌ None | Use mouse/search |
-| **tilish** | i3-style bindings | Ctrl+Alt (via Kanata) | ✅ Config |
+| **tilish** | i3-style bindings | Alt bindings | ✅ Config |
 | **harpoon** | Quick pane jump | harpoon plugin (`Ctrl+y`) | ✅ Plugin |
 | **fuzzback** | Fuzzy scrollback search | Search mode (`/`) | ✅ Built-in |
 | **extrakto** | Fuzzy text extraction | ❌ None | Use edit scrollback |
@@ -125,15 +125,15 @@ Zoxide-integrated session manager like sesh. [GitHub](https://github.com/liam-ma
 | `prefix L` | Last session | ❌ Use session-manager |
 | `M-f` | tmux-fingers | ❌ Not available |
 | `M-j` | fingers jump mode | ❌ Not available |
-| `M-0-9` | Switch workspace | `Ctrl+Alt+0-9` (via Kanata) |
-| `M-h/j/k/l` | Navigate panes | `Ctrl+Alt+h/j/k/l` |
+| `M-0-9` | Switch workspace | `Alt+0-9` |
+| `M-h/j/k/l` | Navigate panes | `Alt+h/j/k/l` |
 | `M-S-h/j/k/l` | Move pane | ❌ Not mapped |
-| `M-Enter` | New pane | `Ctrl+Alt+"` |
-| `M-z` | Toggle zoom | `Ctrl+Alt+z` |
+| `M-Enter` | New pane | `Alt+"` |
+| `M-z` | Toggle zoom | `Alt+z` |
 | `M-n` | Rename window | `prefix ,` |
-| `M-S-q` | Close pane | `Ctrl+Alt+q` |
+| `M-S-q` | Close pane | `Alt+q` |
 | `M-S-e` | Detach | `prefix d` |
-| `M-Tab` | Last window | `Ctrl+Alt+Tab` |
+| `M-Tab` | Last window | `Alt+Tab` |
 | `C-h` (harpoon) | Quick pane jump | `Ctrl+y` |
 | `prefix C-s` | Save (resurrect) | Auto (no binding) |
 | `prefix C-r` | Restore (resurrect) | Auto (no binding) |

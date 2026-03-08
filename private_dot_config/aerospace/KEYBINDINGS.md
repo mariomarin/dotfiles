@@ -1,39 +1,39 @@
 # AeroSpace Keybindings
 
-i3/LeftWM-style keybindings using Alt modifier (like Super on Linux).
+i3/LeftWM-style keybindings using Ctrl+Alt modifier (via Kanata `=` layer).
 
 ## Navigation
 
 | Binding | Action |
 | ------- | ------ |
-| `Alt+hjkl` | Focus direction |
-| `Alt+Shift+hjkl` | Move window |
-| `Alt+1-9` | Switch workspace |
-| `Alt+Shift+1-9` | Move to workspace |
+| `Ctrl+Alt+hjkl` | Focus direction |
+| `Ctrl+Alt+Shift+hjkl` | Move window |
+| `Ctrl+Alt+1-9` | Switch workspace |
+| `Ctrl+Alt+Shift+1-9` | Move to workspace |
 
 ## Window Actions
 
 | Binding | Action |
 | ------- | ------ |
-| `Alt+f` | Fullscreen |
-| `Alt+Shift+q` | Close |
-| `Alt+Enter` | Terminal (Alacritty) |
-| `Alt+Space` | Toggle floating |
-| `Alt+Tab` | Last workspace |
-| `Alt+e` | Cycle layouts (h_tiles → v_tiles → accordion) |
-| `Alt+r` | Resize mode |
-| `Alt+w` | Swap workspaces between monitors |
+| `Ctrl+Alt+f` | Fullscreen |
+| `Ctrl+Alt+Shift+q` | Close |
+| `Ctrl+Alt+Enter` | Terminal (Alacritty) |
+| `Ctrl+Alt+Space` | Toggle floating |
+| `Ctrl+Alt+Tab` | Last workspace |
+| `Ctrl+Alt+e` | Cycle layouts (h_tiles → v_tiles → accordion) |
+| `Ctrl+Alt+r` | Resize mode |
+| `Ctrl+Alt+w` | Swap workspaces between monitors |
 
 ## Monitor Navigation
 
 | Binding | Action |
 | ------- | ------ |
-| `Alt+,` | Focus previous monitor |
-| `Alt+.` | Focus next monitor |
-| `Alt+Shift+,` | Move to previous monitor |
-| `Alt+Shift+.` | Move to next monitor |
+| `Ctrl+Alt+,` | Focus previous monitor |
+| `Ctrl+Alt+.` | Focus next monitor |
+| `Ctrl+Alt+Shift+,` | Move to previous monitor |
+| `Ctrl+Alt+Shift+.` | Move to next monitor |
 
-## Resize Mode (`Alt+r`)
+## Resize Mode (`Ctrl+Alt+r`)
 
 | Key | Action |
 | --- | ------ |
@@ -45,7 +45,7 @@ i3/LeftWM-style keybindings using Alt modifier (like Super on Linux).
 
 | Target | Modifier | Example |
 | ------ | -------- | ------- |
-| AeroSpace (GUI WM) | `Alt` | `Alt+1` → workspace 1 |
-| tmux-tilish (terminal) | `Ctrl+Alt` via Kanata `=` layer | `=+1` → tmux window 1 |
+| AeroSpace (GUI WM) | `Ctrl+Alt` via Kanata `=` layer | `=+1` → workspace 1 |
+| tmux-tilish (terminal) | `Alt` | `Alt+1` → tmux window 1 |
 
-This keeps window management (`Alt`) separate from terminal multiplexer (`Ctrl+Alt`).
+This keeps window management (`Ctrl+Alt`) separate from terminal multiplexer (`Alt`).

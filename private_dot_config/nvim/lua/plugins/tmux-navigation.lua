@@ -1,5 +1,5 @@
 -- Seamless navigation between Neovim and terminal multiplexers (tmux/zellij)
--- Uses Ctrl+Alt (C-M) via Kanata = layer for tilish compatibility
+-- Uses Alt (M) for tilish-style navigation
 return {
   -- Zellij navigation (when running inside zellij)
   {
@@ -7,10 +7,10 @@ return {
     lazy = true,
     event = "VeryLazy",
     keys = {
-      { "<C-M-h>", "<cmd>ZellijNavigateLeftTab<cr>", desc = "Zellij left", silent = true },
-      { "<C-M-j>", "<cmd>ZellijNavigateDown<cr>", desc = "Zellij down", silent = true },
-      { "<C-M-k>", "<cmd>ZellijNavigateUp<cr>", desc = "Zellij up", silent = true },
-      { "<C-M-l>", "<cmd>ZellijNavigateRightTab<cr>", desc = "Zellij right", silent = true },
+      { "<M-h>", "<cmd>ZellijNavigateLeftTab<cr>", desc = "Zellij left", silent = true },
+      { "<M-j>", "<cmd>ZellijNavigateDown<cr>", desc = "Zellij down", silent = true },
+      { "<M-k>", "<cmd>ZellijNavigateUp<cr>", desc = "Zellij up", silent = true },
+      { "<M-l>", "<cmd>ZellijNavigateRightTab<cr>", desc = "Zellij right", silent = true },
     },
     cond = function()
       return vim.env.ZELLIJ ~= nil
@@ -39,28 +39,28 @@ return {
           sync_registers = true,
         },
         navigation = {
-          -- Use = layer (C-M) for tilish-style navigation
+          -- Use Alt for tilish-style navigation (matches tmux-tilish)
           enable_default_keybindings = false,
           cycle_navigation = true,
           keybindings = {
-            left = "<C-M-h>",
-            down = "<C-M-j>",
-            up = "<C-M-k>",
-            right = "<C-M-l>",
-            last_active = "<C-M-\\>",
-            next = "<C-M-Space>",
+            left = "<M-h>",
+            down = "<M-j>",
+            up = "<M-k>",
+            right = "<M-l>",
+            last_active = "<M-\\>",
+            next = "<M-Space>",
           },
         },
         resize = {
-          -- Resize via = layer (matches tilish smart-splits)
+          -- Resize via Alt (matches tilish smart-splits)
           enable_default_keybindings = false,
           resize_step_x = 1,
           resize_step_y = 1,
           keybindings = {
-            left = "<C-M-=>",
-            right = "<C-M-->",
-            down = "<C-M-+>",
-            up = "<C-M-_>",
+            left = "<M-=>",
+            right = "<M-->",
+            down = "<M-+>",
+            up = "<M-_>",
           },
         },
       })

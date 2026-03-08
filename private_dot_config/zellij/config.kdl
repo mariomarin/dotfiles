@@ -1,5 +1,5 @@
 // Zellij configuration with tmux-like Ctrl+a prefix bindings
-// Alt bindings for tilish compatibility (aerospace uses Ctrl+Alt)
+// Alt bindings for tilish-style navigation
 
 theme "catppuccin-mocha"
 

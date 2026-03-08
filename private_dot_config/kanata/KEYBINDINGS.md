@@ -30,28 +30,27 @@ Space Cadet keys + Layer-based navigation, accents, and window management.
 
 ## Window Layer (Hold `=`)
 
-Sends `Ctrl+Alt+key`. Used by tmux-tilish and zellij (not AeroSpace).
+Sends `Ctrl+Alt+key`. Used by AeroSpace window manager.
 
 | Key | Action |
 | --- | ------ |
-| `hjkl` | Navigate panes |
-| `1-9` | Switch tab/window |
-| `q` | Close pane |
-| `Space` | Cycle layouts |
-| `Tab` | Last tab |
+| `hjkl` | Focus direction (AeroSpace) |
+| `1-9` | Switch workspace (AeroSpace) |
+| `q` | Close window |
+| `Space` | Toggle floating |
+| `Tab` | Last workspace |
 | `s` | Session manager |
-| `f` | Toggle floating |
-| `-` / `\` | Split horizontal/vertical |
-| `"` | New pane |
+| `f` | Toggle fullscreen |
+| `Enter` | Launch terminal |
 
-### Separation from AeroSpace
+### Separation from Terminal Multiplexers
 
 | Target | Modifier | Example |
 | ------ | -------- | ------- |
-| AeroSpace (GUI WM) | `Alt` (direct) | `Alt+1` → workspace 1 |
-| tmux/zellij (terminal) | `Ctrl+Alt` via `=` layer | `=+1` → tab 1 |
+| AeroSpace (GUI WM) | `Ctrl+Alt` via `=` layer | `=+1` → workspace 1 |
+| tmux/zellij (terminal) | `Alt` (direct) | `Alt+1` → tmux window/zellij tab |
 
-AeroSpace uses plain `Alt` bindings directly. The `=` layer is only for terminal multiplexers.
+Terminal multiplexers (tmux-tilish, zellij) use plain `Alt` bindings directly. The `=` layer is for AeroSpace window management.
 
 ## Accent Layer (Hold Grave)
 
