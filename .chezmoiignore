@@ -46,6 +46,9 @@ private_dot_local/bin/tests/**
 .env.local
 .env.work
 
+# Machine-specific zsh environment (not tracked)
+.config/zsh/.zshenv.local
+
 # OS-specific scripts (ignore scripts for other operating systems)
 {{ if ne .chezmoi.os "darwin" }}
 .chezmoiscripts/darwin-*

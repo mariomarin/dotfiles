@@ -95,3 +95,9 @@ export DOCKER_BUILDKIT=1
 
 # zim
 : ${ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim}
+
+# Source optional local environment (not tracked by git/chezmoi)
+# Use this for machine-specific variables like ATUIN_SYNC_ADDRESS
+if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshenv.local" ]]; then
+  source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshenv.local"
+fi

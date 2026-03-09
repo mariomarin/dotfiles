@@ -22,6 +22,7 @@ private_dot_config/zsh/
 - Sets up Zim framework paths
 - Configures zsh-vi-mode environment variables
 - Uses GNOME Keyring for SSH agent
+- Sources optional `.zshenv.local` for machine-specific variables (not tracked by git/chezmoi)
 
 ### Interactive Configuration (`dot_zshrc`)
 
@@ -86,6 +87,24 @@ Add bindings to `zvm_after_init()` function in `zsh-vi-mode-config.zsh`.
 ### Adding Zim Modules
 
 Edit `~/.config/zim/zimrc` and run `zimfw install`.
+
+### Machine-Specific Environment Variables
+
+For machine-specific environment variables that should not be tracked by git/chezmoi:
+
+1. Create `~/.config/zsh/.zshenv.local` (ignored by chezmoi)
+2. Add environment variables as needed:
+
+   ```zsh
+   # Example: Atuin sync address for local machine
+   export ATUIN_SYNC_ADDRESS="http://localhost:8888"
+
+   # Example: Machine-specific paths
+   export LOCAL_TOOLS="/opt/local/bin"
+   ```
+
+3. This file is automatically sourced by `dot_zshenv` if it exists
+4. Use this pattern for variables that differ per machine (sync URLs, API endpoints, local paths)
 
 ## Important Notes
 
