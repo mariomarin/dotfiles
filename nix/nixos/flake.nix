@@ -163,19 +163,23 @@
       packages = {
         x86_64-linux =
           let
-            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            pkgs = import nixpkgs {
+              system = "x86_64-linux";
+              overlays = commonOverlays;
+              config.allowUnfree = true;
+            };
           in
           {
             # Individual packages
-            atuin = pkgs.atuin;
+            atuin = pkgs.unstable.atuin;
 
             # Bundled environment for ribosome (linux-apt platform)
             # Matches packages from common/modules/cli-tools.nix
             # Gradual migration: starting with atuin, will add more over time
             ribosome-env = pkgs.buildEnv {
               name = "ribosome-cli-tools";
-              paths = with pkgs; [
-                atuin # Shell history sync (client + server)
+              paths = [
+                pkgs.unstable.atuin # Shell history sync (client + server) - from unstable for latest version
               ];
               pathsToLink = [ "/bin" "/share" ];
             };

@@ -136,6 +136,17 @@ def is-running [] {
     | $in == 0
 }
 
+# Get profile name for flake attribute
+def get-profile-name [flake_attr: string]: nothing -> string {
+    let entries = (nix profile list | lines | parse "{name}:")
+    let match = ($entries | where name == "nix/nixos" | first)
+    if ($match | is-empty) {
+        $flake_attr
+    } else {
+        $match.name
+    }
+}
+
 # Upgrade installed package
 def upgrade-package [name: string] {
     print $"↑ Upgrading ($name)..."
@@ -147,17 +158,13 @@ def upgrade-package [name: string] {
         print $"  Warning: flake update had issues: ($update_result.stderr)"
     }
 
-    # For buildEnv packages, upgrade doesn't rebuild - must remove and reinstall
-    print "  Removing old version..."
-    let remove_result = (nix profile remove $".#($name)" | complete)
-    if $remove_result.exit_code != 0 {
-        print $"  Warning: remove had issues: ($remove_result.stderr)"
-    }
+    # Use profile name, not flake attribute
+    let profile_name = (get-profile-name $name)
+    print $"  Upgrading profile: ($profile_name)"
 
-    print "  Installing updated version..."
-    let result = (nix profile install $".#($name)" | complete)
+    let result = (nix profile upgrade $profile_name | complete)
     if $result.exit_code != 0 {
-        print $"✗ Installation failed: ($result.stderr)"
+        print $"✗ Upgrade failed: ($result.stderr)"
         return 1
     }
 

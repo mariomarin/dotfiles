@@ -137,10 +137,10 @@ nix/nixos/hosts/ribosome
 nix/nixos/hosts/ribosome/**
 .config/atuin/server.toml
 .config/systemd/user/atuin-server.service
-.chezmoiscripts/run_after_linux-apt-install-packages.nu
-.chezmoiscripts/run_onchange_after_02_linux-apt-install-nix-packages.nu
-.chezmoiscripts/run_onchange_after_linux-apt-setup-atuin-server.nu
-.chezmoiscripts/run_once_linux-apt-enable-linger.nu
+.chezmoiscripts/linux-apt-install-packages.nu
+.chezmoiscripts/02_linux-apt-install-nix-packages.nu
+.chezmoiscripts/linux-apt-setup-atuin-server.nu
+.chezmoiscripts/linux-apt-enable-linger.nu
 {{ end }}
 
 # darwin-brew platform only (Homebrew packages and services)
