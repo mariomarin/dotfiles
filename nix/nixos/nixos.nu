@@ -140,6 +140,14 @@ def is-running [] {
 def upgrade-package [name: string] {
     print $"↑ Upgrading ($name)..."
 
+    # Update flake inputs to get latest packages
+    print "  Updating flake inputs..."
+    let update_result = (nix flake update | complete)
+    if $update_result.exit_code != 0 {
+        print $"  Warning: flake update had issues: ($update_result.stderr)"
+    }
+
+    # Upgrade the profile entry
     let result = (nix profile upgrade $".#($name)" | complete)
     if $result.exit_code != 0 {
         print $"✗ Upgrade failed: ($result.stderr)"
