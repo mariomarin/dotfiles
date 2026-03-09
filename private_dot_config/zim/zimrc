@@ -47,6 +47,8 @@ zmodule ${ZIM_CONFIG_FILE:h}/modules/ai-cli
 zmodule ${ZIM_CONFIG_FILE:h}/modules/jj-helpers
 # hastepaste - Hastebin-compatible paste functions
 zmodule ${ZIM_CONFIG_FILE:h}/modules/hastepaste
+# clipper - Clipboard integration over SSH
+zmodule ${ZIM_CONFIG_FILE:h}/modules/clipper
 
 # Enables and configures smart and extensive tab completion.
 # Must load before carapace
