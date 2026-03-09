@@ -40,6 +40,9 @@
     markdownlint-cli
     marksman
 
+    # Commit message linting
+    commitizen
+
     # agents
     claude-code
   ];
@@ -99,6 +102,33 @@
         echo "Proceeding with direct formatter call..."
       fi
 
+      # Suggest just jj-push for jj git push
+      if echo "$COMMAND" | grep -qE "jj\s+git\s+push"; then
+        echo "💡 SUGGESTION: Use 'just jj-push' to run pre-commit checks before pushing."
+        echo ""
+        echo "This ensures all commits pass validation before being pushed to remote."
+        echo ""
+        echo "Available targets:"
+        echo "  just jj-check      # Check what would be pushed (dry-run)"
+        echo "  just jj-push       # Check and push if all hooks pass"
+        echo "  just jj-push-fast  # Skip checks and push immediately"
+        echo ""
+        echo "Proceeding with direct jj git push (no pre-commit checks)..."
+      fi
+
+      # Remind about tests for new/modified .nu scripts
+      if echo "$COMMAND" | grep -qE "(Write|Edit).*\.nu['\"]?\s*\$"; then
+        echo "💡 REMINDER: Did you add/update tests for this Nushell script?"
+        echo ""
+        echo "Test file location:"
+        echo "  - For .scripts/*.nu → .scripts/tests/script-name.nu"
+        echo "  - For .local/bin/*.nu → .local/bin/tests/script-name.nu"
+        echo "  - For nix/*/*.nu → nix/*/tests/script-name.nu"
+        echo ""
+        echo "Run tests with: just test-nu"
+        echo ""
+      fi
+
       # Allow all other commands
       exit 0
     '';
@@ -107,6 +137,16 @@
   # Git hooks - format only staged files on commit
   git-hooks = {
     hooks = {
+      # Commit message linting
+      commitizen = {
+        enable = true;
+        # Enforces conventional commits format:
+        # type(scope): subject
+        #
+        # type: feat, fix, docs, style, refactor, test, chore
+        # subject: max 50 chars, imperative mood, no period
+      };
+
       # Post-commit hook to run just (applies chezmoi changes)
       # Just automatically loads .env.local via 'set dotenv-load'
       post-commit = {

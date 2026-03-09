@@ -34,6 +34,14 @@ devenv.yaml
 .claude
 .claude/**
 
+# Test files (not dotfiles)
+.scripts/tests
+.scripts/tests/**
+.local/bin/tests
+.local/bin/tests/**
+private_dot_local/bin/tests
+private_dot_local/bin/tests/**
+
 # Environment files with secrets (loaded by direnv/devenv)
 .env.local
 .env.work

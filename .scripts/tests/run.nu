@@ -22,10 +22,20 @@ def run-test [test_file: string, func: string] {
 }
 
 def main [] {
-    print "🧪 Running .scripts tests..."
+    print "🧪 Running all Nushell tests..."
     print ""
 
-    let results = glob ".scripts/tests/test_*.nu"
+    let test_dirs = [
+        ".scripts/tests/*.nu"
+        "private_dot_local/bin/tests/*.nu"
+        "nix/darwin/tests/*.nu"
+        "nix/nixos/tests/*.nu"
+    ]
+
+    let results = $test_dirs
+        | each { |pattern| glob $pattern }
+        | flatten
+        | where {|f| ($f | path basename) !~ '^run'}
         | each { |f|
             print $"📁 ($f)"
             let funcs = get-test-funcs $f

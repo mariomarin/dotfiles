@@ -1,0 +1,59 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+[user]
+name = "{{ output "git" "config" "user.name" | trim }}"
+email = "{{ output "git" "config" "user.email" | trim }}"
+
+[ui]
+pager = ":builtin"
+
+[ui.diff]
+format = "git"
+
+[aliases]
+s = ["show", "--git"]
+f = ["git", "fetch", "--tracked"]
+p = ["git", "push", "--tracked"]
+
+# Pre-commit integration
+pre-check = ["util", "exec", "--", "jj-pre-push.nu", "check"]
+push-check = ["util", "exec", "--", "jj-pre-push.nu", "push"]
+
+# Common shortcuts
+st = ["status"]
+l = ["log"]
+d = ["diff"]
+n = ["new"]
+e = ["edit"]
+a = ["abandon"]
+sq = ["squash"]
+ds = ["describe"]
+
+# Show current change
+current = ["log", "--no-graph", "-r", "@", "-T", "change_id.shortest(8) ++ ' ' ++ description.first_line()"]
+
+# Log aliases
+ll = ["log", "-r", "::@"]
+la = ["log", "-r", "all()"]
+recent = ["log", "-r", "::@", "-n", "10"]
+
+# Branch management
+bm = ["bookmark"]
+bml = ["bookmark", "list"]
+bmc = ["bookmark", "create"]
+bmf = ["bookmark", "forget"]
+
+# Show files in current change
+files = ["diff", "--summary"]
+
+# Quick commit
+qc = ["describe", "-m"]
+
+# Rebase shortcuts
+rb = ["rebase"]
+rbd = ["rebase", "-d"]
+rbs = ["rebase", "-s"]
+
+# Git integration
+gf = ["git", "fetch"]
+gp = ["git", "push"]
