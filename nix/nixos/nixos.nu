@@ -179,17 +179,29 @@ def install-package [name: string] {
     print "✅ Installation complete"
 }
 
+# Determine package action based on install status
+def package-action [package_name: string, is_installed: bool] {
+    if $is_installed {
+        { action: "upgrade", package: $package_name }
+    } else {
+        { action: "install", package: $package_name }
+    }
+}
+
 # Linux-apt package installation (ribosome)
 def "main linux-apt" [
     host: string  # Hostname (ribosome)
 ] {
     let package_name = $"($host)-env"
-    print $"📦 Installing Nix packages for ($host) (linux-apt)..."
+    let installed = (is-installed $package_name)
+    let decision = (package-action $package_name $installed)
 
-    if (is-installed $package_name) {
-        upgrade-package $package_name
+    print "📦 Installing Nix packages for" $host "- linux-apt mode"
+
+    if $decision.action == "upgrade" {
+        upgrade-package $decision.package
     } else {
-        install-package $package_name
+        install-package $decision.package
     }
 }
 
