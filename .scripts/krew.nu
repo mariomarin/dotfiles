@@ -14,10 +14,22 @@ def ensure-krew [] {
     }
 
     print "🔧 Bootstrapping krew..."
-    let result = do { kubectl krew install krew } | complete
+
+    # Download and run the official krew installer
+    let install_script = $"(mktemp -d)/install_krew.sh"
+    let download = do {
+        ^curl -fsSL https://krew.sigs.k8s.io/install | save -f $install_script
+    } | complete
+
+    if $download.exit_code != 0 {
+        error make {msg: $"Failed to download krew installer: ($download.stderr)"}
+    }
+
+    let result = do { bash $install_script } | complete
     if $result.exit_code != 0 {
         error make {msg: $"Failed to bootstrap krew: ($result.stderr)"}
     }
+
     print "✅ Krew bootstrapped successfully"
 }
 

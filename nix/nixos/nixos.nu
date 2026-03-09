@@ -147,10 +147,17 @@ def upgrade-package [name: string] {
         print $"  Warning: flake update had issues: ($update_result.stderr)"
     }
 
-    # Upgrade the profile entry
-    let result = (nix profile upgrade $".#($name)" | complete)
+    # For buildEnv packages, upgrade doesn't rebuild - must remove and reinstall
+    print "  Removing old version..."
+    let remove_result = (nix profile remove $".#($name)" | complete)
+    if $remove_result.exit_code != 0 {
+        print $"  Warning: remove had issues: ($remove_result.stderr)"
+    }
+
+    print "  Installing updated version..."
+    let result = (nix profile install $".#($name)" | complete)
     if $result.exit_code != 0 {
-        print $"✗ Upgrade failed: ($result.stderr)"
+        print $"✗ Installation failed: ($result.stderr)"
         return 1
     }
 
