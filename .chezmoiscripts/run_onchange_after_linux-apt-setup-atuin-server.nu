@@ -1,6 +1,8 @@
 #!/usr/bin/env nu
 # Enable and start atuin sync server systemd service
 # Only runs on linux-apt platform (devbox)
+# hash: {{ include "private_dot_config/systemd/user/atuin-server.service" | sha256sum }}
+# hash: {{ include "private_dot_config/systemd/user/atuin-server.service.d/override.conf" | sha256sum }}
 
 # Check if atuin and systemctl are available
 if (which atuin | is-empty) or (which systemctl | is-empty) {
