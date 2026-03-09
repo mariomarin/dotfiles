@@ -41,10 +41,14 @@ export KUBECONFIG=~/.kube/config
 # fly
 export FLYCTL_INSTALL="$HOME/.fly"
 
+# tfenv - Terraform version manager
+export TFENV_ROOT="$HOME/.tfenv"
+
 
 # PATH
 typeset -U PATH path
 path=(
+  "$TFENV_ROOT/bin"
   "$CARGOBIN"
   "$FLYCTL_INSTALL/bin:$PATH"
   "$GOPATH/bin"
