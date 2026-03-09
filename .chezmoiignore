@@ -135,8 +135,9 @@ nix/darwin/**
 .config/environment.d/**
 nix/nixos/hosts/ribosome
 nix/nixos/hosts/ribosome/**
-.config/atuin/server.toml
 .config/systemd/user/atuin-server.service
+.config/systemd/user/atuin-server.service.d
+.config/systemd/user/atuin-server.service.d/**
 .chezmoiscripts/linux-apt-install-packages.nu
 .chezmoiscripts/02_linux-apt-install-nix-packages.nu
 .chezmoiscripts/linux-apt-setup-atuin-server.nu
