@@ -1,5 +1,5 @@
 [core]
 	excludesFile = ~/.config/git/ignore
 
-[includeIf "gitdir:~/src/bitbucket.org/"]
+[includeIf "gitdir:~/code/"]
 	path = ~/.config/git/config-work

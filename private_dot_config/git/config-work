@@ -1,5 +1,5 @@
 [include]
-	path = ~/src/bitbucket.org/.gitconfig
+	path = ~/code/.gitconfig
 
 [core]
-	excludesFile = ~/.config/git/ignore-work
+	excludesFile = ~/.config/git/ignore.local
