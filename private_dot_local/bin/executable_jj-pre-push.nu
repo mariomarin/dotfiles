@@ -222,8 +222,17 @@ def check-update [update: record] {
     | all {|x| $x }
 }
 
+# Clean up any stale temporary bookmarks from previous runs
+def cleanup-stale-bookmarks [] {
+    let stale = (^jj bookmark list | lines | parse "{name}:" | where name =~ "jj-pre-push-keep-" | get name)
+    if ($stale | is-not-empty) {
+        $stale | each {|b| ^jj bookmark forget $b --quiet }
+    }
+}
+
 # Create temporary bookmark
 def create-temp-bookmark [] {
+    cleanup-stale-bookmarks
     let name = $"jj-pre-push-keep-(random chars -l 10)"
     ^jj bookmark create $name -r @ --quiet
     $name
@@ -250,8 +259,9 @@ def check-all-updates [updates: list] {
     let results = try {
         $updates | each {|u| check-update $u }
     } catch {|e|
+        cleanup-temp-bookmark $temp
         print $"Error during pre-commit checks: ($e)"
-        [false]
+        error make {msg: $e}
     }
 
     cleanup-temp-bookmark $temp
