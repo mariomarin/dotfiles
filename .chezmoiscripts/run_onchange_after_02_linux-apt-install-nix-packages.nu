@@ -16,5 +16,6 @@ if (which just | is-empty) {
 let chezmoi_root = (chezmoi source-path)
 
 # Run package installation via justfile
+# Disable atuin to avoid database connection pool timeouts during script execution
 cd $"($chezmoi_root)/nix/nixos"
-just linux-apt
+with-env { ATUIN_NOBIND: "true" } { just linux-apt }
