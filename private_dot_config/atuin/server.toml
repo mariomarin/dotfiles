@@ -15,7 +15,8 @@ open_registration = true
 ## Database
 ## SQLite for single-user setup (no PostgreSQL needed)
 ## Atuin creates this automatically in ~/.local/share/atuin/
-db_uri = "sqlite://~/.local/share/atuin/server.db"
+## Set via systemd Environment: ATUIN_DB_URI=sqlite://%h/.local/share/atuin/server.db
+# db_uri commented out - set via ATUIN_DB_URI env var in systemd service
 
 ## Limits
 ## No limits for personal use

@@ -7,13 +7,14 @@ Wants=network-online.target
 [Service]
 Type=simple
 ExecStart=%h/.nix-profile/bin/atuin server start
+Environment=ATUIN_DB_URI=sqlite://%h/.local/share/atuin/server.db
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
 
 # Security hardening
-ReadWritePaths=%h/.local/share/atuin %h/.config/atuin
+ReadWritePaths=%h/.local/share/atuin %h/.config/atuin %t
 CapabilityBoundingSet=
 AmbientCapabilities=
 NoNewPrivileges=true
