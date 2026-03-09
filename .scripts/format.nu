@@ -64,7 +64,18 @@ def "main shell" [] {
         print "⚠️  shfmt not found. Run 'devenv shell' or 'direnv allow' to load development environment"
         exit 0
     }
-    shfmt -w -i 2 -ci -sr -kp .
+
+    # Find shell scripts, excluding zsh files and zim modules
+    glob **/*.sh
+    | where {|f| not ($f | str contains ".git") }
+    | where {|f| not ($f | str contains "node_modules") }
+    | where {|f| not ($f | str ends-with ".zsh") }
+    | where {|f| not ($f | str ends-with "zshrc") }
+    | where {|f| not ($f | str ends-with "zshenv") }
+    | where {|f| not ($f | str contains "private_dot_config/zim/") }
+    | each {|file| shfmt -w -i 2 -ci -sr -kp $file }
+    | ignore
+
     print "✅ Shell scripts formatted"
 }
 
@@ -75,8 +86,42 @@ def "main yaml" [] {
         print "⚠️  yamlfmt not found. Run 'direnv allow' to load development environment"
         exit 0
     }
-    glob **/*.{yml,yaml} | where {|f| $f !~ "/.git/" and $f !~ "/node_modules/" } | each {|file| yamlfmt $file }
+    glob **/*.{yml,yaml}
+    | where {|f| not ($f | str contains ".git") }
+    | where {|f| not ($f | str contains "node_modules") }
+    | each {|file| yamlfmt $file }
     print "✅ YAML files formatted"
+}
+
+# Validate nushell files
+def "main nushell" [] {
+    print "📝 Validating Nushell files..."
+    if (which nu | is-empty) {
+        print "⚠️  nu not found"
+        exit 0
+    }
+
+    let failed = glob **/*.nu
+    | where {|f| not ($f | str contains ".git") }
+    | where {|f| not ($f | str contains "node_modules") }
+    | where {|f| not ($f | str contains "wsl-") }
+    | each {|file|
+        let result = (nu -n -c $"source \"($file)\"" | complete)
+        if $result.exit_code != 0 {
+            print $"❌ ($file): ($result.stderr)"
+            {file: $file, valid: false}
+        } else {
+            {file: $file, valid: true}
+        }
+    }
+    | where {|r| $r.valid == false }
+
+    if ($failed | length) > 0 {
+        print $"❌ ($failed | length) Nushell files failed validation"
+        exit 1
+    }
+
+    print "✅ All Nushell files valid"
 }
 
 # Format all files
@@ -90,6 +135,8 @@ def "main all" [] {
     main markdown
     print ""
     main nix
+    print ""
+    main nushell
     print ""
     main others
     print ""
@@ -112,8 +159,9 @@ def "main help" [] {
     print "  lua        Format Lua files with stylua"
     print "  markdown   Format Markdown files with markdownlint"
     print "  nix        Format Nix files with nixpkgs-fmt"
+    print "  nushell    Validate Nushell files"
     print "  others     Format JSON and TOML files with biome"
-    print "  shell      Format shell scripts with shfmt"
+    print "  shell      Format shell scripts with shfmt (excludes zsh)"
     print "  yaml       Format YAML files with yamlfmt"
     print "  all        Format all files"
     print "  help       Show this help message"

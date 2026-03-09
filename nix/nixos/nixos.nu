@@ -112,7 +112,7 @@ def "main health" [
 }
 
 # Check if package is installed
-def is-installed [name: string]: bool {
+def is-installed [name: string] {
     nix profile list
     | complete
     | get stdout
@@ -120,7 +120,7 @@ def is-installed [name: string]: bool {
 }
 
 # Check if systemd service needs reload
-def needs-reload []: bool {
+def needs-reload [] {
     systemctl --user show atuin-server.service --property=NeedDaemonReload --value
     | complete
     | get stdout
@@ -129,7 +129,7 @@ def needs-reload []: bool {
 }
 
 # Check if service is running
-def is-running []: bool {
+def is-running [] {
     systemctl --user is-active atuin-server.service
     | complete
     | get exit_code

@@ -84,6 +84,21 @@
         exit 1
       fi
 
+      # Suggest just format for direct formatter calls
+      if echo "$COMMAND" | grep -qE "^\s*(shfmt|nixpkgs-fmt|stylua|markdownlint|yamlfmt|biome)\s"; then
+        echo "💡 SUGGESTION: Use 'just format' instead of calling formatters directly."
+        echo ""
+        echo "This ensures consistent formatting across all files with proper excludes."
+        echo ""
+        echo "Available targets:"
+        echo "  just format          # Format all files"
+        echo "  just format-shell    # Format shell scripts (excludes zsh)"
+        echo "  just format-nix      # Format Nix files"
+        echo "  just format-lua      # Format Lua files"
+        echo ""
+        echo "Proceeding with direct formatter call..."
+      fi
+
       # Allow all other commands
       exit 0
     '';
