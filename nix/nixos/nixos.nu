@@ -111,6 +111,88 @@ def "main health" [
     print ""
 }
 
+# Check if package is installed
+def is-installed [name: string]: bool {
+    nix profile list
+    | complete
+    | get stdout
+    | str contains $name
+}
+
+# Check if systemd service needs reload
+def needs-reload []: bool {
+    systemctl --user show atuin-server.service --property=NeedDaemonReload --value
+    | complete
+    | get stdout
+    | str trim
+    | $in == "yes"
+}
+
+# Check if service is running
+def is-running []: bool {
+    systemctl --user is-active atuin-server.service
+    | complete
+    | get exit_code
+    | $in == 0
+}
+
+# Upgrade installed package
+def upgrade-package [name: string] {
+    print $"↑ Upgrading ($name)..."
+
+    let result = (nix profile upgrade $name | complete)
+    if $result.exit_code != 0 {
+        print $"✗ Upgrade failed: ($result.stderr)"
+        return 1
+    }
+
+    print $"✓ ($name) upgraded"
+
+    if (needs-reload) {
+        print "  Reloading systemd daemon..."
+        systemctl --user daemon-reload
+    }
+
+    if (is-running) {
+        print "  Restarting atuin-server..."
+        systemctl --user restart atuin-server.service
+        print "  ✓ Service restarted"
+    }
+
+    print ""
+    print "✅ Upgrade complete"
+}
+
+# Install fresh package
+def install-package [name: string] {
+    print $"  Installing ($name) from flake..."
+
+    let result = (nix profile install $".#($name)" | complete)
+    if $result.exit_code != 0 {
+        print $"✗ Installation failed: ($result.stderr)"
+        return 1
+    }
+
+    print $"✓ ($name) installed"
+    print $"  Binaries: ~/.nix-profile/bin/"
+    print ""
+    print "✅ Installation complete"
+}
+
+# Linux-apt package installation (ribosome)
+def "main linux-apt" [
+    host: string  # Hostname (ribosome)
+] {
+    let package_name = $"($host)-env"
+    print $"📦 Installing Nix packages for ($host) (linux-apt)..."
+
+    if (is-installed $package_name) {
+        upgrade-package $package_name
+    } else {
+        install-package $package_name
+    }
+}
+
 # Show help
 def "main help" [] {
     nix-common show-help "NixOS Utilities" "nixos.nu" [
@@ -118,6 +200,7 @@ def "main help" [] {
         {name: "remote-switch <host> <target> [--build-host]", description: "Deploy to remote host"}
         {name: "remote-test <host> <target> [--build-host]", description: "Test on remote host"}
         {name: "deploy-vm <target> [--vm-host] [--build-host]", description: "Deploy VM config (default: mitosis)"}
+        {name: "linux-apt <host>", description: "Install packages for linux-apt (ribosome)"}
         {name: "hosts <host>", description: "Show available configurations"}
         {name: "health <host>", description: "System health check"}
         {name: "help", description: "Show this help message"}

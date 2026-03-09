@@ -166,5 +166,37 @@ in
       # KDE Connect - Phone/computer integration
       programs.kdeconnect.enable = true;
     })
+
+    # Atuin server (self-hosted shell history sync)
+    (lib.mkIf isAtuinServer {
+      systemd.user.services.atuin-server = {
+        description = "Atuin sync server (self-hosted)";
+        documentation = [ "https://docs.atuin.sh/self-hosting/server-setup/" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        wantedBy = [ "default.target" ];
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = "${pkgs.atuin}/bin/atuin server start";
+          Restart = "on-failure";
+          RestartSec = 5;
+          StandardOutput = "journal";
+          StandardError = "journal";
+
+          # Security hardening
+          ReadWritePaths = [ "${homeDir}/.local/share/atuin" "${homeDir}/.config/atuin" ];
+          CapabilityBoundingSet = "";
+          AmbientCapabilities = "";
+          NoNewPrivileges = true;
+          ProtectSystem = "strict";
+          ProtectKernelTunables = true;
+          ProtectKernelModules = true;
+          ProtectControlGroups = true;
+          PrivateTmp = true;
+          PrivateDevices = true;
+          LockPersonality = true;
+        };
+      };
+    })
   ];
 }

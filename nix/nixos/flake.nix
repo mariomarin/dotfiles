@@ -158,5 +158,28 @@
         #   username = "john";
         # };
       };
+
+      # Package bundles for non-NixOS hosts (linux-apt)
+      packages = {
+        x86_64-linux =
+          let
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          in
+          {
+            # Individual packages
+            atuin = pkgs.atuin;
+
+            # Bundled environment for ribosome (linux-apt platform)
+            # Matches packages from common/modules/cli-tools.nix
+            # Gradual migration: starting with atuin, will add more over time
+            ribosome-env = pkgs.buildEnv {
+              name = "ribosome-cli-tools";
+              paths = with pkgs; [
+                atuin # Shell history sync (client + server)
+              ];
+              pathsToLink = [ "/bin" "/share" ];
+            };
+          };
+      };
     };
 }

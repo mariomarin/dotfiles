@@ -6,13 +6,13 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=%h/.local/bin/atuin-server server start
+ExecStart=%h/.nix-profile/bin/atuin server start
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
 
-# Security hardening (adapted from official atuin-server.service)
+# Security hardening
 ReadWritePaths=%h/.local/share/atuin %h/.config/atuin
 CapabilityBoundingSet=
 AmbientCapabilities=

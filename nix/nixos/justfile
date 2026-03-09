@@ -73,6 +73,10 @@ hosts:
 health:
     nu nixos.nu health {{HOST}}
 
+# Linux-apt (ribosome) - install packages via nix profile
+linux-apt: gen-user
+    nu nixos.nu linux-apt ribosome
+
 # Help target
 help:
     @echo "NixOS Multi-Machine Build Targets"
