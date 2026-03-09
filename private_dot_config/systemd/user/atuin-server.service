@@ -1,0 +1,29 @@
+[Unit]
+Description=Atuin sync server (self-hosted)
+Documentation=https://docs.atuin.sh/self-hosting/server-setup/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/atuin server start
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening (adapted from official atuin-server.service)
+ReadWritePaths=%h/.local/share/atuin %h/.config/atuin
+CapabilityBoundingSet=
+AmbientCapabilities=
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+PrivateTmp=true
+PrivateDevices=true
+LockPersonality=true
+
+[Install]
+WantedBy=default.target

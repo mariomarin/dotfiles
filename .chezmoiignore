@@ -119,15 +119,16 @@ nix/darwin/**
 .kube/config
 {{ end }}
 
-# linux-apt platform only (apt packages and atuin daemon service)
+# linux-apt platform only (apt packages and atuin sync server)
 {{ if ne $platform "linux-apt" }}
 .config/apt
 .config/apt/**
 .config/environment.d
 .config/environment.d/**
-.config/systemd/user/atuin.service
+.config/atuin/server.toml
+.config/systemd/user/atuin-server.service
 .chezmoiscripts/run_after_linux-apt-install-packages.nu
-.chezmoiscripts/run_after_linux-enable-atuin-daemon.nu
+.chezmoiscripts/run_onchange_after_linux-apt-setup-atuin-server.nu
 .chezmoiscripts/run_once_linux-apt-enable-linger.nu
 {{ end }}
 

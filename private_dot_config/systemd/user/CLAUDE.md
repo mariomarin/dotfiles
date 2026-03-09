@@ -4,12 +4,15 @@ This directory contains systemd user service units managed by chezmoi.
 
 ## Current Services
 
-### atuin.service
+### atuin-server.service
 
-- **Purpose**: Atuin shell history sync daemon
-- **Documentation**: https://github.com/atuinsh/atuin
+- **Purpose**: Atuin self-hosted sync server
+- **Documentation**: https://docs.atuin.sh/self-hosting/server-setup/
 - **Type**: Simple service with automatic restart
-- **Executable**: `~/.local/bin/atuin daemon`
+- **Executable**: `~/.local/bin/atuin server start`
+- **Port**: 8888 (localhost only)
+- **Platform**: linux-apt only
+- **Note**: Client daemon started by shell (`atuin init zsh`), not systemd
 - **Security**: Hardened with PrivateTmp, NoNewPrivileges, ProtectSystem
 
 ### clipper.service
