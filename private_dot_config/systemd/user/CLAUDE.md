@@ -9,7 +9,7 @@ This directory contains systemd user service units managed by chezmoi.
 - **Purpose**: Atuin self-hosted sync server
 - **Documentation**: https://docs.atuin.sh/self-hosting/server-setup/
 - **Type**: Simple service with automatic restart
-- **Executable**: `~/.local/bin/atuin server start`
+- **Executable**: `~/.local/bin/atuin-server server start`
 - **Port**: 8888 (localhost only)
 - **Platform**: linux-apt only
 - **Note**: Client daemon started by shell (`atuin init zsh`), not systemd

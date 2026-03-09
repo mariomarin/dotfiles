@@ -6,7 +6,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=%h/.local/bin/atuin server start
+ExecStart=%h/.local/bin/atuin-server server start
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal

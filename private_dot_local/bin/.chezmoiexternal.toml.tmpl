@@ -118,6 +118,13 @@
     executable = true
     refreshPeriod = "168h"
 
+["atuin-server"]
+    type = "archive-file"
+    url = "https://github.com/atuinsh/atuin/releases/download/{{ $atuinRelease.TagName }}/atuin-server-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
+    path = "atuin-server"
+    executable = true
+    refreshPeriod = "168h"
+
 {{- $topgradeRelease := gitHubLatestRelease "topgrade-rs/topgrade" }}
 ["topgrade"]
     type = "archive-file"
