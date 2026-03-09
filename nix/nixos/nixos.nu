@@ -140,7 +140,7 @@ def is-running [] {
 def upgrade-package [name: string] {
     print $"↑ Upgrading ($name)..."
 
-    let result = (nix profile upgrade $name | complete)
+    let result = (nix profile upgrade $".#($name)" | complete)
     if $result.exit_code != 0 {
         print $"✗ Upgrade failed: ($result.stderr)"
         return 1
