@@ -35,7 +35,3 @@ show_preview = true
 ## What to do when escape is pressed
 ## Options: return-original, return-query
 exit_mode = "return-original"
-
-## History import
-## Import existing shell history on first run
-sync_address = "" # Set via ATUIN_SYNC_ADDRESS environment variable
