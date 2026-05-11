@@ -33,13 +33,6 @@
     refreshPeriod = "168h"
 
 # Text processing
-{{- $yqRelease := gitHubLatestRelease "mikefarah/yq" }}
-["yq"]
-    type = "file"
-    url = "https://github.com/mikefarah/yq/releases/download/{{ $yqRelease.TagName }}/yq_linux_amd64"
-    executable = true
-    refreshPeriod = "168h"
-
 {{- $millerRelease := gitHubLatestRelease "johnkerl/miller" }}
 {{- $millerVersion := trimPrefix "v" $millerRelease.TagName }}
 ["mlr"]
