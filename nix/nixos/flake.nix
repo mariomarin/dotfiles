@@ -31,7 +31,7 @@
     };
 
     devenv = {
-      url = "github:cachix/devenv/v2.1";
+      url = "github:cachix/devenv/v2.1.1";
     };
 
     claude-code-nix = {
