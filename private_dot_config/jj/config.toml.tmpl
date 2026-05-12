@@ -6,9 +6,7 @@ email = "{{ output "git" "config" "user.email" | trim }}"
 
 [ui]
 pager = ":builtin"
-
-[ui.diff]
-format = "git"
+diff-formatter = ":git"
 
 [aliases]
 s = ["show", "--git"]
