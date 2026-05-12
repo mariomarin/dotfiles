@@ -15,6 +15,7 @@ graph TB
 ```
 
 **Key Points:**
+
 - **Server**: linux-apt platform, runs via systemd user service
 - **Clients**: Shell integration via `atuin init zsh` (no systemd needed)
 - **Connection**: Remote clients use SSH tunnel to access server
@@ -30,6 +31,7 @@ chezmoi apply
 ```
 
 This installs:
+
 - `~/.config/atuin/server.toml` - Server configuration
 - `~/.config/systemd/user/atuin-server.service` - Systemd service
 - Enables and starts the service automatically
@@ -114,6 +116,7 @@ atuin sync
 Atuin is automatically integrated in zsh via `~/.config/zsh/atuin-config.zsh`:
 
 **Features:**
+
 - `Ctrl+R` - Search history (replaces default reverse search)
 - `Up Arrow` - Context-aware history search (by prefix)
 - Vi mode compatible bindings
@@ -157,6 +160,7 @@ curl http://127.0.0.1:8888  # Should return HTML page
 **Symptom**: `atuin sync` fails with "connection refused"
 
 **Solution**: Verify SSH tunnel
+
 ```bash
 lsof -i :8888  # Check tunnel is established
 ssh -L 8888:127.0.0.1:8888 <server-host>  # Manual tunnel
@@ -167,6 +171,7 @@ ssh -L 8888:127.0.0.1:8888 <server-host>  # Manual tunnel
 **Symptom**: `systemctl --user status atuin-server` shows failed
 
 **Solution**: Check logs
+
 ```bash
 # View detailed logs
 journalctl --user -u atuin-server -n 50
@@ -182,6 +187,7 @@ journalctl --user -u atuin-server -n 50
 **Symptom**: `atuin sync` succeeds but history not syncing
 
 **Solution**: Verify credentials
+
 ```bash
 # Check environment variables are set
 echo $ATUIN_SYNC_ADDRESS  # Should be http://127.0.0.1:8888
@@ -197,6 +203,7 @@ atuin login -u <username> -p <password>
 **Symptom**: Ctrl+R doesn't use atuin
 
 **Solution**: Verify shell initialization
+
 ```bash
 atuin status
 exec zsh

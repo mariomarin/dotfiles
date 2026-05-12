@@ -42,7 +42,7 @@ uninstall-nixos:
 
 # Run a command in NixOS WSL
 run COMMAND:
-    nu wsl.nu run {{COMMAND}}
+    nu wsl.nu run {{ COMMAND }}
 
 # Open NixOS WSL in Windows Terminal
 terminal:

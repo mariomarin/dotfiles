@@ -78,11 +78,13 @@ nnoremap <leader>y :call system('clip', @0)<CR>
 ### Troubleshooting Connection Issues
 
 1. Check if Clipper is running:
+
    ```bash
    lsof -i :8377
    ```
 
 2. Check service status:
+
    ```bash
    # macOS
    launchctl list | grep clipper
@@ -92,6 +94,7 @@ nnoremap <leader>y :call system('clip', @0)<CR>
    ```
 
 3. Check SSH tunnel (remote):
+
    ```bash
    # Should show forwarded port
    ss -tulpn | grep 8377
@@ -114,6 +117,7 @@ nnoremap <leader>y :call system('clip', @0)<CR>
 ## Future Enhancements
 
 Potential additions:
+
 - UNIX domain socket support (more secure than TCP)
 - Clipboard paste function (retrieve from clipboard)
 - Integration with `wl-clipboard` or `xclip` as fallback
