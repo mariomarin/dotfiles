@@ -21,6 +21,7 @@ Configured in: [tmux-navigation.lua](lua/plugins/tmux-navigation.lua)
 Over SSH, yanks automatically go to your **local** clipboard via OSC 52.
 
 **Requirements:**
+
 - Terminal with OSC 52 support (Alacritty, iTerm2, WezTerm, Kitty)
 - tmux `set-clipboard on` and `allow-passthrough on`
 
@@ -29,11 +30,13 @@ Over SSH, yanks automatically go to your **local** clipboard via OSC 52.
 For large buffers over SSH, use Clipper with `<leader>y`:
 
 **Requirements:**
+
 - Clipper daemon running on local machine (port 8377)
 - SSH RemoteForward configured for remote host
 - `nc` (netcat) command available on remote
 
 **Usage:**
+
 ```vim
 " Send last yank to Clipper
 <leader>y

@@ -12,6 +12,7 @@ This module separates revset construction from execution:
 ### Why This Separation?
 
 Jujutsu revsets are declarative and composable:
+
 - Describe WHAT to query, not HOW to execute
 - Compose complex queries: `mine() & conflicted()`, `trunk()..mutable()`
 - Same revset → same result (for given repo state)

@@ -7,7 +7,7 @@ This directory contains systemd user service units managed by chezmoi.
 ### atuin-server.service
 
 - **Purpose**: Atuin self-hosted sync server
-- **Documentation**: https://docs.atuin.sh/self-hosting/server-setup/
+- **Documentation**: <https://docs.atuin.sh/self-hosting/server-setup/>
 - **Type**: Simple service with automatic restart
 - **Executable**: `~/.local/bin/atuin-server server start`
 - **Port**: 8888 (localhost only)
@@ -18,7 +18,7 @@ This directory contains systemd user service units managed by chezmoi.
 ### clipper.service
 
 - **Purpose**: Clipboard service for remote clipboard access over SSH
-- **Documentation**: https://github.com/wincent/clipper
+- **Documentation**: <https://github.com/wincent/clipper>
 - **Type**: Simple service with automatic restart
 - **Port**: 8377 (TCP on 127.0.0.1)
 - **Auto-enabled**: Via symlink in `default.target.wants/`

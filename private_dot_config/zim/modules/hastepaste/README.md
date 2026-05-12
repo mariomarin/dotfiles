@@ -28,9 +28,11 @@ Both formats are supported for compatibility with the `haste` Ruby gem.
 Paste content from stdin to the Haste server.
 
 **Arguments:**
+
 - `extension` (optional): File extension for syntax highlighting (e.g., "py", "js", "md")
 
 **Example:**
+
 ```zsh
 echo "test content" | hastepaste
 cat script.py | hastepaste py
@@ -41,9 +43,11 @@ cat script.py | hastepaste py
 Execute a command, display output to terminal, and automatically paste it to the Haste server with ANSI escape codes removed.
 
 **Arguments:**
+
 - `command`: The command to execute (as a string)
 
 **Example:**
+
 ```zsh
 capture_command 'terragrunt plan'
 capture_command 'kubectl get pods'
@@ -54,6 +58,7 @@ capture_command 'kubectl get pods'
 Pipe command output to both the terminal and the Haste server with ANSI escape codes removed.
 
 **Example:**
+
 ```zsh
 terragrunt plan | pipe_haste
 kubectl describe pod my-pod | pipe_haste
