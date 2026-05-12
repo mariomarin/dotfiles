@@ -42,9 +42,6 @@
 
     # Commit message linting
     commitizen
-
-    # agents
-    claude-code
   ];
 
   # Claude Code integration
