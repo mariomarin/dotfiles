@@ -20,6 +20,9 @@ disable = [
   "rustup",     # Rustup (managed by Nix on NixOS)
   "bun",        # Bun (managed by NixOS)
 {{- end }}
+{{- if eq .machineConfig.platform "linux-apt" }}
+  "brew_cask",  # No casks on linux-apt
+{{- end }}
 ]
 
 # Don't retry failed steps automatically
@@ -52,7 +55,7 @@ cleanup = true
 "Nix Flake Update" = "cd $(chezmoi source-path)/nix/nixos && nix flake update"
 {{- if eq .chezmoi.os "darwin" }}
 "Nix Flake Rebuild" = "cd $(chezmoi source-path) && sudo just darwin"
-{{- else }}
+{{- else if ne .machineConfig.platform "linux-apt" }}
 "Nix Flake Rebuild" = "cd $(chezmoi source-path) && just nixos"
 {{- end }}
 {{- end }}
