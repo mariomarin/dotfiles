@@ -248,22 +248,22 @@
         always_run = false;
       };
 
-      # LeftWM config validation
+      # LeftWM config validation (desktop-only)
       leftwm-check = {
         enable = true;
         name = "leftwm-check";
-        entry = "leftwm check";
+        entry = "sh -c 'command -v leftwm >/dev/null || exit 0; leftwm check'";
         files = "config\\.ron(\\.tmpl)?$";
         language = "system";
         pass_filenames = false;
         always_run = false;
       };
 
-      # Kanata config validation (process each file separately)
+      # Kanata config validation (desktop-only)
       kanata-check = {
         enable = true;
         name = "kanata-check";
-        entry = "sh -c 'for f; do kanata --check --cfg \"$f\" || exit 1; done' --";
+        entry = "sh -c 'command -v kanata >/dev/null || exit 0; for f; do kanata --check --cfg \"$f\" || exit 1; done' --";
         files = "\\.kbd$";
         language = "system";
         pass_filenames = true;
