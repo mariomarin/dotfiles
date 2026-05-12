@@ -15,7 +15,7 @@ Modern shell with structured data, vi mode, and shell integration for Alacritty/
 ### Vi Mode Keybindings
 
 | Insert Mode | Action | Normal Mode | Action |
-|-------------|--------|-------------|--------|
+| ----------- | ------ | ----------- | ------ |
 | `ESC`, `Ctrl+[` | Normal mode | `i/I/a/A` | Insert modes |
 | `Ctrl+A` | Line start | `h/j/k/l` | Navigation |
 | `Ctrl+E` | Line end | `w/b/e` | Word motions |
@@ -28,7 +28,7 @@ Modern shell with structured data, vi mode, and shell integration for Alacritty/
 ### Plugins
 
 | Plugin | Source | Description |
-|--------|--------|-------------|
+| ------ | ------ | ----------- |
 | `clipboard` | nupm | System clipboard copy/paste |
 | `formats` | NixOS | EML, ICS, INI, plist, VCF support |
 | `query` | NixOS | JSON, XML, web data queries |
@@ -43,7 +43,7 @@ Usage: `clipboard copy`, `clipboard paste`, `query web`, `gstat`
 **What changed:** Zsh+zim → Nushell+carapace. Carapace bridges (Cobra/Clap) replace custom completions.
 
 | Zsh Feature | Nushell | Notes |
-|-------------|---------|-------|
+| ----------- | ------- | ----- |
 | Vi mode, completions, history | ✅ | Full parity |
 | zoxide, fzf, atuin, direnv | ✅ | Native integration |
 | container-use, aws-sso, git-branchless | ✅ | Carapace auto-bridge |

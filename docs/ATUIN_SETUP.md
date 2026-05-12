@@ -60,7 +60,7 @@ systemctl --user restart atuin-server.service
 
 ### Remote Client (SSH Tunnel Required)
 
-**1. Configure SSH Tunnel**
+### 1. Configure SSH Tunnel
 
 Add to SSH config:
 
@@ -71,7 +71,7 @@ Host <server-host>
 
 Or manually: `ssh -L 8888:127.0.0.1:8888 <server-host>`
 
-**2. Configure Client**
+### 2. Configure Client
 
 Create `~/.local/share/chezmoi/.env.work` (NOT tracked in git):
 
@@ -82,7 +82,7 @@ export ATUIN_SYNC_KEY="<key-from-server>"
 
 Reload: `cd ~/.local/share/chezmoi && direnv allow`
 
-**3. Login and Sync**
+### 3. Login and Sync
 
 ```bash
 atuin login -u <username> -p <password>
@@ -92,7 +92,7 @@ atuin sync
 
 ### Local Client (Same Machine as Server)
 
-**1. Configure Client**
+#### 1. Configure Client
 
 Create `~/.local/share/chezmoi/.env.work`:
 
@@ -101,7 +101,7 @@ export ATUIN_SYNC_ADDRESS="http://127.0.0.1:8888"
 export ATUIN_SYNC_KEY="<key-from-server>"
 ```
 
-**2. Login and Sync**
+#### 2. Login and Sync
 
 ```bash
 atuin login -u <username> -p <password>
@@ -214,7 +214,7 @@ bindkey | grep atuin
 ## Files and Locations
 
 | File | Platform | Purpose |
-|------|----------|---------|
+| ---- | -------- | ------- |
 | `~/.config/atuin/config.toml` | All | Client configuration |
 | `~/.config/atuin/server.toml` | linux-apt | Server configuration |
 | `~/.config/systemd/user/atuin-server.service` | linux-apt | Server systemd service |

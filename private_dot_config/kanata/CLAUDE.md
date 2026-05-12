@@ -108,7 +108,7 @@ Physical Keyboard → Kanata → Hammerspoon → macOS Spaces API
 ### Window Layer Keybindings
 
 | User Action | Kanata Sends | Hammerspoon Action |
-|-------------|--------------|-------------------|
+| ----------- | ------------ | ------------------ |
 | `=+1-9` | `Ctrl+Alt+1-9` | Switch to desktop 1-9 |
 | `=+Shift+1-9` | `Ctrl+Alt+Shift+1-9` | Move window to desktop 1-9 |
 | `=+h` | `Ctrl+Alt+h` | Previous space |

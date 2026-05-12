@@ -11,7 +11,7 @@ use bitwarden
 ## Commands
 
 | Command | Description |
-|---------|-------------|
+| ------- | ----------- |
 | `bitwarden unlock` | Unlock vault, save session to `.env.local` |
 | `bitwarden reload` | Reload direnv environment (Unix) |
 | `bitwarden get item` | Retrieve complete item |

@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This Zsh module provides clipboard integration via Clipper, enabling seamless clipboard access both locally and over SSH connections.
+This Zsh module provides clipboard integration via Clipper, enabling seamless clipboard access
+both locally and over SSH connections.
 
 ## Architecture
 

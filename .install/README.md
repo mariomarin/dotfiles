@@ -5,20 +5,34 @@ One-line bootstrap for automated setup.
 ## Quick Start
 
 | Platform | Command |
-|----------|---------|
-| **macOS/NixOS** | `curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh \| sh` |
-| **Windows** | `irm https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-windows.ps1 \| iex` |
+| -------- | ------- |
+| **macOS/NixOS** | See below |
+| **Windows** | See below |
 
-Bootstrap installs package managers, clones repo, prompts for hostname, sets up Bitwarden, and applies configuration. Override hostname: `export HOSTNAME="name"` (before running).
+macOS/NixOS:
+
+```bash
+curl -sfL https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-unix.sh | sh
+```
+
+Windows:
+
+```powershell
+irm https://raw.githubusercontent.com/mariomarin/dotfiles/main/.install/bootstrap-windows.ps1 | iex
+```
+
+Bootstrap installs package managers, clones repo, prompts for hostname, sets up Bitwarden,
+and applies configuration. Override hostname: `export HOSTNAME="name"` (before running).
 
 ## Secret Management
 
-`just bw-setup` → saves session to `.env.local` → `just` auto-loads via `set dotenv-load` → chezmoi templates fetch secrets → topgrade validates session. No manual `export` needed
+`just bw-setup` saves session to `.env.local`, `just` auto-loads via `set dotenv-load`,
+chezmoi templates fetch secrets, topgrade validates session. No manual `export` needed.
 
 ## Troubleshooting
 
 | Issue | Solution |
-|-------|----------|
+| ----- | -------- |
 | **Execution policy (Windows)** | `Set-ExecutionPolicy Bypass -Scope Process -Force` |
 | **Restart required (Windows)** | Restart PowerShell after tools install |
 | **bitwarden-cli missing (NixOS)** | `nix-env -iA nixos.bitwarden-cli` |

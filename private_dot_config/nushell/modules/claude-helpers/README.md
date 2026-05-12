@@ -11,7 +11,7 @@ use claude-helpers *
 ## Commands
 
 | Command | Description |
-|---------|-------------|
+| ------- | ----------- |
 | `cl` | Claude with MCP container-use |
 | `improve` | Improve prompts |
 | `popus` | Opus with clipboard |
