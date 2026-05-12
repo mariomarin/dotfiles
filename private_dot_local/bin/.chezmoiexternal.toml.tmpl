@@ -24,14 +24,6 @@
     executable = true
     refreshPeriod = "168h"
 
-{{- $jjRelease := gitHubLatestRelease "jj-vcs/jj" }}
-["jj"]
-    type = "archive"
-    url = "https://github.com/jj-vcs/jj/releases/download/{{ $jjRelease.TagName }}/jj-{{ $jjRelease.TagName }}-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
-    stripComponents = 0
-    include = ["jj"]
-    refreshPeriod = "168h"
-
 # Text processing
 {{- $millerRelease := gitHubLatestRelease "johnkerl/miller" }}
 {{- $millerVersion := trimPrefix "v" $millerRelease.TagName }}

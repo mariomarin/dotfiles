@@ -180,6 +180,7 @@
               name = "ribosome-cli-tools";
               paths = [
                 pkgs.unstable.atuin # Shell history sync (client + server) - from unstable for latest version
+                pkgs.jujutsu
               ];
               pathsToLink = [ "/bin" "/share" ];
             };

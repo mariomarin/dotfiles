@@ -1,6 +1,7 @@
 #!/usr/bin/env nu
 # Install Nix packages for linux-apt via just
 # hash: {{ include "nix/common/modules/cli-tools.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/flake.nix" | sha256sum }}
 
 # Check if required tools are available
 if (which nix | is-empty) {
