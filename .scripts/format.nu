@@ -89,6 +89,7 @@ def "main yaml" [] {
     glob **/*.{yml,yaml}
     | where {|f| not ($f | str contains ".git") }
     | where {|f| not ($f | str contains "node_modules") }
+    | where {|f| not ($f | str contains ".pre-commit-config") }
     | each {|file| yamlfmt $file }
     print "✅ YAML files formatted"
 }
