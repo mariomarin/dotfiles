@@ -32,7 +32,6 @@
 
     devenv = {
       url = "github:cachix/devenv/v2.1";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     claude-code-nix = {
@@ -177,6 +176,7 @@
           {
             # Individual packages
             atuin = pkgs.unstable.atuin;
+            devenv = devenv.packages.x86_64-linux.default;
 
             # Bundled environment for ribosome (linux-apt platform)
             # Matches packages from common/modules/cli-tools.nix
@@ -186,7 +186,6 @@
               paths = [
                 pkgs.unstable.atuin
                 pkgs.jujutsu
-                devenv.packages.x86_64-linux.devenv
               ];
               pathsToLink = [ "/bin" "/share" ];
             };
