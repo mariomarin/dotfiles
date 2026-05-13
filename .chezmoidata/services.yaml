@@ -1,5 +1,19 @@
 # Service reload configuration
 # Maps config files to services that should be reloaded when they change
+
+_tmux: &tmux
+  name: tmux
+  configs:
+    - private_dot_config/tmux/tmux.conf
+    - private_dot_config/tmux/settings.tmux
+    - private_dot_config/tmux/plugins.tmux
+    - private_dot_config/tmux/mappings/root.tmux
+    - private_dot_config/tmux/mappings/prefix.tmux
+    - private_dot_config/tmux/mappings/copy-mode-vi.tmux
+  type: command
+  check: "tmux list-sessions 2>/dev/null | is-not-empty"
+  reload: "tmux source-file ~/.config/tmux/tmux.conf"
+
 services:
   darwin:
     - name: kanata
@@ -8,6 +22,7 @@ services:
         - private_dot_config/kanata/core.kbd
       type: launchctl
       service: org.local.kanata
+    - *tmux
   linux:
     - name: kanata
       configs:
@@ -25,6 +40,7 @@ services:
         - private_dot_config/systemd/user/clipper.service
       type: systemctl-user
       service: clipper
+    - *tmux
   windows:
     - name: kanata
       configs:

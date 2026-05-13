@@ -107,8 +107,29 @@ nix/darwin/**
 .config/autorandr/**
 {{ end }}
 
-# Desktop-specific scripts (ignore on headless/server machines)
+# Desktop-specific (ignore on headless/server machines)
 {{ if not .machineConfig.features.desktop }}
+.config/alacritty
+.config/alacritty/**
+.config/ghostty
+.config/ghostty/**
+.config/autorandr
+.config/autorandr/**
+.config/autostart
+.config/autostart/**
+.config/leftwm
+.config/leftwm/**
+.config/picom
+.config/picom/**
+.config/polybar
+.config/polybar/**
+.config/rofi
+.config/rofi/**
+.config/tridactyl
+.config/tridactyl/**
+.config/hammerspoon
+.config/hammerspoon/**
+.config/mimeapps.list
 .chezmoiscripts/linux-30-*
 .chezmoiscripts/linux-40-*
 .chezmoiscripts/linux-50-*

@@ -27,7 +27,7 @@ set -g @resurrect-capture-pane-contents 'on'
 # tmux-continuum
 set -g @continuum-restore 'on'
 set -g @continuum-boot 'on'
-set -g @continuum-boot-options 'alacritty'
+set -g @continuum-boot-options 'ghostty'
 set -g @continuum-systemd-start-cmd 'start-server'
 
 # tmux-yank: copy to system clipboard and exit copy mode
