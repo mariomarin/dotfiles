@@ -3,7 +3,6 @@
 
 # Only proceed if HASTE_SERVER is set
 if [[ -z ${HASTE_SERVER} ]]; then
-  print -P "%F{yellow}Warning: HASTE_SERVER not set. Set it in .env.work to enable hastepaste functions.%f" >&2
   return 0
 fi
 

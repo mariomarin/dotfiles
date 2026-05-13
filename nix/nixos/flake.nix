@@ -63,6 +63,7 @@
           bitbucket-cli = final.callPackage ./pkgs/bitbucket-cli.nix { };
           zesh = final.callPackage ./pkgs/zesh.nix { };
           kanata-tray = final.callPackage ./pkgs/kanata-tray.nix { };
+          jj-spr = final.callPackage ./pkgs/jj-spr.nix { };
         })
         claude-code-nix.overlays.default
       ];
@@ -160,7 +161,7 @@
           modules = [ ../darwin/hosts/malus/configuration.nix ];
         };
 
-        # axon - Pinterest-managed Mac (minimal nix-darwin for services)
+        # axon - work Mac (nix-darwin for services)
         axon = mkDarwin {
           system = "aarch64-darwin";
           modules = [ ../darwin/hosts/axon/configuration.nix ];
@@ -198,6 +199,7 @@
                 # Version control
                 pkgs.git-lfs
                 pkgs.unstable.jujutsu
+                pkgs.jj-spr
                 pkgs.gh
                 pkgs.lazygit
 

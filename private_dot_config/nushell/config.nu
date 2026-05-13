@@ -499,8 +499,6 @@ use ($nu.default-config-dir | path join 'modules' 'container-use-completions') *
 # AWS SSO CLI completions
 use ($nu.default-config-dir | path join 'modules' 'aws-sso-cli-completions') *
 
-# Git branchless completions
-use ($nu.default-config-dir | path join 'modules' 'git-branchless-completions') *
 
 # Jujutsu (jj) completions module (provides 'jj update-completions' command)
 use ($nu.default-config-dir | path join 'modules' 'jj-completions.nu') *

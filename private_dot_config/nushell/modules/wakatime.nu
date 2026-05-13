@@ -3,7 +3,7 @@
 
 export def wakatime-heartbeat [] {
     # Skip if tracking disabled
-    if ($env | get -i WAKATIME_DO_NOT_TRACK | default 0) == 1 {
+    if ($env | get -o WAKATIME_DO_NOT_TRACK | default 0) == 1 {
         return
     }
 

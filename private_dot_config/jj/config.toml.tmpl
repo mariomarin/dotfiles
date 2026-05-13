@@ -55,3 +55,23 @@ rbs = ["rebase", "-s"]
 # Git integration
 gf = ["git", "fetch"]
 gp = ["git", "push"]
+
+[fix.tools.just-fmt]
+command = ["just", "--fmt", "--unstable", "--justfile=$path"]
+patterns = ["glob:'**/justfile'"]
+
+[fix.tools.nixpkgs-fmt]
+command = ["nixpkgs-fmt"]
+patterns = ["glob:'**/*.nix'"]
+
+[fix.tools.shfmt]
+command = ["shfmt", "-i", "2", "-ci", "-sr", "-kp", "$path"]
+patterns = ["glob:'**/*.sh'"]
+
+[fix.tools.stylua]
+command = ["stylua", "-"]
+patterns = ["glob:'**/*.lua'"]
+
+[fix.tools.yamlfmt]
+command = ["yamlfmt", "-in"]
+patterns = ["glob:'**/*.yaml'", "glob:'**/*.yml'"]

@@ -1,5 +1,4 @@
-# axon - Pinterest-managed Mac (darwin-brew → nix-darwin migration)
-# Start minimal: only services that need nix-darwin, keep brew for packages
+# axon - work Mac (nix-darwin)
 { config, pkgs, lib, inputs, userConfig, ... }:
 
 let
@@ -7,12 +6,22 @@ let
 in
 {
   imports = [
+    ../../../common/modules/cli-tools.nix
+    ../../../common/modules/fonts.nix
+    ../../../common/modules/tmux.nix
     ../../modules/xdg-open-svc.nix
   ];
+
+  custom.cli = {
+    enable = true;
+    modernCli = true;
+  };
 
   system.primaryUser = username;
   nixpkgs.config.allowUnfree = true;
   nix.enable = false;
+
+  programs.zsh.enableGlobalCompInit = false;
 
   system.stateVersion = 4;
 }

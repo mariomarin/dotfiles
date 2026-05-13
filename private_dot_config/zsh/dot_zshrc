@@ -44,8 +44,8 @@ if [[ ! -d "$TMPPREFIX" ]]; then
   mkdir -p "$TMPPREFIX"
 fi
 
-# node
-npm config set prefix "$NPM_CONFIG_PREFIX"
+# node (only if npm available — nodejs comes from devenv per-project)
+(( ${+commands[npm]} )) && npm config set prefix "$NPM_CONFIG_PREFIX"
 
 # zoxide (fasd replacement)
 eval "$(zoxide init zsh)"
@@ -87,8 +87,8 @@ unalias gt 2>/dev/null
 # are configured in zsh-vi-mode-config.zsh's zvm_after_init function
 # Up arrow is handled by atuin (see atuin-config.zsh)
 
-# kubernetes
-source <(kubectl completion zsh)
+# kubernetes (available via devenv per-project)
+(( ${+commands[kubectl]} )) && source <(kubectl completion zsh)
 
 # jujutsu
 if (( $+commands[jj] )); then

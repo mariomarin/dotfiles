@@ -1,6 +1,5 @@
 # Service reload configuration
 # Maps config files to services that should be reloaded when they change
-
 _tmux: &tmux
   name: tmux
   configs:
@@ -13,7 +12,6 @@ _tmux: &tmux
   type: command
   check: "tmux list-sessions 2>/dev/null | is-not-empty"
   reload: "tmux source-file ~/.config/tmux/tmux.conf"
-
 services:
   darwin:
     - name: kanata

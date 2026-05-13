@@ -11,9 +11,9 @@ typeset -ga _CLIPPER_NC_CMD=(nc)
 
 # Check if nc command exists
 if (( ${+commands[nc]} )); then
-  # Detect if nc supports -N flag (required on Ubuntu/Debian)
-  # Check help output to avoid connecting to Clipper during detection
-  if nc -h 2>&1 | grep -qF -- '-N'; then
+  # -N shuts down network after EOF (needed on GNU netcat / Ubuntu)
+  # macOS nc shows -N in help but doesn't actually support it properly
+  if [[ "$(uname)" != "Darwin" ]] && nc -h 2>&1 | grep -qF -- '-N'; then
     _CLIPPER_NC_CMD+=(-N)
   fi
 fi
@@ -22,21 +22,20 @@ fi
 # Functions
 #
 
-# Copy stdin to clipboard via Clipper
-# Works locally and remotely over SSH (via RemoteForward)
+# Copy stdin to clipboard via Clipper (remote) or pbcopy (local macOS)
 clip() {
-  # Check if nc command exists
-  (( ${+commands[nc]} )) || {
-    print -P "%F{red}Error: nc (netcat) command not found%f" >&2
-    return 1
-  }
-
-  # Send input to Clipper using pre-detected nc flags
-  "${_CLIPPER_NC_CMD[@]}" "$CLIPPER_HOST" "$CLIPPER_PORT" || {
-    print -P "%F{red}Error: Could not connect to Clipper at ${CLIPPER_HOST}:${CLIPPER_PORT}%f" >&2
-    print -P "%F{yellow}Is Clipper running? Check: lsof -i :${CLIPPER_PORT}%f" >&2
-    return 1
-  }
+  if [[ "$(uname)" == "Darwin" && -z "$SSH_TTY" ]]; then
+    pbcopy
+  else
+    (( ${+commands[nc]} )) || {
+      print -P "%F{red}Error: nc (netcat) command not found%f" >&2
+      return 1
+    }
+    "${_CLIPPER_NC_CMD[@]}" "$CLIPPER_HOST" "$CLIPPER_PORT" || {
+      print -P "%F{red}Error: Could not connect to Clipper at ${CLIPPER_HOST}:${CLIPPER_PORT}%f" >&2
+      return 1
+    }
+  fi
 }
 
 # Copy file contents to clipboard via Clipper

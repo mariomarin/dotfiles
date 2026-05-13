@@ -27,7 +27,6 @@
     yt-dlp
 
     # Git utilities
-    git-branchless
     git-sizer
     bfg-repo-cleaner
     git-filter-repo

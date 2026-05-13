@@ -39,8 +39,8 @@ in
       git-lfs
       gh # GitHub CLI
       bitbucket-cli # Bitbucket CLI (custom pkg)
-      git-branchless
       jujutsu # Modern VCS (jj command)
+      jj-spr # Stacked PRs for jj
       lazygit # TUI for git
 
       # ── File management ─────────────────────────────────────────────────
@@ -69,19 +69,15 @@ in
       # ── Development tools ───────────────────────────────────────────────
       just # Command runner
       direnv
+      chezmoi
       age # Encryption (for chezmoi)
 
-      # ── Kubernetes ──────────────────────────────────────────────────────
-      kubectl
-      krew
-      kubelogin
-      kubernetes-helm
 
       # ── Password and secrets ────────────────────────────────────────────
       bitwarden-cli
 
       # ── Shell utilities ─────────────────────────────────────────────────
-      atuin # Shell history sync and search
+      unstable.atuin # Shell history sync and search
       pay-respects # Terminal command correction
       topgrade # Update everything
       envsubst # Environment variable substitution
