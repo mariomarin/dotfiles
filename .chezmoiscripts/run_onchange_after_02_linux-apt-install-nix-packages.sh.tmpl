@@ -3,5 +3,5 @@
 # hash: {{ include "nix/nixos/flake.nix" | sha256sum }}
 set -euo pipefail
 
-cd "$(chezmoi source-path)/nix/nixos"
+cd "{{ .chezmoi.sourceDir }}/nix/nixos"
 ATUIN_NOBIND=true exec nu nixos.nu linux-apt ribosome
