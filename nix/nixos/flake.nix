@@ -192,7 +192,7 @@
                 pkgs.neovim
 
                 # Version control
-                pkgs.jujutsu
+                pkgs.unstable.jujutsu
                 pkgs.gh
                 pkgs.lazygit
 
