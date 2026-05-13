@@ -310,6 +310,7 @@ nu -c "help commands | where name == 'command-name'"
 | Boolean flags | Return value or `null` |
 | Exit codes everywhere | `{ ok: bool, error?: string }` records |
 | Imperative loops | `each`, `where`, `reduce` pipelines |
+| Verbose success output | Unix rule of silence: only print on error |
 
 **Examples:**
 

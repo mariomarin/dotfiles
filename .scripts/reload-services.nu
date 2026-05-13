@@ -40,7 +40,6 @@ def reload-launchctl [service: string] {
     if not (is-running-pgrep $process) {
         return { ok: true, skipped: "not running" }
     }
-    print $"Reloading ($service)..."
     let stop = (do { sudo launchctl stop $service } | complete)
     if $stop.exit_code != 0 {
         return { ok: false, error: $stop.stderr }
@@ -50,7 +49,6 @@ def reload-launchctl [service: string] {
     if $start.exit_code != 0 {
         return { ok: false, error: $start.stderr }
     }
-    print $"✓ ($service) reloaded"
     { ok: true }
 }
 
@@ -61,7 +59,6 @@ def reload-systemctl [service: string, --user] {
     if $enabled.exit_code != 0 {
         return { ok: true, skipped: "not enabled" }
     }
-    print $"Reloading ($service)..."
     if $user {
         do { systemctl --user daemon-reload } | complete | ignore
     }
@@ -70,7 +67,6 @@ def reload-systemctl [service: string, --user] {
     if $result.exit_code != 0 {
         return { ok: false, error: $result.stderr }
     }
-    print $"✓ ($service) reloaded"
     { ok: true }
 }
 
@@ -80,30 +76,24 @@ def reload-command [check: string, reload: string, name: string] {
     if $running.exit_code != 0 {
         return { ok: true, skipped: "not running" }
     }
-    print $"Reloading ($name)..."
     let result = (do { nu -c $reload } | complete)
     if $result.exit_code != 0 {
         return { ok: false, error: $result.stderr }
     }
-    print $"✓ ($name) reloaded"
     { ok: true }
 }
 
 # Reload Windows task-based service
 def reload-windows-task [task: string, exe: string] {
-    # Use tasklist /FI to filter directly - avoids piping to internal commands
     let running = (do { tasklist /FI $"IMAGENAME eq ($exe)" /NH } | complete)
-    # tasklist returns 0 even if no match, but output contains "No tasks" or "INFO:"
     if $running.exit_code != 0 or ($running.stdout | str contains "INFO:") {
         return { ok: true, skipped: "not running" }
     }
-    print $"Stopping ($task)..."
     taskkill /IM $exe /F | ignore
     sleep 1sec
 
     let task_exists = (do { schtasks /Query /TN $task } | complete).exit_code == 0
     if $task_exists {
-        print $"Starting ($task) via scheduled task..."
         let result = (do { schtasks /Run /TN $task } | complete)
         if $result.exit_code != 0 {
             return { ok: false, error: $result.stderr }
@@ -114,10 +104,8 @@ def reload-windows-task [task: string, exe: string] {
         if not ($exe_path | path exists) {
             return { ok: false, error: $"executable not found at ($exe_path)" }
         }
-        print $"Starting ($task) directly..."
         conhost --headless $exe_path --cfg $config_path
     }
-    print $"✓ ($task) reloaded"
     { ok: true }
 }
 
@@ -128,11 +116,9 @@ def process-service [svc: record, state: record] {
     let prev_hash = ($state | get-or-null $name | default "")
 
     if not (has-changed $name $hash $state) {
-        print $"($name): no change"
         return { name: $name, hash: $hash }
     }
 
-    print $"($name): config changed"
     let result = match $svc.type {
         "launchctl" => { reload-launchctl $svc.service }
         "systemctl" => { reload-systemctl $svc.service }
@@ -143,18 +129,14 @@ def process-service [svc: record, state: record] {
     }
 
     if ($result | get-or-null "skipped" | is-not-empty) {
-        print $"($name): ($result.skipped)"
-        # Skipped (not running) - update hash so we don't retry
         return { name: $name, hash: $hash }
     }
 
     if not $result.ok {
-        print $"($name): reload failed - ($result.error)"
-        # Failed - keep OLD hash so next run retries
+        print -e $"✗ ($name): ($result.error)"
         return { name: $name, hash: $prev_hash }
     }
 
-    # Success - update to new hash
     { name: $name, hash: $hash }
 }
 

@@ -20,6 +20,11 @@ services:
         - private_dot_config/systemd/user/atuin-server.service
       type: systemctl-user
       service: atuin-server
+    - name: clipper
+      configs:
+        - private_dot_config/systemd/user/clipper.service
+      type: systemctl-user
+      service: clipper
   windows:
     - name: kanata
       configs:
