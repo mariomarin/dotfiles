@@ -48,6 +48,7 @@ export TFENV_ROOT="$HOME/.tfenv"
 # PATH
 typeset -U PATH path
 path=(
+  "$XDG_DATA_HOME/ribosome-env/bin"
   "$TFENV_ROOT/bin"
   "$CARGOBIN"
   "$FLYCTL_INSTALL/bin:$PATH"
