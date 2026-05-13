@@ -3,19 +3,14 @@
 # Krew plugin management script
 
 def main [] {
-    print "Usage: nu krew.nu [sync|list|install]"
+    main sync
 }
 
 # Check if krew is bootstrapped, bootstrap if needed
 def ensure-krew [] {
     let krew_bin = $"($env.HOME)/.local/share/krew/bin/kubectl-krew"
-    if ($krew_bin | path exists) {
-        return
-    }
+    if ($krew_bin | path exists) { return }
 
-    print "🔧 Bootstrapping krew..."
-
-    # Download and run the official krew installer
     let install_script = $"(mktemp -d)/install_krew.sh"
     let download = do {
         ^curl -fsSL https://krew.sigs.k8s.io/install | save -f $install_script
@@ -29,8 +24,6 @@ def ensure-krew [] {
     if $result.exit_code != 0 {
         error make {msg: $"Failed to bootstrap krew: ($result.stderr)"}
     }
-
-    print "✅ Krew bootstrapped successfully"
 }
 
 # Parse plugins from Krewfile
@@ -48,19 +41,16 @@ def load-krewfile []: nothing -> list<string> {
 
 # Sync plugins from Krewfile
 def "main sync" [] {
-    print "🔄 Syncing krew plugins from ~/.krewfile..."
-
     ensure-krew
-
     let plugins = load-krewfile
-    print $"📦 Found ($plugins | length) plugins in Krewfile"
 
     $plugins | each {|plugin|
-        print $"  Installing ($plugin)..."
-        kubectl krew install $plugin
+        let result = (do { kubectl krew install $plugin } | complete)
+        if $result.exit_code != 0 {
+            print -e $"✗ ($plugin): ($result.stderr)"
+        }
     }
-
-    print "✅ Krew plugins synced"
+    | ignore
 }
 
 # List installed krew plugins
@@ -70,12 +60,11 @@ def "main list" [] {
 
 # Install a plugin and add to Krewfile
 def "main install" [plugin: string] {
-    print $"📦 Installing ($plugin)..."
-    kubectl krew install $plugin
+    let result = (do { kubectl krew install $plugin } | complete)
+    if $result.exit_code != 0 {
+        error make {msg: $"Failed to install ($plugin): ($result.stderr)"}
+    }
 
     let krewfile = $"($nu.home-dir)/.krewfile"
-    print $"📝 Adding ($plugin) to ($krewfile)..."
     $"($plugin)\n" | save --append $krewfile
-
-    print "✅ Done"
 }

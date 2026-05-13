@@ -54,19 +54,18 @@ def reload-launchctl [service: string] {
 
 # Reload a systemctl service (Linux)
 def reload-systemctl [service: string, --user] {
-    let scope = if $user { ["--user"] } else { [] }
+    let scope = if $user { [--user] } else { [] }
     let enabled = (do { systemctl ...$scope is-enabled $service } | complete)
-    if $enabled.exit_code != 0 {
-        return { ok: true, skipped: "not enabled" }
+    if $enabled.exit_code != 0 { return { ok: true, skipped: "not enabled" } }
+
+    if $user { do { systemctl --user daemon-reload } | complete | ignore }
+
+    let result = if $user {
+        do { systemctl --user restart $service } | complete
+    } else {
+        do { sudo systemctl restart $service } | complete
     }
-    if $user {
-        do { systemctl --user daemon-reload } | complete | ignore
-    }
-    let cmd = if $user { ["systemctl" "--user" "restart" $service] } else { ["sudo" "systemctl" "restart" $service] }
-    let result = (do { ^($cmd.0) ...($cmd | skip 1) } | complete)
-    if $result.exit_code != 0 {
-        return { ok: false, error: $result.stderr }
-    }
+    if $result.exit_code != 0 { return { ok: false, error: $result.stderr } }
     { ok: true }
 }
 
