@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "caarlos0-nur": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-darwin"
+        ]
+      },
+      "locked": {
+        "lastModified": 1778115430,
+        "narHash": "sha256-xqjKjhjcz31Tuz5mtNP2hZgqB1bZ2FvLYZsXsJptdZ0=",
+        "owner": "caarlos0",
+        "repo": "nur",
+        "rev": "857c51ea719e58f73ee87d5829045f9ef87953bc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "caarlos0",
+        "repo": "nur",
+        "type": "github"
+      }
+    },
     "cachix": {
       "inputs": {
         "devenv": [
@@ -1103,6 +1123,7 @@
     },
     "root": {
       "inputs": {
+        "caarlos0-nur": "caarlos0-nur",
         "claude-code-nix": "claude-code-nix",
         "devenv": "devenv",
         "home-manager": "home-manager_2",

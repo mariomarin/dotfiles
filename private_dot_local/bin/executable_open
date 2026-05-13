@@ -1,0 +1,9 @@
+#!/usr/bin/env nu
+
+def main [...args: string] {
+    if ($env.SSH_TTY? | is-not-empty) {
+        $args | str join " " | nc -c -w1 localhost 2226
+    } else {
+        ^/usr/bin/open ...$args
+    }
+}

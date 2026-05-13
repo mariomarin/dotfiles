@@ -21,6 +21,7 @@ in
     ../../modules/packages.nix # macOS-specific packages
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
     ../../modules/kanata.nix # Kanata keyboard remapping service
+    ../../modules/xdg-open-svc.nix # Open URLs from remote hosts
     ../../../common/modules/fonts.nix # Shared Nerd Fonts for Unicode symbols
     ../../../common/modules/tmux.nix # Shared tmux plugins configuration
   ];

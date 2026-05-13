@@ -24,6 +24,12 @@ Host *
     ControlMaster auto
     ControlPath ~/.ssh/sockets/%r@%h:%p
     ControlPersist 10m
+{{- if eq .chezmoi.os "darwin" }}
+
+    # Forward xdg-open-svc and clipper to remote hosts
+    RemoteForward 2226 127.0.0.1:2226
+    RemoteForward 8377 127.0.0.1:8377
+{{- end }}
 
 # GitHub
 Host github.com
