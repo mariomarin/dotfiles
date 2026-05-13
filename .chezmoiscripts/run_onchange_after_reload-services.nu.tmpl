@@ -48,7 +48,7 @@ let services = '
 {{- range $i, $svc := .services.linux }}
 {{- if $i }},{{ end }}
   {"name":"{{ $svc.name }}","hash":"{{ template "combineHashes" $svc.configs }}","type":"{{ $svc.type }}"
-{{- if eq $svc.type "systemctl" }},"service":"{{ $svc.service }}"{{ end -}}
+{{- if or (eq $svc.type "systemctl") (eq $svc.type "systemctl-user") }},"service":"{{ $svc.service }}"{{ end -}}
   }
 {{- end }}
 ]

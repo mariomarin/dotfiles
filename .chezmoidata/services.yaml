@@ -15,6 +15,11 @@ services:
         - private_dot_config/kanata/core.kbd
       type: systemctl
       service: kanata-laptop
+    - name: atuin-server
+      configs:
+        - private_dot_config/systemd/user/atuin-server.service
+      type: systemctl-user
+      service: atuin-server
   windows:
     - name: kanata
       configs:

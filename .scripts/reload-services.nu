@@ -55,13 +55,18 @@ def reload-launchctl [service: string] {
 }
 
 # Reload a systemctl service (Linux)
-def reload-systemctl [service: string] {
-    let status = (do { systemctl is-active $service } | complete)
+def reload-systemctl [service: string, --user] {
+    let scope = if $user { ["--user"] } else { [] }
+    let status = (do { systemctl ...$scope is-active $service } | complete)
     if $status.exit_code != 0 {
         return { ok: true, skipped: "not active" }
     }
     print $"Reloading ($service)..."
-    let result = (do { sudo systemctl restart $service } | complete)
+    if $user {
+        do { systemctl --user daemon-reload } | complete | ignore
+    }
+    let cmd = if $user { ["systemctl" "--user" "restart" $service] } else { ["sudo" "systemctl" "restart" $service] }
+    let result = (do { ^($cmd.0) ...($cmd | skip 1) } | complete)
     if $result.exit_code != 0 {
         return { ok: false, error: $result.stderr }
     }
@@ -131,6 +136,7 @@ def process-service [svc: record, state: record] {
     let result = match $svc.type {
         "launchctl" => { reload-launchctl $svc.service }
         "systemctl" => { reload-systemctl $svc.service }
+        "systemctl-user" => { reload-systemctl $svc.service --user }
         "command" => { reload-command $svc.check $svc.reload $name }
         "windows-task" => { reload-windows-task $svc.task $svc.exe }
         _ => { { ok: false, error: $"unknown type: ($svc.type)" } }
