@@ -8,7 +8,7 @@ StartLimitIntervalSec=60
 
 [Service]
 Type=simple
-ExecStart=%h/.nix-profile/bin/atuin server start
+ExecStart=%h/.local/share/ribosome-env/bin/atuin-server start
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
