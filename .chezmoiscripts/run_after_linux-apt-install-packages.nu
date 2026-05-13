@@ -7,6 +7,7 @@ if not ($config_file | path exists) { exit 0 }
 let config = open $config_file
 
 def add-repos [] {
+    if ($config.repos? | is-empty) { return }
     $config.repos | each { |repo|
         if $repo.type == "ppa" {
             let ppa_name = $repo.ppa | str replace "ppa:" ""

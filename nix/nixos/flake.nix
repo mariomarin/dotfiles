@@ -179,13 +179,52 @@
             devenv = devenv.packages.x86_64-linux.default;
 
             # Bundled environment for ribosome (linux-apt platform)
-            # Matches packages from common/modules/cli-tools.nix
-            # Gradual migration: starting with atuin, will add more over time
+            # Mirrors common/modules/cli-tools.nix for non-NixOS hosts
             ribosome-env = pkgs.buildEnv {
               name = "ribosome-cli-tools";
               paths = [
-                pkgs.unstable.atuin
+                # Shells and terminal
+                pkgs.nushell
+                pkgs.carapace
+                pkgs.tmux
+
+                # Editor
+                pkgs.neovim
+
+                # Version control
                 pkgs.jujutsu
+                pkgs.gh
+                pkgs.lazygit
+
+                # Search and text processing
+                pkgs.fzf
+                pkgs.jq
+                pkgs.yq-go
+
+                # System monitoring
+                pkgs.htop
+
+                # Development tools
+                pkgs.just
+                pkgs.direnv
+
+                # Modern CLI replacements
+                pkgs.bat
+                pkgs.ripgrep
+                pkgs.fd
+                pkgs.eza
+
+                # Shell utilities
+                pkgs.unstable.atuin
+                pkgs.zoxide
+                pkgs.topgrade
+
+                # Runtime (needed by Mason for node-based LSPs)
+                pkgs.nodejs
+
+                # Kubernetes
+                pkgs.kubectl
+                pkgs.kubernetes-helm
               ];
               pathsToLink = [ "/bin" "/share" ];
             };

@@ -1,55 +1,13 @@
-# APT packages for linux-apt platform (Ubuntu/Debian without Nix)
-repos:
-  - name: neovim
-    type: ppa
-    ppa: ppa:neovim-ppa/unstable
-  - name: eza
-    type: deb
-    key_url: https://raw.githubusercontent.com/eza-community/eza/main/deb.asc
-    key_file: /etc/apt/keyrings/gierens.gpg
-    repo: "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main"
-  - name: nushell
-    type: deb
-    key_url: https://apt.fury.io/nushell/gpg.key
-    key_file: /etc/apt/keyrings/fury-nushell.gpg
-    repo: "deb [signed-by=/etc/apt/keyrings/fury-nushell.gpg] https://apt.fury.io/nushell/ /"
-  - name: carapace
-    type: deb
-    repo: "deb [trusted=yes] https://apt.fury.io/rsteube/ /"
+# APT packages for linux-apt platform (minimal - most tools come from nix profile)
 packages:
-  # Shells
+  # Shells (need /etc/shells entry)
   - zsh
   - bash
-  # Editors
-  - vim
-  - neovim
-  # Version control
+  # Version control (needed by bootstrap before nix)
   - git
   - git-lfs
-  # jj: install from pre-built binaries (see install script)
-  # Core utils
+  # Core system utils (needed early or by other tools)
   - curl
   - wget
-  - rsync
   - file
-  - tree
   - unzip
-  - zstd
-  - htop
-  - jq
-  - fzf
-  - tmux
-  - direnv
-  # Modern CLI
-  - bat
-  - ripgrep
-  - fd-find
-  - eza
-  # From repos
-  - nushell
-  - carapace-bin
-  # Kubernetes (kubectl installed via .chezmoiexternal.toml.tmpl)
-  - helm
-  # Development
-  - nodejs
-  - npm
