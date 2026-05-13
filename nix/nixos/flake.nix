@@ -192,6 +192,7 @@
                 pkgs.neovim
 
                 # Version control
+                pkgs.git-lfs
                 pkgs.unstable.jujutsu
                 pkgs.gh
                 pkgs.lazygit
