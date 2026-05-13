@@ -57,9 +57,9 @@ def reload-launchctl [service: string] {
 # Reload a systemctl service (Linux)
 def reload-systemctl [service: string, --user] {
     let scope = if $user { ["--user"] } else { [] }
-    let status = (do { systemctl ...$scope is-active $service } | complete)
-    if $status.exit_code != 0 {
-        return { ok: true, skipped: "not active" }
+    let enabled = (do { systemctl ...$scope is-enabled $service } | complete)
+    if $enabled.exit_code != 0 {
+        return { ok: true, skipped: "not enabled" }
     }
     print $"Reloading ($service)..."
     if $user {
