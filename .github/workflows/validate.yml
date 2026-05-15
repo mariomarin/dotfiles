@@ -21,7 +21,7 @@ jobs:
           name: devenv
 
       - name: Install devenv
-        run: nix profile install github:cachix/devenv/v2.1.1
+        run: nix profile install github:cachix/devenv/v2.1.2 --accept-flake-config
 
       - name: Run checks
-        run: devenv test
+        run: devenv shell -- prek run --all-files
