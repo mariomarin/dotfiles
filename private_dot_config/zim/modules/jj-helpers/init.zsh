@@ -256,8 +256,15 @@ jjsync() {
         return
     fi
 
-    # Abandon empty commits already on trunk (landed PRs), keep working copy
-    jj abandon "${base_bookmark}..mutable() & empty() & ~@" 2>/dev/null
+    # Remove empty commits (landed PRs): reparent their children, then abandon
+    local empty_revset="${base_bookmark}..mutable() & empty() & ~@"
+    local -a empty_ids
+    empty_ids=(${(f)"$(jj log -r "$empty_revset" --no-graph -T 'change_id.short() ++ \"\n\"' 2>/dev/null)"})
+    for eid in "${empty_ids[@]}"; do
+        [[ -z "$eid" ]] && continue
+        jj rebase -s "children($eid) & ~empty()" -d "parents($eid)" 2>/dev/null
+        jj abandon "$eid" 2>/dev/null
+    done
 
     # Default: sync all local work using idiomatic jj revsets
     printf "♻️  Rebasing all local work onto trunk...\n"
