@@ -38,7 +38,6 @@ in
       git
       git-lfs
       gh # GitHub CLI
-      gh-dash # GitHub PR dashboard TUI
       bitbucket-cli # Bitbucket CLI (custom pkg)
       jujutsu # Modern VCS (jj command)
       jj-spr # Stacked PRs for jj
