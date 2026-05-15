@@ -45,6 +45,9 @@
 
     # Task runner (needed by justfile-fmt hook)
     just
+
+    # Nushell (needed by nushell-check and nushell-test hooks)
+    nushell
   ];
 
   # Claude Code integration
