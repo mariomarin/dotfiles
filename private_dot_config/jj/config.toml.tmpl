@@ -56,9 +56,11 @@ rbs = ["rebase", "-s"]
 gf = ["git", "fetch"]
 gp = ["git", "push"]
 
-[fix.tools.just-fmt]
-command = ["just", "--fmt", "--unstable", "--justfile=$path"]
-patterns = ["glob:'**/justfile'"]
+# DO NOT enable just-fmt here — it wipes justfiles when run outside their
+# directory because --justfile=$path can't resolve imports. Use prek hook instead.
+# [fix.tools.just-fmt]
+# command = ["just", "--fmt", "--unstable", "--justfile=$path"]
+# patterns = ["glob:'**/justfile'"]
 
 [fix.tools.nixpkgs-fmt]
 command = ["nixpkgs-fmt"]

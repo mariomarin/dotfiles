@@ -163,7 +163,7 @@ def run-check [from_ref: string, to_ref: string] {
         }
     }
 
-    pre-commit run --hook-stage pre-push --from-ref $from_ref --to-ref $to_ref
+    prek run --from-ref $from_ref --to-ref $to_ref
     | complete
     | {
         success: ($in.exit_code == 0),
