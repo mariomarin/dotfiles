@@ -256,8 +256,8 @@ jjsync() {
         return
     fi
 
-    # Abandon empty commits already on trunk (landed PRs)
-    jj abandon "${base_bookmark}..mutable() & empty()" 2>/dev/null
+    # Abandon empty commits already on trunk (landed PRs), keep working copy
+    jj abandon "${base_bookmark}..mutable() & empty() & ~@" 2>/dev/null
 
     # Default: sync all local work using idiomatic jj revsets
     printf "♻️  Rebasing all local work onto trunk...\n"
