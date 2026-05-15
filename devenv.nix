@@ -42,6 +42,9 @@
 
     # Commit message linting
     commitizen
+
+    # Task runner (needed by justfile-fmt hook)
+    just
   ];
 
   # Claude Code integration
