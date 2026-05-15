@@ -9,12 +9,8 @@ set dotenv-load
 # Default target
 default: apply
 
-# Re-add files that change outside chezmoi (plugins, lock files)
-re-add:
-    chezmoi re-add ~/.config/nvim/lazy-lock.json
-
 # Apply dotfiles changes
-apply: re-add
+apply:
     chezmoi apply --no-tty
 
 # Show what would change
@@ -22,7 +18,7 @@ diff:
     chezmoi diff
 
 # Quick apply without updates
-quick-apply: re-add
+quick-apply:
     CHEZMOI_SKIP_UPDATES=1 chezmoi apply --no-tty
 
 # Initialize chezmoi with repository
