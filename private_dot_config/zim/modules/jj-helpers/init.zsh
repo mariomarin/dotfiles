@@ -73,6 +73,10 @@ alias jredo='jj op restore'
 alias jgf='jj git fetch --tracked'
 alias jgp='jj git push --tracked'
 
+# SPR workflow
+alias jpr='jj-spr diff'
+alias jpra='jj-spr diff --all'
+
 #
 # Helper Functions
 #
@@ -292,6 +296,21 @@ jjsync() {
     printf "\n"
     _jj-show-status "$base_bookmark"
     return 0
+}
+
+# Land PR and sync (jj-spr land + fetch + rebase)
+# Usage: jland [-r <revision>]
+jland() {
+    local rev="@-"
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -r) rev="$2"; shift 2 ;;
+            *) rev="$1"; shift ;;
+        esac
+    done
+
+    jj-spr land -r "$rev" || return
+    jjsync
 }
 
 # Quick status with log
