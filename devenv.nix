@@ -213,12 +213,13 @@
         pass_filenames = true;
       };
 
-      # TOML formatting with taplo
+      # TOML formatting with taplo (exclude chezmoi templates)
       taplo = {
         enable = true;
         name = "taplo";
         entry = "taplo fmt";
         files = "\\.toml$";
+        excludes = [ "chezmoiexternal" ];
         language = "system";
         pass_filenames = true;
       };
@@ -271,6 +272,7 @@
         name = "kanata-check";
         entry = "sh -c 'command -v kanata >/dev/null || exit 0; for f; do kanata --check --cfg \"$f\" || exit 1; done' --";
         files = "\\.kbd$";
+        excludes = [ "nix/nixos/modules/" ];
         language = "system";
         pass_filenames = true;
       };

@@ -3,16 +3,18 @@
 -- Matches LeftWM keybindings: =+1-9 for spaces, =+h/l for navigation
 
 -- Reload config automatically
-hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", function(files)
-  for _, file in pairs(files) do
-    if file:match("%.lua$") then
-      hs.reload()
-      return
+hs.pathwatcher
+  .new(os.getenv "HOME" .. "/.hammerspoon/", function(files)
+    for _, file in pairs(files) do
+      if file:match "%.lua$" then
+        hs.reload()
+        return
+      end
     end
-  end
-end):start()
+  end)
+  :start()
 
-hs.alert.show("Hammerspoon loaded")
+hs.alert.show "Hammerspoon loaded"
 
 -- Helper: Get all spaces for a screen
 local function getSpacesForScreen(screen)
@@ -40,7 +42,7 @@ end
 
 -- Switch to workspace by number (Ctrl+Alt+1-9)
 for i = 1, 9 do
-  hs.hotkey.bind({"ctrl", "alt"}, tostring(i), function()
+  hs.hotkey.bind({ "ctrl", "alt" }, tostring(i), function()
     local screen = hs.screen.mainScreen()
     local spaces = getSpacesForScreen(screen)
 
@@ -54,10 +56,10 @@ end
 
 -- Move window to workspace (Ctrl+Alt+Shift+1-9)
 for i = 1, 9 do
-  hs.hotkey.bind({"ctrl", "alt", "shift"}, tostring(i), function()
+  hs.hotkey.bind({ "ctrl", "alt", "shift" }, tostring(i), function()
     local win = hs.window.focusedWindow()
     if not win then
-      hs.alert.show("No focused window")
+      hs.alert.show "No focused window"
       return
     end
 
@@ -66,7 +68,7 @@ for i = 1, 9 do
 
     if spaces[i] then
       hs.spaces.moveWindowToSpace(win, spaces[i])
-      hs.spaces.gotoSpace(spaces[i])  -- Follow window
+      hs.spaces.gotoSpace(spaces[i]) -- Follow window
     else
       hs.alert.show("Desktop " .. i .. " does not exist")
     end
@@ -74,7 +76,7 @@ for i = 1, 9 do
 end
 
 -- Navigate to previous space (Ctrl+Alt+h)
-hs.hotkey.bind({"ctrl", "alt"}, "h", function()
+hs.hotkey.bind({ "ctrl", "alt" }, "h", function()
   local currentSpace = getCurrentSpace()
   local currentIndex = getSpaceIndex(currentSpace)
 
@@ -91,7 +93,7 @@ hs.hotkey.bind({"ctrl", "alt"}, "h", function()
 end)
 
 -- Navigate to next space (Ctrl+Alt+l)
-hs.hotkey.bind({"ctrl", "alt"}, "l", function()
+hs.hotkey.bind({ "ctrl", "alt" }, "l", function()
   local currentSpace = getCurrentSpace()
   local currentIndex = getSpaceIndex(currentSpace)
   local screen = hs.screen.mainScreen()
@@ -106,7 +108,7 @@ hs.hotkey.bind({"ctrl", "alt"}, "l", function()
 end)
 
 -- Focus window below (Ctrl+Alt+j)
-hs.hotkey.bind({"ctrl", "alt"}, "j", function()
+hs.hotkey.bind({ "ctrl", "alt" }, "j", function()
   local win = hs.window.focusedWindow()
   if win then
     local nextWin = win:focusWindowSouth(nil, true, true)
@@ -114,14 +116,14 @@ hs.hotkey.bind({"ctrl", "alt"}, "j", function()
       -- Wrap around: focus first window
       local allWins = hs.window.orderedWindows()
       if #allWins > 1 then
-        allWins[2]:focus()  -- Skip current window
+        allWins[2]:focus() -- Skip current window
       end
     end
   end
 end)
 
 -- Focus window above (Ctrl+Alt+k)
-hs.hotkey.bind({"ctrl", "alt"}, "k", function()
+hs.hotkey.bind({ "ctrl", "alt" }, "k", function()
   local win = hs.window.focusedWindow()
   if win then
     local nextWin = win:focusWindowNorth(nil, true, true)
@@ -137,11 +139,11 @@ end)
 
 -- Swap spaces between monitors (Ctrl+Alt+w)
 -- Useful when you connect/disconnect external monitor
-hs.hotkey.bind({"ctrl", "alt"}, "w", function()
+hs.hotkey.bind({ "ctrl", "alt" }, "w", function()
   local screens = hs.screen.allScreens()
 
   if #screens < 2 then
-    hs.alert.show("Only one monitor detected")
+    hs.alert.show "Only one monitor detected"
     return
   end
 
@@ -167,11 +169,11 @@ hs.hotkey.bind({"ctrl", "alt"}, "w", function()
     win:moveToScreen(screens[1])
   end
 
-  hs.alert.show("Swapped workspaces between monitors")
+  hs.alert.show "Swapped workspaces between monitors"
 end)
 
 -- Move window to previous monitor (Ctrl+Alt+Shift+comma)
-hs.hotkey.bind({"ctrl", "alt", "shift"}, ",", function()
+hs.hotkey.bind({ "ctrl", "alt", "shift" }, ",", function()
   local win = hs.window.focusedWindow()
   if win then
     local screen = win:screen()
@@ -182,7 +184,7 @@ hs.hotkey.bind({"ctrl", "alt", "shift"}, ",", function()
 end)
 
 -- Move window to next monitor (Ctrl+Alt+Shift+period)
-hs.hotkey.bind({"ctrl", "alt", "shift"}, ".", function()
+hs.hotkey.bind({ "ctrl", "alt", "shift" }, ".", function()
   local win = hs.window.focusedWindow()
   if win then
     local screen = win:screen()
@@ -193,16 +195,11 @@ hs.hotkey.bind({"ctrl", "alt", "shift"}, ".", function()
 end)
 
 -- Debug: Show current space info (Ctrl+Alt+i)
-hs.hotkey.bind({"ctrl", "alt"}, "i", function()
+hs.hotkey.bind({ "ctrl", "alt" }, "i", function()
   local currentSpace = getCurrentSpace()
   local currentIndex = getSpaceIndex(currentSpace)
   local screen = hs.screen.mainScreen()
   local spaces = getSpacesForScreen(screen)
 
-  hs.alert.show(string.format(
-    "Desktop %d of %d\nScreen: %s",
-    currentIndex or 0,
-    #spaces,
-    screen:name()
-  ))
+  hs.alert.show(string.format("Desktop %d of %d\nScreen: %s", currentIndex or 0, #spaces, screen:name()))
 end)
