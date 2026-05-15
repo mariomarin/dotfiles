@@ -74,8 +74,8 @@ alias jgf='jj git fetch --tracked'
 alias jgp='jj git push --tracked'
 
 # SPR workflow
-alias jpr='jj-spr diff'
-alias jpra='jj-spr diff --all'
+alias jspr='jj-spr diff'
+alias jspra='jj-spr diff --all'
 
 #
 # Helper Functions
@@ -256,6 +256,9 @@ jjsync() {
         return
     fi
 
+    # Abandon empty commits already on trunk (landed PRs)
+    jj abandon "${base_bookmark}..mutable() & empty()" 2>/dev/null
+
     # Default: sync all local work using idiomatic jj revsets
     printf "♻️  Rebasing all local work onto trunk...\n"
 
@@ -298,7 +301,7 @@ jjsync() {
     return 0
 }
 
-# Land PR and sync (jj-spr land + fetch + rebase)
+# Land PR and sync (jj-spr land + jjsync)
 # Usage: jland [-r <revision>]
 jland() {
     local rev="@-"
