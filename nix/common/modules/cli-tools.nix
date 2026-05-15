@@ -53,7 +53,6 @@ in
       # ── Search and text processing ──────────────────────────────────────
       fzf
       jq
-      yq-go
       miller # CSV, TSV, JSON processing
 
       # ── Network utilities ───────────────────────────────────────────────
