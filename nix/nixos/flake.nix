@@ -206,7 +206,6 @@
                 # Search and text processing
                 pkgs.fzf
                 pkgs.jq
-                pkgs.yq-go
 
                 # System monitoring
                 pkgs.htop
