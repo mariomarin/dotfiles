@@ -230,6 +230,7 @@
         name = "yamlfmt";
         entry = "yamlfmt";
         files = "\\.(yml|yaml)$";
+        excludes = [ "pre-commit-config" ];
         language = "system";
         pass_filenames = true;
       };
