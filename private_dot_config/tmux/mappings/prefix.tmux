@@ -30,5 +30,8 @@ bind -n M-Tab last-window   # move to last active window
 # toggle status bar
 bind-key b set-option status
 
+# GitHub PR dashboard
+bind g display-popup -E -w 90% -h 85% "gh-dash"
+
 # reload configuration
 bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"
