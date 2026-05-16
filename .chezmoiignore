@@ -165,17 +165,12 @@ nix/nixos/hosts/ribosome/**
 .chezmoiscripts/linux-apt-enable-linger.nu
 {{ end }}
 
-# darwin-brew platform only (Homebrew packages and services)
-{{ if ne $platform "darwin-brew" }}
+# darwin-specific (hammerspoon, brew config)
+{{ if ne .chezmoi.os "darwin" }}
 .config/brew
 .config/brew/**
 .config/hammerspoon
 .config/hammerspoon/**
-.config/launchd
-.config/launchd/**
-.chezmoiscripts/run_onchange_after_10_darwin-brew-install-packages.nu
-.chezmoiscripts/run_onchange_after_20_darwin-brew-setup-services.nu
-.chezmoiscripts/run_onchange_after_30_darwin-brew-setup-hammerspoon.nu
 {{ end }}
 
 # darwin with nix only (tridactyl-native from nix)
