@@ -1,0 +1,5 @@
+{{- if and (eq .chezmoi.os "darwin") (lookPath "darwin-rebuild") }}
+# nix-darwin manages these services — remove chezmoi-managed plists
+Library/LaunchAgents/org.local.clipper.plist
+Library/LaunchAgents/org.local.syncthing.plist
+{{- end }}
