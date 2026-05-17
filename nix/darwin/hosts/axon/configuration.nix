@@ -18,7 +18,18 @@ in
     alacritty
     obsidian
     vscode
+    spotify
   ];
+
+  homebrew = {
+    enable = true;
+    onActivation.cleanup = "zap";
+    casks = [
+      "firefox"
+      "ghostty"
+      "hammerspoon"
+    ];
+  };
 
   custom.cli = {
     enable = true;

@@ -237,6 +237,19 @@ jjsync() {
         jj git fetch --all-remotes || return
     fi
 
+    # Remove stale jj-spr tracking branches (they make commits immutable)
+    if jj config get --repo spr.githubRepository 2>/dev/null | grep -q .; then
+        local -a spr_branches
+        spr_branches=(${(f)"$(git branch -r 2>/dev/null | grep 'origin/spr/' | sed 's/^ *//')"})
+        if [[ ${#spr_branches[@]} -gt 0 ]]; then
+            for b in "${spr_branches[@]}"; do
+                [[ -z "$b" ]] && continue
+                git branch -rD "$b" 2>/dev/null
+            done
+            jj git import 2>/dev/null
+        fi
+    fi
+
     # Show what trunk() resolved to for transparency
     local trunk_info
     trunk_info=$(jj log -r "$base_bookmark" --no-graph -T 'bookmarks ++ " " ++ commit_id.short(8)' --limit 1 2>/dev/null)
