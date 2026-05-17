@@ -45,6 +45,9 @@ in
     };
   };
 
+  # Karabiner in systemPackages so nix-darwin copies .app to /Applications
+  environment.systemPackages = [ pkgs.karabiner-dk ];
+
   # Copy kanata to stable path and create Karabiner socket directory
   system.activationScripts.postActivation.text = ''
     # Copy kanata binary to stable path (preserves Input Monitoring permission)
