@@ -5,19 +5,13 @@
 let
   username = userConfig.username;
   homeDir = "/Users/${username}";
-
-  # Build environment with all system applications
-  appEnv = pkgs.buildEnv {
-    name = "system-applications";
-    paths = config.environment.systemPackages;
-    pathsToLink = "/Applications";
-  };
 in
 {
   imports = [
     ../../../common/modules/cli-tools.nix # Shared CLI tools
     ../../../common/modules/apps.nix # Shared GUI applications
     ../../../common/modules/development.nix # Shared development tools
+    ../../modules/apps.nix # Copy nix apps to /Applications
     ../../modules/packages.nix # macOS-specific packages
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
     ../../modules/kanata.nix # Kanata keyboard remapping service
@@ -25,33 +19,6 @@ in
     ../../../common/modules/fonts.nix # Shared Nerd Fonts for Unicode symbols
     ../../../common/modules/tmux.nix # Shared tmux plugins configuration
   ];
-
-  # Copy applications instead of symlinking to make Spotlight happy
-  # Based on nix-darwin PR #1396 (not yet in stable 25.05)
-  # Symlinks aren't indexed by Spotlight, aliases have other issues
-  # rsync with --copy-unsafe-links converts nix store symlinks to real files
-  system.activationScripts.applications.text = lib.mkForce ''
-    echo "setting up /Applications/Nix Apps..." >&2
-
-    targetFolder='/Applications/Nix Apps'
-
-    # Clean up old style symlink to nix store (if exists)
-    if [ -L "$targetFolder" ]; then
-      rm "$targetFolder"
-    fi
-
-    mkdir -p "$targetFolder"
-
-    ${lib.getExe pkgs.rsync} \
-      --checksum \
-      --copy-unsafe-links \
-      --archive \
-      --delete \
-      --chmod=-w \
-      --no-group \
-      --no-owner \
-      ${appEnv}/Applications/ "$targetFolder"
-  '';
 
   # Enable CLI tools with modern replacements
   custom.cli = {

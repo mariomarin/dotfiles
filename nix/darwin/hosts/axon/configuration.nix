@@ -10,7 +10,9 @@ in
     ../../../common/modules/cli-tools.nix
     ../../../common/modules/fonts.nix
     ../../../common/modules/tmux.nix
+    ../../modules/apps.nix
     ../../modules/xdg-open-svc.nix
+    ../../modules/kanata.nix
   ];
 
   custom.cli = {
@@ -47,6 +49,7 @@ in
       StandardErrorPath = "${homeDir}/Library/Logs/syncthing.log";
     };
   };
+
 
   system.stateVersion = 4;
 }
