@@ -10,9 +10,14 @@ in
     ../../../common/modules/cli-tools.nix
     ../../../common/modules/fonts.nix
     ../../../common/modules/tmux.nix
-    ../../modules/apps.nix
     ../../modules/xdg-open-svc.nix
     ../../modules/kanata.nix
+  ];
+
+  environment.systemPackages = with pkgs; [
+    alacritty
+    obsidian
+    vscode
   ];
 
   custom.cli = {

@@ -11,7 +11,6 @@ in
     ../../../common/modules/cli-tools.nix # Shared CLI tools
     ../../../common/modules/apps.nix # Shared GUI applications
     ../../../common/modules/development.nix # Shared development tools
-    ../../modules/apps.nix # Copy nix apps to /Applications
     ../../modules/packages.nix # macOS-specific packages
     ../../modules/homebrew.nix # Homebrew casks for apps not in nixpkgs
     ../../modules/kanata.nix # Kanata keyboard remapping service
