@@ -48,6 +48,17 @@ in
   # Karabiner in systemPackages so nix-darwin copies .app to /Applications
   environment.systemPackages = [ pkgs.karabiner-dk ];
 
+  # Kanata tray icon (user agent)
+  launchd.user.agents.kanata-tray = {
+    serviceConfig = {
+      Label = "org.local.kanata-tray";
+      ProgramArguments = [ "${pkgs.kanata-tray}/bin/kanata-tray" ];
+      RunAtLoad = true;
+      KeepAlive = true;
+      ProcessType = "Background";
+    };
+  };
+
   # Copy kanata to stable path and create Karabiner socket directory
   system.activationScripts.postActivation.text = ''
     # Copy kanata binary to stable path (preserves Input Monitoring permission)
