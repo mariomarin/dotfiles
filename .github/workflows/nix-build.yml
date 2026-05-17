@@ -15,7 +15,7 @@ jobs:
             extra-substituters = https://devenv.cachix.org
             extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
       - name: Build darwinConfigurations.axon (dry-run)
-        run: nix build --flake ./nix/nixos#darwinConfigurations.axon.system --dry-run
+        run: nix build './nix/nixos#darwinConfigurations.axon.system' --dry-run
   build-linux:
     runs-on: ubuntu-latest
     steps:
@@ -26,4 +26,4 @@ jobs:
             extra-substituters = https://devenv.cachix.org
             extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
       - name: Build packages.x86_64-linux.ribosome-env (dry-run)
-        run: nix build --flake ./nix/nixos#packages.x86_64-linux.ribosome-env --dry-run
+        run: nix build './nix/nixos#packages.x86_64-linux.ribosome-env' --dry-run
