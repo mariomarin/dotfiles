@@ -37,7 +37,7 @@ set -g @yank_selection_mouse 'clipboard'
 set -g @yank_with_mouse 'on'
 
 # tmux-thumbs (prefix + F to activate)
-set -g @thumbs-key F
+set -g @thumbs-key Space
 set -g @thumbs-command 'tmux set-buffer -- {} && tmux display-message "Copied {}"'
 # Cross-platform open: detect OS at runtime
 if-shell "uname | grep -q Darwin" \
