@@ -64,6 +64,7 @@
           zesh = final.callPackage ./pkgs/zesh.nix { };
           kanata-tray = final.callPackage ./pkgs/kanata-tray.nix { };
           jj-spr = final.callPackage ./pkgs/jj-spr.nix { };
+          jj-stack = final.callPackage ./pkgs/jj-stack.nix { };
         })
         claude-code-nix.overlays.default
       ];

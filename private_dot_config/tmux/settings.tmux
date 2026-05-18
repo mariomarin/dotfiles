@@ -6,7 +6,7 @@ set -g prefix C-a
 
 # Force zsh as default shell for new windows/panes
 # Works even if login shell is bash (corporate environments)
-set -g default-shell /usr/bin/zsh
+set -g default-shell /run/current-system/sw/bin/zsh
 
 # Escape time for Alt/Meta key sequences (10ms allows ESC+key to be recognized as M-key)
 # Override tmux-sensible's escape-time 0 which breaks Alt bindings:

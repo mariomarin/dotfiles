@@ -41,7 +41,8 @@ in
       gh-dash # GitHub PR dashboard TUI
       bitbucket-cli # Bitbucket CLI (custom pkg)
       jujutsu # Modern VCS (jj command)
-      jj-spr # Stacked PRs for jj
+      jj-spr # Stacked PRs for jj (write access repos)
+      jj-stack # Stacked PRs for jj (read-only repos)
       lazygit # TUI for git
 
       # ── File management ─────────────────────────────────────────────────
