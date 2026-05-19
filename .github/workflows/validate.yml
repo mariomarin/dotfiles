@@ -17,6 +17,8 @@ jobs:
       - uses: nix-community/cache-nix-action@v6
         with:
           primary-key: devenv-${{ hashFiles('devenv.lock', 'devenv.nix') }}
+          restore-prefixes-first-match: devenv-
+          gc-max-store-size: 4000000000
       - name: Install devenv
         run: nix profile install github:cachix/devenv/v2.1.2 --accept-flake-config
       - name: Run checks
