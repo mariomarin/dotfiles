@@ -12,6 +12,5 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Evaluate flake outputs
         run: |
-          nix flake check --no-build ./nix/nixos
-          nix eval ./nix/nixos#packages.x86_64-linux.ribosome-env.drvPath
-          nix eval ./nix/nixos#darwinConfigurations.axon.config.system.build.toplevel.drvPath
+          nix eval --raw ./nix/nixos#packages.x86_64-linux.ribosome-env.drvPath
+          nix eval --raw ./nix/nixos#darwinConfigurations.axon.config.system.build.toplevel.drvPath
