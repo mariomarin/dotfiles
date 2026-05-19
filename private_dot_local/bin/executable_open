@@ -11,7 +11,7 @@ def main [...args: string] {
     if ($target | is-empty) { return }
 
     if ($env.SSH_TTY? | is-not-empty) {
-        $target | nc -N localhost 2226
+        $target | nc -w1 localhost 2226
     } else if ((^uname | str trim) == "Darwin") {
         ^/usr/bin/open ...$args
     } else if ("/proc/sys/fs/binfmt_misc/WSLInterop" | path exists) {
