@@ -1,0 +1,20 @@
+"$schema" = "https://raw.githubusercontent.com/rszyma/kanata-tray/main/doc/config_schema.json"
+
+[general]
+allow_concurrent_presets = false
+control_server_enable = false
+control_server_port = 8100
+
+[defaults]
+tcp_port = 5829
+autorestart_on_crash = false
+
+[defaults.hooks]
+
+[defaults.layer_icons]
+
+[presets.'Default Preset']
+kanata_executable = '/usr/local/bin/kanata'
+kanata_config = '~/.config/kanata/darwin.kbd'
+tcp_port = 5829
+autorun = false

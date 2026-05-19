@@ -37,6 +37,8 @@ in
         kanataStablePath
         "--cfg"
         "/Users/${config.system.primaryUser}/.config/kanata/darwin.kbd"
+        "--port"
+        "5829"
       ];
       RunAtLoad = true;
       KeepAlive = true;
@@ -46,7 +48,22 @@ in
   };
 
   # Karabiner in systemPackages so nix-darwin copies .app to /Applications
-  environment.systemPackages = [ pkgs.karabiner-dk ];
+  environment.systemPackages = [ pkgs.karabiner-dk pkgs.kanata-tray ];
+
+  # Kanata tray icon (user agent)
+  launchd.user.agents.kanata-tray = {
+    serviceConfig = {
+      Label = "org.local.kanata-tray";
+      ProgramArguments = [ "${pkgs.kanata-tray}/bin/kanata-tray" ];
+      RunAtLoad = true;
+      KeepAlive = true;
+      ProcessType = "Background";
+      EnvironmentVariables = {
+        KANATA_TRAY_LOG_DIR = "/tmp";
+        KANATA_TRAY_CONFIG_DIR = "/Users/${config.system.primaryUser}/.config/kanata-tray";
+      };
+    };
+  };
 
   # Copy kanata to stable path and create Karabiner socket directory
   system.activationScripts.postActivation.text = ''
