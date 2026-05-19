@@ -1,0 +1,37 @@
+#!/usr/bin/env nu
+
+# Copy stdin or file to clipboard (platform-aware, SSH-aware)
+# Usage: echo "text" | clip
+#        clip file.txt
+#
+# SSH detection: uses $SSH_TTY which reflects the environment where
+# the tmux server (or shell) was started. This is correct when tmux
+# is always started from the same context it's used in (SSH→SSH, local→local).
+
+def main [...args: string] {
+    let input = if ($args | is-not-empty) {
+        let file = $args.0
+        if ($file | path exists) {
+            open --raw $file
+        } else {
+            $args | str join " "
+        }
+    } else {
+        $in
+    }
+
+    if ($input | is-empty) { return }
+
+    if ($env.SSH_TTY? | is-not-empty) {
+        # Over SSH: forward to clipper on Mac via tunnel
+        $input | nc -N localhost 8377
+    } else if ((^uname | str trim) == "Darwin") {
+        $input | ^pbcopy
+    } else if ("/proc/sys/fs/binfmt_misc/WSLInterop" | path exists) {
+        $input | ^clip.exe
+    } else if (which xclip | is-not-empty) {
+        $input | ^xclip -selection clipboard
+    } else if (which wl-copy | is-not-empty) {
+        $input | ^wl-copy
+    }
+}

@@ -148,6 +148,72 @@ Watch out for these common conflicts:
 - `M-h/j/k/l` - Navigation keys used by multiple plugins
 - `prefix b` - Buffer operations vs status bar toggle
 
+## Clipboard and Open Integration
+
+### Architecture
+
+Clipboard and URL opening use standalone scripts in `~/.local/bin/` that move
+platform/SSH detection out of tmux config into helper scripts, reducing
+config-time branching. OSC52 (`set-buffer -w`) is the truly client-aware
+clipboard path. `clip`/`open` remain server-environment scoped via `$SSH_TTY`.
+
+| Script | Purpose | SSH (linux-apt→Mac) | Local Mac | Local Linux | WSL |
+| ------ | ------- | ------------------- | --------- | ----------- | --- |
+| `clip` | Copy to clipboard | nc → clipper:8377 | pbcopy | xclip/wl-copy | clip.exe |
+| `open` | Open URL/file | nc → xdg-open-svc:2226 | /usr/bin/open | xdg-open | wslview |
+
+### How it works
+
+- **tmux-thumbs** calls `clip` and `open` directly (no platform branching in tmux config)
+- **OSC52** (`set -s set-clipboard external`) handles tmux buffer → client terminal clipboard
+- **SSH tunnels** (RemoteForward 8377, 2226) bridge remote → local Mac services
+- **clipper** daemon on Mac accepts clipboard content on port 8377
+- **xdg-open-svc** daemon on Mac opens URLs/files on port 2226
+
+### Scope model
+
+- **Config time** (server start): terminal features, OSC52 settings
+- **Invocation time** (key press): `clip`/`open` scripts check `$SSH_TTY`
+- **Client time** (attach): OSC52 (`set-buffer -w`) routes to attached terminal
+
+### Limitation: `$SSH_TTY` reflects server start context
+
+The `clip`/`open` scripts check `$SSH_TTY` to decide SSH vs local. This reflects
+the environment where the **tmux server was started**, not the currently attached
+client. This is correct for our setup because:
+
+- linux-apt: tmux always starts via SSH (`RemoteCommand zsh -l`)
+- macOS/NixOS: tmux always starts locally
+
+If tmux were started by systemd and later attached over SSH, `clip`/`open` would
+incorrectly use the local path. OSC52 (`set-buffer -w`) handles this correctly
+since it routes to the actual attached terminal.
+
+### Thumbs interpolation
+
+`{}` is interpolated by tmux-thumbs before shell execution. Double-quoting
+(`"{}"`) handles spaces and `&` but is NOT fully safe for all shell metacharacters
+(embedded quotes, `$(...)`, backticks). This is a known tmux-thumbs limitation.
+
+`clip` is best-effort (`;` not `&&`) so OSC52 clipboard works even if clip fails.
+`open` does NOT write to clipboard (`set-buffer` without `-w`).
+
+### Platform detection: prefer helper scripts, call by explicit path
+
+Helper scripts (`~/.local/bin/clip`, `~/.local/bin/open`) centralize platform/SSH
+detection for maintainability. Call them by **explicit path** in tmux config to
+avoid ambiguity with system commands (macOS has `/usr/bin/open`).
+
+The scripts are server-environment scoped (check `$SSH_TTY` at invocation, which
+reflects tmux server start context). This is correct only when tmux always starts
+in the same context it runs in. OSC52 (`set-buffer -w`) is the truly client-aware
+clipboard path.
+
+```tmux
+set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | ~/.local/bin/clip 2>/dev/null; ...'
+set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; ~/.local/bin/open "{}"; ...'
+```
+
 ## Important Notes
 
 - Always preserve user preferences when resolving conflicts
