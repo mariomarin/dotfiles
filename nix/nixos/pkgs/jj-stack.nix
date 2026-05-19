@@ -8,10 +8,10 @@ buildNpmPackage {
     owner = "keanemind";
     repo = "jj-stack";
     rev = "main";
-    hash = lib.fakeHash;
+    hash = "sha256-fk+FZv4lu+noM6ig4NFGAlRy4AWdEjkLIDZZ877bKLs=";
   };
 
-  npmDepsHash = lib.fakeHash;
+  npmDepsHash = "sha256-RVOnxdzSpgyxfS+EZS1oIlX+chUl8GyLXKrmVlEmLPg=";
 
   buildPhase = ''
     npm run build
