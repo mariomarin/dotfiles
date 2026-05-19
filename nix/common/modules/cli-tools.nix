@@ -72,6 +72,7 @@ in
       direnv
       chezmoi
       age # Encryption (for chezmoi)
+      kubectl
 
 
       # ── Password and secrets ────────────────────────────────────────────
