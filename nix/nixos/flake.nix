@@ -65,6 +65,7 @@
           kanata-tray = final.callPackage ./pkgs/kanata-tray.nix { };
           jj-spr = final.callPackage ./pkgs/jj-spr.nix { };
           jj-stack = final.callPackage ./pkgs/jj-stack.nix { };
+          clipper = final.callPackage ./pkgs/clipper.nix { };
         })
         claude-code-nix.overlays.default
       ];
