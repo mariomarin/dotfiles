@@ -1,9 +1,22 @@
 #!/usr/bin/env nu
 
+# Open URL/file (platform-aware, SSH-aware)
+# Over SSH: forwards to xdg-open-svc on Mac via tunnel (port 2226)
+# Local: uses native opener
+#
+# Same SSH_TTY caveat as clip: reflects tmux server start context.
+
 def main [...args: string] {
+    let target = ($args | str join " ")
+    if ($target | is-empty) { return }
+
     if ($env.SSH_TTY? | is-not-empty) {
-        $args | str join " " | nc -c -w1 localhost 2226
-    } else {
+        $target | nc -N localhost 2226
+    } else if ((^uname | str trim) == "Darwin") {
         ^/usr/bin/open ...$args
+    } else if ("/proc/sys/fs/binfmt_misc/WSLInterop" | path exists) {
+        ^wslview ...$args
+    } else {
+        ^xdg-open ...$args
     }
 }

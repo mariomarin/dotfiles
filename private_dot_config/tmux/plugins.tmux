@@ -38,14 +38,11 @@ set -g @yank_with_mouse 'on'
 
 # tmux-thumbs (prefix + F to activate)
 set -g @thumbs-key Space
-set -g @thumbs-command 'tmux set-buffer -- {} && tmux display-message "Copied {}"'
-# Cross-platform open: detect OS at runtime
-if-shell "uname | grep -q Darwin" \
-    "set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message \"Opening {}\" && open {}'"
-if-shell "test -f /proc/sys/fs/binfmt_misc/WSLInterop" \
-    "set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message \"Opening {}\" && wslview {}'"
-if-shell "uname | grep -q Linux && ! test -f /proc/sys/fs/binfmt_misc/WSLInterop" \
-    "set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message \"Opening {}\" && xdg-open {}'"
+# Clipboard: OSC52 via set-buffer -w (primary), clip (best-effort, explicit path)
+# Note: {} interpolation is not fully shell-safe for all inputs (embedded quotes, $(...))
+set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | ~/.local/bin/clip 2>/dev/null; tmux display-message "Copied"'
+# Open: explicit path to helper, no clipboard side-effect
+set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; ~/.local/bin/open "{}"; tmux display-message "Opening"'
 
 # tmux-tilish (farzadmf fork with copilot support)
 # M-Space as modal modifier (like i3wm $mod key)
