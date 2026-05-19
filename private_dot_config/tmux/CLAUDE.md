@@ -152,9 +152,10 @@ Watch out for these common conflicts:
 
 ### Architecture
 
-Clipboard and URL opening use standalone scripts in `~/.local/bin/` that handle
-platform detection at **invocation time** (not config time). This avoids tmux
-config-time vs client-attach-time scope issues.
+Clipboard and URL opening use standalone scripts in `~/.local/bin/` that move
+platform/SSH detection out of tmux config into helper scripts, reducing
+config-time branching. OSC52 (`set-buffer -w`) is the truly client-aware
+clipboard path. `clip`/`open` remain server-environment scoped via `$SSH_TTY`.
 
 | Script | Purpose | SSH (linux-apt→Mac) | Local Mac | Local Linux | WSL |
 | ------ | ------- | ------------------- | --------- | ----------- | --- |
