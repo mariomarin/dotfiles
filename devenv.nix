@@ -196,8 +196,9 @@
       nushell-check = {
         enable = true;
         name = "nushell-check";
-        entry = "bash -c 'for f in \"$@\"; do nu -n -c \"source \\\"$f\\\"\"; done' _";
-        files = "\\.nu$";
+        entry = "nu .scripts/nu-check.nu";
+        files = "(\\.nu$|/executable_[^.]+$)";
+        types_or = [ "text" ];
         excludes = [ "wsl-" ]; # WSL scripts use cmd.exe, can't check on other platforms
         language = "system";
         pass_filenames = true;
