@@ -40,9 +40,9 @@ set -g @yank_with_mouse 'on'
 set -g @thumbs-key Space
 # Clipboard: OSC52 via set-buffer -w (primary), clip (best-effort, explicit path)
 # Note: {} interpolation is not fully shell-safe for all inputs (embedded quotes, $(...))
-set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | ~/.local/bin/clip 2>/dev/null; tmux display-message "Copied"'
-# Open: explicit path to helper, no clipboard side-effect
-set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; ~/.local/bin/open "{}"; tmux display-message "Opening"'
+set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | clip 2>/dev/null; tmux display-message "Copied: {}"'
+# Open: no clipboard side-effect
+set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; peek "{}"; tmux display-message "Opening: {}"'
 
 # tmux-tilish (farzadmf fork with copilot support)
 # M-Space as modal modifier (like i3wm $mod key)

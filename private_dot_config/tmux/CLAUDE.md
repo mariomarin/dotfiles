@@ -160,7 +160,7 @@ clipboard path. `clip`/`open` remain server-environment scoped via `$SSH_TTY`.
 | Script | Purpose | SSH (linux-apt→Mac) | Local Mac | Local Linux | WSL |
 | ------ | ------- | ------------------- | --------- | ----------- | --- |
 | `clip` | Copy to clipboard | nc → clipper:8377 | pbcopy | xclip/wl-copy | clip.exe |
-| `open` | Open URL/file | nc → xdg-open-svc:2226 | /usr/bin/open | xdg-open | wslview |
+| `peek` | Open URL/file | nc → xdg-open-svc:2226 | /usr/bin/open | xdg-open | wslview |
 
 ### How it works
 
@@ -196,13 +196,14 @@ since it routes to the actual attached terminal.
 (embedded quotes, `$(...)`, backticks). This is a known tmux-thumbs limitation.
 
 `clip` is best-effort (`;` not `&&`) so OSC52 clipboard works even if clip fails.
-`open` does NOT write to clipboard (`set-buffer` without `-w`).
+`peek` does NOT write to clipboard (`set-buffer` without `-w`).
 
-### Platform detection: prefer helper scripts, call by explicit path
+### Platform detection: helper scripts on PATH
 
-Helper scripts (`~/.local/bin/clip`, `~/.local/bin/open`) centralize platform/SSH
-detection for maintainability. Call them by **explicit path** in tmux config to
-avoid ambiguity with system commands (macOS has `/usr/bin/open`).
+Helper scripts (`clip`, `peek`) in `~/.local/bin/` centralize platform/SSH
+detection. They are called by name (not absolute path) in tmux config —
+`~/.local/bin` must be on PATH in the tmux server environment (set in
+`default-shell` or shell profile).
 
 The scripts are server-environment scoped (check `$SSH_TTY` at invocation, which
 reflects tmux server start context). This is correct only when tmux always starts
@@ -210,8 +211,8 @@ in the same context it runs in. OSC52 (`set-buffer -w`) is the truly client-awar
 clipboard path.
 
 ```tmux
-set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | ~/.local/bin/clip 2>/dev/null; ...'
-set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; ~/.local/bin/open "{}"; ...'
+set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | clip 2>/dev/null; ...'
+set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; peek "{}"; ...'
 ```
 
 ## Important Notes
