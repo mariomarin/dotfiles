@@ -1,37 +1,61 @@
-# SSH agent socket detection
-# Priority: forwarded agent (VMs) → GNOME Keyring → systemd
-_find_ssh_sock() {
-  local uid=$(id -u)
+autoload -Uz add-zsh-hook
 
-  # Forwarded agent (VMs) - find newest socket by modification time
-  local forwarded=$(find /tmp -maxdepth 2 -type s -name "agent.*" -user "$USER" -printf '%T@ %p\n' 2>/dev/null \
-    | sort -rn | head -1 | cut -d' ' -f2-)
-
-  if [[ -S "$forwarded" ]]; then
-    echo "$forwarded"
-    return
-  fi
-
-  # Desktop: GNOME Keyring
-  if [[ -S "/run/user/$uid/gcr/ssh" ]]; then
-    echo "/run/user/$uid/gcr/ssh"
-    return
-  fi
-  if [[ -S "/run/user/$uid/keyring/ssh" ]]; then
-    echo "/run/user/$uid/keyring/ssh"
-    return
-  fi
-
-  # Headless: systemd ssh-agent
-  if [[ -S "/run/user/$uid/ssh-agent" ]]; then
-    echo "/run/user/$uid/ssh-agent"
-  fi
+# Reachable agent socket?
+# ssh-add -l exit codes: 0=has keys, 1=no keys, 2=can't contact agent
+_ssh_sock_ok() {
+  [[ -n $1 && -S $1 ]] || return 1
+  SSH_AUTH_SOCK=$1 ssh-add -l </dev/null >/dev/null 2>&1
+  (( $? == 0 || $? == 1 ))
 }
 
-_update_ssh_sock() {
-  local sock=$(_find_ssh_sock)
-  [[ -n "$sock" ]] && export SSH_AUTH_SOCK="$sock"
+# Best socket: forwarded (newest, ours) → current → desktop/systemd fallbacks
+_ssh_best_sock() {
+  local sock
+  local -a forwarded fallbacks
+
+  setopt localoptions extended_glob
+
+  forwarded=(/tmp/(agent.*|*/agent.*)(#qN=Uom))
+  for sock in $forwarded; do
+    _ssh_sock_ok "$sock" || continue
+    REPLY=$sock
+    return 0
+  done
+
+  if _ssh_sock_ok "$SSH_AUTH_SOCK"; then
+    REPLY=$SSH_AUTH_SOCK
+    return 0
+  fi
+
+  fallbacks=(
+    /run/user/$EUID/gcr/ssh
+    /run/user/$EUID/keyring/ssh
+    /run/user/$EUID/ssh-agent
+  )
+
+  for sock in $fallbacks; do
+    _ssh_sock_ok "$sock" || continue
+    REPLY=$sock
+    return 0
+  done
+
+  return 1
 }
 
-# Initialize on load
-_update_ssh_sock
+_update_ssh_auth_sock() {
+  _ssh_best_sock || return 0
+  [[ $REPLY == $SSH_AUTH_SOCK ]] || export SSH_AUTH_SOCK=$REPLY
+}
+
+_ssh_auth_sock_preexec() {
+  case $1 in
+    (aws*|kubectl*|helm*|k9s*|terraform*|ssh*|scp*|sftp*|git*)
+      _update_ssh_auth_sock
+      ;;
+  esac
+}
+
+add-zsh-hook -d preexec _ssh_auth_sock_preexec 2>/dev/null
+add-zsh-hook    preexec _ssh_auth_sock_preexec
+
+_update_ssh_auth_sock
