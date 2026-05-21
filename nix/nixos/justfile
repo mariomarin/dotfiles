@@ -2,9 +2,9 @@
 
 set shell := ["nu", "-c"]
 
-# Default target - first-time setup or switch
+# Default target - delegates to darwin justfile on macOS
 default:
-    @just switch
+    @if (^uname | str trim) == "Darwin" { just --justfile ../darwin/justfile switch } else { just switch }
 
 # Auto-detect hostname or use HOST environment variable
 HOST := env_var_or_default("HOST", `hostname`)
