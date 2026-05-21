@@ -1,0 +1,328 @@
+#!/usr/bin/env nu
+
+# j - jj workflow helper (git-branchless ergonomics for jujutsu)
+
+def "nu-complete j bookmarks" [] {
+  ^jj bookmark list -T 'name ++ "\n"' err> /dev/null
+  | lines
+  | where {|l| not ($l | is-empty) }
+  | each {|b| { value: $b, description: "bookmark" } }
+}
+
+def "nu-complete j revisions" [] {
+  ^jj log --no-graph -T 'change_id.short() ++ " " ++ description.first_line() ++ "\n"' --limit 20 err> /dev/null
+  | lines
+  | where {|l| not ($l | is-empty) }
+  | each {|l|
+    let parts = ($l | split row " " --number 2)
+    { value: ($parts | first), description: ($parts | skip 1 | str join " " | default "") }
+  }
+}
+
+# Get current bookmark (from @ or parent if @ is empty)
+def get-current-bookmark [] {
+  let bookmark = (^jj log -r @ --no-graph -T 'bookmarks' err> /dev/null | str trim)
+  if not ($bookmark | is-empty) { return $bookmark }
+
+  let is_empty = (^jj log -r @ --no-graph -T 'if(empty, "true", "")' err> /dev/null | str trim)
+  if $is_empty != "true" {
+    error make { msg: "No bookmark found for @ (commit has changes)" }
+  }
+
+  let parent_bookmark = (^jj log -r '@-' --no-graph -T 'bookmarks' err> /dev/null | str trim)
+  if not ($parent_bookmark | is-empty) { return $parent_bookmark }
+
+  error make { msg: "No bookmark found for @ or @-" }
+}
+
+# Revset for all local work above a base
+def revset-local [base: string] {
+  $"roots\(($base)..mutable\(\)\)"
+}
+
+# Sync with remote: fetch + rebase all local work onto trunk
+def "main sync" [
+  bookmark?: string@"nu-complete j bookmarks"  # Sync specific bookmark only
+  --no-pull                                     # Skip fetching from remote
+  --current (-c)                                # Sync only current change (@)
+  --mine (-m)                                   # Sync only my commits
+  --base (-b): string = "trunk()"              # Base bookmark/revset
+] {
+  if not $no_pull {
+    print "⏬ Fetching from remote..."
+    let fetch = (do { ^jj git fetch --all-remotes } | complete)
+    if $fetch.exit_code != 0 {
+      print $"❌ Fetch failed: ($fetch.stderr)"
+      error make { msg: "fetch failed" }
+    }
+  }
+
+  # Remove stale jj-spr tracking branches
+  let has_spr = (do { ^jj config get --repo spr.githubRepository } | complete)
+  if $has_spr.exit_code == 0 and not ($has_spr.stdout | str trim | is-empty) {
+    let spr_branches = (do { ^git branch -r } | complete)
+    if $spr_branches.exit_code == 0 {
+      $spr_branches.stdout | lines
+      | str trim
+      | where {|b| $b | str starts-with "origin/spr/" }
+      | each {|b| do { ^git branch -rD $b } | complete; null }
+      | ignore
+
+      do { ^jj git import } | complete | ignore
+    }
+  }
+
+  # Show trunk resolution
+  let trunk_info = (^jj log -r $base --no-graph -T 'bookmarks ++ " " ++ commit_id.short(8)' --limit 1 err> /dev/null | str trim)
+  if not ($trunk_info | is-empty) {
+    print $"🎯 Base: ($trunk_info)"
+  }
+
+  # Sync specific bookmark
+  if ($bookmark | is-not-empty) {
+    print $"Syncing bookmark: ($bookmark)"
+    let result = (do { ^jj rebase -b $bookmark -d $base } | complete)
+    if $result.exit_code != 0 {
+      print $"❌ Rebase failed: ($result.stderr)"
+      error make { msg: "rebase failed" }
+    }
+    return
+  }
+
+  # Sync only current change
+  if $current {
+    print "Syncing current change (@)"
+    let result = (do { ^jj rebase -d $base } | complete)
+    if $result.exit_code != 0 {
+      print $"❌ Rebase failed: ($result.stderr)"
+      error make { msg: "rebase failed" }
+    }
+    return
+  }
+
+  # Rebase all local work
+  print "♻️  Rebasing all local work onto trunk..."
+
+  let revset = if $mine {
+    $"roots\(($base)..mine\(\)\)"
+  } else {
+    $"roots\(($base)..mutable\(\)\)"
+  }
+
+  let rebase_result = (do { ^jj rebase -s $revset -d $base } | complete)
+  if $rebase_result.exit_code != 0 {
+    print $"❌ Rebase failed"
+    print $rebase_result.stderr
+    error make { msg: "rebase failed" }
+  }
+
+  # Abandon empty commits that landed (after rebase makes them empty)
+  do { ^jj abandon $"all:($base)..mutable\(\) & empty\(\) & ~@" } | complete | ignore
+
+  # Check for conflicts
+  let conflicted = (^jj log -r $"($base)..mutable\(\) & conflicts\(\)" --no-graph -T 'change_id.short() ++ "\n"' err> /dev/null | lines | where {|l| not ($l | is-empty) })
+
+  if ($conflicted | length) > 0 {
+    print $"⚠️  ($conflicted | length) commit\(s\) have conflicts:"
+    let conflict_revset = ($conflicted | str join " | ")
+    ^jj log -r $conflict_revset
+  } else {
+    print "✅ Sync complete - no conflicts"
+  }
+
+  print ""
+  print "📊 Current state:"
+  ^jj log -r $"($base)..mutable\(\) | @" --limit 10
+}
+
+# Land PR via jj-spr and sync
+def "main land" [
+  revision?: string@"nu-complete j revisions"  # Revision to land (default: @-)
+  --rev (-r): string                            # Revision to land (flag form, compat)
+] {
+  if ($rev | is-not-empty) and ($revision | is-not-empty) {
+    error make { msg: "ambiguous: provide either positional revision or -r, not both" }
+  }
+  let rev = ($rev | default ($revision | default "@-"))
+  let land_result = (do { ^jj-spr land -r $rev } | complete)
+  if $land_result.exit_code != 0 {
+    print $land_result.stderr
+    error make { msg: "land failed" }
+  }
+  print $land_result.stdout
+  main sync
+}
+
+# Create or update PR from bookmark
+def "main pr" [
+  bookmark?: string@"nu-complete j bookmarks"  # Bookmark to push (default: current)
+  --create (-c)                                 # Create new PR
+  --draft (-d)                                  # Create as draft
+  --all (-a)                                    # Process all bookmarks
+  ...extra: string                              # Extra args passed to gh pr create
+] {
+  let bookmarks = if $all {
+    ^jj bookmark list -T 'name ++ "\n"' err> /dev/null | lines | where {|l| not ($l | is-empty) }
+  } else if ($bookmark | is-not-empty) {
+    [$bookmark]
+  } else {
+    [(get-current-bookmark)]
+  }
+
+  let failures = ($bookmarks | each {|bm|
+    print $"Processing bookmark: ($bm)"
+
+    let pr_number = (do { ^gh pr list --head $bm --json number --jq '.[0].number' } | complete)
+    let pr_num = ($pr_number.stdout | str trim)
+
+    if not ($pr_num | is-empty) and $pr_number.exit_code == 0 {
+      print $"  PR #($pr_num) exists, updating..."
+      let push = (do { ^jj git push --bookmark $bm --force } | complete)
+      if $push.exit_code != 0 {
+        print $"  ❌ Push failed: ($push.stderr)"
+        return $bm
+      }
+      return null
+    }
+
+    if not $create {
+      print "  No PR found. Use --create to create one."
+      return $bm
+    }
+
+    print "  Creating new PR..."
+    let gh_args = (["pr" "create" "--head" $bm "--fill"]
+      | if $draft { append "--draft" } else { $in }
+      | if not ($extra | is-empty) { append $extra } else { $in })
+    let create_result = (do { ^gh ...$gh_args } | complete)
+    if $create_result.exit_code != 0 {
+      print $"  ❌ Create failed: ($create_result.stderr)"
+      return $bm
+    }
+    print $create_result.stdout
+    null
+  } | where {|it| $it != null })
+
+  if not ($failures | is-empty) {
+    error make { msg: $"failed for bookmarks: ($failures | str join ', ')" }
+  }
+}
+
+# Move commits (git-branchless style)
+def "main move" [
+  commit: string@"nu-complete j revisions"      # Commit to move
+  dest: string@"nu-complete j revisions"        # Destination
+  --revisions (-r)                              # Move single commit only (default: with descendants)
+  --source (-s)                                 # Move with descendants (default, explicit)
+  --exact (-x)                                  # Alias for -r
+] {
+  if ($revisions or $exact) and $source {
+    error make { msg: "ambiguous: -r/-x and -s are mutually exclusive" }
+  }
+  let mode = if $revisions or $exact { "-r" } else { "-s" }
+  print $"Moving ($commit) \(mode: ($mode)\) to ($dest)"
+  let result = (do { ^jj rebase $mode $commit -d $dest } | complete)
+  if $result.exit_code != 0 {
+    print $"❌ Move failed: ($result.stderr)"
+    error make { msg: "move failed" }
+  }
+}
+
+# Push current bookmark to remote
+def "main push" [
+  bookmark?: string@"nu-complete j bookmarks"  # Bookmark to push (default: current)
+  --force (-f)                                  # Force push
+] {
+  let bm = if ($bookmark | is-not-empty) { $bookmark } else { get-current-bookmark }
+  print $"Pushing bookmark: ($bm)"
+  let args = if $force { ["--bookmark" $bm "--force"] } else { ["--bookmark" $bm] }
+  let result = (do { ^jj git push ...$args } | complete)
+  if $result.exit_code != 0 {
+    print $"❌ Push failed: ($result.stderr)"
+    error make { msg: "push failed" }
+  }
+}
+
+# Set main bookmark and push
+def "main push-main" [] {
+  print "Setting main bookmark to current change and pushing..."
+  let set_result = (do { ^jj bookmark set main } | complete)
+  if $set_result.exit_code != 0 {
+    print $"❌ Failed to set bookmark: ($set_result.stderr)"
+    error make { msg: "bookmark set failed" }
+  }
+  let push_result = (do { ^jj git push --bookmark main } | complete)
+  if $push_result.exit_code != 0 {
+    print $"❌ Push failed: ($push_result.stderr)"
+    error make { msg: "push failed" }
+  }
+}
+
+# Interactive bookmark checkout (requires fzf)
+def "main co" [] {
+  let selection = (^jj bookmark list | ^fzf --height=20 --reverse | str trim)
+  if ($selection | is-empty) { return }
+
+  let bookmark = ($selection | split row " " | first | str replace -r ':$' '')
+  ^jj new $bookmark
+}
+
+# Abandon empty commits with no description
+def "main clean" [
+  scope?: string  # Revset scope (default: mutable())
+] {
+  let s = ($scope | default "mutable()")
+
+  let empty_commits = (
+    ^jj log -r $"($s) & empty\(\)" --no-graph -T 'if(description, "", change_id.short() ++ "\n")' err> /dev/null
+    | lines
+    | where {|l| not ($l | is-empty) }
+  )
+
+  if ($empty_commits | length) == 0 {
+    print "No empty commits without description found"
+    return
+  }
+
+  print $"Found ($empty_commits | length) empty commit\(s\) with no description:"
+  for commit in $empty_commits {
+    print $"  ($commit)"
+  }
+
+  let answer = (input "Abandon these commits? [y/N] ")
+  if ($answer | str downcase) != "y" { return }
+
+  ^jj abandon ...$empty_commits
+}
+
+# Show help
+def "main help" [] {
+  print "j - jj workflow helper (git-branchless ergonomics)
+
+Subcommands:
+  j sync [bookmark]     Sync local work with trunk (fetch + rebase)
+  j land [revision]     Land PR via jj-spr and sync
+  j pr [bookmark]       Create or update PR (-c to create, -d for draft)
+  j move <commit> <dest> Move commits (-r for single commit)
+  j push [bookmark]     Push bookmark to remote
+  j push-main           Set main bookmark and push
+  j co                  Interactive bookmark checkout (fzf)
+  j clean [scope]       Abandon empty undescribed commits
+
+Flags:
+  j sync --no-pull      Skip fetch
+  j sync -c             Sync only current change
+  j sync -m             Sync only my commits
+  j sync -b <base>      Custom base (default: trunk())
+  j land -r <rev>       Land specific revision
+  j pr -c               Create new PR
+  j pr -d               Create as draft
+  j pr -a               Process all bookmarks
+  j pr -c -- --title \"...\" --body \"...\"  Pass extra gh args after --
+  j move -r             Move single commit (not descendants)
+  j move -x             Alias for -r"
+}
+
+def main [] {
+  main help
+}
