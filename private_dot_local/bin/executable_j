@@ -1,5 +1,4 @@
 #!/usr/bin/env nu
-
 # j - jj workflow helper (git-branchless ergonomics for jujutsu)
 
 def "nu-complete j bookmarks" [] {
