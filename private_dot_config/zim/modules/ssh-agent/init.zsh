@@ -13,9 +13,7 @@ _ssh_best_sock() {
   local sock
   local -a forwarded fallbacks
 
-  setopt localoptions extended_glob
-
-  forwarded=(/tmp/(agent.*|*/agent.*)(#qN=Uom))
+  forwarded=(/tmp/agent.*(NUom) /tmp/*/agent.*(NUom))
   for sock in $forwarded; do
     _ssh_sock_ok "$sock" || continue
     REPLY=$sock
