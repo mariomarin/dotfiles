@@ -116,7 +116,7 @@ def "main sync" [
   }
 
   # Abandon empty commits that landed (after rebase makes them empty)
-  do { ^jj abandon $"all:($base)..mutable\(\) & empty\(\) & ~@" } | complete | ignore
+  do { ^jj abandon $"($base)..mutable\(\) & empty\(\) & ~@" } | complete | ignore
 
   # Check for conflicts
   let conflicted = (^jj log -r $"($base)..mutable\(\) & conflicts\(\)" --no-graph -T 'change_id.short() ++ "\n"' err> /dev/null | lines | where {|l| not ($l | is-empty) })
