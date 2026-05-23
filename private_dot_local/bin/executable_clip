@@ -3,35 +3,124 @@
 # Copy stdin or file to clipboard (platform-aware, SSH-aware)
 # Usage: echo "text" | clip
 #        clip file.txt
+#        clip "some text"
 #
-# SSH detection: uses $SSH_TTY which reflects the environment where
-# the tmux server (or shell) was started. This is correct when tmux
-# is always started from the same context it's used in (SSH→SSH, local→local).
+# SSH detection: layers SSH_TTY, SSH_CONNECTION, and SSH_CLIENT to cover
+# interactive shells, non-TTY sessions, and older SSH implementations.
+# This is correct when tmux is always started from the same context it's
+# used in (SSH→SSH, local→local). If tmux was started locally and you
+# attach over SSH, none of these will be set — which is the right behavior.
 
-def main [...args: string] {
+def is-ssh [] -> bool {
+    ($env.SSH_TTY? | is-not-empty)
+    or ($env.SSH_CONNECTION? | is-not-empty)
+    or ($env.SSH_CLIENT? | is-not-empty)
+}
+
+def is-macos [] -> bool {
+    (^uname | str trim) == "Darwin"
+}
+
+def is-wsl [] -> bool {
+    "/proc/sys/fs/binfmt_misc/WSLInterop" | path exists
+}
+
+def has-cmd [cmd: string] -> bool {
+    (which $cmd | is-not-empty)
+}
+
+def read-file [path: string] -> string {
+    if not ($path | path exists) {
+        error make {
+            msg: $"clip: file not found: ($path)"
+            label: {
+                text: "this path does not exist"
+                span: (metadata $path).span
+            }
+        }
+    }
+    open --raw $path | into string
+}
+
+def copy-via-ssh-tunnel [input: string] {
+    let result = ($input | ^nc -N localhost 8377 | complete)
+
+    if $result.exit_code != 0 {
+        error make {
+            msg: $"clip: nc exited with code ($result.exit_code) — clipper may not be running or port 8377 is not forwarded"
+            label: {
+                text: "nc failed here"
+                span: (metadata $input).span
+            }
+        }
+    }
+
+    if ($result.stderr | is-not-empty) {
+        print --stderr $"clip: nc stderr: ($result.stderr)"
+    }
+}
+
+def resolve-backend [] -> string {
+    if (is-ssh)              { "ssh" }
+    else if (is-macos)       { "pbcopy" }
+    else if (is-wsl)         { "clip.exe" }
+    else if (has-cmd "xclip") { "xclip" }
+    else if (has-cmd "wl-copy") { "wl-copy" }
+    else { "none" }
+}
+
+def copy-to-clipboard [input: string, backend: string] {
+    match $backend {
+        "ssh"     => { copy-via-ssh-tunnel $input }
+        "pbcopy"  => { $input | ^pbcopy }
+        "clip.exe" => { $input | ^clip.exe }
+        "xclip"   => { $input | ^xclip -selection clipboard }
+        "wl-copy" => { $input | ^wl-copy }
+        "none"    => {
+            error make {
+                msg: "clip: no clipboard backend found"
+                label: {
+                    text: "none of: pbcopy, clip.exe, xclip, wl-copy found in PATH"
+                    span: (metadata $input).span
+                }
+            }
+        }
+    }
+}
+
+export def main [
+    --verbose (-v)  # Print the backend being used
+    ...args: string # File path or literal text; omit to read stdin
+] {
     let input = if ($args | is-not-empty) {
-        let file = $args.0
-        if ($file | path exists) {
-            open --raw $file
+        let first = $args.0
+        if ($first | path exists) {
+            read-file $first
         } else {
             $args | str join " "
         }
     } else {
-        $in
+        $in | into string
     }
 
-    if ($input | is-empty) { return }
-
-    if ($env.SSH_TTY? | is-not-empty) {
-        # Over SSH: forward to clipper on Mac via tunnel
-        $input | nc -N localhost 8377
-    } else if ((^uname | str trim) == "Darwin") {
-        $input | ^pbcopy
-    } else if ("/proc/sys/fs/binfmt_misc/WSLInterop" | path exists) {
-        $input | ^clip.exe
-    } else if (which xclip | is-not-empty) {
-        $input | ^xclip -selection clipboard
-    } else if (which wl-copy | is-not-empty) {
-        $input | ^wl-copy
+    if ($input | is-empty) {
+        error make { msg: "clip: no input provided (stdin was empty and no args given)" }
     }
+
+    let backend = resolve-backend
+
+    if $verbose {
+        let label = match $backend {
+            "ssh"      => "nc → clipper (SSH tunnel)"
+            "pbcopy"   => "pbcopy"
+            "clip.exe" => "clip.exe"
+            "xclip"    => "xclip"
+            "wl-copy"  => "wl-copy"
+            "none"     => "none"
+        }
+        print $"clip: using ($label)"
+    }
+
+    copy-to-clipboard $input $backend
 }
+
