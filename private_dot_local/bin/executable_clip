@@ -11,25 +11,25 @@
 # used in (SSH→SSH, local→local). If tmux was started locally and you
 # attach over SSH, none of these will be set — which is the right behavior.
 
-def is-ssh [] -> bool {
+def is-ssh []: nothing -> bool {
     ($env.SSH_TTY? | is-not-empty)
     or ($env.SSH_CONNECTION? | is-not-empty)
     or ($env.SSH_CLIENT? | is-not-empty)
 }
 
-def is-macos [] -> bool {
+def is-macos []: nothing -> bool {
     (^uname | str trim) == "Darwin"
 }
 
-def is-wsl [] -> bool {
+def is-wsl []: nothing -> bool {
     "/proc/sys/fs/binfmt_misc/WSLInterop" | path exists
 }
 
-def has-cmd [cmd: string] -> bool {
+def has-cmd [cmd: string]: nothing -> bool {
     (which $cmd | is-not-empty)
 }
 
-def read-file [path: string] -> string {
+def read-file [path: string]: nothing -> string {
     if not ($path | path exists) {
         error make {
             msg: $"clip: file not found: ($path)"
@@ -42,7 +42,7 @@ def read-file [path: string] -> string {
     open --raw $path | into string
 }
 
-def copy-via-ssh-tunnel [input: string] {
+def copy-via-ssh-tunnel [input: string]: nothing -> nothing {
     let result = ($input | ^nc -N localhost 8377 | complete)
 
     if $result.exit_code != 0 {
@@ -60,23 +60,23 @@ def copy-via-ssh-tunnel [input: string] {
     }
 }
 
-def resolve-backend [] -> string {
-    if (is-ssh)              { "ssh" }
-    else if (is-macos)       { "pbcopy" }
-    else if (is-wsl)         { "clip.exe" }
+def resolve-backend []: nothing -> string {
+    if (is-ssh)               { "ssh" }
+    else if (is-macos)        { "pbcopy" }
+    else if (is-wsl)          { "clip.exe" }
     else if (has-cmd "xclip") { "xclip" }
     else if (has-cmd "wl-copy") { "wl-copy" }
     else { "none" }
 }
 
-def copy-to-clipboard [input: string, backend: string] {
+def copy-to-clipboard [input: string, backend: string]: nothing -> nothing {
     match $backend {
-        "ssh"     => { copy-via-ssh-tunnel $input }
-        "pbcopy"  => { $input | ^pbcopy }
+        "ssh"      => { copy-via-ssh-tunnel $input }
+        "pbcopy"   => { $input | ^pbcopy }
         "clip.exe" => { $input | ^clip.exe }
-        "xclip"   => { $input | ^xclip -selection clipboard }
-        "wl-copy" => { $input | ^wl-copy }
-        "none"    => {
+        "xclip"    => { $input | ^xclip -selection clipboard }
+        "wl-copy"  => { $input | ^wl-copy }
+        "none"     => {
             error make {
                 msg: "clip: no clipboard backend found"
                 label: {
@@ -91,7 +91,7 @@ def copy-to-clipboard [input: string, backend: string] {
 export def main [
     --verbose (-v)  # Print the backend being used
     ...args: string # File path or literal text; omit to read stdin
-] {
+]: nothing -> nothing {
     let input = if ($args | is-not-empty) {
         let first = $args.0
         if ($first | path exists) {
@@ -123,4 +123,3 @@ export def main [
 
     copy-to-clipboard $input $backend
 }
-
