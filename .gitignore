@@ -31,3 +31,6 @@ tmux/plugins
 
 # Personal notes (not in repo, managed by chezmoi)
 etc-personal/
+
+# Generated at build time — username is now hardcoded per-host in flake.nix
+nix/nixos/user.nix

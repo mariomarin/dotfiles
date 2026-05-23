@@ -1,12 +1,9 @@
 # macOS-specific packages from nixpkgs
 # Prefer nixpkgs over Homebrew for better reproducibility
-{ pkgs, pkgs-unstable, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
-    pkgs-unstable.kanata # Keyboard remapping (unstable: V6 karabiner-dk compat)
-    kanata-tray # System tray for kanata (custom pkg)
-    karabiner-dk # DriverKit VirtualHIDDevice (driver-only, no full Karabiner-Elements)
     spotify # Music streaming
     tridactyl-native # Native messenger for Tridactyl Firefox addon
   ];
