@@ -16,9 +16,6 @@
     bitwarden-desktop
     vscode
 
-    # Image Editing
-    gimp
-
     # File Sync
     syncthing
   ];

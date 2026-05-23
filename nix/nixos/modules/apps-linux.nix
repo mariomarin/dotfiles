@@ -26,6 +26,7 @@
   # Common cross-platform apps are in common/modules/apps.nix
   environment.systemPackages = with pkgs; [
     # Linux Desktop Applications
+    gimp # Image editing (Linux-only since GIMP 3)
     baobab # Disk usage analyzer with graphical interface
     gnome-disk-utility # Disk management utility
     zathura # PDF/document viewer

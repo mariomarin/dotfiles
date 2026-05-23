@@ -8,10 +8,10 @@ rustPlatform.buildRustPackage {
     owner = "jennings";
     repo = "jj-spr";
     rev = "main";
-    hash = "sha256-dpeLf8h31AoGDhVw8raqqPTFMCjAU1juAr63M5qMeb4=";
+    hash = "sha256-HO8kbaklJAvNZHHto+Ph0rpb8vPOkgGw7FGH7vtIB9w=";
   };
 
-  cargoHash = "sha256-ragGArEAsFts9BeRZDelec8Efm5QMzJyrM98uSUMNIU=";
+  cargoHash = "sha256-4fRM2fMlEFM9d/W4QyBrBebtsQpPuq4hELKQBU74FLE=";
 
   buildInputs = [ openssl zlib ];
   nativeBuildInputs = [ pkg-config git jujutsu ];
