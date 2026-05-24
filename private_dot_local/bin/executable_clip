@@ -13,7 +13,7 @@
 
 def is-ssh []: nothing -> bool {
     [SSH_TTY SSH_CONNECTION SSH_CLIENT]
-    | any {|key| $env | get -o $key | is-not-empty }
+    | any {|key| ($env | get --optional $key | is-not-empty) }
 }
 
 def is-macos []: nothing -> bool {
@@ -61,14 +61,14 @@ def copy-via-ssh-tunnel [input: string]: nothing -> nothing {
 
 def resolve-backend []: nothing -> string {
     [
-        [{|| is-ssh},              "ssh"]
-        [{|| is-macos},            "pbcopy"]
-        [{|| is-wsl},              "clip.exe"]
-        [{|| has-cmd "xclip"},     "xclip"]
-        [{|| has-cmd "wl-copy"},   "wl-copy"]
+        { check: {|| is-ssh},              backend: "ssh" }
+        { check: {|| is-macos},            backend: "pbcopy" }
+        { check: {|| is-wsl},              backend: "clip.exe" }
+        { check: {|| has-cmd "xclip"},     backend: "xclip" }
+        { check: {|| has-cmd "wl-copy"},   backend: "wl-copy" }
     ]
-    | each {|row| if (do $row.0) { $row.1 } }
-    | compact
+    | where { |row| do $row.check }
+    | get backend?
     | get 0?
     | default "none"
 }
@@ -114,15 +114,7 @@ export def main [
     let backend = resolve-backend
 
     if $verbose {
-        let label = match $backend {
-            "ssh"      => "nc → clipper (SSH tunnel)"
-            "pbcopy"   => "pbcopy"
-            "clip.exe" => "clip.exe"
-            "xclip"    => "xclip"
-            "wl-copy"  => "wl-copy"
-            "none"     => "none"
-        }
-        print $"clip: using ($label)"
+        print $"clip: using ($backend)"
     }
 
     copy-to-clipboard $input $backend
