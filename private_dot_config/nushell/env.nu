@@ -39,19 +39,16 @@ $env.NU_PLUGIN_DIRS = [
 # PATH CONFIGURATION
 # -----------------------------------------------------------------------------
 # Cross-platform PATH setup
-let path_var = if ($nu.os-info.name == "windows") { "Path" } else { "PATH" }
 let path_additions = [
     ($nu.home-path | path join '.local' 'bin')
     ($nu.home-path | path join 'go' 'bin')
     ($env.NUPM_HOME | path join 'scripts')
 ]
 
-if ($nu.os-info.name == "windows") {
-    $env.Path = ($env.Path | split row (char esep) | append $path_additions | uniq)
-} else if ($nu.os-info.name == "macos") {
-    $env.PATH = ($env.PATH | split row (char esep) | prepend $path_additions | prepend ['/opt/homebrew/bin' '/usr/local/bin'] | uniq)
-} else {
-    $env.PATH = ($env.PATH | split row (char esep) | prepend $path_additions | uniq)
+match $nu.os-info.name {
+    "windows" => { $env.Path = ($env.Path | split row (char esep) | append $path_additions | uniq) }
+    "macos"   => { $env.PATH = ($env.PATH | split row (char esep) | prepend $path_additions | prepend ['/opt/homebrew/bin' '/usr/local/bin'] | uniq) }
+    _         => { $env.PATH = ($env.PATH | split row (char esep) | prepend $path_additions | uniq) }
 }
 
 # -----------------------------------------------------------------------------
@@ -70,8 +67,8 @@ $env.EDITOR = 'nvim'
 $env.VISUAL = 'nvim'
 
 # OS-specific environment
-if ($nu.os-info.name == "linux") {
-    $env.BROWSER = 'firefox'
-} else if ($nu.os-info.name == "macos") {
-    $env.BROWSER = 'open'
+$env.BROWSER = match $nu.os-info.name {
+    "linux" => "firefox"
+    "macos" => "open"
+    _ => ""
 }

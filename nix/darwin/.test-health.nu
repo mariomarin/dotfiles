@@ -1,25 +1,23 @@
 #!/usr/bin/env nu
 # Test script for darwin health check
 
+def run-cmd [cmd: closure] {
+    let result = (do $cmd | complete)
+    if $result.exit_code == 0 { $result.stdout | str trim } else { null }
+}
+
 print "🔍 nix-darwin Health Check"
 print "=========================="
-let hostname_result = (do { ^scutil --get LocalHostName } | complete)
-let hostname = if $hostname_result.exit_code == 0 { $hostname_result.stdout | str trim } else { "unknown" }
-print $"✓ Hostname: ($hostname)"
-let macos_result = (do { ^sw_vers -productVersion } | complete)
-let macos = if $macos_result.exit_code == 0 { $macos_result.stdout | str trim } else { "unknown" }
-print $"✓ macOS version: ($macos)"
-let arch_result = (do { ^uname -m } | complete)
-let arch = if $arch_result.exit_code == 0 { $arch_result.stdout | str trim } else { "unknown" }
-print $"✓ Architecture: ($arch)"
-let nix_result = (do { ^nix --version } | complete)
-let nix_version = if $nix_result.exit_code == 0 { $nix_result.stdout | str trim } else { "not installed" }
-print $"✓ Nix version: ($nix_version)"
-let darwin_rebuild_exists = (which darwin-rebuild | is-not-empty)
-print $"✓ darwin-rebuild: (if $darwin_rebuild_exists { 'installed' } else { '❌ not installed' })"
-let flake_path = "../nixos/flake.nix"
-let flake_exists = ($flake_path | path exists)
-print $"✓ Flake exists: (if $flake_exists { 'yes' } else { '❌ no' })"
-let config_dir = ("/etc/nix-darwin" | path exists)
-print $"✓ nix-darwin config: (if $config_dir { 'installed' } else { 'not installed (run: just first-time)' })"
+
+[
+    ["Hostname",          (run-cmd {|| ^scutil --get LocalHostName} | default "unknown")]
+    ["macOS version",     (run-cmd {|| ^sw_vers -productVersion}    | default "unknown")]
+    ["Architecture",      (run-cmd {|| ^uname -m}                   | default "unknown")]
+    ["Nix version",       (run-cmd {|| ^nix --version}              | default "not installed")]
+    ["darwin-rebuild",    (if (which darwin-rebuild | is-not-empty) { "installed" } else { "❌ not installed" })]
+    ["Flake exists",      (if ("../nixos/flake.nix" | path exists)  { "yes" }         else { "❌ no" })]
+    ["nix-darwin config", (if ("/etc/nix-darwin" | path exists)     { "installed" }   else { "not installed (run: just first-time)" })]
+]
+| each {|row| print $"✓ ($row.0): ($row.1)"}
+
 print ""
