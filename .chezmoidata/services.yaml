@@ -19,7 +19,7 @@ services:
         - private_dot_config/kanata/darwin.kbd
         - private_dot_config/kanata/core.kbd
       type: launchctl
-      service: org.local.kanata
+      service: org.nixos.kanata
     - *tmux
   linux:
     - name: kanata
