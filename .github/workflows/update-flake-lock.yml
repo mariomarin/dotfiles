@@ -20,6 +20,7 @@ jobs:
       - uses: DeterminateSystems/update-flake-lock@v28
         id: ufl
         with:
+          path-to-flake-dir: nix/nixos
           pr-title: "chore(nix): update flake.lock"
           pr-labels: dependencies
           commit-msg: "chore(nix): update flake.lock"
