@@ -9,8 +9,8 @@
     # NOTE: Karabiner-DriverKit-VirtualHIDDevice installed separately for kanata
     # (full karabiner-elements conflicts with kanata - grabs keyboard exclusively)
     casks = [
+      "docker" # Docker Desktop - not in nixpkgs
       "firefox" # Better macOS integration via homebrew
-      "windows-app" # Microsoft Windows App (Remote Desktop)
     ];
   };
 }
