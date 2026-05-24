@@ -13,9 +13,8 @@ s = ["show", "--git"]
 f = ["git", "fetch", "--tracked"]
 p = ["git", "push", "--tracked"]
 
-# Pre-commit integration
-pre-check = ["util", "exec", "--", "jj-pre-push.nu", "check"]
-push-check = ["util", "exec", "--", "jj-pre-push.nu", "push"]
+# Hook-validated push (jj-hooks)
+push = ["util", "exec", "--", "jj-hp", "push"]
 
 # Common shortcuts
 st = ["status"]

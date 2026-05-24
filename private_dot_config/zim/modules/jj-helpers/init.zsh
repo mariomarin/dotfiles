@@ -1,21 +1,7 @@
 # Jujutsu (jj) Helper Module for Zimfw
-# Mirrors git module structure with jj-specific aliases and functions
+# Aliases only — all logic lives in ~/.local/bin/j (cross-shell Nu script)
 
-# Directory for module functions
-JJ_HELPERS_DIR="${0:h}/functions"
-
-# Create functions directory if it doesn't exist
-[[ -d "$JJ_HELPERS_DIR" ]] || mkdir -p "$JJ_HELPERS_DIR"
-
-# Add to fpath for autoloading
-fpath=("$JJ_HELPERS_DIR" "${fpath[@]}")
-
-# Only proceed if jj command exists
 (( ${+commands[jj]} )) || return 0
-
-#
-# Aliases
-#
 
 # Bookmark (b)
 alias jb='jj bookmark'
@@ -69,32 +55,23 @@ alias joplog='jj op log'
 alias jundo='jj op undo'
 alias jredo='jj op restore'
 
-# Git operations (g)
+# Git operations — direct jj aliases
 alias jgf='jj git fetch --tracked'
-alias jgp='jj git push --tracked'
 
-# SPR workflow
-alias jspr='jj-spr diff'
-alias jspra='jj-spr diff --all'
-
-# j subcommand aliases (delegates to ~/.local/bin/j)
+# j subcommand aliases (all logic in ~/.local/bin/j)
 alias jsync='j sync'
 alias jland='j land'
 alias jpr='j pr'
 alias jmove='j move'
 alias jpush='j push'
 alias jpush-main='j push-main'
+alias jgp='j gp'
+alias jspr='j spr'
+alias jspra='j spr --all'
 alias jjco='j co'
 alias jclean='j clean'
-
-# Quick status with log (stays in zsh — simple one-liner)
-jjst() {
-    jj status
-    echo ""
-    jj log -r 'ancestors(@, 5)'
-}
-
 alias jjhelp='j help'
 
-# Source local customizations if they exist
+alias jjst='jj status && echo && jj log -r "ancestors(@, 5)"'
+
 [[ -f "${0:h}/local.zsh" ]] && source "${0:h}/local.zsh"

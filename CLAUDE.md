@@ -849,7 +849,7 @@ Run `chezmoi apply` after system updates to fix any broken symlinks.
   ```text
   directory/structure/
   ```
-  
+
   ```bash
   echo "shell commands"
   ```

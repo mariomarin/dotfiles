@@ -43,6 +43,7 @@ in
       jujutsu # Modern VCS (jj command)
       jj-spr # Stacked PRs for jj (write access repos)
       jj-stack # Stacked PRs for jj (read-only repos)
+      jj-hooks # Hook runner for jj pushes (jj-hp)
       lazygit # TUI for git
 
       # ── File management ─────────────────────────────────────────────────
