@@ -1,0 +1,32 @@
+name: Update Neovim lazy-lock.json
+
+on:
+  schedule:
+    - cron: "0 9 * * 1,4"
+  workflow_dispatch:
+
+jobs:
+  update-plugins:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: loqusion/lazy-lock-update@v1
+
+      - uses: peter-evans/create-pull-request@v8
+        id: cpr
+        with:
+          commit-message: "chore(nvim): update lazy-lock.json"
+          branch: chore/update-lazy-lock
+          delete-branch: true
+          title: "chore(nvim): update lazy-lock.json"
+          labels: dependencies
+
+      - if: steps.cpr.outputs.pull-request-number
+        run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
