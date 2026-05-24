@@ -21,13 +21,12 @@ def "main lua" [] {
     stylua .
 }
 
-# Format Markdown files with markdownlint
 def "main markdown" [] {
-    if (which markdownlint | is-empty) {
-        print -e "⚠️  markdownlint not found"
+    if (which rumdl | is-empty) {
+        print -e "⚠️  rumdl not found"
         exit 0
     }
-    do { markdownlint --fix "**/*.md" --ignore node_modules --ignore .git } | complete | ignore
+    do { rumdl fmt . } | complete | ignore
 }
 
 # Format Nix files with nixpkgs-fmt
@@ -125,7 +124,7 @@ def "main help" [] {
     print "Commands:"
     print "  justfile   Format justfiles"
     print "  lua        Format Lua files with stylua"
-    print "  markdown   Format Markdown files with markdownlint"
+    print "  markdown   Format Markdown files with rumdl"
     print "  nix        Format Nix files with nixpkgs-fmt"
     print "  nushell    Validate Nushell files"
     print "  others     Format JSON and TOML files with biome"
