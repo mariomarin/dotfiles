@@ -228,21 +228,27 @@ def "main move" [
 }
 
 # Push current bookmark to remote
+# Push bookmark via jj-hp (runs hooks, then pushes)
 def "main push" [
   bookmark?: string@"nu-complete j bookmarks"  # Bookmark to push (default: current)
-  --force (-f)                                  # Force push
+  --force (-f)                                  # Force push (skips hooks)
 ] {
   let bm = if ($bookmark | is-not-empty) { $bookmark } else { get-current-bookmark }
   print $"Pushing bookmark: ($bm)"
-  let args = if $force { ["--bookmark" $bm "--force"] } else { ["--bookmark" $bm] }
-  let result = (do { ^jj git push ...$args } | complete)
+  let cmd = if $force {
+    { ^jj git push --bookmark $bm --force }
+  } else {
+    { ^jj-hp push --bookmark $bm }
+  }
+  let result = (do $cmd | complete)
   if $result.exit_code != 0 {
-    print $"❌ Push failed: ($result.stderr)"
+    print $result.stdout
     error make { msg: "push failed" }
   }
+  print $result.stdout
 }
 
-# Set main bookmark and push
+# Set main bookmark and push via jj-hp
 def "main push-main" [] {
   print "Setting main bookmark to current change and pushing..."
   let set_result = (do { ^jj bookmark set main } | complete)
@@ -250,11 +256,52 @@ def "main push-main" [] {
     print $"❌ Failed to set bookmark: ($set_result.stderr)"
     error make { msg: "bookmark set failed" }
   }
-  let push_result = (do { ^jj git push --bookmark main } | complete)
+  let push_result = (do { ^jj-hp push --bookmark main } | complete)
   if $push_result.exit_code != 0 {
-    print $"❌ Push failed: ($push_result.stderr)"
+    print $push_result.stdout
     error make { msg: "push failed" }
   }
+  print $push_result.stdout
+}
+
+# Push directly via jj git push (no hooks)
+def "main gp" [
+  bookmark?: string@"nu-complete j bookmarks"  # Bookmark to push (default: current)
+  --force (-f)                                  # Force push
+  --tracked (-t)                                # Push all tracked bookmarks
+] {
+  let args = if $tracked {
+    ["--tracked"]
+  } else {
+    let bm = if ($bookmark | is-not-empty) { $bookmark } else { get-current-bookmark }
+    if $force { ["--bookmark" $bm "--force"] } else { ["--bookmark" $bm] }
+  }
+  let result = (do { ^jj git push ...$args } | complete)
+  if $result.exit_code != 0 {
+    print $"❌ Push failed: ($result.stderr)"
+    error make { msg: "push failed" }
+  }
+}
+
+# Run hooks on current change then jj-spr diff
+def "main spr" [
+  --all (-a)          # Process all bookmarks (jj-spr diff --all)
+  --skip-hooks        # Skip jj-hp run, go straight to jj-spr diff
+] {
+  if not $skip_hooks {
+    let check = (do { ^jj-hp run @ } | complete)
+    if $check.exit_code != 0 {
+      print $check.stdout
+      error make { msg: "hooks failed, fix before submitting PR" }
+    }
+  }
+  let args = if $all { ["diff" "--all"] } else { ["diff"] }
+  let result = (do { ^jj-spr ...$args } | complete)
+  if $result.exit_code != 0 {
+    print $result.stderr
+    error make { msg: "jj-spr failed" }
+  }
+  print $result.stdout
 }
 
 # Interactive bookmark checkout (requires fzf)
@@ -299,27 +346,33 @@ def "main help" [] {
   print "j - jj workflow helper (git-branchless ergonomics)
 
 Subcommands:
-  j sync [bookmark]     Sync local work with trunk (fetch + rebase)
-  j land [revision]     Land PR via jj-spr and sync
-  j pr [bookmark]       Create or update PR (-c to create, -d for draft)
+  j sync [bookmark]      Sync local work with trunk (fetch + rebase)
+  j land [revision]      Land PR via jj-spr and sync
+  j pr [bookmark]        Create or update PR (-c to create, -d for draft)
   j move <commit> <dest> Move commits (-r for single commit)
-  j push [bookmark]     Push bookmark to remote
-  j push-main           Set main bookmark and push
-  j co                  Interactive bookmark checkout (fzf)
-  j clean [scope]       Abandon empty undescribed commits
+  j push [bookmark]      Push via jj-hp (runs hooks, then pushes)
+  j push-main            Set main bookmark and push via jj-hp
+  j gp [bookmark]        Push directly via jj git push (no hooks)
+  j spr                  Run hooks then jj-spr diff
+  j co                   Interactive bookmark checkout (fzf)
+  j clean [scope]        Abandon empty undescribed commits
 
 Flags:
-  j sync --no-pull      Skip fetch
-  j sync -c             Sync only current change
-  j sync -m             Sync only my commits
-  j sync -b <base>      Custom base (default: trunk())
-  j land -r <rev>       Land specific revision
-  j pr -c               Create new PR
-  j pr -d               Create as draft
-  j pr -a               Process all bookmarks
+  j sync --no-pull       Skip fetch
+  j sync -c              Sync only current change
+  j sync -m              Sync only my commits
+  j sync -b <base>       Custom base (default: trunk())
+  j land -r <rev>        Land specific revision
+  j pr -c                Create new PR
+  j pr -d                Create as draft
+  j pr -a                Process all bookmarks
   j pr -c -- --title \"...\" --body \"...\"  Pass extra gh args after --
-  j move -r             Move single commit (not descendants)
-  j move -x             Alias for -r"
+  j push -f              Force push (skips hooks)
+  j gp -t                Push all tracked bookmarks
+  j spr -a               Process all bookmarks (jj-spr diff --all)
+  j spr --skip-hooks     Skip hooks, go straight to jj-spr diff
+  j move -r              Move single commit (not descendants)
+  j move -x              Alias for -r"
 }
 
 def main [] {

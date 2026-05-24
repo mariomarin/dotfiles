@@ -267,12 +267,14 @@ Always specify the language for fenced code blocks to pass markdownlint checks (
 
 ````markdown
 # Good - language specified
+
 ```bash
 echo "Hello World"
 ```
 
-# Bad - no language specified
-```
+## Bad - no language specified
+
+```text
 echo "Hello World"
 ```
 ````
