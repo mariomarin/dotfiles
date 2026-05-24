@@ -42,7 +42,7 @@ For a complete list of keybindings, see **[KEYBINDINGS.md](KEYBINDINGS.md)**.
 | tmux-yank           | System clipboard integration        |
 | tmux-resurrect      | Session persistence                 |
 | tmux-continuum      | Auto-save + auto-start              |
-| tmux-thumbs         | Copy text with hints (like Vimium)  |
+| tmux-thumbs         | Copy text with hints (like Vimium) — requires manual `cargo build` on macOS with Nix Rust (see CLAUDE.md) |
 | tmux-tilish         | i3wm-style navigation and layouts   |
 | tmux-harpoon        | Quick jump to saved sessions/panes  |
 | tmux-fuzzback       | Search scrollback with fzf          |
