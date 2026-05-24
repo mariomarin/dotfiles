@@ -15,7 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: loqusion/lazy-lock-update@v1
+      - name: Install Neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: stable
+
+      - name: Update lazy-lock.json
+        run: nvim --headless "+Lazy! update" +qa
+        env:
+          HOME: /root
 
       - uses: peter-evans/create-pull-request@v8
         id: cpr
@@ -25,6 +34,7 @@ jobs:
           delete-branch: true
           title: "chore(nvim): update lazy-lock.json"
           labels: dependencies
+          add-paths: private_dot_config/nvim/lazy-lock.json
 
       - if: steps.cpr.outputs.pull-request-number
         run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-url }}"
