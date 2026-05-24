@@ -164,14 +164,6 @@
     executable = true
     refreshPeriod = "168h"
 
-# Kanata tray icon
-{{- $kanataTrayRelease := gitHubLatestRelease "rszyma/kanata-tray" }}
-["kanata-tray"]
-    type = "file"
-    url = "https://github.com/rszyma/kanata-tray/releases/download/{{ $kanataTrayRelease.TagName }}/kanata-tray-linux"
-    executable = true
-    refreshPeriod = "168h"
-
 # Secrets
 {{- $ageRelease := gitHubLatestRelease "FiloSottile/age" }}
 ["age"]
