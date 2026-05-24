@@ -215,6 +215,24 @@ set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | clip 2>/dev/n
 set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; peek "{}"; ...'
 ```
 
+## Troubleshooting
+
+### tmux-thumbs fails to build on macOS (Nix-managed Rust)
+
+TPM runs `cargo build --release` inside `~/.local/share/tmux/plugins/tmux-thumbs/`.
+With Nix-provided Rust, the linker fails with `library not found for -liconv`.
+
+Fix — build manually with rustup toolchain and SDK library path:
+
+```bash
+cd ~/.local/share/tmux/plugins/tmux-thumbs
+LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/usr/lib" \
+PATH="/Users/mario/.rustup/toolchains/stable-aarch64-apple-darwin/bin:$PATH" \
+cargo build --release
+```
+
+The binaries land in `target/release/` which is where the plugin scripts expect them.
+
 ## Important Notes
 
 - Always preserve user preferences when resolving conflicts
