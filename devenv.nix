@@ -199,7 +199,7 @@
         entry = "nu .scripts/nu-check.nu";
         files = "(\\.nu$|/executable_[^.]+$)";
         types_or = [ "text" ];
-        excludes = [ "wsl-" ]; # WSL scripts use cmd.exe, can't check on other platforms
+        excludes = [ "wsl-" "nushell/env\\.nu" ]; # WSL scripts and Nu startup configs require live $nu context
         language = "system";
         pass_filenames = true;
       };

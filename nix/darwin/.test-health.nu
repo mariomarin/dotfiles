@@ -1,23 +1,24 @@
 #!/usr/bin/env nu
-# Test script for darwin health check
+# nix-darwin health check
 
-def run-cmd [cmd: closure] {
-    let result = (do $cmd | complete)
-    if $result.exit_code == 0 { $result.stdout | str trim } else { null }
+def has-cmd [cmd: string]: nothing -> bool {
+    (which $cmd | is-not-empty)
 }
 
-print "🔍 nix-darwin Health Check"
-print "=========================="
+def check-nix []: nothing -> string {
+    let result = (do { ^nix --version } | complete)
+    if $result.exit_code == 0 { $result.stdout | str trim } else { "❌ not installed" }
+}
+
+print "nix-darwin Health Check"
+print "======================="
 
 [
-    ["Hostname",          (run-cmd {|| ^scutil --get LocalHostName} | default "unknown")]
-    ["macOS version",     (run-cmd {|| ^sw_vers -productVersion}    | default "unknown")]
-    ["Architecture",      (run-cmd {|| ^uname -m}                   | default "unknown")]
-    ["Nix version",       (run-cmd {|| ^nix --version}              | default "not installed")]
-    ["darwin-rebuild",    (if (which darwin-rebuild | is-not-empty) { "installed" } else { "❌ not installed" })]
-    ["Flake exists",      (if ("../nixos/flake.nix" | path exists)  { "yes" }         else { "❌ no" })]
-    ["nix-darwin config", (if ("/etc/nix-darwin" | path exists)     { "installed" }   else { "not installed (run: just first-time)" })]
+    { label: "Nix",           value: (check-nix) }
+    { label: "darwin-rebuild", value: (if (has-cmd "darwin-rebuild") { "installed" } else { "❌ not installed (run: just first-time)" }) }
+    { label: "Flake",          value: (if ("../nixos/flake.nix" | path exists) { "yes" } else { "❌ missing" }) }
+    { label: "nix-darwin",     value: (if ("/etc/nix-darwin" | path exists) { "configured" } else { "not configured (run: just first-time)" }) }
 ]
-| each {|row| print $"✓ ($row.0): ($row.1)"}
+| each {|row| print $"  ($row.label): ($row.value)"}
 
 print ""
