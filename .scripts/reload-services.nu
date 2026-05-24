@@ -17,16 +17,9 @@ def save-state [state: record] {
     $state | save -f $path
 }
 
-# Get value from record or null if missing
-def get-or-null [key: string] {
-    let input = $in
-    if ($key in $input) { $input | get $key } else { null }
-}
-
 # Check if service config changed
 def has-changed [name: string, hash: string, state: record] {
-    let prev = ($state | get-or-null $name | default "")
-    $prev != $hash
+    ($state | get -o $name | default "") != $hash
 }
 
 # Check if process is running via pgrep
@@ -41,10 +34,7 @@ def reload-launchctl [service: string] {
         return { ok: true, skipped: "not running" }
     }
     let uid = (id -u | str trim)
-    let domain = (
-        if (sudo launchctl list $service | complete).exit_code == 0 { "system" }
-        else { $"gui/($uid)" }
-    )
+    let domain = if (do { sudo launchctl list $service } | complete).exit_code == 0 { "system" } else { $"gui/($uid)" }
     let result = (do { sudo launchctl kickstart -k $"($domain)/($service)" } | complete)
     if $result.exit_code != 0 {
         return { ok: false, error: $result.stderr }
@@ -112,7 +102,7 @@ def reload-windows-task [task: string, exe: string] {
 def process-service [svc: record, state: record] {
     let name = $svc.name
     let hash = $svc.hash
-    let prev_hash = ($state | get-or-null $name | default "")
+    let prev_hash = ($state | get -o $name | default "")
 
     if not (has-changed $name $hash $state) {
         return { name: $name, hash: $hash }
@@ -127,7 +117,7 @@ def process-service [svc: record, state: record] {
         _ => { { ok: false, error: $"unknown type: ($svc.type)" } }
     }
 
-    if ($result | get-or-null "skipped" | is-not-empty) {
+    if ($result | get -o "skipped" | is-not-empty) {
         return { name: $name, hash: $hash }
     }
 

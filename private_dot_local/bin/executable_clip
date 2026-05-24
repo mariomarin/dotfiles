@@ -1,4 +1,4 @@
-#!/usr/bin/env nu
+#!/usr/bin/env -S nu --stdin
 
 # Copy stdin or file to clipboard (platform-aware, SSH-aware)
 # Usage: echo "text" | clip
@@ -12,9 +12,8 @@
 # attach over SSH, none of these will be set — which is the right behavior.
 
 def is-ssh []: nothing -> bool {
-    ($env.SSH_TTY? | is-not-empty)
-    or ($env.SSH_CONNECTION? | is-not-empty)
-    or ($env.SSH_CLIENT? | is-not-empty)
+    [SSH_TTY SSH_CONNECTION SSH_CLIENT]
+    | any {|key| ($env | get --optional $key | is-not-empty) }
 }
 
 def is-macos []: nothing -> bool {
@@ -61,12 +60,17 @@ def copy-via-ssh-tunnel [input: string]: nothing -> nothing {
 }
 
 def resolve-backend []: nothing -> string {
-    if (is-ssh)               { "ssh" }
-    else if (is-macos)        { "pbcopy" }
-    else if (is-wsl)          { "clip.exe" }
-    else if (has-cmd "xclip") { "xclip" }
-    else if (has-cmd "wl-copy") { "wl-copy" }
-    else { "none" }
+    [
+        { check: {|| is-ssh},              backend: "ssh" }
+        { check: {|| is-macos},            backend: "pbcopy" }
+        { check: {|| is-wsl},              backend: "clip.exe" }
+        { check: {|| has-cmd "xclip"},     backend: "xclip" }
+        { check: {|| has-cmd "wl-copy"},   backend: "wl-copy" }
+    ]
+    | where { |row| do $row.check }
+    | get backend?
+    | get 0?
+    | default "none"
 }
 
 def copy-to-clipboard [input: string, backend: string]: nothing -> nothing {
@@ -91,7 +95,7 @@ def copy-to-clipboard [input: string, backend: string]: nothing -> nothing {
 export def main [
     --verbose (-v)  # Print the backend being used
     ...args: string # File path or literal text; omit to read stdin
-]: nothing -> nothing {
+] {
     let input = if ($args | is-not-empty) {
         let first = $args.0
         if ($first | path exists) {
@@ -110,15 +114,7 @@ export def main [
     let backend = resolve-backend
 
     if $verbose {
-        let label = match $backend {
-            "ssh"      => "nc → clipper (SSH tunnel)"
-            "pbcopy"   => "pbcopy"
-            "clip.exe" => "clip.exe"
-            "xclip"    => "xclip"
-            "wl-copy"  => "wl-copy"
-            "none"     => "none"
-        }
-        print $"clip: using ($label)"
+        print $"clip: using ($backend)"
     }
 
     copy-to-clipboard $input $backend
