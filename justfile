@@ -99,69 +99,17 @@ krew-list:
 krew-install PLUGIN:
     nu .scripts/krew.nu install {{ PLUGIN }}
 
-# Linting and formatting targets
-# Note: Formatting is also configured as git pre-commit hooks in devenv.nix
-# These targets are for manual formatting outside of git workflow
-
-# Run all linting checks
-lint: lint-lua lint-nix lint-nu lint-shell
-    print "✅ All linting checks passed"
-
-# Check Lua files with stylua
-lint-lua:
-    nu .scripts/lint.nu lua
-
-# Check Nix files syntax
-lint-nix:
-    nu .scripts/lint.nu nix
-
-# Check Nushell scripts syntax
-lint-nu:
-    nu .scripts/lint.nu nu
-
-# Check shell scripts with shellcheck
-lint-shell:
-    nu .scripts/lint.nu shell
-
-# Format all files
-format: format-lua format-nix format-shell format-yaml format-markdown format-justfile format-others
-    print "✨ All formatting complete"
-
-# Format Lua files with stylua
-format-lua:
-    nu .scripts/format.nu lua
-
-# Format Nix files with nixpkgs-fmt
-format-nix:
-    nu .scripts/format.nu nix
-
-# Format shell scripts with shfmt
-format-shell:
-    nu .scripts/format.nu shell
-
-# Format YAML files with yamlfmt
-format-yaml:
-    nu .scripts/format.nu yaml
-
-# Format Markdown files with rumdl
-format-markdown:
-    nu .scripts/format.nu markdown
-
-# Format justfiles
-format-justfile:
-    nu .scripts/format.nu justfile
-
-# Format JSON and TOML files with biome
-format-others:
-    nu .scripts/format.nu others
+# Format all files (mutating)
+format:
+    prek run --all-files
 
 # Start development shell
 dev:
     nu .scripts/dev.nu
 
-# Run all checks
-check: lint test-nu
-    print "✅ All checks passed"
+# Check files changed since main (mirrors CI); test-nu runs on all scripts
+check: test-nu
+    prek run --from-ref origin/main
 
 # Run nushell tests
 test-nu:

@@ -165,6 +165,26 @@
       # Nix formatting
       nixpkgs-fmt.enable = true;
 
+      # Nix dead code detection
+      deadnix = {
+        enable = true;
+        name = "deadnix";
+        entry = "deadnix --fail";
+        files = "\\.nix$";
+        language = "system";
+        pass_filenames = true;
+      };
+
+      # Nix linting and syntax checking (whole-repo for cross-file analysis)
+      statix = {
+        enable = true;
+        name = "statix";
+        entry = "statix check .";
+        files = "\\.nix$";
+        language = "system";
+        pass_filenames = false;
+      };
+
       # Lua formatting
       stylua.enable = true;
 
@@ -240,10 +260,10 @@
       rumdl = {
         enable = true;
         name = "rumdl";
-        entry = "rumdl fmt";
+        entry = "rumdl fmt .";
         files = "\\.md$";
         language = "system";
-        pass_filenames = true;
+        pass_filenames = false;
       };
 
       # Justfile formatting
