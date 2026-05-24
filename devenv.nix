@@ -37,7 +37,7 @@
     taplo
 
     # Markdown linting and LSP
-    markdownlint-cli
+    rumdl
     marksman
 
     # Commit message linting
@@ -91,7 +91,7 @@
       fi
 
       # Suggest just format for direct formatter calls
-      if echo "$COMMAND" | grep -qE "^\s*(shfmt|nixpkgs-fmt|stylua|markdownlint|yamlfmt|biome)\s"; then
+      if echo "$COMMAND" | grep -qE "^\s*(shfmt|nixpkgs-fmt|stylua|rumdl|yamlfmt|biome)\s"; then
         echo "💡 SUGGESTION: Use 'just format' instead of calling formatters directly."
         echo ""
         echo "This ensures consistent formatting across all files with proper excludes."
@@ -237,10 +237,10 @@
       };
 
       # Markdown linting and formatting
-      markdownlint = {
+      rumdl = {
         enable = true;
-        name = "markdownlint";
-        entry = "markdownlint --fix";
+        name = "rumdl";
+        entry = "rumdl fmt";
         files = "\\.md$";
         language = "system";
         pass_filenames = true;

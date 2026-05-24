@@ -147,7 +147,7 @@ format-shell:
 format-yaml:
     nu .scripts/format.nu yaml
 
-# Format Markdown files with markdownlint
+# Format Markdown files with rumdl
 format-markdown:
     nu .scripts/format.nu markdown
 
