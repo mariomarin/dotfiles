@@ -24,7 +24,7 @@ zimfw install
 - **`cl`** - Claude with MCP container-use enforcement
   - Forces all operations through containerized environments
   - Includes checkpointing and isolated execution
-  
+
 - **`improve`** - Improve prompts for better AI understanding
 
   ```bash

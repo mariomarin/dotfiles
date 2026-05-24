@@ -509,6 +509,9 @@ if ($jj_completions | path exists) {
     source ~/.cache/nushell/jj-completions.nu
 }
 
+# jj workflow aliases (mirrors jj-helpers zsh module)
+source ($nu.default-config-dir | path join 'scripts' 'jj-aliases.nu')
+
 # -----------------------------------------------------------------------------
 # PLUGIN REGISTRATION
 # -----------------------------------------------------------------------------

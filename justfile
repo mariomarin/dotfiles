@@ -49,17 +49,13 @@ git-sync BRANCH="main":
     just git-pull {{ BRANCH }}
     just git-push {{ BRANCH }}
 
-# Jujutsu (jj) operations with pre-commit integration
+# Jujutsu (jj) operations
 
-# Check what would be pushed (no actual push)
-jj-check:
-    jj-pre-push.nu check
-
-# Check and push if all pre-commit hooks pass
+# Push via jj-hp (runs hooks, then pushes)
 jj-push:
-    jj-pre-push.nu push
+    jj-hp push
 
-# Push without running pre-commit checks (use when confident)
+# Push directly without hooks
 jj-push-fast:
     jj git push
 
@@ -147,7 +143,7 @@ format-shell:
 format-yaml:
     nu .scripts/format.nu yaml
 
-# Format Markdown files with markdownlint
+# Format Markdown files with rumdl
 format-markdown:
     nu .scripts/format.nu markdown
 
