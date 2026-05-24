@@ -40,14 +40,14 @@ def reload-launchctl [service: string] {
     if not (is-running-pgrep $process) {
         return { ok: true, skipped: "not running" }
     }
-    let stop = (do { sudo launchctl stop $service } | complete)
-    if $stop.exit_code != 0 {
-        return { ok: false, error: $stop.stderr }
-    }
-    sleep 1sec
-    let start = (do { sudo launchctl start $service } | complete)
-    if $start.exit_code != 0 {
-        return { ok: false, error: $start.stderr }
+    let uid = (id -u | str trim)
+    let domain = (
+        if (sudo launchctl list $service | complete).exit_code == 0 { "system" }
+        else { $"gui/($uid)" }
+    )
+    let result = (do { sudo launchctl kickstart -k $"($domain)/($service)" } | complete)
+    if $result.exit_code != 0 {
+        return { ok: false, error: $result.stderr }
     }
     { ok: true }
 }
