@@ -32,6 +32,7 @@ in
       "firefox"
       "ghostty"
       "hammerspoon"
+      "voiceink"
     ];
   };
 

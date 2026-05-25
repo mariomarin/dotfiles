@@ -11,6 +11,7 @@
     casks = [
       "docker" # Docker Desktop - not in nixpkgs
       "firefox" # Better macOS integration via homebrew
+      "voiceink" # Voice to text
     ];
   };
 }
