@@ -1,27 +1,5 @@
 {{- if eq .chezmoi.os "windows" -}}
 #!/usr/bin/env nu
-# Install packages from winget configuration DSC file (Windows)
 # config hash: {{ include "private_dot_config/winget/configuration.dsc.yaml" | sha256sum }}
-
-# Check if winget is installed
-if (which winget | is-empty) {
-    print "❌ winget not found. Please install App Installer from Microsoft Store."
-    exit 1
-}
-
-let config_file = ($env.USERPROFILE | path join ".config" "winget" "configuration.dsc.yaml")
-if not ($config_file | path exists) {
-    print $"❌ Config file not found: ($config_file)"
-    exit 1
-}
-
-print "📦 Applying winget configuration (this may take a while)..."
-let result = do { winget configure --file $config_file --accept-configuration-agreements --disable-interactivity } | complete
-if $result.exit_code != 0 {
-    # Show output only on failure
-    print $result.stdout
-    print $result.stderr
-    exit $result.exit_code
-}
-print "✅ Winget configuration applied"
+nu {{ joinPath .chezmoi.sourceDir ".scripts/windows-install-packages.nu" | quote }}
 {{- end }}

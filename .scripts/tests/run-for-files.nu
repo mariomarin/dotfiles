@@ -33,6 +33,13 @@ def find-tests [source_file: string] {
         return [".scripts/tests/test_all_scripts.nu"]
     }
 
+    # private_dot_local/bin/* → private_dot_local/bin/tests/test_*.nu
+    if ($dir | str ends-with "private_dot_local/bin") {
+        let bin_name = $name | str replace "executable_" ""
+        let test = $"private_dot_local/bin/tests/test_($bin_name).nu"
+        if ($test | path exists) { return [$test] }
+    }
+
     # modules/*/mod.nu → modules/*/tests/mod.nu
     if ($source_file | str contains "modules/") and ($dir | path basename) != "tests" {
         let module_dir = if ($name == "mod") { $dir } else { $dir }

@@ -26,17 +26,21 @@ def ensure-krew [] {
     }
 }
 
-# Parse plugins from Krewfile
+def parse-krewfile [content: string]: nothing -> list<string> {
+    $content
+    | lines
+    | str trim
+    | where {|it| not ($it | is-empty) }
+    | where {|it| not ($it | str starts-with "#") }
+    | where {|it| not ($it | str starts-with "index") }
+}
+
 def load-krewfile []: nothing -> list<string> {
     let krewfile = $"($nu.home-dir)/.krewfile"
     if not ($krewfile | path exists) {
         error make {msg: $"Krewfile not found at ($krewfile)"}
     }
-
-    open $krewfile
-    | lines
-    | where $it !~ '^#' and $it !~ '^$' and $it !~ '^index'
-    | str trim
+    parse-krewfile (open $krewfile)
 }
 
 # Sync plugins from Krewfile

@@ -4,11 +4,15 @@
 
 const TUNNEL_LOG = "/tmp/cloudflared-tunnel.log"
 
+def parse-tunnel-url [log_content: string] {
+    $log_content
+    | parse -r '(https://[a-z0-9-]+\.trycloudflare\.com)'
+    | get -o 0?.capture0
+}
+
 def extract-url [] {
     if not ($TUNNEL_LOG | path exists) { return null }
-    open $TUNNEL_LOG
-    | parse -r '(https://[a-z0-9-]+\.trycloudflare\.com)'
-    | get -i 0?.capture0
+    parse-tunnel-url (open $TUNNEL_LOG)
 }
 
 # Get tunnel URL from log (prints export command)

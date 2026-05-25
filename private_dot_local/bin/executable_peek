@@ -6,17 +6,20 @@
 #
 # Same SSH_TTY caveat as clip: reflects tmux server start context.
 
+def select-opener [ssh: bool, macos: bool, wsl: bool]: nothing -> string {
+    if $ssh { "nc" } else if $macos { "open" } else if $wsl { "wslview" } else { "xdg-open" }
+}
+
 def main [...args: string] {
     let target = ($args | str join " ")
     if ($target | is-empty) { return }
 
-    if ($env.SSH_TTY? | is-not-empty) {
-        $target | nc -w1 localhost 2226
-    } else if ((^uname | str trim) == "Darwin") {
-        ^/usr/bin/open ...$args
-    } else if ("/proc/sys/fs/binfmt_misc/WSLInterop" | path exists) {
-        ^wslview ...$args
-    } else {
-        ^xdg-open ...$args
+    let opener = (select-opener ($env.SSH_TTY? | is-not-empty) ((^uname | str trim) == "Darwin") ("/proc/sys/fs/binfmt_misc/WSLInterop" | path exists))
+
+    match $opener {
+        "nc" => { $target | nc -w1 localhost 2226 }
+        "open" => { ^/usr/bin/open ...$args }
+        "wslview" => { ^wslview ...$args }
+        "xdg-open" => { ^xdg-open ...$args }
     }
 }

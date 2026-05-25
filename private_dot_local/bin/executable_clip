@@ -11,6 +11,15 @@
 # used in (SSH→SSH, local→local). If tmux was started locally and you
 # attach over SSH, none of these will be set — which is the right behavior.
 
+def select-backend [env_flags: record<ssh: bool, macos: bool, wsl: bool, has_xclip: bool, has_wl_copy: bool>]: nothing -> string {
+    if $env_flags.ssh { return "ssh" }
+    if $env_flags.macos { return "pbcopy" }
+    if $env_flags.wsl { return "clip.exe" }
+    if $env_flags.has_xclip { return "xclip" }
+    if $env_flags.has_wl_copy { return "wl-copy" }
+    "none"
+}
+
 def is-ssh []: nothing -> bool {
     [SSH_TTY SSH_CONNECTION SSH_CLIENT]
     | any {|key| ($env | get --optional $key | is-not-empty) }
@@ -60,17 +69,13 @@ def copy-via-ssh-tunnel [input: string]: nothing -> nothing {
 }
 
 def resolve-backend []: nothing -> string {
-    [
-        { check: {|| is-ssh},              backend: "ssh" }
-        { check: {|| is-macos},            backend: "pbcopy" }
-        { check: {|| is-wsl},              backend: "clip.exe" }
-        { check: {|| has-cmd "xclip"},     backend: "xclip" }
-        { check: {|| has-cmd "wl-copy"},   backend: "wl-copy" }
-    ]
-    | where { |row| do $row.check }
-    | get backend?
-    | get 0?
-    | default "none"
+    select-backend {
+        ssh: (is-ssh)
+        macos: (is-macos)
+        wsl: (is-wsl)
+        has_xclip: (has-cmd "xclip")
+        has_wl_copy: (has-cmd "wl-copy")
+    }
 }
 
 def copy-to-clipboard [input: string, backend: string]: nothing -> nothing {

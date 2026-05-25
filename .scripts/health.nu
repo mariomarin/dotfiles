@@ -1,60 +1,44 @@
 #!/usr/bin/env nu
-# Health check utilities
+# Health check utilities — reports only missing/broken tools
 
-# Get version from command (returns null on failure)
-def get-version [cmd: string, parser: closure] {
-    let result = do { nu -c $cmd } | complete
-    if $result.exit_code != 0 { return null }
-    do $parser $result.stdout
+def check-cmd [cmd: string]: nothing -> record<name: string, ok: bool> {
+    let result = (do { nu -c $cmd } | complete)
+    { name: $cmd, ok: ($result.exit_code == 0) }
 }
 
-# System health summary
+def evaluate-checks [results: list<record<name: string, ok: bool>>]: nothing -> record<ok: bool, missing: list<string>> {
+    let missing = ($results | where {|r| not $r.ok } | get name)
+    { ok: ($missing | is-empty), missing: $missing }
+}
+
+# Report missing/broken tools (silent when healthy)
 def "main summary" [] {
-    print "🏥 System Health Summary"
-    print "========================"
-    print ""
-    print "🔍 Quick Status:"
+    let checks = [
+        (check-cmd "chezmoi --version")
+        (check-cmd "nvim --version")
+        (check-cmd "tmux -V")
+        (check-cmd "zsh --version")
+    ]
 
-    let nixos = get-version "nixos-version" { $in | lines | first | split row ' ' | first 2 | str join ' ' } | default "❌ not available"
-    let chezmoi = get-version "chezmoi --version" { $in | lines | first | split row ',' | first } | default "❌ not installed"
-    let nvim = get-version "nvim --version" { $in | lines | first } | default "❌ not installed"
-    let tmux = get-version "tmux -V" { $in | str trim } | default "❌ not installed"
-    let zsh = get-version "zsh --version" { $in | lines | first } | default "❌ not installed"
+    let status = (evaluate-checks $checks)
+    if $status.ok { return }
 
-    print $"  NixOS:   ($nixos)"
-    print $"  Chezmoi: ($chezmoi)"
-    print $"  Neovim:  ($nvim)"
-    print $"  Tmux:    ($tmux)"
-    print $"  Zsh:     ($zsh)"
+    print "Missing tools:"
+    $status.missing | each {|m| print $"  ✗ ($m)" } | ignore
 }
 
-# Full system health check
+# Run component health checks, print only failures
 def "main all" [] {
-    print "🏥 Full System Health Check"
-    print "==========================="
-    print ""
-    do { just nixos-health } | complete | ignore
-    print ""
-    do { just chezmoi-health } | complete | ignore
-    print ""
-    do { just nvim-health } | complete | ignore
-    print ""
-    do { just tmux-health } | complete | ignore
-    print ""
-    do { just zim-health } | complete | ignore
-}
+    let components = ["nixos-health" "chezmoi-health" "nvim-health" "tmux-health" "zim-health"]
+    let failures = ($components | each {|c|
+        let result = (do { just $c } | complete)
+        if $result.exit_code != 0 { $c } else { null }
+    } | where {|r| $r != null })
 
-# Show help
-def "main help" [] {
-    print "Health Check Utilities"
-    print "======================"
-    print ""
-    print "Usage: nu health.nu <command>"
-    print ""
-    print "Commands:"
-    print "  summary   Show quick system health summary"
-    print "  all       Run full system health check"
-    print "  help      Show this help message"
+    if ($failures | is-empty) { return }
+
+    print "Failed health checks:"
+    $failures | each {|f| print $"  ✗ ($f)" } | ignore
 }
 
 def main [] {

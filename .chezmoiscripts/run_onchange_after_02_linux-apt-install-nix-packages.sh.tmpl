@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-# hash: {{ include "nix/common/modules/cli-tools.nix" | sha256sum }}
-# hash: {{ include "nix/nixos/flake.nix" | sha256sum }}
-set -euo pipefail
-
-cd "{{ .chezmoi.sourceDir }}/nix/nixos"
-ATUIN_NOBIND=true exec nu nixos.nu linux-apt ribosome

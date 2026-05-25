@@ -1,5 +1,4 @@
 #!/usr/bin/env nu
-# Reload tmux config when any tmux config file changes
 {{- $tmuxReloadFiles := list
   "private_dot_config/tmux/tmux.conf"
   "private_dot_config/tmux/settings.tmux"
@@ -11,19 +10,4 @@
 {{- range $file := $tmuxReloadFiles }}
 # {{ $file }} hash: {{ include $file | sha256sum }}
 {{- end }}
-
-if (which tmux | is-empty) { exit 0 }
-
-let server_check = (do { ^tmux list-sessions } | complete)
-if $server_check.exit_code != 0 {
-    print "tmux reload skipped (server not running)"
-    exit 0
-}
-
-let result = (do { ^tmux source-file ~/.config/tmux/tmux.conf } | complete)
-if $result.exit_code == 0 {
-    print "tmux config reloaded"
-} else {
-    print $"tmux reload failed: ($result.stderr)"
-    exit 1
-}
+nu {{ joinPath .chezmoi.sourceDir ".scripts/tmux-reload.nu" | quote }}

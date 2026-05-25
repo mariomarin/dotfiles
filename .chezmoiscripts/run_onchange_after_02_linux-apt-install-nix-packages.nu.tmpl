@@ -1,0 +1,6 @@
+#!/usr/bin/env nu
+# hash: {{ include "nix/common/modules/cli-tools.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/flake.nix" | sha256sum }}
+cd {{ joinPath .chezmoi.sourceDir "nix/nixos" | quote }}
+$env.ATUIN_NOBIND = "true"
+nu nixos.nu linux-apt ribosome
