@@ -1,0 +1,12 @@
+set shell := ["nu", "-c"]
+
+# Apply the right configuration for the current platform
+default:
+    #!/usr/bin/env nu
+    if (^uname | str trim) == "Darwin" {
+        just --justfile darwin/justfile switch
+    } else if ("/etc/nixos" | path exists) {
+        just --justfile nixos/justfile switch
+    } else {
+        just --justfile nixos/justfile linux-apt
+    }

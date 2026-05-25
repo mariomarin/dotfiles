@@ -120,6 +120,11 @@ doctor:
     nu .scripts/doctor.nu all
 
 # Pass-through targets to subdirectories
+
+# Apply the right nix configuration for the current platform
+nix:
+    @just nix/
+
 nixos-switch:
     @just nix/nixos/switch
 

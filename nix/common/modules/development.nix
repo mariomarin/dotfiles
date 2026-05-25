@@ -36,7 +36,7 @@
 
     # Node.js
     nodejs_22
-    nodePackages.yarn
+    yarn
 
     # Java
     openjdk
