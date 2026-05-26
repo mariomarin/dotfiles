@@ -236,9 +236,7 @@ def "main spr" [
   if not $skip_hooks {
     run-or-fail "Hooks" { ^jj-hp run @ }
   }
-  let args = if $all { ["diff" "--all"] } else { ["diff"] }
-  let result = (run-or-fail "jj-spr" { ^jj-spr ...$args })
-  if ($result.stdout | is-not-empty) { print $result.stdout }
+  if $all { ^jj-spr diff --all } else { ^jj-spr diff }
 }
 
 # Interactive bookmark checkout (requires fzf)
