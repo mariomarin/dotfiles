@@ -160,7 +160,7 @@ nix/nixos/hosts/ribosome/**
 .config/systemd/user/atuin-server.service
 .config/systemd/user/atuin-server.service.d
 .config/systemd/user/atuin-server.service.d/**
-.chezmoiscripts/02_linux-apt-install-nix-packages.sh
+.chezmoiscripts/02_linux-apt-install-nix-packages.nu
 .chezmoiscripts/linux-apt-setup-atuin-server.nu
 .chezmoiscripts/linux-apt-enable-linger.nu
 {{ end }}

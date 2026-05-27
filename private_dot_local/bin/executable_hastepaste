@@ -1,0 +1,134 @@
+#!/usr/bin/env -S nu --stdin
+# hastepaste - paste content to Hastebin-compatible servers
+
+def normalize-url [raw: string]: nothing -> string {
+  let trimmed = ($raw | str trim | str replace -r '/$' '')
+  if ($trimmed | str starts-with "http://") or ($trimmed | str starts-with "https://") {
+    $trimmed
+  } else {
+    $"https://($trimmed)"
+  }
+}
+
+def parse-haste-response [body: string]: nothing -> record<ok: bool, value: string, error: string> {
+  let trimmed = ($body | str trim)
+  if ($trimmed | is-empty) {
+    return { ok: false, value: "", error: "empty response" }
+  }
+  let parsed = (try { $trimmed | from json | into record } catch { null })
+  if ($parsed == null) {
+    return { ok: false, value: "", error: $"invalid JSON: ($trimmed)" }
+  }
+  let key = ($parsed | get -o key | default "")
+  if ($key | is-empty) {
+    { ok: false, value: "", error: $"no key in response: ($trimmed)" }
+  } else {
+    { ok: true, value: $key, error: "" }
+  }
+}
+
+def build-paste-url [base_url: string, key: string, extension: string]: nothing -> string {
+  let ext = if ($extension | is-empty) { "" } else { $".($extension)" }
+  $"($base_url)/($key)($ext)"
+}
+
+def strip-ansi [text: string]: nothing -> string {
+  $text | ansi strip
+}
+
+def require-env []: nothing -> string {
+  let server = ($env | get -o HASTE_SERVER | default "")
+  if ($server | is-empty) {
+    error make { msg: "HASTE_SERVER not set" }
+  }
+  $server
+}
+
+def run-or-fail [label: string, cmd: closure] {
+  let result = (do $cmd | complete)
+  if $result.exit_code != 0 {
+    if ($result.stdout | is-not-empty) { print -e $result.stdout }
+    if ($result.stderr | is-not-empty) { print -e $result.stderr }
+    error make { msg: $"($label) failed" }
+  }
+  $result
+}
+
+# Paste stdin to Haste server
+def main [
+  extension?: string  # File extension for syntax highlighting
+] {
+  let server = (require-env)
+  let base_url = (normalize-url $server)
+  let content = ($in | into string)
+
+  if ($content | is-empty) {
+    error make { msg: "no input" }
+  }
+
+  let result = (run-or-fail "Upload" {
+    $content | ^curl -s -X POST --data-binary @- $"($base_url)/documents"
+  })
+
+  let parsed = (parse-haste-response $result.stdout)
+  if not $parsed.ok {
+    error make { msg: $parsed.error }
+  }
+
+  print (build-paste-url $base_url $parsed.value ($extension | default ""))
+}
+
+# Execute command and paste output
+# Usage: hastepaste capture 'ls -la'
+def "main capture" [
+  command: string  # Command string to execute
+] {
+  let server = (require-env)
+  let base_url = (normalize-url $server)
+
+  let header = $"[($env.PWD)] ($command)"
+  let result = (do { nu -c $command } | complete)
+  let output = $"($header)\n($result.stdout)"
+
+  print -n $output
+  if ($result.stderr | is-not-empty) { print -e $result.stderr }
+
+  let clean = (strip-ansi $output)
+  let upload = (run-or-fail "Upload" {
+    $clean | ^curl -s -X POST --data-binary @- $"($base_url)/documents"
+  })
+
+  let parsed = (parse-haste-response $upload.stdout)
+  if not $parsed.ok {
+    error make { msg: $parsed.error }
+  }
+
+  print -e (build-paste-url $base_url $parsed.value "")
+}
+
+# Pipe stdin to terminal and paste
+def "main pipe" [
+  extension?: string  # File extension for syntax highlighting
+] {
+  let server = (require-env)
+  let base_url = (normalize-url $server)
+  let content = ($in | into string)
+
+  if ($content | is-empty) {
+    error make { msg: "no input" }
+  }
+
+  print -n $content
+
+  let clean = (strip-ansi $content)
+  let upload = (run-or-fail "Upload" {
+    $clean | ^curl -s -X POST --data-binary @- $"($base_url)/documents"
+  })
+
+  let parsed = (parse-haste-response $upload.stdout)
+  if not $parsed.ok {
+    error make { msg: $parsed.error }
+  }
+
+  print -e (build-paste-url $base_url $parsed.value ($extension | default ""))
+}

@@ -52,12 +52,21 @@ in
 
   # Copy kanata to stable path and create Karabiner socket directory
   system.activationScripts.postActivation.text = ''
-    # Copy kanata binary to stable path (preserves Input Monitoring permission)
-    cp -f ${pkgs-unstable.kanata}/bin/kanata ${kanataStablePath}
-    chmod 755 ${kanataStablePath}
-
     # Create required directory for Karabiner socket
     mkdir -p "/Library/Application Support/org.pqrs/tmp"
     chmod 1777 "/Library/Application Support/org.pqrs/tmp"
+
+    # Copy kanata binary to stable path only if it changed
+    new_hash=$(shasum -a 256 ${pkgs-unstable.kanata}/bin/kanata | cut -d' ' -f1)
+    old_hash=""
+    if [ -f ${kanataStablePath} ]; then
+      old_hash=$(shasum -a 256 ${kanataStablePath} | cut -d' ' -f1)
+    fi
+
+    if [ "$new_hash" != "$old_hash" ]; then
+      cp -f ${pkgs-unstable.kanata}/bin/kanata ${kanataStablePath}
+      chmod 755 ${kanataStablePath}
+      osascript -e 'display notification "Kanata binary updated — re-grant Input Monitoring in System Settings → Privacy & Security" with title "Kanata"'
+    fi
   '';
 }
