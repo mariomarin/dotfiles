@@ -1,4 +1,8 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, inputs, ... }:
+
+let
+  pkgs-unstable = import inputs.nixpkgs-unstable { system = pkgs.stdenv.system; };
+in
 
 {
   # Development environment for this repository
@@ -48,6 +52,9 @@
 
     # Nushell (needed by nushell-check and nushell-test hooks)
     nushell
+
+    # Nushell linter (unstable for latest version)
+    pkgs-unstable.nu-lint
   ];
 
   # Claude Code integration
@@ -210,6 +217,18 @@
           ".*zshenv$"
           "private_dot_config/zim/.*" # Exclude zim modules
         ];
+      };
+
+      # Nushell linting
+      nushell-lint = {
+        enable = true;
+        name = "nushell-lint";
+        entry = "nu-lint";
+        files = "(\\.nu$|/executable_[^.]+$)";
+        types_or = [ "text" ];
+        excludes = [ "wsl-" "nushell/env\\.nu" ];
+        language = "system";
+        pass_filenames = true;
       };
 
       # Nushell syntax checking (source parses more strictly than --ide-check)
