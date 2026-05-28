@@ -232,26 +232,14 @@ in
         pass_filenames = true;
       };
 
-      # Nushell linting
-      nushell-lint = {
-        enable = true;
-        name = "nushell-lint";
-        entry = "nu-lint";
-        files = "(\\.nu$|/executable_[^.]+$)";
-        types_or = [ "text" ];
-        excludes = [ "wsl-" "nushell/env\\.nu" ];
-        language = "system";
-        pass_filenames = true;
-      };
-
-      # Nushell syntax checking (source parses more strictly than --ide-check)
+      # Nushell validation (nu-check + nu-lint)
       nushell-check = {
         enable = true;
         name = "nushell-check";
         entry = "nu .scripts/nu-check.nu";
         files = "(\\.nu$|/executable_[^.]+$)";
         types_or = [ "text" ];
-        excludes = [ "wsl-" "nushell/env\\.nu" ]; # WSL scripts and Nu startup configs require live $nu context
+        excludes = [ "wsl-" "nushell/env\\.nu" ];
         language = "system";
         pass_filenames = true;
       };
