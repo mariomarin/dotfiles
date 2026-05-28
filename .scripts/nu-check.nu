@@ -28,9 +28,15 @@ def main [...files: string] {
   let failures = (
     $files
     | each {|f|
+        let path = ($f | path expand)
+
+        if not ($path | path exists) {
+          return null
+        }
+
         let shebang = (
           try {
-            open $f --raw | lines | first | default ""
+            open $path --raw | lines | first | default ""
           } catch {
             ""
           }
@@ -40,7 +46,7 @@ def main [...files: string] {
           return null
         }
 
-        let result = (do { nu-check --debug $f } | complete)
+        let result = (do { nu-check --debug $path } | complete)
 
         if $result.exit_code != 0 {
           print $"FAIL: ($f)"
