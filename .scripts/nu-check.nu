@@ -1,6 +1,6 @@
 #!/usr/bin/env nu
 
-# Pre-commit hook: validate/lint Nushell scripts
+# Pre-commit hook: syntax-validate Nushell scripts
 # - .nu files: always checked
 # - extensionless files: checked only if shebang invokes nu
 
@@ -24,41 +24,6 @@ def should-check [file: string, shebang: string]: nothing -> bool {
   ($file | str ends-with ".nu") or (is-nu-shebang $shebang)
 }
 
-def check-file [file: string]: nothing -> record<file: string, ok: bool, stage: string, stderr: string> {
-  let parse_result = (do {
-    nu-check --debug $file
-  } | complete)
-
-  if $parse_result.exit_code != 0 {
-    return {
-      file: $file
-      ok: false
-      stage: "nu-check"
-      stderr: $parse_result.stderr
-    }
-  }
-
-  let lint_result = (do {
-    nu-lint $file
-  } | complete)
-
-  if $lint_result.exit_code != 0 {
-    return {
-      file: $file
-      ok: false
-      stage: "nu-lint"
-      stderr: $lint_result.stderr
-    }
-  }
-
-  {
-    file: $file
-    ok: true
-    stage: ""
-    stderr: ""
-  }
-}
-
 def main [...files: string] {
   let failures = (
     $files
@@ -75,14 +40,14 @@ def main [...files: string] {
           return null
         }
 
-        let result = (check-file $f)
+        let result = (do { nu-check --debug $f } | complete)
 
-        if not $result.ok {
-          print $"FAIL: ($result.file) [($result.stage)]"
+        if $result.exit_code != 0 {
+          print $"FAIL: ($f)"
           if not ($result.stderr | is-empty) {
             print $result.stderr
           }
-          return $result
+          return $f
         }
 
         null
@@ -92,7 +57,7 @@ def main [...files: string] {
 
   if not ($failures | is-empty) {
     error make {
-      msg: $"($failures | length) file\(s\) failed Nushell validation/linting"
+      msg: $"($failures | length) file\(s\) failed nushell-check"
     }
   }
 }

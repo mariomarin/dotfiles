@@ -232,7 +232,19 @@ in
         pass_filenames = true;
       };
 
-      # Nushell validation (nu-check + nu-lint)
+      # Nushell linting
+      nushell-lint = {
+        enable = true;
+        name = "nushell-lint";
+        entry = "nu-lint";
+        files = "(\\.nu$|/executable_[^.]+$)";
+        types_or = [ "text" ];
+        excludes = [ "wsl-" "nushell/env\\.nu" ];
+        language = "system";
+        pass_filenames = true;
+      };
+
+      # Nushell syntax checking
       nushell-check = {
         enable = true;
         name = "nushell-check";
