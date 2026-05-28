@@ -1,4 +1,4 @@
-{ lib, buildNpmPackage, fetchFromGitHub, nodejs }:
+{ lib, buildNpmPackage, fetchFromGitHub }:
 
 buildNpmPackage {
   pname = "jj-stack";

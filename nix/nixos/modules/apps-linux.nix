@@ -1,6 +1,6 @@
 # Desktop-specific packages module
 # GUI applications and desktop utilities for NixOS
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   # Package overrides - for flakes these will be handled differently

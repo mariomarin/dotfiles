@@ -6,31 +6,37 @@ in
 {
   # Boot configuration - only for non-WSL systems
   config = lib.mkIf (!isWSL) {
-    # Bootloader
-    boot.loader.systemd-boot.enable = true;
-    boot.loader.efi.canTouchEfiVariables = true;
-    boot.loader.efi.efiSysMountPoint = "/boot/efi";
+    boot = {
+      # Bootloader
+      loader = {
+        systemd-boot.enable = true;
+        efi.canTouchEfiVariables = true;
+        efi.efiSysMountPoint = "/boot/efi";
+      };
 
-    # Setup keyfile
-    boot.initrd.secrets = {
-      "/crypto_keyfile.bin" = null;
-    };
+      # Setup keyfile
+      initrd = {
+        secrets = {
+          "/crypto_keyfile.bin" = null;
+        };
+        # Kernel modules
+        availableKernelModules = [ "nvme" "ehci_pci" "xhci_pci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" "thinkpad_acpi" ];
+        kernelModules = [ "acpi_call" "kvm-intel" ];
+      };
 
-    # Kernel modules
-    boot.initrd.availableKernelModules = [ "nvme" "ehci_pci" "xhci_pci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" "thinkpad_acpi" ];
-    boot.initrd.kernelModules = [ "acpi_call" "kvm-intel" ];
-    boot.kernelModules = [ "kvm-intel" ];
-    boot.extraModulePackages = with config.boot.kernelPackages; [
-      acpi_call
-    ] ++ [
-      pkgs.linuxPackages.sysdig
-    ];
+      kernelModules = [ "kvm-intel" ];
+      extraModulePackages = with config.boot.kernelPackages; [
+        acpi_call
+      ] ++ [
+        pkgs.linuxPackages.sysdig
+      ];
 
-    # Plymouth boot splash
-    boot.plymouth = {
-      enable = true;
-      themePackages = [ (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ "owl" ]; }) ];
-      theme = "owl";
+      # Plymouth boot splash
+      plymouth = {
+        enable = true;
+        themePackages = [ (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ "owl" ]; }) ];
+        theme = "owl";
+      };
     };
   };
 }

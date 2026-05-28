@@ -4,7 +4,7 @@
 #
 # NOTE: These modules are NixOS-specific (use Linux kernel, systemd, etc.)
 # Darwin (macOS) uses its own separate configuration in nix/darwin/
-{ config, pkgs, lib, ... }:
+{ ... }:
 
 {
   imports = [

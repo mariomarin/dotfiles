@@ -22,69 +22,79 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # X11 configuration
-    services.xserver = {
-      enable = true;
-      xkb.layout = "us";
-      xkb.variant = "altgr-intl";
+    services = {
+      # X11 configuration
+      xserver = {
+        enable = true;
+        xkb.layout = "us";
+        xkb.variant = "altgr-intl";
 
-      displayManager = lib.mkMerge [
-        # Common display manager settings
-        {
-          sessionCommands = ''
-            eval $(${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
-            export SSH_AUTH_SOCK
-            
-            # Start polkit-gnome authentication agent if not already running
-            ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
-            
-            # Set random wallpaper for LeftWM (initial wallpaper)
-            # Note: wallpaper rotation is handled by systemd timer
-            ${lib.optionalString (cfg.type == "leftwm") ''
-              if [ -d "$HOME/.wallpaper" ] && [ "$(ls -A $HOME/.wallpaper 2>/dev/null)" ]; then
-                ${pkgs.feh}/bin/feh --bg-fill --randomize $HOME/.wallpaper/* &
-              fi
-            ''}
-          '';
-        }
+        displayManager = lib.mkMerge [
+          # Common display manager settings
+          {
+            sessionCommands = ''
+              eval $(${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+              export SSH_AUTH_SOCK
 
-        # GNOME uses GDM
-        (lib.mkIf (cfg.type == "gnome") {
-          gdm.enable = true;
-        })
+              # Start polkit-gnome authentication agent if not already running
+              ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
 
-        # Other desktops use LightDM
-        (lib.mkIf (cfg.type != "gnome") {
-          lightdm = {
-            enable = true;
-            greeters.slick = {
+              # Set random wallpaper for LeftWM (initial wallpaper)
+              # Note: wallpaper rotation is handled by systemd timer
+              ${lib.optionalString (cfg.type == "leftwm") ''
+                if [ -d "$HOME/.wallpaper" ] && [ "$(ls -A $HOME/.wallpaper 2>/dev/null)" ]; then
+                  ${pkgs.feh}/bin/feh --bg-fill --randomize $HOME/.wallpaper/* &
+                fi
+              ''}
+            '';
+          }
+
+          # GNOME uses GDM
+          (lib.mkIf (cfg.type == "gnome") {
+            gdm.enable = true;
+          })
+
+          # Other desktops use LightDM
+          (lib.mkIf (cfg.type != "gnome") {
+            lightdm = {
               enable = true;
-              theme.name = "Zukitre-dark";
+              greeters.slick = {
+                enable = true;
+                theme.name = "Zukitre-dark";
+              };
             };
+          })
+        ];
+
+        windowManager.leftwm.enable = cfg.type == "leftwm";
+
+        desktopManager = {
+          xterm.enable = false;
+          xfce = lib.mkIf (cfg.type == "leftwm") {
+            enable = true;
+            noDesktop = true;
+            enableXfwm = false;
           };
-        })
-      ];
-
-      windowManager.leftwm.enable = cfg.type == "leftwm";
-
-      desktopManager = {
-        xterm.enable = false;
-        xfce = lib.mkIf (cfg.type == "leftwm") {
-          enable = true;
-          noDesktop = true;
-          enableXfwm = false;
+          gnome.enable = cfg.type == "gnome";
         };
-        gnome.enable = cfg.type == "gnome";
+
+        videoDrivers = [ "modesetting" ];
       };
 
-      videoDrivers = [ "modesetting" ];
+      # Set the default session for LeftWM
+      displayManager.defaultSession = lib.mkIf (cfg.type == "leftwm") "xfce+leftwm";
+
+      # Enable GVFS for file manager support
+      gvfs.enable = true;
     };
 
-    # Set the default session for LeftWM
-    services.displayManager.defaultSession = lib.mkIf (cfg.type == "leftwm") "xfce+leftwm";
+    programs = {
+      # Hyprland (Wayland)
+      hyprland.enable = cfg.type == "hyprland";
 
-    # Hyprland (Wayland)
-    programs.hyprland.enable = cfg.type == "hyprland";
+      # Enable dconf for GTK apps
+      dconf.enable = true;
+    };
 
     # Common desktop packages
     environment.systemPackages = with pkgs; [
@@ -105,16 +115,10 @@ in
       transmission_4-gtk
     ]);
 
-    # Enable dconf for GTK apps
-    programs.dconf.enable = true;
-
     # XDG portal for desktop integration
     xdg.portal = {
       enable = true;
       extraPortals = [ portalPackages.${cfg.type} ];
     };
-
-    # Enable GVFS for file manager support
-    services.gvfs.enable = true;
   };
 }

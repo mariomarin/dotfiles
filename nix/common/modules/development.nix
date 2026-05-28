@@ -1,5 +1,5 @@
 # Shared development tools for both NixOS and nix-darwin
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [

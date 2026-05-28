@@ -10,7 +10,7 @@
 # To add packages: Edit nix/nixos/flake.nix ribosome-env.paths
 # To manage services: Edit private_dot_config/systemd/user/
 #
-{ config, pkgs, lib, ... }:
+{ ... }:
 
 {
   imports = [

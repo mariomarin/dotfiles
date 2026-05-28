@@ -1,6 +1,6 @@
 # Common NixOS configuration shared by all hosts
 # Contains only universal settings that apply regardless of host type
-{ config, pkgs, lib, ... }:
+{ ... }:
 
 {
   imports = [
@@ -19,27 +19,27 @@
   #   "qtwebengine-5.15.19"
   # ];
 
-  # Enable flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # Nix configuration
+  nix = {
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      # Keep derivations for direnv
+      keep-outputs = true;
+      keep-derivations = true;
+    };
 
-  # Nix daemon configuration
-  nix.extraOptions = ''
-    trusted-users = root mario
-    extra-substituters = https://devenv.cachix.org
-    extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
-  '';
+    extraOptions = ''
+      trusted-users = root mario
+      extra-substituters = https://devenv.cachix.org
+      extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
+    '';
 
-  # Automatic garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 15d";
-  };
-
-  # Keep derivations for direnv
-  nix.settings = {
-    keep-outputs = true;
-    keep-derivations = true;
+    # Automatic garbage collection
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 15d";
+    };
   };
 
   # Path links for nix-direnv integration

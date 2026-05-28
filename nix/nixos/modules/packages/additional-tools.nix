@@ -1,6 +1,6 @@
 # Additional specialized tools module
 # Domain-specific tools for Kubernetes, cloud, git utilities, and media
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [

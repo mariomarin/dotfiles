@@ -1,6 +1,6 @@
 # Font configuration for NixOS
 # Imports common fonts and adds NixOS-specific settings
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [ ../../../common/modules/fonts.nix ];

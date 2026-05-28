@@ -45,14 +45,14 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-darwin, nixpkgs-unstable, nixos-hardware, nixos-wsl, nix-darwin, nur, home-manager, devenv, caarlos0-nur, claude-code-nix, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, nixos-hardware, nixos-wsl, nix-darwin, nur, devenv, claude-code-nix, ... }@inputs:
     let
       # Common overlays shared by all hosts
       commonOverlays = [
         nur.overlays.default
-        (final: prev: {
+        (final: _prev: {
           unstable = import nixpkgs-unstable {
-            system = final.system;
+            inherit (final) system;
             config.allowUnfree = true;
           };
           tmux-harpoon = final.callPackage ./pkgs/tmux-harpoon.nix { };
@@ -68,7 +68,7 @@
       ];
 
       # Helper function to create a NixOS system
-      mkSystem = { hostname, system, modules, username }:
+      mkSystem = { system, modules, username, ... }:
         let
           userConfig = { inherit username; };
         in

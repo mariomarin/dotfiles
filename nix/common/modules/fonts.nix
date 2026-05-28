@@ -1,6 +1,6 @@
 # Shared font configuration for NixOS and nix-darwin
 # Provides Nerd Fonts for Unicode symbols (kanata config, terminal, etc.)
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   fonts.packages = with pkgs; [

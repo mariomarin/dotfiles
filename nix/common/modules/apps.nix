@@ -1,7 +1,7 @@
 # Shared GUI applications for both NixOS and nix-darwin
 # NOTE: Do NOT use pkgs.stdenv.isLinux here - causes infinite recursion with overlays
 # Platform-specific packages go in apps-linux.nix (NixOS) or packages.nix (Darwin)
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [

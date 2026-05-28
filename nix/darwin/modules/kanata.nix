@@ -1,7 +1,7 @@
 # Kanata keyboard remapping service for macOS
 # Requires Karabiner-DriverKit-VirtualHIDDevice for virtual keyboard support
 # See: https://github.com/jtroo/kanata/discussions/1537
-{ config, pkgs, pkgs-unstable, lib, ... }:
+{ config, pkgs, pkgs-unstable, ... }:
 
 let
   kanataStablePath = "/usr/local/bin/kanata";

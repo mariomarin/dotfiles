@@ -1,4 +1,4 @@
-{ config, pkgs, lib, userConfig, ... }:
+{ pkgs, userConfig, ... }:
 
 {
   # User configuration - username from user.nix

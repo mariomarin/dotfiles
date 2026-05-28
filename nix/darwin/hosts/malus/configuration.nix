@@ -1,9 +1,9 @@
 # malus - macOS configuration
 # Biology theme: Malus (apple genus) for macOS
-{ config, pkgs, lib, userConfig, ... }:
+{ pkgs, userConfig, ... }:
 
 let
-  username = userConfig.username;
+  inherit (userConfig) username;
   homeDir = "/Users/${username}";
 in
 {

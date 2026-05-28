@@ -25,7 +25,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "https://github.com/rszyma/kanata-tray/releases/download/v${version}/${asset.name}";
-    hash = asset.hash;
+    inherit (asset) hash;
   };
 
   dontUnpack = true;

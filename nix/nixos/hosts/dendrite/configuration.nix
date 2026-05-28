@@ -1,5 +1,5 @@
 # ThinkPad T470 (dendrite) - portable workstation
-{ config, pkgs, lib, ... }:
+{ lib, ... }:
 
 {
   imports = [
@@ -10,52 +10,59 @@
   # Set hostname
   networking.hostName = "dendrite";
 
-  # Enable CLI tools with modern replacements
-  custom.cli = {
-    enable = true;
-    modernCli = true;
-  };
+  custom = {
+    # Enable CLI tools with modern replacements
+    cli = {
+      enable = true;
+      modernCli = true;
+    };
 
-  # Enable development tools
-  custom.development.enable = true;
+    # Enable development tools
+    development.enable = true;
 
-  # Enable desktop environment
-  custom.desktop = {
-    enable = true;
-    type = "leftwm"; # LeftWM + XFCE (no desktop)
-  };
-
-  # Enable all desktop-related services
-  services.kanata.enable = true;
-  programs.kdeconnect.enable = true;
-
-  # Audio
-  services.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
-  # Bluetooth
-  hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
-
-  # Power management for laptop
-  services.power-profiles-daemon.enable = false;
-  services.tlp = {
-    enable = true;
-    settings = {
-      CPU_SCALING_GOVERNOR_ON_AC = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-
-      # ThinkPad battery thresholds
-      START_CHARGE_THRESH_BAT0 = lib.mkForce 75;
-      STOP_CHARGE_THRESH_BAT0 = lib.mkForce 80;
+    # Enable desktop environment
+    desktop = {
+      enable = true;
+      type = "leftwm"; # LeftWM + XFCE (no desktop)
     };
   };
 
-  # Touchpad support
-  services.libinput.enable = true;
+  # Enable all desktop-related services
+  services = {
+    kanata.enable = true;
+
+    # Audio
+    pulseaudio.enable = false;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+    };
+
+    # Bluetooth
+    blueman.enable = true;
+
+    # Power management for laptop
+    power-profiles-daemon.enable = false;
+    tlp = {
+      enable = true;
+      settings = {
+        CPU_SCALING_GOVERNOR_ON_AC = "performance";
+        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+
+        # ThinkPad battery thresholds
+        START_CHARGE_THRESH_BAT0 = lib.mkForce 75;
+        STOP_CHARGE_THRESH_BAT0 = lib.mkForce 80;
+      };
+    };
+
+    # Touchpad support
+    libinput.enable = true;
+  };
+
+  programs.kdeconnect.enable = true;
+
+  # Bluetooth
+  hardware.bluetooth.enable = true;
 }
