@@ -64,10 +64,7 @@ in
     chmod 1777 "/Library/Application Support/org.pqrs/tmp"
 
     # Kill any manually-started Karabiner daemons to prevent conflicts
-    pgrep -f "Karabiner-VirtualHIDDevice-Daemon activate" | while read -r pid; do
-      echo "Stopping conflicting Karabiner daemon (PID $pid)..."
-      kill "$pid" 2>/dev/null || true
-    done
+    pkill -f "Karabiner-VirtualHIDDevice-Daemon activate" || true
 
     # Copy kanata binary to stable path only if it changed
     new_hash=$(shasum -a 256 ${pkgs-unstable.kanata}/bin/kanata | cut -d' ' -f1)
