@@ -46,7 +46,7 @@ def main [...files: string] {
           return null
         }
 
-        let result = (do { ^nu --no-config-file -c $"nu-check --debug \"($path)\"" } | complete)
+        let result = (do { ^nu --no-config-file --commands $"nu-check --debug '($path)'" } | complete)
 
         if $result.exit_code != 0 {
           print $"FAIL: ($f)"
