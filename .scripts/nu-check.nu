@@ -46,13 +46,11 @@ def main [...files: string] {
           return null
         }
 
-        let result = (do { nu-check --debug $path } | complete)
+        let result = (do { ^nu --no-config-file -c $"nu-check --debug \"($path)\"" } | complete)
 
         if $result.exit_code != 0 {
           print $"FAIL: ($f)"
-          if not ($result.stderr | is-empty) {
-            print $result.stderr
-          }
+          print ($result.stderr | str trim)
           return $f
         }
 

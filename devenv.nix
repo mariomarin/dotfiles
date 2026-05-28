@@ -179,6 +179,7 @@ in
         name = "deadnix";
         entry = "deadnix --fail";
         files = "\\.nix$";
+        excludes = [ "hardware-configuration\\.nix" ];
         language = "system";
         pass_filenames = true;
       };
