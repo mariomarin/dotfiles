@@ -115,25 +115,16 @@ check: test-nu
 test-nu:
     nu .scripts/tests/run.nu
 
-# Health checks
-health: health-summary
-    print ""
-    print "Run 'just health-all' for detailed checks of all subsystems"
-
-# System health summary
-health-summary:
-    nu .scripts/health.nu summary
-
-# Full system health check
-health-all:
+# Doctor: report only problems with actionable fixes
+doctor:
     nu .scripts/health.nu all
 
 # Pass-through targets to subdirectories
 nixos-switch:
     @just nix/nixos/switch
 
-nixos-health:
-    @just nix/nixos/health
+nixos-doctor:
+    @just nix/nixos/doctor
 
 chezmoi-apply:
     @just chezmoi/apply
@@ -144,26 +135,26 @@ chezmoi-quick-apply:
 chezmoi-diff:
     @just chezmoi/diff
 
-chezmoi-health:
-    @just chezmoi/health
+chezmoi-doctor:
+    @just chezmoi/doctor
 
 nvim-sync:
     @just private_dot_config/nvim/sync
 
-nvim-health:
-    @just private_dot_config/nvim/health
+nvim-doctor:
+    @just private_dot_config/nvim/doctor
 
 tmux-reload:
     @just private_dot_config/tmux/reload
 
-tmux-health:
-    @just private_dot_config/tmux/health
+tmux-doctor:
+    @just private_dot_config/tmux/doctor
 
 zim-update:
     @just private_dot_config/zim/update
 
-zim-health:
-    @just private_dot_config/zim/health
+zim-doctor:
+    @just private_dot_config/zim/doctor
 
 zim-recompile:
     @just private_dot_config/zim/recompile
@@ -214,8 +205,8 @@ wsl-setup:
 wsl-check:
     @just wsl/check-wsl
 
-wsl-health:
-    @just wsl/health
+wsl-doctor:
+    @just wsl/doctor
 
 wsl-start:
     @just wsl/start-nixos
@@ -230,8 +221,11 @@ darwin-first-time:
 darwin-switch:
     @just nix/darwin/switch
 
-darwin-health:
-    @just nix/darwin/health
+darwin-doctor:
+    @just nix/darwin/doctor
+
+kanata-doctor:
+    nu .scripts/kanata-doctor.nu
 
 # Windows package management (Windows only)
 # Packages are applied automatically by chezmoi when configuration.dsc.yaml changes

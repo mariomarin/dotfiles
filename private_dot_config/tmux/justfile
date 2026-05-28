@@ -26,28 +26,17 @@ status:
 kill-server:
     tmux kill-server
 
-# Health check
-health:
+# Doctor: report only problems
+doctor:
     #!/usr/bin/env nu
-    print "🔍 Tmux Health Check"
-    print "=================="
-    let version_result = (do { tmux -V } | complete)
-    let version = if $version_result.exit_code == 0 { $version_result.stdout | str trim } else { "unknown" }
-    print $"✓ Tmux version: ($version)"
-    let config_exists = ("~/.config/tmux/tmux.conf" | path expand | path exists)
-    print $"✓ Config file: (if $config_exists { 'exists' } else { '❌ missing' })"
-    let plugins_dir = "/run/current-system/sw/share/tmux-plugins"
-    let plugins = if ($plugins_dir | path exists) { (ls $plugins_dir | length) } else { 0 }
-    print $"✓ Nix plugins: ($plugins) installed"
-    let server_result = (do { tmux list-sessions } | complete)
-    let server_running = if $server_result.exit_code == 0 { "yes" } else { "no" }
-    print $"✓ Server running: ($server_running)"
-    let sessions = if $server_result.exit_code == 0 { ($server_result.stdout | lines | length) } else { 0 }
-    print $"✓ Sessions: ($sessions) active"
-    let keys_result = (do { tmux list-keys } | complete)
-    let keys = if $keys_result.exit_code == 0 { ($keys_result.stdout | lines | length) } else { 0 }
-    print $"✓ Key bindings: ($keys) configured"
-    let env_result = (do { tmux show-environment TERM } | complete)
-    let term = if $env_result.exit_code == 0 { ($env_result.stdout | split row '=' | last | str trim) } else { "not in tmux" }
-    print $"✓ Environment: ($term)"
-    print ""
+    mut issues = []
+    let tmux = (do { ^tmux -V } | complete)
+    if $tmux.exit_code != 0 { $issues = ($issues | append "tmux not found — install tmux") }
+    let config = ("~/.config/tmux/tmux.conf" | path expand)
+    if not ($config | path exists) { $issues = ($issues | append "config missing — run: chezmoi apply") }
+    let plugins_dir = ("~/.local/share/tmux/plugins" | path expand)
+    if not ($plugins_dir | path exists) { $issues = ($issues | append "plugins missing — run: chezmoi apply") }
+    if ($issues | is-empty) { return }
+    print "tmux:"
+    $issues | each {|i| print $"  ($i)" } | ignore
+    exit 1

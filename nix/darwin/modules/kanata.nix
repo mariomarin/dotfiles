@@ -76,6 +76,8 @@ in
     if [ "$new_hash" != "$old_hash" ]; then
       cp -f ${pkgs-unstable.kanata}/bin/kanata ${kanataStablePath}
       chmod 755 ${kanataStablePath}
+      # Re-sign with proper adhoc signature (linker-signed from nix is rejected by macOS)
+      codesign --force --sign - ${kanataStablePath}
       osascript -e 'display notification "Kanata binary updated — re-grant Input Monitoring in System Settings → Privacy & Security" with title "Kanata"'
     fi
   '';

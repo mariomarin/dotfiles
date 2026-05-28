@@ -160,58 +160,37 @@ def "main info" [] {
 }
 
 # Health check for WSL setup
-def "main health" [] {
+def "main doctor" [] {
     check-os
-    print "🏥 WSL NixOS Health Check"
-    print "========================="
-    print ""
+    mut issues = []
 
-    # Check WSL
-    print "WSL Installation:"
-    let wsl_installed = (do { wsl --version } | complete | get exit_code) == 0
-    if $wsl_installed {
-        print "  ✅ WSL2 installed"
-    } else {
-        print "  ❌ WSL2 not installed"
+    let wsl_installed = (do { ^wsl --version } | complete | get exit_code) == 0
+    if not $wsl_installed {
+        $issues = ($issues | append "WSL2 not installed — run: wsl --install")
+        print "wsl:"; $issues | each {|i| print $"  ($i)" } | ignore; exit 1
     }
 
-    # Check if NixOS is imported
-    print ""
-    print "NixOS Distribution:"
-    let distros_result = (wsl --list --quiet | complete)
+    let distros_result = (do { ^wsl --list --quiet } | complete)
     let nixos_exists = if $distros_result.exit_code == 0 {
-        ($distros_result.stdout | lines | any {|line|
-            let name = ($line | str trim)
-            $name == "NixOS"
-        })
+        ($distros_result.stdout | lines | any {|line| ($line | str trim) == "NixOS" })
+    } else { false }
+
+    if not $nixos_exists {
+        $issues = ($issues | append "NixOS not imported — run: just wsl-import")
     } else {
-        false
-    }
-
-    if $nixos_exists {
-        print "  ✅ NixOS imported"
-
-        # Check if running
-        let running_result = (wsl --list --running | complete)
+        let running_result = (do { ^wsl --list --running } | complete)
         let nixos_running = if $running_result.exit_code == 0 {
-            ($running_result.stdout | lines | any {|line|
-                let name = ($line | str trim)
-                $name == "NixOS"
-            })
-        } else {
-            false
+            ($running_result.stdout | lines | any {|line| ($line | str trim) == "NixOS" })
+        } else { false }
+        if not $nixos_running {
+            $issues = ($issues | append "NixOS not running — run: just wsl-start")
         }
-
-        if $nixos_running {
-            print "  ✅ NixOS running"
-        } else {
-            print "  ⚠️  NixOS not running (start with: nu wsl.nu start-nixos)"
-        }
-    } else {
-        print "  ❌ NixOS not imported (run: nu wsl.nu import-nixos)"
     }
 
-    print ""
+    if ($issues | is-empty) { return }
+    print "wsl:"
+    $issues | each {|i| print $"  ($i)" } | ignore
+    exit 1
 }
 
 # Complete WSL NixOS setup (one-command install)
@@ -316,7 +295,7 @@ def "main help" [] {
     print "  run <command>    Run a command in NixOS WSL"
     print "  terminal         Open NixOS in Windows Terminal"
     print "  info             Show WSL system information"
-    print "  health           Health check for WSL setup"
+    print "  doctor           Report problems with fixes"
     print "  setup            Complete automated setup"
     print "  help             Show this help message"
     print ""

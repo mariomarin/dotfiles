@@ -38,21 +38,20 @@ def "main hosts" [
 }
 
 # Health check for nix-darwin system
-def "main health" [] {
-    nix-common print-header "🔍 nix-darwin Health Check"
+def "main doctor" [] {
+    mut issues = []
 
-    nix-common health-item "Hostname" (do -i { ^scutil --get LocalHostName } | complete | get stdout | str trim)
-    nix-common health-item "macOS version" (do -i { ^sw_vers -productVersion } | complete | get stdout | str trim)
-    nix-common health-item "Architecture" (do -i { ^uname -m } | complete | get stdout | str trim)
+    let nix = (do -i { ^nix --version } | complete)
+    if $nix.exit_code != 0 { $issues = ($issues | append "nix not installed — run: curl -L https://install.determinate.systems/nix | sh") }
 
-    let nix_version = (do -i { nix --version } | complete)
-    nix-common health-item "Nix version" (if $nix_version.exit_code == 0 { $nix_version.stdout | str trim } else { "not installed" })
+    if (which darwin-rebuild | is-empty) { $issues = ($issues | append "darwin-rebuild missing — run: just first-time") }
 
-    nix-common health-item "darwin-rebuild" (if (which darwin-rebuild | is-not-empty) { "installed" } else { "❌ not installed" })
-    nix-common health-item "Flake exists" (if ("../nixos/flake.nix" | path exists) { "yes" } else { "❌ no" })
-    nix-common health-item "nix-darwin config" (if ("/etc/nix-darwin" | path exists) { "installed" } else { "not installed (run: just first-time)" })
+    if not ("../nixos/flake.nix" | path exists) { $issues = ($issues | append "flake.nix missing") }
 
-    print ""
+    if ($issues | is-empty) { return }
+    print "darwin:"
+    $issues | each {|i| print $"  ($i)" } | ignore
+    exit 1
 }
 
 # Show help
@@ -60,7 +59,7 @@ def "main help" [] {
     nix-common show-help "nix-darwin Utilities" "darwin.nu" [
         {name: "first-time <host>", description: "First-time nix-darwin setup"}
         {name: "hosts <host>", description: "Show available configurations"}
-        {name: "health", description: "System health check"}
+        {name: "doctor", description: "Report problems with fixes"}
         {name: "help", description: "Show this help message"}
     ]
 }

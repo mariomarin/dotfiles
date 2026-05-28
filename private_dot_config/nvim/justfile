@@ -17,33 +17,20 @@ update:
 clean:
     nvim --headless "+Lazy! clean" +qa
 
-# Health check
-health:
+# Doctor: report only problems
+doctor:
     #!/usr/bin/env nu
-    print "🔍 Neovim Health Check"
-    print "===================="
-    let version_result = (do { nvim --version } | complete)
-    let version = if $version_result.exit_code == 0 { $version_result.stdout | lines | first } else { "unknown" }
-    print $"✓ Neovim version: ($version)"
-    print $"✓ Config location: (~/.config/nvim | path expand)"
+    mut issues = []
+    let nvim = (do { ^nvim --version } | complete)
+    if $nvim.exit_code != 0 { $issues = ($issues | append "nvim not found — install neovim") }
+    let config = ("~/.config/nvim/init.lua" | path expand)
+    if not ($config | path exists) { $issues = ($issues | append "config missing — run: chezmoi apply") }
     let lazy_dir = ("~/.local/share/nvim/lazy" | path expand)
-    let plugins = if ($lazy_dir | path exists) { (ls $lazy_dir | where type == dir | length) } else { 0 }
-    print $"✓ LazyVim plugins: ($plugins) installed"
-    let parser_dir = ("~/.local/share/nvim/lazy/nvim-treesitter/parser" | path expand)
-    let parsers = if ($parser_dir | path exists) { (ls $parser_dir | where name =~ ".so$" | length) } else { 0 }
-    print $"✓ Treesitter parsers: ($parsers) installed"
-    let mason_dir = ("~/.local/share/nvim/mason/packages" | path expand)
-    let mason = if ($mason_dir | path exists) { (ls $mason_dir | length) } else { 0 }
-    print $"✓ Mason packages: ($mason) installed"
-    let syntax_result = (do { nvim --headless -c "try | source init.lua | echo 'valid' | catch | echo 'invalid' | endtry" -c "qa!" } | complete)
-    let syntax = if $syntax_result.exit_code == 0 { "valid" } else { "checking..." }
-    print $"✓ Config syntax: ($syntax)"
-    print ""
-    print "For detailed health check, run: just health-full"
-
-# Full health check
-health-full:
-    nvim "+checkhealth" "+qa"
+    if not ($lazy_dir | path exists) { $issues = ($issues | append "no plugins — run: just nvim-sync") }
+    if ($issues | is-empty) { return }
+    print "nvim:"
+    $issues | each {|i| print $"  ($i)" } | ignore
+    exit 1
 
 # Show plugin status
 plugins:

@@ -8,23 +8,6 @@ export def main [] {
     exit 1
 }
 
-
-# Print a health check item
-export def health-item [
-    label: string      # Label for the health check item
-    value: string      # Value to display
-] {
-    print $"✓ ($label): ($value)"
-}
-
-# Print header with title and underline
-export def print-header [
-    title: string      # Header title
-] {
-    print $title
-    print ("=" | fill -c "=" -w ($title | str length))
-}
-
 # Build nixos-rebuild command with optional build host
 export def nixos-rebuild [
     action: string            # Action: switch, test, build

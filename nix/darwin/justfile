@@ -38,9 +38,9 @@ show:
 hosts:
     nu darwin.nu hosts {{ HOST }}
 
-# Health check
-health:
-    nu darwin.nu health
+# Doctor: report only problems
+doctor:
+    nu darwin.nu doctor
 
 # Help
 help:
@@ -57,7 +57,7 @@ help:
     @echo ""
     @echo "Utilities:"
     @echo "  just hosts               # Show available configurations"
-    @echo "  just health              # System health check"
+    @echo "  just doctor              # Report problems with fixes"
     @echo "  just update              # Update flake inputs"
     @echo "  just check               # Validate flake"
     @echo ""

@@ -52,9 +52,9 @@ terminal:
 info:
     nu wsl.nu info
 
-# Health check for WSL setup
-health:
-    nu wsl.nu health
+# Doctor: report only problems
+doctor:
+    nu wsl.nu doctor
 
 # Complete WSL NixOS setup (one-command install)
 setup:

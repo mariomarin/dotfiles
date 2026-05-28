@@ -61,9 +61,9 @@ show:
 hosts:
     nu nixos.nu hosts {{ HOST }}
 
-# Health check
-health:
-    nu nixos.nu health {{ HOST }}
+# Doctor: report only problems
+doctor:
+    nu nixos.nu doctor {{ HOST }}
 
 # Linux-apt (ribosome) - install packages via nix profile
 linux-apt:
@@ -94,7 +94,7 @@ help:
     @echo ""
     @echo "Utilities:"
     @echo "  just hosts               # Show available configurations"
-    @echo "  just health              # System health check"
+    @echo "  just doctor              # Report problems with fixes"
     @echo "  just update              # Update flake inputs"
     @echo "  just check               # Validate flake"
     @echo ""

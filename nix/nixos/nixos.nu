@@ -82,33 +82,27 @@ def "main hosts" [
     print $"Current HOST: ($host)"
 }
 
-# Health check for NixOS system
-def "main health" [
+# Doctor: report only problems for NixOS system
+def "main doctor" [
     host: string  # Current hostname
 ] {
-    check-os
-    nix-common print-header $"🔍 NixOS Health Check for ($host)"
+    if (sys host).name != "Linux" { return }
 
-    nix-common health-item "NixOS version" (do -i { nixos-version } | complete | get stdout | str trim)
-    nix-common health-item "Hostname" (do -i { hostname } | complete | get stdout | str trim)
+    mut issues = []
 
-    let gen_result = (do -i { sudo nix-env --list-generations --profile /nix/var/nix/profiles/system } | complete)
-    nix-common health-item "Current generation" (if $gen_result.exit_code == 0 { $gen_result.stdout | lines | last } else { "unknown" })
+    if not ("flake.lock" | path exists) {
+        $issues = ($issues | append "flake.lock missing — run: nix flake update")
+    }
 
-    nix-common health-item "Flake status" (if ("flake.lock" | path exists) { "locked" } else { "⚠️  not locked" })
+    let flake_result = (do -i { ^nix flake check --no-build } | complete)
+    if $flake_result.exit_code != 0 {
+        $issues = ($issues | append "flake check failed — run: nix flake check")
+    }
 
-    let syntax_result = (do -i { nix-instantiate --parse configuration.nix } | complete)
-    nix-common health-item "Configuration syntax" (if $syntax_result.exit_code == 0 { "valid" } else { "❌ invalid" })
-
-    let flake_result = (do -i { nix flake check --no-build } | complete)
-    nix-common health-item "Flake check" (if $flake_result.exit_code == 0 { "passed" } else { "⚠️  warnings" })
-
-    nix-common health-item "Nix daemon" (do -i { systemctl is-active nix-daemon.service } | complete | get stdout | str trim)
-
-    let disk_result = (do -i { ^du -sh /nix/store } | complete)
-    nix-common health-item "Disk usage" (if $disk_result.exit_code == 0 { $disk_result.stdout | split row "\t" | first } else { "unknown" })
-
-    print ""
+    if ($issues | is-empty) { return }
+    print $"nixos \(($host)\):"
+    $issues | each {|i| print $"  ($i)" } | ignore
+    exit 1
 }
 
 # Linux-apt package sync via nix build --out-link
@@ -140,7 +134,7 @@ def "main help" [] {
         {name: "deploy-vm <target> [--vm-host] [--build-host]", description: "Deploy VM config (default: mitosis)"}
         {name: "linux-apt <host>", description: "Install packages for linux-apt (ribosome)"}
         {name: "hosts <host>", description: "Show available configurations"}
-        {name: "health <host>", description: "System health check"}
+        {name: "doctor <host>", description: "Report problems with fixes"}
         {name: "help", description: "Show this help message"}
     ]
 }

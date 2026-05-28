@@ -46,38 +46,19 @@ update:
     chezmoi git pull -- --rebase && chezmoi diff
 
 # Health check
-health:
+doctor:
     #!/usr/bin/env nu
-    print "🔍 Chezmoi Health Check"
-    print "======================"
-    let version_result = (do { chezmoi --version } | complete)
-    let version = if $version_result.exit_code == 0 { $version_result.stdout | lines | first } else { "unknown" }
-    print $"✓ Chezmoi version: ($version)"
-    let source_result = (do { chezmoi source-path } | complete)
-    let source = if $source_result.exit_code == 0 { $source_result.stdout | str trim } else { "unknown" }
-    print $"✓ Source directory: ($source)"
-    let config_exists = ("~/.config/chezmoi/chezmoi.toml" | path expand | path exists)
-    print $"✓ Config file: (if $config_exists { 'exists' } else { 'using defaults' })"
-    let managed_result = (do { chezmoi managed } | complete)
-    let managed_count = if $managed_result.exit_code == 0 { $managed_result.stdout | lines | length } else { 0 }
-    print $"✓ Managed files: ($managed_count)"
-    let status_result = (do { chezmoi status } | complete)
-    let status_count = if $status_result.exit_code == 0 { $status_result.stdout | lines | length } else { 0 }
-    print $"✓ Modified files: ($status_count) files"
-    cd $source
-    let git_status_result = (do { git status --porcelain } | complete)
-    let git_status = if $git_status_result.exit_code == 0 {
-        let changes = ($git_status_result.stdout | lines | length)
-        if $changes == 0 { "clean" } else { $"($changes) changes" }
-    } else { "unknown" }
-    print $"✓ Git status: ($git_status)"
-    let remote_result = (do { git remote get-url origin } | complete)
-    let remote = if $remote_result.exit_code == 0 { $remote_result.stdout | str trim } else { "no remote" }
-    print $"✓ Git remote: ($remote)"
-    let config_path = ("~/.config/chezmoi/chezmoi.toml" | path expand)
-    let auto_commit = if ($config_path | path exists) {
-        let content = (open $config_path | to text)
-        if ($content | str contains "autoCommit") and ($content | str contains "true") { "enabled" } else { "disabled" }
-    } else { "disabled" }
-    print $"✓ Auto commit: ($auto_commit)"
-    print ""
+    mut issues = []
+    let cm = (do { ^chezmoi --version } | complete)
+    if $cm.exit_code != 0 { $issues = ($issues | append "chezmoi not found — install chezmoi"); print "chezmoi:"; $issues | each {|i| print $"  ($i)" } | ignore; exit 1 }
+    let config = ("~/.config/chezmoi/chezmoi.toml" | path expand)
+    if not ($config | path exists) { $issues = ($issues | append "config missing — run: chezmoi init") }
+    let status = (do { ^chezmoi status } | complete)
+    if $status.exit_code == 0 and ($status.stdout | str trim | is-not-empty) {
+        let count = ($status.stdout | lines | length)
+        $issues = ($issues | append $"($count) files out of sync — run: chezmoi apply")
+    }
+    if ($issues | is-empty) { return }
+    print "chezmoi:"
+    $issues | each {|i| print $"  ($i)" } | ignore
+    exit 1
