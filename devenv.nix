@@ -277,24 +277,23 @@
         always_run = false;
       };
 
-      # LeftWM config validation (desktop-only)
+      # LeftWM config validation (NixOS-only, requires leftwm binary)
       leftwm-check = {
         enable = true;
         name = "leftwm-check";
-        entry = "sh -c 'command -v leftwm >/dev/null || exit 0; leftwm check'";
+        entry = "sh -c '[ \"$(uname)\" = Linux ] || exit 0; command -v leftwm >/dev/null || exit 0; leftwm check'";
         files = "config\\.ron(\\.tmpl)?$";
         language = "system";
         pass_filenames = false;
         always_run = false;
       };
 
-      # Kanata config validation (desktop-only)
+      # Kanata config validation (platform-specific .kbd files only)
       kanata-check = {
         enable = true;
         name = "kanata-check";
         entry = "sh -c 'command -v kanata >/dev/null || exit 0; for f; do kanata --check --cfg \"$f\" || exit 1; done' --";
-        files = "\\.kbd$";
-        excludes = [ "nix/nixos/modules/" ];
+        files = "private_dot_config/kanata/(darwin|windows|laptop)\\.kbd$";
         language = "system";
         pass_filenames = true;
       };
