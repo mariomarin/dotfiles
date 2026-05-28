@@ -64,8 +64,7 @@ in
     chmod 1777 "/Library/Application Support/org.pqrs/tmp"
 
     # Kill any manually-started Karabiner daemons to prevent conflicts
-    # Only kill processes NOT managed by our launchd service
-    pgrep -f "Karabiner-VirtualHIDDevice-Daemon activate" | while read pid; do
+    pgrep -f "Karabiner-VirtualHIDDevice-Daemon activate" | while read -r pid; do
       echo "Stopping conflicting Karabiner daemon (PID $pid)..."
       kill "$pid" 2>/dev/null || true
     done
