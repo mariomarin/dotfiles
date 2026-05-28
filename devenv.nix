@@ -288,11 +288,11 @@
         always_run = false;
       };
 
-      # Kanata config validation (platform-specific .kbd files only)
+      # Kanata config validation (Linux-only, macOS kills kanata without Input Monitoring)
       kanata-check = {
         enable = true;
         name = "kanata-check";
-        entry = "sh -c 'command -v kanata >/dev/null || exit 0; for f; do kanata --check --cfg \"$f\" || exit 1; done' --";
+        entry = "sh -c '[ \"$(uname)\" = Linux ] || exit 0; command -v kanata >/dev/null || exit 0; for f; do kanata --check --cfg \"$f\" || exit 1; done' --";
         files = "private_dot_config/kanata/(darwin|windows|laptop)\\.kbd$";
         language = "system";
         pass_filenames = true;
