@@ -240,7 +240,7 @@ in
         entry = "nu-lint";
         files = "(\\.nu$|/executable_[^.]+$)";
         types_or = [ "text" ];
-        excludes = [ "wsl-" "nushell/env\\.nu" ];
+        excludes = [ "wsl-" "nushell/(env|config)\\.nu" ];
         language = "system";
         pass_filenames = true;
       };
