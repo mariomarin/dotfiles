@@ -33,6 +33,10 @@ in
   #    sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
   # 2. Approve extension in System Settings > Privacy & Security
   # 3. Grant Input Monitoring to /usr/local/bin/kanata
+  #
+  # IMPORTANT: Do NOT manually run Karabiner-VirtualHIDDevice-Daemon!
+  # The launchd service above manages it automatically. Running it manually
+  # causes multiple daemon instances that compete and break kanata connection.
   launchd.daemons.kanata = {
     serviceConfig = {
       Label = "org.nixos.kanata";
@@ -58,6 +62,13 @@ in
     # Create required directory for Karabiner socket
     mkdir -p "/Library/Application Support/org.pqrs/tmp"
     chmod 1777 "/Library/Application Support/org.pqrs/tmp"
+
+    # Kill any manually-started Karabiner daemons to prevent conflicts
+    # Only kill processes NOT managed by our launchd service
+    pgrep -f "Karabiner-VirtualHIDDevice-Daemon activate" | while read pid; do
+      echo "Stopping conflicting Karabiner daemon (PID $pid)..."
+      kill "$pid" 2>/dev/null || true
+    done
 
     # Copy kanata binary to stable path only if it changed
     new_hash=$(shasum -a 256 ${pkgs-unstable.kanata}/bin/kanata | cut -d' ' -f1)
