@@ -53,8 +53,9 @@ in
     # Nushell (needed by nushell-check and nushell-test hooks)
     nushell
 
-    # Nushell linter (unstable for latest version)
+    # Nushell linter and formatter (unstable for latest versions)
     pkgs-unstable.nu-lint
+    pkgs-unstable.nufmt
   ];
 
   # Claude Code integration
@@ -217,6 +218,18 @@ in
           ".*zshenv$"
           "private_dot_config/zim/.*" # Exclude zim modules
         ];
+      };
+
+      # Nushell formatting
+      nufmt = {
+        enable = true;
+        name = "nufmt";
+        entry = "nufmt";
+        files = "(\\.nu$|/executable_[^.]+$)";
+        types_or = [ "text" ];
+        excludes = [ "wsl-" "nushell/env\\.nu" ];
+        language = "system";
+        pass_filenames = true;
       };
 
       # Nushell linting
