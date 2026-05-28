@@ -1,7 +1,7 @@
-# Tests for health.nu (doctor)
+# Tests for doctor.nu
 use std/assert
 
-const SCRIPT = ".scripts/health.nu"
+const SCRIPT = ".scripts/doctor.nu"
 
 def "test script parses" [] {
     do { nu -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
@@ -17,6 +17,6 @@ def "test has subcommands" [] {
 }
 
 def "test summary passes when tools exist" [] {
-    let result = (do { nu --no-config-file -c "source .scripts/health.nu; main summary" } | complete)
+    let result = (do { nu --no-config-file -c "source .scripts/doctor.nu; main summary" } | complete)
     assert equal $result.exit_code 0
 }

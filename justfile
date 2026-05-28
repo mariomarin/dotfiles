@@ -117,7 +117,7 @@ test-nu:
 
 # Doctor: report only problems with actionable fixes
 doctor:
-    nu .scripts/health.nu all
+    nu .scripts/doctor.nu all
 
 # Pass-through targets to subdirectories
 nixos-switch:
