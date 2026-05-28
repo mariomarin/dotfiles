@@ -10,7 +10,6 @@
 # hash: {{ include "nix/common/modules/fonts.nix" | sha256sum }}
 {{- if eq .machineConfig.platform "darwin" }}
 print "🔄 Rebuilding nix-darwin configuration..."
-cd {{ joinPath .chezmoi.sourceDir "nix/darwin" | quote }}
 $env.ATUIN_NOBIND = "true"
-just switch
+just --justfile {{ joinPath .chezmoi.sourceDir "nix/darwin/justfile" | quote }} --working-directory {{ joinPath .chezmoi.sourceDir "nix/darwin" | quote }} switch
 {{- end }}

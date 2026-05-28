@@ -19,7 +19,6 @@
 # hash: {{ include "nix/common/modules/fonts.nix" | sha256sum }}
 {{- if eq .machineConfig.platform "nixos" }}
 print "🔄 Rebuilding NixOS configuration..."
-cd {{ joinPath .chezmoi.sourceDir "nix/nixos" | quote }}
 $env.ATUIN_NOBIND = "true"
-just switch
+just --justfile {{ joinPath .chezmoi.sourceDir "nix/nixos/justfile" | quote }} --working-directory {{ joinPath .chezmoi.sourceDir "nix/nixos" | quote }} switch
 {{- end }}
