@@ -34,6 +34,14 @@ def main [...files: string] {
           return null
         }
 
+        # Skip nushell runtime config files — they use `source`/`use` with
+        # $nu.default-config-dir which fails in a clean nu process
+        let basename = ($path | path basename)
+        let parent = ($path | path dirname | path basename)
+        if $parent == "nushell" and ($basename in ["env.nu" "config.nu"]) {
+          return null
+        }
+
         let shebang = (
           try {
             open $path --raw | lines | first | default ""
