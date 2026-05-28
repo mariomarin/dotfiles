@@ -1,0 +1,16 @@
+#!/usr/bin/env nu
+# Auto-rebuild darwin when nix configuration changes
+# hash: {{ include "nix/darwin/hosts/axon/configuration.nix" | sha256sum }}
+# hash: {{ include "nix/darwin/hosts/malus/configuration.nix" | sha256sum }}
+# hash: {{ include "nix/darwin/modules/packages.nix" | sha256sum }}
+# hash: {{ include "nix/darwin/modules/homebrew.nix" | sha256sum }}
+# hash: {{ include "nix/darwin/modules/kanata.nix" | sha256sum }}
+# hash: {{ include "nix/darwin/modules/xdg-open-svc.nix" | sha256sum }}
+# hash: {{ include "nix/common/modules/cli-tools.nix" | sha256sum }}
+# hash: {{ include "nix/common/modules/fonts.nix" | sha256sum }}
+{{- if eq .machineConfig.platform "darwin" }}
+print "🔄 Rebuilding nix-darwin configuration..."
+cd {{ joinPath .chezmoi.sourceDir "nix/darwin" | quote }}
+$env.ATUIN_NOBIND = "true"
+just switch
+{{- end }}

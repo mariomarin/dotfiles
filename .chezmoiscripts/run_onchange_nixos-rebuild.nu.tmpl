@@ -1,0 +1,25 @@
+#!/usr/bin/env nu
+# Auto-rebuild nixos when nix configuration changes
+# hash: {{ include "nix/nixos/flake.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/configuration.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/common.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/hardware-configuration.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/boot.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/desktop.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/development.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/locale.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/networking.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/security.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/services.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/users.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/modules/virtualization.nix" | sha256sum }}
+# hash: {{ include "nix/common/modules/cli-tools.nix" | sha256sum }}
+# hash: {{ include "nix/common/modules/cli-tools-pkgs.nix" | sha256sum }}
+# hash: {{ include "nix/common/modules/development.nix" | sha256sum }}
+# hash: {{ include "nix/common/modules/fonts.nix" | sha256sum }}
+{{- if eq .machineConfig.platform "nixos" }}
+print "🔄 Rebuilding NixOS configuration..."
+cd {{ joinPath .chezmoi.sourceDir "nix/nixos" | quote }}
+$env.ATUIN_NOBIND = "true"
+just switch
+{{- end }}
