@@ -13,7 +13,10 @@ in
   launchd.daemons.karabiner-vhid = {
     serviceConfig = {
       Label = "org.pqrs.Karabiner-VirtualHIDDevice-Daemon";
-      ProgramArguments = [ karabinerDaemon ];
+      ProgramArguments = [
+        karabinerDaemon
+        "daemon"
+      ];
       RunAtLoad = true;
       KeepAlive = true;
       ProcessType = "Interactive";
