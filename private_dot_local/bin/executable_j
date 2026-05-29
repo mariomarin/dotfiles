@@ -236,7 +236,12 @@ def "main spr" [
   if not $skip_hooks {
     run-or-fail "Hooks" { ^jj-hp run @ }
   }
-  if $all { ^jj-spr diff --all } else { ^jj-spr diff }
+  let result = (do { if $all { ^jj-spr diff --all } else { ^jj-spr diff } } | complete)
+  if ($result.stdout | is-not-empty) { print $result.stdout }
+  if $result.exit_code != 0 {
+    if ($result.stderr | is-not-empty) { print -e $result.stderr }
+    exit $result.exit_code
+  }
 }
 
 # Interactive bookmark checkout (requires fzf)
