@@ -48,18 +48,15 @@ set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; peek "{}"; tmux display-
 # tmux-jump (EasyMotion for copy-mode, prefix + j to activate)
 set -g @jump-key 'j'
 
-# tmux-tilish (farzadmf fork with copilot support)
-# M-Space as modal modifier (like i3wm $mod key)
-# Setting @tilish-prefix creates a key table accessed via M-Space
-# (when empty, tilish would create M-hjkl bindings in root table instead)
-set -g @tilish-prefix 'M-Space'
+# tmux-tilish (direct M-key bindings, i3wm-style)
+set -g @tilish-navigator 'on'
 set -g @tilish-dmenu 'on'
 set -g @tilish-new_pane '"'
 set -g @tilish-smart-splits 'on'
 set -g @tilish-smart-splits-dirs '= + _ -'
 set -g @tilish-smart-splits-dirs-large ""
 
-# tmux-harpoon (avoid M-h conflict with tilish)
+# tmux-harpoon
 set -g @harpoon_key_append1 'C-S-a'
 set -g @harpoon_key_append2 'M-a'
 

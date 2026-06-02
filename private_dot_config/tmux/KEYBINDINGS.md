@@ -33,7 +33,7 @@ Enhanced session picker with icons and preview pane showing session contents.
 
 | Keybinding | Prefix | Description |
 | ---------- | ------ | ----------- |
-| `M-Space Tab` | `prefix l` / `prefix Tab` | Switch to last active window |
+| `M-Tab` | `prefix l` / `prefix Tab` | Switch to last active window |
 | | `prefix w` | Window tree picker |
 | | `prefix c` | Create new window |
 | | `prefix n` | Next window |
@@ -49,8 +49,8 @@ Enhanced session picker with icons and preview pane showing session contents.
 
 | Keybinding | Prefix | Description |
 | ---------- | ------ | ----------- |
-| `M-Space h/j/k/l` | | Navigate between panes (works with Neovim) |
-| `M-Space Arrow` | | Resize panes by 1 step (vim aware) |
+| `M-h/j/k/l` | | Navigate between panes (works with Neovim) |
+| `M-Arrow` | | Resize panes by 1 step (vim aware) |
 | | `prefix "` | Split pane horizontally |
 | | `prefix %` | Split pane vertically |
 | | `prefix o` | Cycle through panes |
@@ -125,30 +125,28 @@ Works in copy-mode: cursor lands at the target position, ready for selection.
 | `prefix C-s` | Save tmux session |
 | `prefix C-r` | Restore tmux session |
 
-### tmux-tilish (i3wm-style)
+### tmux-tilish (i3wm-style, direct Alt bindings)
 
-**Modal prefix**: `M-Space` (Alt+Space)
-
-| Keybinding | Prefix | Description |
-| ---------- | ------ | ----------- |
-| `M-Space 1-9` | `prefix 1-9` | Switch to window 1-9 |
-| `M-Space 0` | `prefix 0` | Switch to window 0/10 |
-| `M-Space Tab` | `prefix l` | Last active window |
-| `M-Space hjkl` | | Navigate panes (vim aware) |
-| `M-Space S-hjkl` | | Move pane in direction |
-| `M-Space Enter` | | Create new pane |
-| `M-Space S-q` | `prefix x` | Close pane |
-| `M-Space z` | | Zoom (fullscreen) toggle |
-| `M-Space s` | | Layout: main-horizontal |
-| `M-Space S-s` | | Layout: even-vertical |
-| `M-Space v` | | Layout: main-vertical |
-| `M-Space S-v` | | Layout: even-horizontal |
-| `M-Space t` | | Layout: tiled |
-| `M-Space r` | | Refresh current layout |
-| `M-Space n` | `prefix ,` | Rename current window |
-| `M-Space S-e` | `prefix d` | Detach from tmux |
-| `M-Space S-c` | `prefix r` | Reload configuration |
-| `M-Space S-1-9` | | Move pane to window 1-9 |
+| Keybinding | Description |
+| ---------- | ----------- |
+| `M-1` to `M-9` | Switch to window 1-9 |
+| `M-0` | Switch to window 0/10 |
+| `M-Tab` | Last active window |
+| `M-h/j/k/l` | Navigate panes (vim aware) |
+| `M-H/J/K/L` | Move pane in direction |
+| `M-Enter` | Create new pane |
+| `M-Q` | Close pane |
+| `M-z` | Zoom (fullscreen) toggle |
+| `M-s` | Layout: main-horizontal |
+| `M-S` | Layout: even-vertical |
+| `M-v` | Layout: main-vertical |
+| `M-V` | Layout: even-horizontal |
+| `M-t` | Layout: tiled |
+| `M-r` | Refresh current layout |
+| `M-n` | Rename current window |
+| `M-E` | Detach from tmux |
+| `M-C` | Reload configuration |
+| `M-!` to `M-(` | Move pane to window 1-9 |
 
 ### tmux-harpoon
 
@@ -186,15 +184,11 @@ Works in copy-mode: cursor lands at the target position, ready for selection.
 
 Using **aserowy/tmux.nvim** for seamless tmux/neovim integration:
 
-- **Navigation**: `M-Space h/j/k/l` to move between tmux panes and Neovim splits
+- **Navigation**: `M-h/j/k/l` to move between tmux panes and Neovim splits
   - Provided by tmux-tilish with built-in vim awareness (`is_vim` check)
   - Works seamlessly in both tmux and Neovim
-  - Modal prefix: `M-Space` (Alt+Space) followed by direction key
 - **Resizing**: Omarchy-style keybindings for pane resizing
-  - `M-Space =` (Alt+Space, then =): Grow pane to the left
-  - `M-Space -` (Alt+Space, then -): Grow pane to the right
-  - `M-Space +` (Alt+Space, then Shift+=): Grow pane down
-  - `M-Space _` (Alt+Space, then Shift+-): Grow pane up
+  - `M-=` / `M--` / `M-+` / `M-_` for directional resizing
   - Provided by tmux-tilish smart splits with custom configuration
   - Works in both tmux and Neovim with vim awareness
 - **Clipboard Sync**: Automatic synchronization of registers between Neovim instances and tmux
@@ -204,7 +198,7 @@ Using **aserowy/tmux.nvim** for seamless tmux/neovim integration:
 
 The following keybindings have been resolved:
 
-- **`M-Space`**: Used as modal prefix for tmux-tilish; frees up all `M-<key>` bindings for other uses
+- **`M-h/j/k/l`**: tmux-tilish navigation (vim-aware, shared with Neovim)
 - **`M-a`**: tmux-harpoon append binding (no conflict with tilish modal prefix)
 - **`C-h`**: tmux-harpoon jump binding (no conflict with existing bindings)
 - **`prefix F`**: Previously used by tmux-fzf, now available

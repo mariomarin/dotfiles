@@ -1,7 +1,6 @@
 -- Seamless navigation between Neovim and tmux
--- Modal prefix: M-Space (matches tmux-tilish)
+-- Direct M-hjkl bindings (matches tmux-tilish without prefix)
 return {
-  -- Tmux navigation (when running inside tmux)
   {
     "aserowy/tmux.nvim",
     cond = function()
@@ -9,42 +8,33 @@ return {
     end,
     event = "VeryLazy",
     config = function()
-      -- Over SSH, use OSC 52 for clipboard (configured in options.lua)
-      -- Locally, let tmux.nvim sync clipboard via tmux buffers
       local is_ssh = vim.env.SSH_TTY ~= nil
 
       require("tmux").setup({
         copy_sync = {
-          -- Sync registers between neovim instances via tmux buffers
-          -- dd in nvim1, p in nvim2 - works over SSH without OSC52
           enable = true,
-          -- Don't override clipboard over SSH (use OSC 52 instead)
           sync_clipboard = not is_ssh,
           sync_registers = true,
         },
         navigation = {
-          -- Modal prefix: M-Space (matches tmux-tilish modal prefix)
           enable_default_keybindings = false,
           cycle_navigation = true,
           keybindings = {
-            left = "<M-Space>h",
-            down = "<M-Space>j",
-            up = "<M-Space>k",
-            right = "<M-Space>l",
-            last_active = "<M-Space>\\",
-            next = "<M-Space><Space>",
+            left = "<M-h>",
+            down = "<M-j>",
+            up = "<M-k>",
+            right = "<M-l>",
           },
         },
         resize = {
-          -- Modal prefix: M-Space (matches tilish smart-splits)
           enable_default_keybindings = false,
           resize_step_x = 1,
           resize_step_y = 1,
           keybindings = {
-            left = "<M-Space>=",
-            right = "<M-Space>-",
-            down = "<M-Space>+",
-            up = "<M-Space>_",
+            left = "<M-=>",
+            right = "<M-->",
+            down = "<M-+>",
+            up = "<M-_>",
           },
         },
       })
