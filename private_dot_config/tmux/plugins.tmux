@@ -7,6 +7,7 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'fcsonline/tmux-thumbs'
 set -g @plugin 'farzadmf/tmux-tilish'
 set -g @plugin 'Chaitanyabsprip/tmux-harpoon'
+set -g @plugin 'schasse/tmux-jump'
 set -g @plugin 'roosta/tmux-fuzzback'
 set -g @plugin 'niksingh710/minimal-tmux-status'
 
@@ -43,6 +44,9 @@ set -g @thumbs-key Space
 set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | clip 2>/dev/null; tmux display-message "Copied: {}"'
 # Open: no clipboard side-effect
 set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; peek "{}"; tmux display-message "Opening: {}"'
+
+# tmux-jump (EasyMotion for copy-mode, prefix + j to activate)
+set -g @jump-key 'j'
 
 # tmux-tilish (farzadmf fork with copilot support)
 # M-Space as modal modifier (like i3wm $mod key)

@@ -99,6 +99,14 @@ Enhanced session picker with icons and preview pane showing session contents.
 | `%` | Next matching bracket |
 | `Escape` | Exit copy mode |
 
+## Jump (tmux-jump)
+
+| Keybinding | Description |
+| ---------- | ----------- |
+| `prefix j` | EasyMotion-style jump — type a char, hints appear at matches, press hint to move cursor there |
+
+Works in copy-mode: cursor lands at the target position, ready for selection.
+
 ## Text Selection (tmux-thumbs)
 
 | Keybinding | Description |
