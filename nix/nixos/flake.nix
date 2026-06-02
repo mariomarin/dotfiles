@@ -2,10 +2,10 @@
   description = "NixOS configurations for multiple hosts";
 
   inputs = {
-    # Stable 25.05 for NixOS
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-    # Stable 25.05 for darwin (uses darwin-specific branch)
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.11-darwin";
+    # Stable 26.05 for NixOS
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    # Stable 26.05 for darwin (uses darwin-specific branch)
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-26.05-darwin";
     # Unstable available for select packages
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
@@ -17,9 +17,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nix-darwin support - use nix-darwin-25.05 branch
+    # nix-darwin support - must match nixpkgs-darwin branch
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
