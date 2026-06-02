@@ -57,7 +57,9 @@ cleanup = true
 "Nix Flake Update" = "cd $(chezmoi source-path)/nix/nixos && nix flake update"
 {{- if eq .chezmoi.os "darwin" }}
 "Nix Flake Rebuild" = "cd $(chezmoi source-path) && sudo just darwin"
-{{- else if ne .machineConfig.platform "linux-apt" }}
+{{- else if eq .machineConfig.platform "linux-apt" }}
+"Nix Flake Rebuild" = "cd $(chezmoi source-path)/nix/nixos && nu nixos.nu linux-apt ribosome"
+{{- else }}
 "Nix Flake Rebuild" = "cd $(chezmoi source-path) && just nixos"
 {{- end }}
 {{- end }}
