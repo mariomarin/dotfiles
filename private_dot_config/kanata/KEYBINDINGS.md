@@ -12,6 +12,7 @@ Space Cadet keys + Layer-based navigation and accents.
 | ⇧› Right Shift | `)` | ⇧ | Parenthesis or Shift |
 | ‹⎈ Left Ctrl | `{` | ⎈ | Brace or Control |
 | ␣ Space | ␣ | Nav | Navigation layer (arrows) |
+| `=` Equal | `=` | Window | Workspace management |
 | ˋ Grave | ˋ | Accent | Accented characters |
 
 ## Navigation Layer (Hold ␣)
@@ -40,6 +41,23 @@ Space Cadet keys + Layer-based navigation and accents.
 | `s` | ß | `'` | ü |
 | `c` | ç | `q` | ¿ |
 | `w` | œ | `m` | µ |
+
+## Window Layer (Hold `=`)
+
+Sends `Ctrl+Alt+key` for Hammerspoon (macOS) or LeftWM (Linux).
+
+| Key | Action |
+| --- | ------ |
+| `1-9` | Switch to desktop 1-9 |
+| `Shift+1-9` | Move window to desktop 1-9 |
+| `h` | Previous space |
+| `j` | Focus window below |
+| `k` | Focus window above |
+| `l` | Next space |
+| `w` | Swap workspaces (monitors) |
+| `,` | Move window to prev monitor |
+| `.` | Move window to next monitor |
+| `i` | Show desktop info (debug) |
 
 ## Platform-Specific Notes
 
