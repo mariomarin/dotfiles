@@ -67,8 +67,8 @@ for i = 1, 9 do
     local spaces = getSpacesForScreen(screen)
 
     if spaces[i] then
-      hs.spaces.moveWindowToSpace(win, spaces[i])
-      hs.spaces.gotoSpace(spaces[i]) -- Follow window
+      hs.spaces.moveWindowToSpace(win:id(), spaces[i])
+      hs.spaces.gotoSpace(spaces[i])
     else
       hs.alert.show("Desktop " .. i .. " does not exist")
     end
