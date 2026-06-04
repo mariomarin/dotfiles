@@ -1066,11 +1066,11 @@
         "nixpkgs": "nixpkgs_9"
       },
       "locked": {
-        "lastModified": 1780564544,
-        "narHash": "sha256-ljk/86ypsH2sQGaAMryirHKA6fpu2tRcLpv8hSW+rqY=",
+        "lastModified": 1780592949,
+        "narHash": "sha256-2a/5p9NALvkANIR7M8sXCa/iTMo47mvNRhNU9J1Kn4w=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "926abe90eb6743953a6acdb3463ee510db6aa0c6",
+        "rev": "038d315127295173acbe5c89ba8bd90623c2b55a",
         "type": "github"
       },
       "original": {
