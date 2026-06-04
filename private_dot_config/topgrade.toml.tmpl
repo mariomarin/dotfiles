@@ -20,9 +20,10 @@ disable = [
   "rustup",     # Rustup (managed by Nix on NixOS)
   "bun",        # Bun (managed by NixOS)
 {{- end }}
-{{- if eq .machineConfig.platform "linux-apt" }}
-  "brew_cask",  # No casks on linux-apt
-{{- end }}
+  "gem",        # RubyGems (requires sudo)
+  "ruby_gems",  # RubyGems alternate name
+  "brew_formula", # Managed by nix-darwin
+  "brew_cask",  # Managed by nix-darwin
 ]
 
 # Don't retry failed steps automatically
