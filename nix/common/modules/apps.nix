@@ -13,7 +13,6 @@
 
     # Productivity
     obsidian
-    bitwarden-desktop
     vscode
 
     # File Sync
