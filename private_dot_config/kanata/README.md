@@ -12,7 +12,7 @@ Advanced keyboard remapping with Carabiner-style keymaps and Space Cadet keyboar
 
 ## Keybindings
 
-For a complete list of keybindings and layer configurations, see **[KEYBINDINGS.md](KEYBINDINGS.md)**.
+For a complete list of keybindings and layer configurations, see **[keybindings.md](../../../docs/keybindings.md)**.
 
 **Quick reference**:
 
@@ -202,7 +202,7 @@ ls -la /dev/input/by-path/ | grep kbd
 
 ## Related Documentation
 
-- [KEYBINDINGS.md](KEYBINDINGS.md) - Complete keybinding reference
+- [keybindings.md](../../../docs/keybindings.md) - Complete keybinding reference
 - [CLAUDE.md](CLAUDE.md) - AI guidance for Kanata configuration
 - [Kanata Documentation](https://github.com/kanata/kanata) - Official documentation
 - [Kanata Tutorial](https://github.com/kanata/kanata/blob/master/keymap/tutorial.kbd) - Tutorial config

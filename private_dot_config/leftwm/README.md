@@ -12,7 +12,7 @@ LeftWM is a tiling window manager for X11 that focuses on simplicity and flexibi
 
 ## Keybindings
 
-For a complete list of keybindings, see **[KEYBINDINGS.md](KEYBINDINGS.md)**.
+For a complete list of keybindings, see **[keybindings.md](../../../docs/keybindings.md)**.
 
 **Quick reference**:
 
@@ -141,6 +141,6 @@ systemctl --user start wallpaper-rotation.service
 
 ## Related Documentation
 
-- [KEYBINDINGS.md](KEYBINDINGS.md) - Complete keybinding reference
+- [keybindings.md](../../../docs/keybindings.md) - Complete keybinding reference
 - [CLAUDE.md](CLAUDE.md) - AI guidance for LeftWM configuration
 - [LeftWM Wiki](https://github.com/leftwm/leftwm/wiki) - Official documentation

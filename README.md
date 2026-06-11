@@ -138,10 +138,7 @@ For chezmoi naming conventions, see the
 | macOS setup | [nix/darwin/README.md](nix/darwin/README.md) |
 | WSL setup | [wsl/README.md](wsl/README.md) |
 | Secrets management | [docs/secrets.md](docs/secrets.md) |
-| Neovim keybindings | [private_dot_config/nvim/KEYBINDINGS.md](private_dot_config/nvim/KEYBINDINGS.md) |
-| Tmux keybindings | [private_dot_config/tmux/KEYBINDINGS.md](private_dot_config/tmux/KEYBINDINGS.md) |
-| LeftWM keybindings | [private_dot_config/leftwm/KEYBINDINGS.md](private_dot_config/leftwm/KEYBINDINGS.md) |
-| Kanata keybindings | [private_dot_config/kanata/KEYBINDINGS.md](private_dot_config/kanata/KEYBINDINGS.md) |
+| Keybindings (all) | [docs/keybindings.md](docs/keybindings.md) |
 
 ## Common Commands
 

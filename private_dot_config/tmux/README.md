@@ -24,7 +24,7 @@ The configuration automatically detects your display server (X11/Wayland) and us
 
 ## Keybindings
 
-For a complete list of keybindings, see **[KEYBINDINGS.md](KEYBINDINGS.md)**.
+For a complete list of keybindings, see **[keybindings.md](../../../docs/keybindings.md)**.
 
 **Quick reference**:
 
@@ -109,5 +109,5 @@ Using **aserowy/tmux.nvim** for seamless tmux/neovim integration:
 
 ## Related Documentation
 
-- [KEYBINDINGS.md](KEYBINDINGS.md) - Complete keybinding reference
+- [keybindings.md](../../../docs/keybindings.md) - Complete keybinding reference
 - [CLAUDE.md](CLAUDE.md) - AI guidance for tmux configuration

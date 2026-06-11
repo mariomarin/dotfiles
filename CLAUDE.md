@@ -615,19 +615,17 @@ Detailed documentation for each major component is available in subdirectory CLA
 - [LeftWM CLAUDE.md](private_dot_config/leftwm/CLAUDE.md) - Window manager configuration
 - [Polybar CLAUDE.md](private_dot_config/polybar/CLAUDE.md) - Status bar and scripts
 
-### README Files (User Documentation)
+### Keybindings Documentation
 
-- [Tmux README](private_dot_config/tmux/README.md) - Complete keybindings reference
-- Additional component READMEs are created as needed
+- [docs/keybindings.md](docs/keybindings.md) - **Unified index, check here for conflicts first**
 
 ## ⚠️ Critical Documentation Rules
 
-**When modifying tmux configuration:**
+**When modifying any keybindings:**
 
-1. **ALWAYS** update the [Tmux README](private_dot_config/tmux/README.md) with keybinding changes
-2. **ALWAYS** check for duplicate or conflicting keybindings
-3. **ALWAYS** document plugin default keybindings
-4. Refer to [Tmux CLAUDE.md](private_dot_config/tmux/CLAUDE.md) for detailed guidance
+1. **ALWAYS** check [docs/keybindings.md](docs/keybindings.md) for conflicts first
+2. **ALWAYS** update the conflict guide in docs/keybindings.md if adding root-level keys
+3. Refer to [Tmux CLAUDE.md](private_dot_config/tmux/CLAUDE.md) for tmux-specific guidance
 
 ## Architecture
 

@@ -44,7 +44,7 @@ The darwin.kbd config supports both keyboards by mapping both `grv` and `nubs`:
 
 ## Key Mappings
 
-See [KEYBINDINGS.md](KEYBINDINGS.md) for complete key mapping reference and optional features.
+See [keybindings.md](../../../docs/keybindings.md) for complete key mapping reference and optional features.
 
 ## Platform Support
 
@@ -203,7 +203,7 @@ sudo launchctl kickstart -k system/org.local.kanata
 
 ## Related Documentation
 
-- [KEYBINDINGS.md](KEYBINDINGS.md) - Complete keybinding reference
+- [keybindings.md](../../../docs/keybindings.md) - Complete keybinding reference
 - [README.md](README.md) - Configuration overview and installation
 - [Kanata Documentation](https://github.com/kanata/kanata) - Official documentation
 - [Keyboard Layout Reference](https://github.com/kanata/kanata/blob/master/doc/quick-reference.md)

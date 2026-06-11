@@ -6,9 +6,9 @@ This file provides guidance to Claude Code when working with the tmux configurat
 
 **When making ANY changes to tmux keybindings or settings:**
 
-1. **ALWAYS** update the [KEYBINDINGS.md](./KEYBINDINGS.md) keybindings documentation
-2. **ALWAYS** check for duplicate or conflicting keybindings
-3. **ALWAYS** document plugin-specific keybindings
+1. **ALWAYS** check [docs/keybindings.md](../../../docs/keybindings.md) for conflicts first
+2. **ALWAYS** update [keybindings.md](../../../docs/keybindings.md) with the change
+3. **ALWAYS** update the conflict guide in docs/keybindings.md for root-level keys
 4. **NEVER** leave undocumented keybindings
 
 ## Directory Structure
@@ -94,50 +94,31 @@ Currently using **aserowy/tmux.nvim** for seamless integration:
 ### Adding a New Keybinding
 
 1. Add binding to appropriate file in `mappings/`
-2. **UPDATE KEYBINDINGS.md** with the new keybinding
-3. Check for conflicts with existing bindings
+2. Check [docs/keybindings.md](../../../docs/keybindings.md) for conflicts
+3. Update conflict guide in docs/keybindings.md for root-level keys
 4. Test the binding
 
 ### Adding a New Plugin
 
 1. Add to `.chezmoiexternal.toml` in plugins directory
 2. Add configuration to `plugins.tmux`
-3. **UPDATE KEYBINDINGS.md** with plugin keybindings
+3. Update [docs/keybindings.md](../../../docs/keybindings.md) with plugin keybindings
 4. Run `chezmoi apply` to fetch plugin
 
 ### Changing Existing Bindings
 
 1. Make the change in the appropriate file
-2. **UPDATE KEYBINDINGS.md** immediately
+2. Update [docs/keybindings.md](../../../docs/keybindings.md) immediately
 3. Check for conflicts or duplicates
-4. Update conflict section if needed
-
-## Documentation Standards
-
-The KEYBINDINGS.md must include:
-
-1. **Complete keybinding list** organized by category
-2. **Plugin-specific keybindings** for each plugin
-3. **Conflict warnings** with ⚠️ symbols
-4. **Default bindings** that plugins provide
-5. **Clear descriptions** for each binding
-
-The README.md should:
-
-1. Provide overview of features and configuration
-2. Link to KEYBINDINGS.md for complete keybinding reference
-3. List plugins and their purposes
-4. Document integration with other tools (Neovim, etc.)
 
 ## Testing Checklist
 
 Before committing tmux changes:
 
-- [ ] All keybindings documented in KEYBINDINGS.md
+- [ ] Checked docs/keybindings.md for conflicts
+- [ ] Updated docs/keybindings.md with changes
 - [ ] No undocumented plugin bindings
-- [ ] Conflicts clearly marked
 - [ ] Tested all modified bindings
-- [ ] Checked for duplicates
 
 ## Common Keybinding Conflicts
 
@@ -237,6 +218,5 @@ The binaries land in `target/release/` which is where the plugin scripts expect 
 
 - Always preserve user preferences when resolving conflicts
 - Document WHY a conflict was resolved in a particular way
-- Keep KEYBINDINGS.md as the single source of truth for keybindings
-- README.md should provide overview and link to KEYBINDINGS.md
+- Keep docs/keybindings.md as the single source of truth for keybindings
 - Test integration with Neovim after navigation changes

@@ -21,4 +21,4 @@ Configured in: [copy-mode-vi.tmux](mappings/copy-mode-vi.tmux)
 - **tmux-fingers** (`M-f`) - Highlight text, type letter to copy
 - **extrakto** (`prefix Tab`) - Extract URLs/paths/text
 
-See [KEYBINDINGS.md](KEYBINDINGS.md)
+See [keybindings.md](../../../docs/keybindings.md)
