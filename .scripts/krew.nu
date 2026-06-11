@@ -6,24 +6,9 @@ def main [] {
     main sync
 }
 
-# Check if krew is bootstrapped, bootstrap if needed
 def ensure-krew [] {
-    let krew_bin = $"($env.HOME)/.local/share/krew/bin/kubectl-krew"
-    if ($krew_bin | path exists) { return }
-
-    let install_script = $"(mktemp -d)/install_krew.sh"
-    let download = do {
-        ^curl -fsSL https://krew.sigs.k8s.io/install | save -f $install_script
-    } | complete
-
-    if $download.exit_code != 0 {
-        error make {msg: $"Failed to download krew installer: ($download.stderr)"}
-    }
-
-    let result = do { bash $install_script } | complete
-    if $result.exit_code != 0 {
-        error make {msg: $"Failed to bootstrap krew: ($result.stderr)"}
-    }
+    if (which kubectl-krew | is-not-empty) { return }
+    error make {msg: "krew not found — install via nix"}
 }
 
 def parse-krewfile [content: string]: nothing -> list<string> {
