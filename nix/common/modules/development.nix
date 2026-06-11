@@ -20,10 +20,6 @@
     unstable.neovim
 
     # Go
-    go
-    gopls
-    gotools
-    go-tools
     golangci-lint
 
     # Rust

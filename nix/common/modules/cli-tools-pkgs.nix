@@ -57,7 +57,17 @@ pkgs: {
     direnv
     chezmoi
     age # Encryption (for chezmoi)
+
+    # ── Go ───────────────────────────────────────────────────────────────
+    go
+    gopls
+    gotools
+    go-tools
+
+    # ── Kubernetes ───────────────────────────────────────────────────────
     kubectl
+    krew
+    helm
 
     # ── Password and secrets ────────────────────────────────────────────
     bitwarden-cli
