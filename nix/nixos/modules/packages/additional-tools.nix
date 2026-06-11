@@ -8,9 +8,7 @@
     xan
 
     # Kubernetes
-    kubectl
     stern
-    krew
 
     # Cloud tools
     awscli2

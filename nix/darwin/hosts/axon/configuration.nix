@@ -8,8 +8,10 @@ in
 {
   imports = [
     ../../../common/modules/cli-tools.nix
+    ../../../common/modules/development.nix
     ../../../common/modules/fonts.nix
     ../../../common/modules/tmux.nix
+    ../../modules/homebrew.nix
     ../../modules/xdg-open-svc.nix
     ../../modules/kanata.nix
   ];
@@ -27,16 +29,12 @@ in
   };
 
   homebrew = {
-    enable = true;
-    onActivation.cleanup = "zap";
     brews = [
       "libyaml"
     ];
     casks = [
-      "firefox"
       "ghostty"
       "hammerspoon"
-      "voiceink"
     ];
   };
 
