@@ -7,7 +7,7 @@ def main [] {
 }
 
 def ensure-krew [] {
-    if (which kubectl-krew | is-not-empty) { return }
+    if (which krew | is-not-empty) { return }
     error make {msg: "krew not found — install via nix"}
 }
 
@@ -34,7 +34,7 @@ def "main sync" [] {
     let plugins = load-krewfile
 
     $plugins | each {|plugin|
-        let result = (do { kubectl krew install $plugin } | complete)
+        let result = (do { krew install $plugin } | complete)
         if $result.exit_code != 0 {
             print -e $"✗ ($plugin): ($result.stderr)"
         }
@@ -44,12 +44,12 @@ def "main sync" [] {
 
 # List installed krew plugins
 def "main list" [] {
-    kubectl krew list
+    krew list
 }
 
 # Install a plugin and add to Krewfile
 def "main install" [plugin: string] {
-    let result = (do { kubectl krew install $plugin } | complete)
+    let result = (do { krew install $plugin } | complete)
     if $result.exit_code != 0 {
         error make {msg: $"Failed to install ($plugin): ($result.stderr)"}
     }
