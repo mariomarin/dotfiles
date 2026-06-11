@@ -72,6 +72,7 @@ pkgs: {
     cheat # Interactive cheatsheets
     navi # Interactive cheatsheet tool
     tealdeer # Fast tldr client
+    presenterm # Terminal slideshow presentations
 
     # ── Nushell plugins ─────────────────────────────────────────────────
     nushellPlugins.formats # EML, ICS, INI, plist, VCF support
