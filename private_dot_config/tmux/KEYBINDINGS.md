@@ -152,10 +152,10 @@ Works in copy-mode: cursor lands at the target position, ready for selection.
 
 | Keybinding | Description |
 | ---------- | ----------- |
-| `C-h` | Fuzzy-jump to saved session/pane |
-| `C-S-a` | Add current session to harpoon list |
-| `M-a` | Add current session + pane to harpoon list |
-| `C-e` | Edit harpoon saved list in popup |
+| `M-b` | Fuzzy-jump to saved session/pane |
+| `C-S-h` | Add current session to harpoon list |
+| `C-S-a` | Jump to slot 1 |
+| `M-a` | Jump to slot 2 |
 
 ### tmux-fuzzback
 
@@ -200,5 +200,5 @@ The following keybindings have been resolved:
 
 - **`M-h/j/k/l`**: tmux-tilish navigation (vim-aware, shared with Neovim)
 - **`M-a`**: tmux-harpoon append binding (no conflict with tilish modal prefix)
-- **`C-h`**: tmux-harpoon jump binding (no conflict with existing bindings)
+- **`M-b`**: tmux-harpoon fuzzy-jump (C-h avoided — conflicts with tmux-navigator)
 - **`prefix F`**: Previously used by tmux-fzf, now available

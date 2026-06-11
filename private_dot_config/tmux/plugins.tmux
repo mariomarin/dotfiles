@@ -57,8 +57,11 @@ set -g @tilish-smart-splits-dirs '= + _ -'
 set -g @tilish-smart-splits-dirs-large ""
 
 # tmux-harpoon
+# append1/2 suppress the default C-h (list) and C-S-h (add) bindings, so set explicitly
 set -g @harpoon_key_append1 'C-S-a'
 set -g @harpoon_key_append2 'M-a'
+bind-key -n M-b   run-shell "~/.local/share/tmux/plugins/tmux-harpoon/harpoon -l"
+bind-key -n C-S-h run-shell "~/.local/share/tmux/plugins/tmux-harpoon/harpoon -a"
 
 # ── General settings ──────────────────────────────────────────────────────────
 
