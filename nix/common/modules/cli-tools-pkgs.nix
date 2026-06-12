@@ -67,7 +67,7 @@ pkgs: {
     # ── Kubernetes ───────────────────────────────────────────────────────
     kubectl
     krew
-    helm
+    kubernetes-helm
 
     # ── Password and secrets ────────────────────────────────────────────
     bitwarden-cli

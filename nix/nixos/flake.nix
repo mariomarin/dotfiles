@@ -193,9 +193,6 @@
               paths = cliPkgs.base ++ cliPkgs.modern ++ [
                 # Runtime (needed by Mason for node-based LSPs)
                 pkgs.nodejs
-
-                # Kubernetes
-                pkgs.kubernetes-helm
               ];
               pathsToLink = [ "/bin" "/share" ];
             };
