@@ -54,81 +54,50 @@ def run-or-fail [label: string, cmd: closure] {
   $result
 }
 
-# Paste stdin to Haste server
-def main [
-  extension?: string  # File extension for syntax highlighting
-] {
-  let server = (require-env)
-  let base_url = (normalize-url $server)
-  let content = ($in | into string)
-
-  if ($content | is-empty) {
-    error make { msg: "no input" }
-  }
-
+def upload-paste [base_url: string, content: string, extension: string]: nothing -> string {
+  let clean = (strip-ansi $content)
   let result = (run-or-fail "Upload" {
-    $content | ^curl -s -X POST --data-binary @- $"($base_url)/documents"
+    $clean | ^curl -s -X POST --data-binary @- $"($base_url)/documents"
   })
-
   let parsed = (parse-haste-response $result.stdout)
   if not $parsed.ok {
     error make { msg: $parsed.error }
   }
+  build-paste-url $base_url $parsed.value $extension
+}
 
-  print (build-paste-url $base_url $parsed.value ($extension | default ""))
+# Paste stdin to Haste server
+def main [
+  extension?: string  # File extension for syntax highlighting
+] {
+  let base_url = (normalize-url (require-env))
+  let content = ($in | into string)
+  if ($content | is-empty) { error make { msg: "no input" } }
+  print (upload-paste $base_url $content ($extension | default ""))
 }
 
 # Execute command and paste output
-# Usage: hastepaste capture 'ls -la'
 def "main capture" [
   command: string  # Command string to execute
 ] {
-  let server = (require-env)
-  let base_url = (normalize-url $server)
-
+  let base_url = (normalize-url (require-env))
   let header = $"[($env.PWD)] ($command)"
   let result = (do { nu -c $command } | complete)
   let output = $"($header)\n($result.stdout)"
 
   print -n $output
   if ($result.stderr | is-not-empty) { print -e $result.stderr }
-
-  let clean = (strip-ansi $output)
-  let upload = (run-or-fail "Upload" {
-    $clean | ^curl -s -X POST --data-binary @- $"($base_url)/documents"
-  })
-
-  let parsed = (parse-haste-response $upload.stdout)
-  if not $parsed.ok {
-    error make { msg: $parsed.error }
-  }
-
-  print -e (build-paste-url $base_url $parsed.value "")
+  print -e (upload-paste $base_url $output "")
 }
 
 # Pipe stdin to terminal and paste
 def "main pipe" [
   extension?: string  # File extension for syntax highlighting
 ] {
-  let server = (require-env)
-  let base_url = (normalize-url $server)
+  let base_url = (normalize-url (require-env))
   let content = ($in | into string)
-
-  if ($content | is-empty) {
-    error make { msg: "no input" }
-  }
+  if ($content | is-empty) { error make { msg: "no input" } }
 
   print -n $content
-
-  let clean = (strip-ansi $content)
-  let upload = (run-or-fail "Upload" {
-    $clean | ^curl -s -X POST --data-binary @- $"($base_url)/documents"
-  })
-
-  let parsed = (parse-haste-response $upload.stdout)
-  if not $parsed.ok {
-    error make { msg: $parsed.error }
-  }
-
-  print -e (build-paste-url $base_url $parsed.value ($extension | default ""))
+  print -e (upload-paste $base_url $content ($extension | default ""))
 }
