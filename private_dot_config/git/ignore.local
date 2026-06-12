@@ -1,11 +1,21 @@
-# Devenv files
-.devenv/
-.devenv.flake.nix
-devenv.lock
-devenv.nix
-devenv.yaml
-.direnv/
-
-# Claude files
+# Claude Code project settings
 CLAUDE.md
 .claude/
+
+# Personal directories
+etc-personal/
+
+# Environment files
+.env
+
+# Devenv
+.envrc
+.devenv.flake.nix
+devenv.nix
+devenv.yaml
+devenv.lock
+.devenv/
+.direnv/
+
+# Pre-commit symlinks (nix store paths)
+.pre-commit-config.yaml
