@@ -1,6 +1,7 @@
 return {
   {
-    "niuiic/presenterm.nvim",
-    config = true,
+    "Piotr1215/presenterm.nvim",
+    build = false,
+    opts = {},
   },
 }
