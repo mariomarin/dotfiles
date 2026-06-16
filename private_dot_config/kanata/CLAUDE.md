@@ -60,7 +60,7 @@ Kanata is available on all desktop platforms:
 
 - Configured in `nix/darwin/modules/kanata.nix`
 - Packages in `nix/darwin/modules/packages.nix` (kanata, karabiner-dk)
-- Uses stable path `/run/current-system/sw/bin/kanata` for Input Monitoring permission persistence
+- Uses stable path `/usr/local/bin/kanata` for Input Monitoring permission persistence
 - Logs: `/tmp/kanata.out.log`, `/tmp/kanata.err.log`
 
 **Architecture:**
@@ -75,7 +75,7 @@ Physical Keyboard → Karabiner DriverKit Extension → kanata → Virtual Keybo
 1. Activate extension (once):
    `sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/.../Karabiner-VirtualHIDDevice-Manager" activate`
 2. Approve in System Settings > Privacy & Security
-3. Grant Input Monitoring to `/run/current-system/sw/bin/kanata`
+3. Grant Input Monitoring to `/usr/local/bin/kanata`
 
 ### Windows
 
