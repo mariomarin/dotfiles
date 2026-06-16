@@ -171,17 +171,19 @@ journalctl -u kanata-laptop -f
 
 ```bash
 # Check service status
-sudo launchctl list | grep kanata
+sudo launchctl list | grep -E "kanata|karabiner"
 
 # View logs
-tail -f /tmp/kanata.out.log /tmp/kanata.err.log
+tail -f /tmp/kanata.out.log /tmp/kanata.err.log /tmp/karabiner-vhid.out.log /tmp/karabiner-vhid.err.log
 
-# Restart service
-# nix-darwin:
-sudo launchctl kickstart -kp system/org.nixos.kanata
-# darwin-brew:
-sudo launchctl kickstart -k system/org.local.kanata
+# Restart services (karabiner must come first — kanata connects to its socket)
+sudo launchctl stop org.pqrs.Karabiner-VirtualHIDDevice-Daemon
+sudo launchctl start org.pqrs.Karabiner-VirtualHIDDevice-Daemon
+sudo launchctl stop org.nixos.kanata
+sudo launchctl start org.nixos.kanata
 ```
+
+**WARNING**: Do NOT use `launchctl kickstart` — it blocks waiting for the process and hangs.
 
 ## Important Notes
 
