@@ -66,18 +66,18 @@ in
     # Kill any manually-started Karabiner daemons to prevent conflicts
     pkill -f "Karabiner-VirtualHIDDevice-Daemon activate" || true
 
-    # Copy kanata binary to stable path only if it changed
+    # Copy kanata binary to stable path only if the nix store source changed.
+    # Compare against a hash sentinel file (not the signed binary — codesign changes its hash).
     new_hash=$(shasum -a 256 ${pkgs-unstable.kanata}/bin/kanata | cut -d' ' -f1)
-    old_hash=""
-    if [ -f ${kanataStablePath} ]; then
-      old_hash=$(shasum -a 256 ${kanataStablePath} | cut -d' ' -f1)
-    fi
+    sentinel="${kanataStablePath}.sha256"
+    old_hash=$(cat "$sentinel" 2>/dev/null || true)
 
     if [ "$new_hash" != "$old_hash" ]; then
       cp -f ${pkgs-unstable.kanata}/bin/kanata ${kanataStablePath}
       chmod 755 ${kanataStablePath}
       # Re-sign with proper adhoc signature (linker-signed from nix is rejected by macOS)
       codesign --force --sign - ${kanataStablePath}
+      echo "$new_hash" > "$sentinel"
       osascript -e 'display notification "Kanata binary updated — re-grant Input Monitoring in System Settings → Privacy & Security" with title "Kanata"'
     fi
   '';
