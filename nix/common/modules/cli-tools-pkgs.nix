@@ -106,6 +106,7 @@ pkgs: {
     procs # Modern ps
     pstree # Process tree
     ripgrep # Modern grep
+    rmlint # Duplicate file finder
     sd # Modern sed
     xcp # Modern cp with progress
     zoxide # Modern cd with frecency
