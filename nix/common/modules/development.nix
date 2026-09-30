@@ -25,6 +25,7 @@
     # Rust
     rustup
     rust-analyzer
+    unstable.go-task
 
     # Lua
     lua5_1
