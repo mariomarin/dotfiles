@@ -7,6 +7,7 @@
   danger-enable-cmd no
   macos-dev-names-include (
     "KB800 Kinesis Freestyle"
+    "Apple Internal Keyboard / Trackpad"
   )
 )
 
