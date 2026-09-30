@@ -49,6 +49,47 @@ def check-vhid [label: string]: nothing -> list<string> {
     } else { [] }
 }
 
+# kanata needs both permissions but only reports the first one it fails on,
+# so also ask tccd which grants exist but no longer match the binary.
+# Ad-hoc signed binaries are granted by cdhash: every rebuild orphans them.
+const TCC_SERVICES = {
+    kTCCServiceListenEvent: "Input Monitoring"
+    kTCCServiceAccessibility: "Accessibility"
+}
+
+def find-denied-permissions [log: string]: nothing -> list<string> {
+    if not ($log | path exists) { return [] }
+    open --raw $log | lines | last 5
+    | parse --regex 'macOS (?<perm>Input Monitoring|Accessibility) permission'
+    | get perm
+}
+
+def find-stale-permissions [bin: string]: nothing -> list<string> {
+    let pred = $"process == \"tccd\" AND eventMessage CONTAINS \"Failed to match existing code requirement for subject ($bin)\""
+    ^/usr/bin/log show --last 5m --style compact --predicate $pred
+    | parse --regex 'service (?<svc>kTCCService\w+)'
+    | get svc | uniq
+    | each {|svc| $TCC_SERVICES | get -o $svc } | compact
+}
+
+def has-no-devices [log: string]: nothing -> bool {
+    if not ($log | path exists) { return false }
+    open --raw $log | lines | last 5 | any {|l| $l | str contains "Couldn't register any device" }
+}
+
+def check-permissions [bin: string, label: string]: nothing -> list<string> {
+    let stale  = (find-stale-permissions $bin)
+    let denied = (find-denied-permissions "/tmp/kanata.err.log")
+    let perms  = ($stale | append $denied | uniq)
+    if ($perms | is-empty) { return [] }
+
+    $perms | each {|perm|
+        let why = if $perm in $stale { "stale entry from an older build" } else { "not granted" }
+        $"($perm) permission denied \(($why)\) — fix: System Settings → Privacy & Security → ($perm), remove kanata \(−\), re-add ($bin) \(+, ⌘⇧G\)"
+    }
+    | append $"then: sudo launchctl kickstart -k system/($label)"
+}
+
 def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> list<string> {
     let s = (launchd-state $label)
     let cmd = (restart-cmd $label)
@@ -56,6 +97,11 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
         "not-loaded"         => ["kanata service not loaded — run: just darwin"]
         "codesigning-killed" => [$"killed by codesigning — fix: sudo codesign --force --sign - ($bin), then re-grant Input Monitoring"]
         "stopped" => {
+            let perm_issues = (check-permissions $bin $label)
+            if ($perm_issues | is-not-empty) { return $perm_issues }
+            if (has-no-devices "/tmp/kanata.err.log") {
+                return ["no configured keyboard connected — compare `kanata --list` with macos-dev-names-include in ~/.config/kanata/darwin.kbd"]
+            }
             let hint = if not $vhid_running { " (start karabiner-vhid first)" } else { "" }
             [$"kanata not running($hint) — run: ($cmd)"]
         }
