@@ -90,8 +90,14 @@ def "main doctor" [
 
     mut issues = []
 
-    if not ("flake.lock" | path exists) {
+    let lock = "flake.lock"
+    if not ($lock | path exists) {
         $issues = ($issues | append "flake.lock missing — run: nix flake update")
+    } else {
+        let age = (date now) - ((ls -l $lock | get 0.modified) | into datetime)
+        if $age > 30day {
+            $issues = ($issues | append $"flake.lock is ($age | into int | $in / 86400000000000) days old — run: nix flake update")
+        }
     }
 
     let flake_result = do -i { ^nix flake check --no-build } | complete
