@@ -125,6 +125,10 @@ doctor:
 nix:
     @just nix/
 
+# Update Nix flake.lock
+flake-update:
+    cd nix/nixos && nix flake update
+
 nixos-switch:
     @just nix/nixos/switch
 
