@@ -98,6 +98,13 @@ def check-permissions [bin: string, label: string]: nothing -> list<string> {
     | append $"then: sudo launchctl kickstart -k system/($label)"
 }
 
+def format-log-tail [log: string]: nothing -> list<string> {
+    if not ($log | path exists) { return [] }
+    let lines = open --raw $log | lines | last 10
+    if ($lines | is-empty) { return [] }
+    ["  last error:"] | append ($lines | each {|line| $"    ($line)"})
+}
+
 def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> list<string> {
     let s = (launchd-state $label)
     let cmd = (restart-cmd $label)
@@ -111,7 +118,7 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
                 return ["no configured keyboard connected — compare `kanata --list` with macos-dev-names-include in ~/.config/kanata/darwin.kbd"]
             }
             let hint = if not $vhid_running { " (start karabiner-vhid first)" } else { "" }
-            [$"kanata not running($hint) — run: ($cmd)"]
+            [$"kanata not running($hint) — run: ($cmd)"] | append (format-log-tail "/tmp/kanata.err.log")
         }
         _ => []
     }
