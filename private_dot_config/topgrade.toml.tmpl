@@ -41,7 +41,7 @@ cleanup = true
 
 # Custom commands to run at specific times
 [pre_commands]
-{{- if ne .machineConfig.platform "darwin-brew" }}
+{{- if and (ne .machineConfig.platform "darwin-brew") (ne .machineConfig.platform "linux-apt") }}
 # Ensure Bitwarden vault is unlocked and session is saved
 "Bitwarden unlock" = "cd $(chezmoi source-path) && just bw-unlock"
 {{- end }}
