@@ -166,22 +166,41 @@ def volume-of [home: string]: table -> list<record> {
     }
 }
 
+# Hardlinks share an inode: rmlint skips hashing them and removing one frees nothing.
+def inode-key []: record -> any {
+    let entry = $in
+    if $entry.inode? == null { return null }
+    $"($entry.disk_id?):($entry.inode)"
+}
+
+# Space a copy would free: none when it is a hardlink of a kept file.
+def reclaimable [kept: list]: record -> filesize {
+    let entry = $in
+    let key = ($entry | inode-key)
+    if $key != null and $key in $kept { return 0b }
+    $entry.size | into filesize
+}
+
 def redundant-files []: list<record> -> list<record> {
-    where not ($it.is_original? | default false)
-    | each {|e| {kind: redundant, type: $e.type, path: $e.path, size: ($e.size | into filesize)} }
+    let lint = $in
+    let kept = ($lint | where ($it.is_original? | default false) | each { inode-key } | compact)
+    $lint
+    | where not ($it.is_original? | default false)
+    | each {|e| {kind: redundant, type: $e.type, path: $e.path, size: ($e | reclaimable $kept)} }
 }
 
 def duplicate-groups []: list<record> -> list<record> {
     where type == duplicate_file
-    | group-by checksum
+    | group-by {|e| $e.checksum? | default ($e | inode-key) | default $e.path }
     | values
     | each {|group|
+        let kept = ($group | where is_original | each { inode-key } | compact)
         let copies = ($group | where not $it.is_original)
         {
             kind: duplicates
             keep: ($group | where is_original | get 0?.path | default "?")
             copies: ($copies | length)
-            wasted: ($copies | get size | math sum | into filesize)
+            wasted: ($copies | each { reclaimable $kept } | math sum | into filesize)
         }
     }
 }

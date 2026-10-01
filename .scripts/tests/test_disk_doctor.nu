@@ -95,6 +95,21 @@ def "test duplicate-groups sums wasted copies" [] {
     assert equal $groups [{kind: duplicates, keep: "/r/a/big", copies: 2, wasted: 200b}]
 }
 
+const HARDLINK_JSON = r#'[
+  {"type": "duplicate_file", "path": "/r/a", "size": 100, "disk_id": 1, "inode": 7, "is_original": true},
+  {"type": "duplicate_file", "path": "/r/b", "size": 100, "disk_id": 1, "inode": 7, "is_original": false}
+]'#
+
+def "test duplicate-groups hardlinks have no checksum and waste nothing" [] {
+    let groups = (eval $"($HARDLINK_JSON | to nuon) | parse-rmlint | duplicate-groups")
+    assert equal $groups [{kind: duplicates, keep: "/r/a", copies: 1, wasted: 0b}]
+}
+
+def "test redundant-files hardlink frees nothing" [] {
+    let sizes = (eval $"($HARDLINK_JSON | to nuon) | parse-rmlint | redundant-files | get size")
+    assert equal $sizes [0b]
+}
+
 def "test diagnose with nothing found yields only volume" [] {
     assert equal (eval $"(facts) | diagnose | get kind") [volume]
 }
