@@ -4,7 +4,7 @@
 # Sesh session selector with fzf (or skim if available)
 export def "sesh sessions" [] {
     # Get session list from sesh
-    let sessions = (sesh list -t -c | lines)
+    let sessions = sesh list -t -c | lines
 
     if ($sessions | is-empty) {
         print "No sessions available"

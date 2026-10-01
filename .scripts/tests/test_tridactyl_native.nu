@@ -12,7 +12,7 @@ def "test build-manifest structure" [] {
         nu -n -c 'source .scripts/tridactyl-native.nu; build-manifest "/nix/store/abc/bin/native_main" | to nuon'
     } | complete
     assert equal $result.exit_code 0
-    let m = ($result.stdout | str trim | from nuon)
+    let m = $result.stdout | str trim | from nuon
     assert equal $m.name "tridactyl"
     assert equal $m.type "stdio"
     assert equal $m.path "/nix/store/abc/bin/native_main"

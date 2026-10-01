@@ -33,8 +33,9 @@ def "main sync" [] {
     ensure-krew
     let plugins = load-krewfile
 
-    $plugins | each {|plugin|
-        let result = (do { krew install $plugin } | complete)
+    $plugins
+    | each {|plugin|
+        let result = do { krew install $plugin } | complete
         if $result.exit_code != 0 {
             print -e $"✗ ($plugin): ($result.stderr)"
         }
@@ -49,7 +50,7 @@ def "main list" [] {
 
 # Install a plugin and add to Krewfile
 def "main install" [plugin: string] {
-    let result = (do { krew install $plugin } | complete)
+    let result = do { krew install $plugin } | complete
     if $result.exit_code != 0 {
         error make {msg: $"Failed to install ($plugin): ($result.stderr)"}
     }

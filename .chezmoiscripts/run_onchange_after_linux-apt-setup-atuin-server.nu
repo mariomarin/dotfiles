@@ -10,7 +10,7 @@ if (which atuin | is-empty) or (which systemctl | is-empty) {
 }
 
 # Check if systemd user bus is available
-let bus_check = (do -i { systemctl --user status } | complete)
+let bus_check = do -i { systemctl --user status } | complete
 if $bus_check.exit_code != 0 {
     print "⚠️  Systemd user bus not available"
     print "   Run manually after login: systemctl --user enable --now atuin-server.service"
@@ -55,7 +55,7 @@ if not $is_active {
 }
 
 # Verify server is running
-let status = (systemctl --user is-active atuin-server.service | str trim)
+let status = systemctl --user is-active atuin-server.service | str trim
 if $status == "active" {
     print "✓ Atuin sync server is running on 127.0.0.1:8888"
 } else {

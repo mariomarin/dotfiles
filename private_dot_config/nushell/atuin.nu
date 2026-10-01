@@ -46,7 +46,7 @@ def _atuin_search_cmd [...flags: string] {
         }
     }
     [
-        $ATUIN_KEYBINDING_TOKEN,
+        $ATUIN_KEYBINDING_TOKEN
         ([
             `with-env { ATUIN_LOG: error, ATUIN_QUERY: (commandline) } {`,
                 (if $nu_version.0 <= 0 and $nu_version.1 <= 90 { 'commandline' } else { 'commandline edit' }),
@@ -54,7 +54,7 @@ def _atuin_search_cmd [...flags: string] {
                     ($flags | append [--interactive] | each {|e| $'"($e)"'}),
                 (if $nu_version.1 >= 92 { ' e>| str trim)' } else {' | complete | $in.stderr | str substring ..-1)'}),
             `}`,
-        ] | flatten | str join ' '),
+        ] | flatten | str join ' ')
     ] | str join "\n"
 }
 

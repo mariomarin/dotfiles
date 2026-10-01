@@ -14,11 +14,15 @@ def get-test-funcs [test_file: string] {
 
 def run-test [test_file: string, func: string] {
     let result = do { nu -n -c $"source ($test_file); ($func)" } | complete
-    { name: $func, passed: ($result.exit_code == 0), error: ($result.stderr | str trim) }
+    {
+        name: $func
+        passed: ($result.exit_code == 0)
+        error: ($result.stderr | str trim)
+    }
 }
 
 def run-test-file [test_file: string] {
-    get-test-funcs $test_file | each { |func| run-test $test_file $func }
+    get-test-funcs $test_file | each {|func| run-test $test_file $func }
 }
 
 # Map source file to its test file(s)
@@ -42,7 +46,7 @@ def find-tests [source_file: string] {
 
     # modules/*/mod.nu → modules/*/tests/mod.nu
     if ($source_file | str contains "modules/") and ($dir | path basename) != "tests" {
-        let module_dir = if ($name == "mod") { $dir } else { $dir }
+        let module_dir = if $name == "mod" { $dir } else { $dir }
         let test = $"($module_dir)/tests/mod.nu"
         if ($test | path exists) { return [$test] }
     }
@@ -52,11 +56,11 @@ def find-tests [source_file: string] {
 
 def main [...files: string] {
     let tests_to_run = $files
-        | where { |f| $f | str ends-with ".nu" }
-        | where { |f| not ($f | str contains "/tests/") }
-        | each { |f| find-tests $f }
-        | flatten
-        | uniq
+    | where {|f| $f | str ends-with ".nu" }
+    | where {|f| not ($f | str contains "/tests/") }
+    | each {|f| find-tests $f }
+    | flatten
+    | uniq
 
     if ($tests_to_run | is-empty) {
         print "No tests to run"

@@ -2,9 +2,9 @@
 # Doctor: report only problems with actionable fixes
 
 def check-cmd [cmd: string]: nothing -> record<name: string, fix: string> {
-    let result = (do { ^sh -c $"command -v ($cmd)" } | complete)
+    let result = do { ^sh -c $"command -v ($cmd)" } | complete
     if $result.exit_code != 0 {
-        { name: $cmd, fix: "install it or check PATH" }
+        {name: $cmd, fix: "install it or check PATH"}
     } else {
         null
     }
@@ -24,11 +24,18 @@ def "main summary" [] {
 }
 
 def "main all" [] {
-    let components = ["nixos" "chezmoi" "nvim" "tmux" "zim" "kanata"]
+    let components = [
+        "nixos"
+        "chezmoi"
+        "nvim"
+        "tmux"
+        "zim"
+        "kanata"
+    ]
     let failures = ($components | each {|c|
-        let result = (do { ^just $"($c)-doctor" } | complete)
+        let result = do { ^just $"($c)-doctor" } | complete
         if $result.exit_code != 0 {
-            let out = ($result.stdout | str trim)
+            let out = $result.stdout | str trim
             if ($out | is-not-empty) { print $out }
             $c
         } else { null }

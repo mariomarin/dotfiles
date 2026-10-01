@@ -234,7 +234,7 @@ kanata-doctor:
 
 # Read-only disk report: space, snapshots, dupes, caches, docker, backups
 disk-doctor *args:
-    nu .scripts/disk-doctor.nu {{args}}
+    nu .scripts/disk-doctor.nu {{ args }}
 
 # Windows package management (Windows only)
 # Packages are applied automatically by chezmoi when configuration.dsc.yaml changes

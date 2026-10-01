@@ -4,7 +4,7 @@
 # Sesh session selector with fzf
 export def "sesh sessions" [] {
     # Get session list from sesh
-    let sessions = (sesh list -t -c | lines)
+    let sessions = sesh list -t -c | lines
 
     if ($sessions | is-empty) {
         print "No sessions available"
@@ -12,7 +12,11 @@ export def "sesh sessions" [] {
     }
 
     # Use fzf to select session
-    let session = ($sessions | str join "\n" | fzf --height 40% --reverse --border-label ' sesh ' --border --prompt '⚡  ')
+    let session = (
+        $sessions
+        | str join "\n"
+        | fzf --height 40% --reverse --border-label ' sesh ' --border --prompt '⚡  '
+    )
 
     if ($session | is-empty) {
         return

@@ -1,7 +1,7 @@
 # Tests that all .scripts/*.nu files parse without errors
 use std/assert
 
-const SKIP = ["dev.nu"]  # Scripts that can't be sourced in isolation
+const SKIP = ["dev.nu"] # Scripts that can't be sourced in isolation
 
 def "test all scripts parse" [] {
     glob ".scripts/*.nu"

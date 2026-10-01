@@ -41,7 +41,7 @@ def "main quick" [
     rm -f $TUNNEL_LOG
 
     if $background {
-        ^cloudflared tunnel --url $service o+e> $TUNNEL_LOG &
+        ^cloudflared tunnel --url $service & o+e> $TUNNEL_LOG
         print $"📝 Tunnel running in background"
         print $"   Log: ($TUNNEL_LOG)"
         print $"   URL: just tunnel-url (after ~5s)"
@@ -60,7 +60,7 @@ def "main stop" [] {
         print "ℹ️  No tunnel running"
         return
     }
-    $pids | each { |pid| kill $pid; print $"✅ Stopped (PID: ($pid))" } | ignore
+    $pids | each {|pid| kill $pid; print $"✅ Stopped (PID: ($pid))" } | ignore
     rm -f $TUNNEL_LOG
 }
 

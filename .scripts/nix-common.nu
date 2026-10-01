@@ -41,7 +41,7 @@ export def show-help [
     print ""
     print "Commands:"
     for cmd in $commands {
-        let padded_name = ($cmd.name | fill -c " " -w 50 -a left)
+        let padded_name = $cmd.name | fill -c " " -w 50 -a left
         print $"  ($padded_name)($cmd.description)"
     }
 }

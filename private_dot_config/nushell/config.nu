@@ -20,9 +20,9 @@ $env.config.edit_mode = 'vi'
 # Options: block, underscore, line, blink_block, blink_underscore, blink_line, inherit
 # -----------------------------------------------------------------------------
 $env.config.cursor_shape = {
-    vi_insert: line        # Beam cursor in insert mode (like default vim)
-    vi_normal: block       # Block cursor in normal mode
-    emacs: line            # For when temporarily in emacs mode
+    vi_insert: line # Beam cursor in insert mode (like default vim)
+    vi_normal: block # Block cursor in normal mode
+    emacs: line # For when temporarily in emacs mode
 }
 
 # -----------------------------------------------------------------------------
@@ -37,8 +37,8 @@ $env.config.buffer_editor = 'nvim'
 $env.config.history = {
     max_size: 100_000
     sync_on_enter: true
-    file_format: "sqlite"  # Enables advanced history features
-    isolation: false       # Share history across sessions
+    file_format: "sqlite" # Enables advanced history features
+    isolation: false # Share history across sessions
 }
 
 # -----------------------------------------------------------------------------
@@ -48,12 +48,8 @@ $env.config.completions = {
     case_sensitive: false
     quick: true
     partial: true
-    algorithm: "fuzzy"     # or "prefix"
-    external: {
-        enable: true
-        max_results: 100
-        completer: null    # Will be set by carapace if available
-    }
+    algorithm: "fuzzy" # or "prefix", 
+    external: {enable: true, max_results: 100, completer: null}
 }
 
 # -----------------------------------------------------------------------------
@@ -61,7 +57,7 @@ $env.config.completions = {
 # -----------------------------------------------------------------------------
 $env.config.color_config = {
     separator: white
-    leading_trailing_space_bg: { attr: n }
+    leading_trailing_space_bg: {attr: n}
     header: green_bold
     empty: blue
     bool: light_cyan
@@ -82,7 +78,7 @@ $env.config.color_config = {
     glob: cyan_bold
     block: white
     hints: dark_gray
-    search_result: { bg: red fg: white }
+    search_result: {bg: red, fg: white}
     shape_binary: purple_bold
     shape_block: blue_bold
     shape_bool: light_cyan
@@ -104,7 +100,7 @@ $env.config.color_config = {
     shape_list: cyan_bold
     shape_literal: blue
     shape_match_pattern: green
-    shape_matching_brackets: { attr: u }
+    shape_matching_brackets: {attr: u}
     shape_nothing: light_cyan
     shape_operator: yellow
     shape_pipe: purple_bold
@@ -118,11 +114,7 @@ $env.config.color_config = {
     shape_variable: purple
     shape_vardecl: purple
     shape_raw_string: light_purple
-    shape_garbage: {
-        fg: white
-        bg: red
-        attr: b
-    }
+    shape_garbage: {fg: white, bg: red, attr: b}
 }
 
 # -----------------------------------------------------------------------------
@@ -133,165 +125,166 @@ $env.config.color_config = {
 # and cannot be remapped. Only Ctrl/Alt sequences are configurable.
 
 $env.config.keybindings = [
-    # -------------------------------------------------------------------------
-    # INSERT MODE BINDINGS
-    # -------------------------------------------------------------------------
-
-    # Ctrl+A - Move to beginning of line (like Emacs/zsh)
     {
+
+        # -------------------------------------------------------------------------
+        # INSERT MODE BINDINGS
+        # -------------------------------------------------------------------------
+
+        # Ctrl+A - Move to beginning of line (like Emacs/zsh)
         name: move_to_line_start
         modifier: control
         keycode: char_a
         mode: vi_insert
-        event: { edit: MoveToLineStart }
+        event: {edit: MoveToLineStart}
     }
-
-    # Ctrl+E - Move to end of line
     {
+
+        # Ctrl+E - Move to end of line
         name: move_to_line_end
         modifier: control
         keycode: char_e
         mode: vi_insert
-        event: { edit: MoveToLineEnd }
+        event: {edit: MoveToLineEnd}
     }
-
-    # Ctrl+K - Kill to end of line
     {
+
+        # Ctrl+K - Kill to end of line
         name: kill_line
         modifier: control
         keycode: char_k
         mode: vi_insert
-        event: { edit: CutToLineEnd }
+        event: {edit: CutToLineEnd}
     }
-
-    # Ctrl+U - Kill to beginning of line
     {
+
+        # Ctrl+U - Kill to beginning of line
         name: unix_line_discard
         modifier: control
         keycode: char_u
         mode: vi_insert
-        event: { edit: CutFromLineStart }
+        event: {edit: CutFromLineStart}
     }
-
-    # Ctrl+W - Delete word backward
     {
+
+        # Ctrl+W - Delete word backward
         name: backward_kill_word
         modifier: control
         keycode: char_w
         mode: vi_insert
-        event: { edit: BackspaceWord }
+        event: {edit: BackspaceWord}
     }
-
-    # Ctrl+H - Backspace (explicit)
     {
+
+        # Ctrl+H - Backspace (explicit)
         name: backspace
         modifier: control
         keycode: char_h
         mode: vi_insert
-        event: { edit: Backspace }
+        event: {edit: Backspace}
     }
-
-    # Ctrl+L - Clear screen
     {
+
+        # Ctrl+L - Clear screen
         name: clear_screen
         modifier: control
         keycode: char_l
         mode: [vi_insert, vi_normal]
-        event: { send: ClearScreen }
+        event: {send: ClearScreen}
     }
-
-    # Ctrl+Y - Accept autosuggestion (like zsh)
     {
+
+        # Ctrl+Y - Accept autosuggestion (like zsh)
         name: accept_autosuggestion
         modifier: control
         keycode: char_y
         mode: vi_insert
         event: {
             until: [
-                { send: historyhintcomplete }
+                {send: historyhintcomplete}
             ]
         }
     }
-
-    # Ctrl+G - Sesh session selector (g = go to session)
     {
+
+        # Ctrl+G - Sesh session selector (g = go to session)
         name: sesh_sessions
         modifier: control
         keycode: char_g
         mode: [vi_insert, vi_normal]
-        event: { send: ExecuteHostCommand cmd: "sesh sessions" }
+        event: {send: ExecuteHostCommand, cmd: "sesh sessions"}
     }
-
-    # -------------------------------------------------------------------------
-    # CLIPBOARD (system clipboard via nu_plugin_clipboard)
-    # -------------------------------------------------------------------------
-
-    # Ctrl+Shift+C - Copy current line to system clipboard
     {
+
+        # -------------------------------------------------------------------------
+        # CLIPBOARD (system clipboard via nu_plugin_clipboard)
+        # -------------------------------------------------------------------------
+
+        # Ctrl+Shift+C - Copy current line to system clipboard
         name: copy_line_to_clipboard
         modifier: control_shift
         keycode: char_c
         mode: [vi_insert, vi_normal]
-        event: { send: executehostcommand cmd: "commandline | clipboard copy; print 'Copied to clipboard'" }
+        event: {send: executehostcommand, cmd: "commandline | clipboard copy; print 'Copied to clipboard'"}
     }
-
-    # Ctrl+Shift+V - Paste from system clipboard
     {
+
+        # Ctrl+Shift+V - Paste from system clipboard
         name: paste_from_clipboard
         modifier: control_shift
         keycode: char_v
         mode: [vi_insert, vi_normal]
-        event: { send: executehostcommand cmd: "commandline edit --insert (clipboard paste)" }
+        event: {send: executehostcommand, cmd: "commandline edit --insert (clipboard paste)"}
     }
-
-    # -------------------------------------------------------------------------
-    # NORMAL MODE BINDINGS
-    # -------------------------------------------------------------------------
-
-    # Note: Ctrl+R is handled by atuin if available (see atuin.nu)
-    # Falls back to built-in history menu if atuin is not installed
-    # Ctrl+N/P for menu/history navigation defined below in MENU NAVIGATION section
-
-    # -------------------------------------------------------------------------
-    # MENU NAVIGATION
-    # -------------------------------------------------------------------------
-
-    # Tab - Completion menu
     {
+
+        # -------------------------------------------------------------------------
+        # NORMAL MODE BINDINGS
+        # -------------------------------------------------------------------------
+
+        # Note: Ctrl+R is handled by atuin if available (see atuin.nu)
+        # Falls back to built-in history menu if atuin is not installed
+        # Ctrl+N/P for menu/history navigation defined below in MENU NAVIGATION section
+
+        # -------------------------------------------------------------------------
+        # MENU NAVIGATION
+        # -------------------------------------------------------------------------
+
+        # Tab - Completion menu
         name: completion_menu
         modifier: none
         keycode: tab
         mode: [vi_insert, vi_normal]
         event: {
             until: [
-                { send: menu name: completion_menu }
-                { send: menunext }
-                { edit: complete }
+                {send: menu, name: completion_menu}
+                {send: menunext}
+                {edit: complete}
             ]
         }
     }
-
-    # Shift+Tab - Previous completion
     {
+
+        # Shift+Tab - Previous completion
         name: completion_previous
         modifier: shift
         keycode: backtab
         mode: [vi_insert, vi_normal]
-        event: { send: menuprevious }
+        event: {send: menuprevious}
     }
-
-    # Ctrl+N / Ctrl+P - History navigation (like zsh history-substring-search)
-    # Empty buffer = cycle through all history
-    # With text = prefix search
     {
+
+        # Ctrl+N / Ctrl+P - History navigation (like zsh history-substring-search)
+        # Empty buffer = cycle through all history
+        # With text = prefix search
         name: history_search_forward
         modifier: control
         keycode: char_n
         mode: [vi_insert, vi_normal]
         event: {
             until: [
-                { send: menudown }
-                { send: down }
+                {send: menudown}
+                {send: down}
             ]
         }
     }
@@ -302,8 +295,8 @@ $env.config.keybindings = [
         mode: [vi_insert, vi_normal]
         event: {
             until: [
-                { send: menuup }
-                { send: up }
+                {send: menuup}
+                {send: up}
             ]
         }
     }
@@ -325,7 +318,7 @@ $env.config.menus = [
         }
         style: {
             text: green
-            selected_text: { attr: r }
+            selected_text: {attr: r}
             description_text: yellow
         }
     }
@@ -333,15 +326,8 @@ $env.config.menus = [
         name: history_menu
         only_buffer_difference: true
         marker: "? "
-        type: {
-            layout: list
-            page_size: 20
-        }
-        style: {
-            text: green
-            selected_text: green_reverse
-            description_text: yellow
-        }
+        type: {layout: list, page_size: 20}
+        style: {text: green, selected_text: green_reverse, description_text: yellow}
     }
     {
         name: ide_completion_menu
@@ -363,7 +349,7 @@ $env.config.menus = [
         }
         style: {
             text: green
-            selected_text: { attr: r }
+            selected_text: {attr: r}
             description_text: yellow
         }
     }
@@ -375,21 +361,19 @@ $env.config.menus = [
 use ($nu.default-config-dir | path join 'modules' 'wakatime.nu')
 
 $env.config.hooks = {
-    pre_prompt: [{ ||
-        null
-    }]
-    pre_execution: [{ ||
-        wakatime wakatime-heartbeat
-    }]
+    pre_prompt: [
+        {|| null }
+    ]
+    pre_execution: [
+        {|| wakatime wakatime-heartbeat }
+    ]
     env_change: {
-        PWD: [{ |before, after|
-            null
-        }]
+        PWD: [
+            {|before, after| null }
+        ]
     }
     display_output: "if (term size).columns >= 100 { table -e } else { table }"
-    command_not_found: { ||
-        null
-    }
+    command_not_found: {|| null }
 }
 
 # -----------------------------------------------------------------------------
@@ -397,12 +381,12 @@ $env.config.hooks = {
 # -----------------------------------------------------------------------------
 # OSC codes for terminal integration with Alacritty and Windows Terminal
 $env.config.shell_integration = {
-    osc2: true    # Window/tab title with abbreviated path
-    osc7: true    # Communicate working directory to terminal
-    osc8: true    # Clickable hyperlinks in terminal output
+    osc2: true # Window/tab title with abbreviated path
+    osc7: true # Communicate working directory to terminal
+    osc8: true # Clickable hyperlinks in terminal output
     osc9_9: false # ConEmu path communication (conflicts with osc7)
-    osc133: true  # Shell integration markers (prompt/command/output)
-    osc633: true  # VS Code shell integration
+    osc133: true # Shell integration markers (prompt/command/output)
+    osc633: true # VS Code shell integration
     reset_application_mode: true # Reset mode for better SSH compatibility
 }
 
@@ -418,25 +402,21 @@ $env.config.error_style = "fancy"
 # LS configuration
 $env.config.ls = {
     use_ls_colors: true
-    clickable_links: true  # Enable clickable file paths (requires OSC 8)
+    clickable_links: true # Enable clickable file paths (requires OSC 8)
 }
 
 # RM configuration
 $env.config.rm = {
-    always_trash: false  # Don't always use trash, allow permanent deletion
+    always_trash: false # Don't always use trash, allow permanent deletion
 }
 
 # Table configuration
 $env.config.table = {
-    mode: rounded  # Rounded table borders
-    index_mode: always  # Always show row indices
+    mode: rounded # Rounded table borders
+    index_mode: always # Always show row indices
     show_empty: true
-    padding: { left: 1, right: 1 }
-    trim: {
-        methodology: wrapping
-        wrapping_try_keep_words: true
-        truncating_suffix: "..."
-    }
+    padding: {left: 1, right: 1}
+    trim: {methodology: wrapping, wrapping_try_keep_words: true, truncating_suffix: "..."}
     header_on_separator: false
 }
 
@@ -445,13 +425,13 @@ $env.config.table = {
 # -----------------------------------------------------------------------------
 
 # Atuin history (if available)
-let atuin_init = ($nu.default-config-dir | path join 'atuin.nu')
+let atuin_init = $nu.default-config-dir | path join 'atuin.nu'
 if (which atuin | is-not-empty) and ($atuin_init | path exists) {
     source ~/.config/nushell/atuin.nu
 }
 
 # Zoxide directory navigation (if available)
-let zoxide_init = ($nu.default-config-dir | path join 'zoxide.nu')
+let zoxide_init = $nu.default-config-dir | path join 'zoxide.nu'
 if (which zoxide | is-not-empty) and ($zoxide_init | path exists) {
     source ~/.config/nushell/zoxide.nu
 }
@@ -469,11 +449,12 @@ if (which carapace | is-not-empty) {
 # -----------------------------------------------------------------------------
 # MACHINE FEATURES (generated by chezmoi)
 # -----------------------------------------------------------------------------
-const FEATURES_FILE = ($nu.default-config-dir | path join 'features.nuon')
+const FEATURES_FILE = $nu.default-config-dir | path join 'features.nuon'
+
 const FEATURES = if ($FEATURES_FILE | path exists) {
     open $FEATURES_FILE
 } else {
-    { bitwarden: false, desktop: false, kanata: false }
+    {bitwarden: false, desktop: false, kanata: false}
 }
 
 # -----------------------------------------------------------------------------
@@ -499,12 +480,15 @@ use ($nu.default-config-dir | path join 'modules' 'container-use-completions') *
 # AWS SSO CLI completions
 use ($nu.default-config-dir | path join 'modules' 'aws-sso-cli-completions') *
 
-
 # Jujutsu (jj) completions module (provides 'jj update-completions' command)
 use ($nu.default-config-dir | path join 'modules' 'jj-completions.nu') *
 
 # Source jj completions if available (generate with: jj update-completions)
-let jj_completions = ([$nu.default-config-dir, '..', 'cache', 'nushell', 'jj-completions.nu'] | path join | path expand)
+let jj_completions = (
+    [$nu.default-config-dir, '..', 'cache', 'nushell', 'jj-completions.nu']
+    | path join
+    | path expand
+)
 if ($jj_completions | path exists) {
     source ~/.cache/nushell/jj-completions.nu
 }
@@ -518,7 +502,10 @@ source ($nu.default-config-dir | path join 'scripts' 'jj-aliases.nu')
 # Plugins installed via NixOS packages or nupm need to be registered
 
 # Register clipboard plugin if installed via nupm
-let clipboard_plugin = ($nu.home-path | path join '.local' 'share' 'nupm' 'modules' 'nu_plugin_clipboard' 'target' 'release' 'nu_plugin_clipboard')
+let clipboard_plugin = (
+    $nu.home-path
+    | path join '.local' 'share' 'nupm' 'modules' 'nu_plugin_clipboard' 'target' 'release' 'nu_plugin_clipboard'
+)
 if ($clipboard_plugin | path exists) {
     do { plugin add $clipboard_plugin } | complete | ignore
 }
@@ -539,13 +526,13 @@ if (which eza | is-not-empty) {
     $env.EZA_COLORS = 'da=1;34:gm=1;34:Su=1;34'
 
     alias ls = eza --group-directories-first
-    alias ll = ls -l --git  # Long format with git status
-    alias l = ll -a         # Long format, all files
-    alias lr = ll -T        # Long format, recursive tree
-    alias lx = ll --sort=extension  # Long format, sort by extension
-    alias lk = ll --sort=size       # Long format, largest file size last
-    alias lt = ll --sort=modified   # Long format, newest modification time last
-    alias lc = ll --sort=changed    # Long format, newest status change last
+    alias ll = ls -l --git # Long format with git status
+    alias l = ll -a # Long format, all files
+    alias lr = ll -T # Long format, recursive tree
+    alias lx = ll --sort=extension # Long format, sort by extension
+    alias lk = ll --sort=size # Long format, largest file size last
+    alias lt = ll --sort=modified # Long format, newest modification time last
+    alias lc = ll --sort=changed # Long format, newest status change last
 }
 
 # -----------------------------------------------------------------------------

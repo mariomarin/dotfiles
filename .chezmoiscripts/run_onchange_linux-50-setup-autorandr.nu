@@ -6,7 +6,7 @@ print "Setting up autorandr..."
 # Create initial profile if displays are connected
 if (which autorandr | is-not-empty) {
     # Save current configuration as 'default'
-    let current = (autorandr | complete)
+    let current = autorandr | complete
     if not ($current.stdout | str contains "default (current)") {
         print "Saving current display configuration as 'default' profile..."
         autorandr --save default | ignore

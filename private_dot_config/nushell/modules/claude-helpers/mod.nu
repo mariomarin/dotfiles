@@ -26,7 +26,7 @@ export def cl [...args] {
 
 # Improve prompt engineering
 export def improve [...args] {
-    let user_prompt = ($args | str join " ")
+    let user_prompt = $args | str join " "
 
     let improve_prompt = $"Please improve the following prompt to make it more precise, actionable, and effective for an AI assistant like yourself:
 
@@ -58,7 +58,7 @@ export def popus [...args] {
         error make {msg: "No clipboard tool found. Install xclip or xsel on Linux."}
     }
 
-    let clipboard_content = (bash -c $clipboard_cmd | str trim)
+    let clipboard_content = bash -c $clipboard_cmd | str trim
 
     if ($clipboard_content | is-empty) {
         error make {msg: "Clipboard is empty"}

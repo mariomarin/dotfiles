@@ -8,9 +8,9 @@ export def "jj update-completions" [] {
         return
     }
 
-    let cache_dir = ([$nu.default-config-dir, '..', 'cache', 'nushell'] | path join | path expand)
+    let cache_dir = [$nu.default-config-dir, '..', 'cache', 'nushell'] | path join | path expand
     mkdir $cache_dir
-    let completions_file = ([$cache_dir, 'jj-completions.nu'] | path join)
+    let completions_file = [$cache_dir, 'jj-completions.nu'] | path join
 
     print $"Generating jj completions to ($completions_file)..."
     jj util completion nushell | save -f $completions_file

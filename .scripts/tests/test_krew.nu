@@ -13,7 +13,7 @@ def "test parse-krewfile filters comments and blanks" [] {
         nu -n -c $"source .scripts/krew.nu; parse-krewfile '($input)' | to nuon"
     } | complete
     assert equal $result.exit_code 0
-    let parsed = ($result.stdout | str trim | from nuon)
+    let parsed = $result.stdout | str trim | from nuon
     assert equal $parsed ["ctx" "ns" "oidc-login"]
 }
 

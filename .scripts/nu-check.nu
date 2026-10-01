@@ -5,13 +5,13 @@
 # - extensionless files: checked only if shebang invokes nu
 
 def is-nu-shebang [shebang: string]: nothing -> bool {
-  if not ($shebang | str starts-with "#!") {
-    return false
-  }
+    if not ($shebang | str starts-with "#!") {
+        return false
+    }
 
-  let line = ($shebang | str trim)
+    let line = $shebang | str trim
 
-  (
+    (
     ($line | str contains "/env nu") or
     ($line | str ends-with "/nu") or
     ($line | str contains "/nu ") or
@@ -21,14 +21,14 @@ def is-nu-shebang [shebang: string]: nothing -> bool {
 }
 
 def should-check [file: string, shebang: string]: nothing -> bool {
-  ($file | str ends-with ".nu") or (is-nu-shebang $shebang)
+    ($file | str ends-with ".nu") or (is-nu-shebang $shebang)
 }
 
 def main [...files: string] {
-  let failures = (
+    let failures = (
     $files
     | each {|f|
-        let path = ($f | path expand)
+        let path = $f | path expand
 
         if not ($path | path exists) {
           return null
@@ -36,8 +36,8 @@ def main [...files: string] {
 
         # Skip nushell runtime config files — they use `source`/`use` with
         # $nu.default-config-dir which fails in a clean nu process
-        let basename = ($path | path basename)
-        let parent = ($path | path dirname | path basename)
+        let basename = $path | path basename
+        let parent = $path | path dirname | path basename
         if $parent == "nushell" and ($basename in ["env.nu" "config.nu"]) {
           return null
         }
@@ -54,7 +54,7 @@ def main [...files: string] {
           return null
         }
 
-        let path_lit = ($path | to nuon)
+        let path_lit = $path | to nuon
         let result = (do {
           ^nu --no-config-file --commands $"nu-check --debug ($path_lit)"
         } | complete)
@@ -70,9 +70,7 @@ def main [...files: string] {
     | where {|it| $it != null }
   )
 
-  if not ($failures | is-empty) {
-    error make {
-      msg: $"($failures | length) file\(s\) failed nushell-check"
+    if not ($failures | is-empty) {
+        error make {msg: $"($failures | length) file\(s\) failed nushell-check"}
     }
-  }
 }

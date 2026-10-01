@@ -33,10 +33,10 @@ def main [] {
     ]
 
     let results = $test_dirs
-        | each { |pattern| glob $pattern }
-        | flatten
-        | where {|f| ($f | path basename) !~ '^run'}
-        | each { |f|
+    | each {|pattern| glob $pattern }
+    | flatten
+    | where {|f| ($f | path basename) !~ '^run'}
+    | each { |f|
             print $"📁 ($f)"
             let funcs = get-test-funcs $f
             $funcs | each { |func|
@@ -47,7 +47,7 @@ def main [] {
                 $r
             }
         }
-        | flatten
+    | flatten
 
     let passed = $results | where passed | length
     let total = $results | length

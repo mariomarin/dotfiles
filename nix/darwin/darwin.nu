@@ -41,8 +41,11 @@ def "main hosts" [
 def "main doctor" [] {
     mut issues = []
 
-    let nix = (do -i { ^nix --version } | complete)
-    if $nix.exit_code != 0 { $issues = ($issues | append "nix not installed — run: curl -L https://install.determinate.systems/nix | sh") }
+    let nix = do -i { ^nix --version } | complete
+    if $nix.exit_code != 0 { $issues = (
+        $issues
+        | append "nix not installed — run: curl -L https://install.determinate.systems/nix | sh"
+    ) }
 
     if (which darwin-rebuild | is-empty) { $issues = ($issues | append "darwin-rebuild missing — run: just first-time") }
 

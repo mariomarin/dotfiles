@@ -2,20 +2,25 @@
 # Tracks terminal activity similar to wakatime-zsh-plugin
 
 export def wakatime-heartbeat [] {
+
     # Skip if tracking disabled
     if ($env | get -o WAKATIME_DO_NOT_TRACK | default 0) == 1 {
         return
     }
 
     # Locate wakatime-cli binary
-    let wakatime_bin = ($env | get -i ZSH_WAKATIME_BIN | default ($nu.home-path | path join '.wakatime' 'wakatime-cli'))
+    let wakatime_bin = (
+        $env
+        | get -i ZSH_WAKATIME_BIN
+        | default ($nu.home-path | path join '.wakatime' 'wakatime-cli')
+    )
 
     if not ($wakatime_bin | path exists) {
         return
     }
 
     # Get the command being executed
-    let cmd = (commandline | split row ' ' | first)
+    let cmd = commandline | split row ' ' | first
 
     if ($cmd | is-empty) {
         return
@@ -26,7 +31,9 @@ export def wakatime-heartbeat [] {
         open .wakatime-project | lines | first
     } else {
         let result = do { git rev-parse --show-toplevel } | complete
-        if $result.exit_code == 0 { $result.stdout | str trim | path basename } else { 'Terminal' }
+        if $result.exit_code == 0 {
+            $result.stdout | str trim | path basename
+        } else { 'Terminal' }
     }
 
     # Build offline flag
@@ -36,8 +43,8 @@ export def wakatime-heartbeat [] {
         ''
     }
 
-    let timeout = ($env | get -i WAKATIME_TIMEOUT | default '5')
+    let timeout = $env | get -i WAKATIME_TIMEOUT | default '5'
 
     # Send heartbeat in background (ignore errors)
-    do { ^$wakatime_bin --write --plugin 'nushell-wakatime/0.1.0' --entity-type app --entity $cmd --project $project --language sh --timeout $timeout $offline_flag o> /dev/null e> /dev/null & } | complete | ignore
+    do { ^$wakatime_bin --write --plugin 'nushell-wakatime/0.1.0' --entity-type app --entity $cmd --project $project --language sh --timeout $timeout $offline_flag & o> /dev/null e> /dev/null } | complete | ignore
 }

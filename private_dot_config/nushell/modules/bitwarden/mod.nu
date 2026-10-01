@@ -32,7 +32,7 @@ def clear_stored_session [] {
 def get-bw-status [session?: string] {
     if not (bw-available) { return null }
     let result = if ($session | is-not-empty) {
-        do { BW_SESSION=$session bw status } | complete
+        do { bw status } | complete
     } else {
         do { bw status } | complete
     }

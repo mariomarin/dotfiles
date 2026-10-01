@@ -21,8 +21,16 @@
 
 # --- data ---
 
-const KINDS = [volume stray-script snapshot redundant duplicates cache docker backup]
-
+const KINDS = [
+    volume
+    stray-script
+    snapshot
+    redundant
+    duplicates
+    cache
+    docker
+    backup
+]
 const DOCKER_RAW = "Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw"
 
 const ADVICE = {
@@ -42,12 +50,27 @@ def main [
     --top: int = 10   # rows per table
     --list            # print every path rmlint would remove
 ]: nothing -> nothing {
-    if (which rmlint | is-empty) { print --stderr "rmlint not installed"; exit 1 }
-    let root = ($path | path expand)
-    if not ($root | path exists) { print --stderr $"no such path: ($root)"; exit 1 }
+    if (which rmlint | is-empty) {
+        print --stderr "rmlint not installed"
+        exit 1
+    }
+    let root = $path | path expand
+    if not ($root | path exists) {
+        print --stderr $"no such path: ($root)"
+        exit 1
+    }
 
     let facts = (gather $root)
-    print ($facts | diagnose | render {root: $root, top: $top, list: $list, caches: $facts.cache_dir})
+    print (
+        $facts
+        | diagnose
+        | render {
+            root: $root
+            top: $top
+            list: $list
+            caches: $facts.cache_dir
+        }
+    )
 }
 
 # --- actions: the only code that reads the machine ---
@@ -60,8 +83,13 @@ def gather [root: string]: nothing -> record {
     } else {
         $env.XDG_CACHE_HOME? | default ($home | path join .cache)
     }
-    let backup_dirs = (ls $home | where type == dir | get name | where {|p| $p | is-backup-dir })
-    let has_docker = (which docker | is-not-empty)
+    let backup_dirs = (
+        ls $home
+        | where type == dir
+        | get name
+        | where {|p| $p | is-backup-dir }
+    )
+    let has_docker = which docker | is-not-empty
 
     {
         home: $home
@@ -70,29 +98,39 @@ def gather [root: string]: nothing -> record {
         stray_scripts: (glob --depth 4 $"($root)/**/rmlint.sh")
         snapshots: (if $darwin { run-text tmutil listlocalsnapshots / } else { "" })
         rmlint: (run-rmlint $root)
-        caches: (du-paths (if ($cache_dir | path exists) { ls --all $cache_dir | get name } else { [] }))
-        docker_raw: (du-paths [($home | path join $DOCKER_RAW)])
-        docker_df: (if $has_docker { run-text docker system df --format "{{json .}}" } else { "" })
+        caches: (
+            du-paths (
+                if ($cache_dir | path exists) {
+                    ls --all $cache_dir | get name
+                } else { [] }
+            )
+        )
+        docker_raw: (du-paths [
+            ($home | path join $DOCKER_RAW)
+        ])
+        docker_df: (
+            if $has_docker { run-text docker system df --format "{{json .}}" } else { "" }
+        )
         backups: (du-paths $backup_dirs)
     }
 }
 
 # stdout of a command, or "" if it fails.
 def --wrapped run-text [cmd: string, ...args: string]: nothing -> string {
-    let res = (do { run-external $cmd ...$args } | complete)
+    let res = do { run-external $cmd ...$args } | complete
     if $res.exit_code == 0 { $res.stdout } else { "" }
 }
 
 # `du -sk` output for the paths that exist; unreadable entries are skipped.
 def du-paths [paths: list<string>]: nothing -> string {
-    let existing = ($paths | where ($it | path exists))
+    let existing = $paths | where ($it | path exists)
     if ($existing | is-empty) { return "" }
     do { ^du -sk ...$existing } | complete | get stdout
 }
 
 def run-rmlint [root: string]: nothing -> string {
     let out = (mktemp --tmpdir disk-doctor.XXXXXX)
-    let res = (do { rmlint $root -o $"json:($out)" } | complete)
+    let res = do { rmlint $root -o $"json:($out)" } | complete
     let json = (open --raw $out)
     rm --force $out
     if $res.exit_code != 0 { error make {msg: $"rmlint failed: ($res.stderr | str trim)"} }
@@ -103,17 +141,29 @@ def run-rmlint [root: string]: nothing -> string {
 
 def diagnose []: record -> list<record> {
     let facts = $in
-    let lint = ($facts.rmlint | parse-rmlint)
+    let lint = $facts.rmlint | parse-rmlint
     [
         ...($facts.disks | volume-of $facts.home)
         ...($facts.stray_scripts | each {|p| {kind: stray-script, path: $p} })
         ...($facts.snapshots | parse-snapshots)
         ...($lint | redundant-files)
         ...($lint | duplicate-groups)
-        ...($facts.caches | parse-du | each {|r| {kind: cache, name: ($r.path | path basename), size: $r.size} })
-        ...($facts.docker_raw | parse-du | each {|r| {kind: docker, item: "Docker.raw (VM disk)", size: $r.size, reclaimable: ""} })
+        ...(
+            $facts.caches
+            | parse-du
+            | each {|r| {kind: cache, name: ($r.path | path basename), size: $r.size} }
+        )
+        ...(
+            $facts.docker_raw
+            | parse-du
+            | each {|r| {kind: docker, item: "Docker.raw (VM disk)", size: $r.size, reclaimable: ""} }
+        )
         ...($facts.docker_df | parse-docker-df)
-        ...($facts.backups | parse-du | each {|r| {kind: backup, path: $r.path, size: $r.size} })
+        ...(
+            $facts.backups
+            | parse-du
+            | each {|r| {kind: backup, path: $r.path, size: $r.size} }
+        )
     ]
 }
 
@@ -174,16 +224,21 @@ def inode-key []: record -> any {
 }
 
 # Space a copy would free: none when it is a hardlink of a kept file.
-def reclaimable [kept: list]: record -> filesize {
+def reclaimable [kept: list<any>]: record -> filesize {
     let entry = $in
-    let key = ($entry | inode-key)
+    let key = $entry | inode-key
     if $key != null and $key in $kept { return 0b }
     $entry.size | into filesize
 }
 
 def redundant-files []: list<record> -> list<record> {
     let lint = $in
-    let kept = ($lint | where ($it.is_original? | default false) | each { inode-key } | compact)
+    let kept = (
+        $lint
+        | where ($it.is_original? | default false)
+        | each { inode-key }
+        | compact
+    )
     $lint
     | where not ($it.is_original? | default false)
     | each {|e| {kind: redundant, type: $e.type, path: $e.path, size: ($e | reclaimable $kept)} }
@@ -194,8 +249,8 @@ def duplicate-groups []: list<record> -> list<record> {
     | group-by {|e| $e.checksum? | default ($e | inode-key) | default $e.path }
     | values
     | each {|group|
-        let kept = ($group | where is_original | each { inode-key } | compact)
-        let copies = ($group | where not $it.is_original)
+        let kept = $group | where is_original | each { inode-key } | compact
+        let copies = $group | where not $it.is_original
         {
             kind: duplicates
             keep: ($group | where is_original | get 0?.path | default "?")
@@ -209,10 +264,13 @@ def duplicate-groups []: list<record> -> list<record> {
 
 def render [ctx: record]: list<record> -> string {
     let findings = $in
-    let clean = ($findings | where kind == redundant | is-empty)
+    let clean = $findings | where kind == redundant | is-empty
     [
         (if $clean { $"redundant files: none in ($ctx.root)" })
-        ...($KINDS | each {|kind| $findings | where kind == $kind | view $kind $ctx })
+        ...(
+            $KINDS
+            | each {|kind| $findings | where kind == $kind | view $kind $ctx }
+        )
         (if not $clean { next-steps $ctx.root })
     ]
     | compact
@@ -244,7 +302,7 @@ def view-volume []: record -> string {
 def view-stray-scripts []: list<record> -> string {
     [
         "warning: existing rmlint.sh found — running it DELETES files:"
-        ...($in | each {|i| $"  ($i.path)  \(preview: ($i.path) -n, or remove it if stale\)" })
+        ...$in | each {|i| $"  ($i.path)  \(preview: ($i.path) -n, or remove it if stale\)" }
         ""
     ] | str join "\n"
 }
@@ -252,7 +310,7 @@ def view-stray-scripts []: list<record> -> string {
 def view-snapshots []: list<record> -> string {
     [
         "local APFS snapshots (hold deleted files' space; size not reported):"
-        ...($in | each {|i| $"  ($i.name)" })
+        ...$in | each {|i| $"  ($i.name)" }
         "  macOS drops them under pressure. delete one by date: sudo tmutil deletelocalsnapshots <YYYY-MM-DD-HHMMSS>\n"
     ] | str join "\n"
 }
@@ -274,7 +332,10 @@ def view-redundant [ctx: record]: list<record> -> string {
         | table --index false | str trim --right
     )
     let removals = if $ctx.list {
-        ["\nwould remove:" ...($items | each {|i| $"  [($i.type)] ($i.path | rel $ctx.root)" })]
+        [
+            "\nwould remove:"
+            ...($items | each {|i| $"  [($i.type)] ($i.path | rel $ctx.root)" })
+        ]
     } else { [] }
     ["rmlint would flag (nothing was changed):" $summary ...$removals] | str join "\n"
 }
@@ -292,8 +353,15 @@ def view-duplicates [ctx: record]: list<record> -> string {
 
 def view-caches [ctx: record]: list<record> -> string {
     let items = $in
-    let total = ($items | get size | math sum)
-    let rows = ($items | sort-by size --reverse | first $ctx.top | select name size | table --index false | str trim --right)
+    let total = $items | get size | math sum
+    let rows = (
+        $items
+        | sort-by size --reverse
+        | first $ctx.top
+        | select name size
+        | table --index false
+        | str trim --right
+    )
     [
         $"\nlargest caches in ($ctx.caches) \(($total) total\):"
         $rows
@@ -305,7 +373,7 @@ def view-caches [ctx: record]: list<record> -> string {
 def view-docker []: list<record> -> string {
     [
         "\ndocker:"
-        ($in | select item size reclaimable | table --index false | str trim --right)
+        $in | select item size reclaimable | table --index false | str trim --right
         "  inspect first: docker system df -v · dangling images only: docker image prune"
     ] | str join "\n"
 }
@@ -313,7 +381,7 @@ def view-docker []: list<record> -> string {
 def view-backups []: list<record> -> string {
     [
         "\nbackup copies:"
-        ($in | select path size | table --index false | str trim --right)
+        $in | select path size | table --index false | str trim --right
         "  confirm a copy exists elsewhere (NAS, the source machine) before moving it off this disk"
     ] | str join "\n"
 }

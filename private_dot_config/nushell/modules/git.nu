@@ -58,7 +58,9 @@ export alias gdx = git ls-files --deleted
 export alias gdm = git ls-files --modified
 export alias gdu = git ls-files --other --exclude-standard
 export alias gdk = git ls-files --killed
-export def gdi [] { git status --porcelain --ignored=matching | lines | parse "{status} {file}" | where status == "!!" | get file }
+export def gdi [] {
+    git status --porcelain --ignored=matching | lines | parse "{status} {file}" | where status == "!!" | get file
+}
 export alias gdI = git ls-files --ignored --exclude-per-directory=.gitignore --cached
 
 # Fetch (gf)
@@ -123,7 +125,10 @@ export alias gp = git push
 export alias gpf = git push --force-with-lease
 export alias gpF = git push --force
 export alias gpa = git push --all
-export def gpA [] { git push --all; git push --tags --no-verify }
+export def gpA [] {
+    git push --all
+    git push --tags --no-verify
+}
 export alias gpt = git push --tags
 export def gpc [] { git push --set-upstream origin (git rev-parse --abbrev-ref HEAD) }
 export def gpp [] {
@@ -211,4 +216,6 @@ export alias gyd = git switch --detach
 
 # Misc
 export def "g.." [] { cd (git rev-parse --show-toplevel | str trim) }
-export def git-root [] { git rev-parse --show-toplevel | str trim }
+export def git-root [] {
+    git rev-parse --show-toplevel | str trim
+}
