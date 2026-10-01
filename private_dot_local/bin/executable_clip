@@ -37,6 +37,18 @@ def has-cmd [cmd: string]: nothing -> bool {
     (which $cmd | is-not-empty)
 }
 
+# Decode raw bytes as UTF-8, or pass a value that is already a string through
+# unchanged. stdin and `open --raw` yield binary; decoding explicitly preserves
+# multibyte UTF-8 instead of mangling it the way `into string` on binary does.
+def into-utf8 []: any -> string {
+    let input = $in
+    match ($input | describe) {
+        "nothing" => ""
+        "binary" => ($input | decode utf-8)
+        _ => ($input | into string)
+    }
+}
+
 def read-file [path: string]: nothing -> string {
     if not ($path | path exists) {
         error make {
@@ -47,7 +59,7 @@ def read-file [path: string]: nothing -> string {
             }
         }
     }
-    open --raw $path | into string
+    open --raw $path | into-utf8
 }
 
 def copy-via-ssh-tunnel [input: string]: nothing -> nothing {
@@ -109,7 +121,7 @@ export def main [
             $args | str join " "
         }
     } else {
-        $in | into string
+        $in | into-utf8
     }
 
     if ($input | is-empty) {

@@ -8,7 +8,7 @@ def "test script parses" [] {
 }
 
 def "test help output" [] {
-    let help = nu $SCRIPT | str downcase
+    let help = nu $SCRIPT | str lowercase
     [
         "quick"
         "ssh"

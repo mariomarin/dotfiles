@@ -270,7 +270,7 @@ def "main clean" [
   $empty_commits | each {|c| print $"  ($c)" } | ignore
 
   let answer = (input "Abandon these commits? [y/N] ")
-  if ($answer | str downcase) != "y" { return }
+  if ($answer | str lowercase) != "y" { return }
 
   ^jj abandon ...$empty_commits
 }

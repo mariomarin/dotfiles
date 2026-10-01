@@ -48,3 +48,35 @@ def "test select-backend none" [] {
     } | complete
     assert equal ($result.stdout | str trim) "none"
 }
+
+def "test into-utf8 decodes binary multibyte" [] {
+    let result = do {
+        nu -n -c "source private_dot_local/bin/executable_clip; ('café ☕ 中文 🎉' | into binary) | into-utf8"
+    } | complete
+    assert equal ($result.stdout | str trim) "café ☕ 中文 🎉"
+}
+
+def "test into-utf8 passes strings through" [] {
+    let result = do {
+        nu -n -c "source private_dot_local/bin/executable_clip; ('résumé' | into-utf8)"
+    } | complete
+    assert equal ($result.stdout | str trim) "résumé"
+}
+
+def "test into-utf8 handles empty input" [] {
+    let result = do {
+        nu -n -c "source private_dot_local/bin/executable_clip; (null | into-utf8)"
+    } | complete
+    assert equal $result.exit_code 0
+    assert equal ($result.stdout | str trim) ""
+}
+
+def "test read-file preserves utf-8" [] {
+    let tmp = (mktemp -t "clip-utf8-XXXXXX")
+    "naïve — 你好 🚀" | save --force --raw $tmp
+    let result = do {
+        nu -n -c $"source private_dot_local/bin/executable_clip; read-file '($tmp)'"
+    } | complete
+    rm --force $tmp
+    assert equal ($result.stdout | str trim) "naïve — 你好 🚀"
+}
