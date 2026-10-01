@@ -227,6 +227,7 @@ in
         name = "nufmt";
         entry = "nufmt";
         files = "(\\.nu$|/executable_[^.]+$)";
+        types = [ ]; # Disable auto-detection of nushell type
         types_or = [ "text" ];
         excludes = [ "wsl-" "nushell/env\\.nu" ];
         language = "system";
@@ -239,6 +240,7 @@ in
         name = "nushell-lint";
         entry = "nu-lint";
         files = "(\\.nu$|/executable_[^.]+$)";
+        types = [ ]; # Disable auto-detection of nushell type
         types_or = [ "text" ];
         excludes = [ "wsl-" "nushell/(env|config)\\.nu" ];
         language = "system";
@@ -251,6 +253,7 @@ in
         name = "nushell-check";
         entry = "nu .scripts/nu-check.nu";
         files = "(\\.nu$|/executable_[^.]+$)";
+        types = [ ]; # Disable auto-detection of nushell type
         types_or = [ "text" ];
         excludes = [ "wsl-" "nushell/(env|config)\\.nu$" ];
         language = "system";
@@ -263,6 +266,8 @@ in
         name = "nushell-test";
         entry = "nu .scripts/tests/run-for-files.nu";
         files = "\\.nu$";
+        types = [ ]; # Disable auto-detection of nushell type
+        types_or = [ "text" ];
         language = "system";
         pass_filenames = true;
       };
