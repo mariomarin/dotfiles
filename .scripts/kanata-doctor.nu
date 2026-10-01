@@ -17,12 +17,13 @@ def launchd-state [label: string] {
     let out = do { ^launchctl print $"system/($label)" } | complete
     if $out.exit_code != 0 { return {state: "not-loaded"} }
     if ($out.stdout | str contains "state = running") { return {state: "running"} }
+    if ($out.stdout | str contains "state = spawn scheduled") { return {state: "spawn-scheduled"} }
     if ($out.stdout | str contains "OS_REASON_CODESIGNING") { return {state: "codesigning-killed"} }
     {state: "stopped"}
 }
 
 def restart-cmd [label: string] {
-    $"sudo launchctl stop ($label) && sudo launchctl start ($label)"
+    $"sudo launchctl kickstart -k system/($label)"
 }
 
 def check-bin [bin: string]: nothing -> list<string> {
@@ -46,10 +47,13 @@ def check-cfg [file: string]: nothing -> list<string> {
 
 def check-vhid [label: string]: nothing -> list<string> {
     let s = (launchd-state $label)
-    if $s.state != "running" {
+    # spawn-scheduled is acceptable - service is configured and will start on demand
+    if $s.state == "running" or $s.state == "spawn-scheduled" {
+        []
+    } else {
         let cmd = (restart-cmd $label)
         [$"karabiner-vhid not running — run: ($cmd)"]
-    } else { [] }
+    }
 }
 
 # kanata needs both permissions but only reports the first one it fails on,
