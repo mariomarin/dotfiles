@@ -37,6 +37,17 @@ def parse-revision-lines []: list<string> -> list<record<value: string, descript
   }
 }
 
+# Run command and return Result - functional core
+def run-cmd [cmd: closure]: nothing -> record<ok: bool> {
+  let result = (do $cmd | complete)
+  if $result.exit_code == 0 {
+    ok {stdout: $result.stdout, stderr: $result.stderr}
+  } else {
+    err {stdout: $result.stdout, stderr: $result.stderr, code: $result.exit_code}
+  }
+}
+
+# Run command or fail - imperative shell for side effects
 def run-or-fail [label: string, cmd: closure] {
   let result = (do $cmd | complete)
   if $result.exit_code != 0 {
@@ -98,17 +109,17 @@ def "main sync" [
   }
 
   # Remove stale jj-spr tracking branches
-  let has_spr = (do { ^jj config get --repo spr.githubRepository } | complete)
-  if $has_spr.exit_code == 0 and not ($has_spr.stdout | str trim | is-empty) {
-    let spr_branches = (do { ^git branch -r } | complete)
-    if $spr_branches.exit_code == 0 {
-      $spr_branches.stdout | lines
+  let spr_check = (run-cmd {^jj config get --repo spr.githubRepository})
+  if ($spr_check | is-ok) and not (($spr_check.value.stdout | str trim) | is-empty) {
+    let branches = (run-cmd {^git branch -r})
+    if ($branches | is-ok) {
+      $branches.value.stdout | lines
       | str trim
-      | where {|b| $b | str starts-with "origin/spr/" }
-      | each {|b| do { ^git branch -rD $b } | complete; null }
+      | where {|b| $b | str starts-with "origin/spr/"}
+      | each {|b| run-cmd {^git branch -rD $b}; null}
       | ignore
 
-      do { ^jj git import } | complete | ignore
+      run-cmd {^jj git import} | ignore
     }
   }
 
@@ -170,16 +181,15 @@ def "main pr" [
   }
 
   let failures = ($bookmarks | each {|bm|
-    let pr_number = (do { ^gh pr list --head $bm --json number --jq '.[0].number' } | complete)
-    let pr_num = ($pr_number.stdout | str trim)
+    let pr_check = (run-cmd {^gh pr list --head $bm --json number --jq '.[0].number'})
 
-    if not ($pr_num | is-empty) and $pr_number.exit_code == 0 {
-      let push = (do { ^jj git push --bookmark $bm --force } | complete)
-      if $push.exit_code != 0 {
-        print -e $"($bm): ($push.stderr)"
+    if ($pr_check | is-ok) and not (($pr_check.value.stdout | str trim) | is-empty) {
+      let push = (run-cmd {^jj git push --bookmark $bm --force})
+      if ($push | is-err) {
+        print -e $"($bm): ($push.value.stderr)"
         return $bm
       }
-      if ($push.stdout | is-not-empty) { print $push.stdout }
+      if ($push.value.stdout | is-not-empty) {print $push.value.stdout}
       return null
     }
 
@@ -189,16 +199,16 @@ def "main pr" [
     }
 
     let gh_args = (["pr" "create" "--head" $bm "--fill"]
-      | if $draft { append "--draft" } else { $in }
-      | if not ($extra | is-empty) { append $extra } else { $in })
-    let create_result = (do { ^gh ...$gh_args } | complete)
-    if $create_result.exit_code != 0 {
-      print -e $"($bm): ($create_result.stderr)"
+      | if $draft {append "--draft"} else {$in}
+      | if not ($extra | is-empty) {append $extra} else {$in})
+    let create = (run-cmd {^gh ...$gh_args})
+    if ($create | is-err) {
+      print -e $"($bm): ($create.value.stderr)"
       return $bm
     }
-    if ($create_result.stdout | is-not-empty) { print $create_result.stdout }
+    if ($create.value.stdout | is-not-empty) {print $create.value.stdout}
     null
-  } | where {|it| $it != null })
+  } | where {|it| $it != null})
 
   if not ($failures | is-empty) {
     error make { msg: $"failed for: ($failures | str join ', ')" }
