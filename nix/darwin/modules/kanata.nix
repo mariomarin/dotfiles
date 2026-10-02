@@ -4,16 +4,13 @@
 { config, pkgs, pkgs-unstable, ... }:
 
 let
-  # Wrapper script at stable path that execs Nix store binary
-  # TCC permissions are granted to the wrapper (stable path)
-  # SIP blocks DYLD_* in launchd, but we can use DYLD_LIBRARY_PATH in the wrapper itself
-  # since the wrapper is what launchd runs, not a dyld-loaded binary
-  kanataWrapper = pkgs.writeShellScript "kanata-wrapper" ''
-    # Set library path for Nix dependencies
-    export DYLD_FALLBACK_LIBRARY_PATH="/nix/store:''${DYLD_FALLBACK_LIBRARY_PATH:-}"
-    exec "${pkgs-unstable.kanata}/bin/kanata" "$@"
-  '';
+  # Copy kanata binary and patch library paths to use system libraries
+  # TCC requires a stable, signed binary (can't use wrapper scripts)
+  # We copy to stable path and use install_name_tool to point to system libs
   kanataStablePath = "/usr/local/bin/kanata";
+
+  # macOS provides libiconv at /usr/lib/libiconv.2.dylib
+  systemLibiconv = "/usr/lib/libiconv.2.dylib";
   karabinerDaemon = "${pkgs.karabiner-dk}/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon";
 in
 {
@@ -35,8 +32,8 @@ in
   };
 
   # Kanata keyboard remapper
-  # Uses wrapper script at stable path (/usr/local/bin/kanata) for TCC permissions
-  # Wrapper execs Nix store binary, so permissions survive rebuilds
+  # Copies binary to stable path and patches to use system libraries
+  # TCC permissions granted to signed binary (can't use wrapper scripts)
   #
   # First-time setup (one-time):
   # 1. Activate Karabiner extension:
@@ -67,7 +64,7 @@ in
   # Karabiner in systemPackages so nix-darwin copies .app to /Applications
   environment.systemPackages = [ pkgs.karabiner-dk ];
 
-  # Install wrapper and create Karabiner socket directory
+  # Copy binary and patch library paths
   system.activationScripts.postActivation.text = ''
     # Create required directory for Karabiner socket
     mkdir -p "/Library/Application Support/org.pqrs/tmp"
@@ -76,9 +73,19 @@ in
     # Kill any manually-started Karabiner daemons to prevent conflicts
     pkill -f "Karabiner-VirtualHIDDevice-Daemon activate" || true
 
-    # Install wrapper script to stable path
-    # TCC permissions are granted to this path, wrapper execs Nix store binary
-    cp -f ${kanataWrapper} ${kanataStablePath}
+    # Copy kanata binary to stable path for TCC permissions
+    # TCC requires actual signed binary, not wrapper script
+    cp -f ${pkgs-unstable.kanata}/bin/kanata ${kanataStablePath}
     chmod 755 ${kanataStablePath}
+
+    # Patch library paths to use system libiconv instead of Nix store
+    # This avoids dyld failures when running via launchd (SIP blocks DYLD_* vars)
+    install_name_tool -change \
+      /nix/store/fgrxz4hr8f71hkhsddbvk8nxadpg67bv-libiconv-115.100.1/lib/libiconv.2.dylib \
+      ${systemLibiconv} \
+      ${kanataStablePath} || true
+
+    # Re-sign with ad-hoc signature (required for TCC)
+    codesign --force --sign - ${kanataStablePath}
   '';
 }
