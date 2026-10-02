@@ -112,10 +112,10 @@ def has-no-devices [log: string]: nothing -> bool {
 def has-dyld-error [log: string]: nothing -> record {
     if not ($log | path exists) { return {has_error: false} }
     let lines = (open --raw $log | lines | last 10)
-    let dyld_line = ($lines | where {|l| $l | str contains "Library not loaded:"} | first)
-    if ($dyld_line | is-empty) { return {has_error: false} }
+    let dyld_lines = ($lines | where {|l| $l | str contains "Library not loaded:"})
+    if ($dyld_lines | is-empty) { return {has_error: false} }
 
-    let lib = ($dyld_line | parse "Library not loaded: {path}" | get path.0? | default "")
+    let lib = ($dyld_lines | first | parse "{prefix}Library not loaded: {path}" | get path.0? | default "")
     {has_error: true, lib: $lib}
 }
 
@@ -152,7 +152,13 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
             let dyld = (has-dyld-error "/tmp/kanata.err.log")
             if $dyld.has_error {
                 let lib = ($dyld.lib? | default "unknown library")
-                return [(issue "kanata" "error" $"crash-looping: missing Nix dependency ($lib)" "just darwin")]
+                let exists = ($lib | path exists)
+                let msg = if $exists {
+                    $"crash-looping: dyld cannot load ($lib) - binary may be stale, check `ls -lh ($bin)` vs latest build"
+                } else {
+                    $"crash-looping: missing Nix dependency ($lib)"
+                }
+                return [(issue "kanata" "error" $msg "just darwin")]
             }
             []
         }
@@ -163,7 +169,13 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
             let dyld = (has-dyld-error "/tmp/kanata.err.log")
             if $dyld.has_error {
                 let lib = ($dyld.lib? | default "unknown library")
-                return [(issue "kanata" "error" $"failed to start: missing Nix dependency ($lib)" "just darwin")]
+                let exists = ($lib | path exists)
+                let msg = if $exists {
+                    $"failed to start: dyld cannot load ($lib) - binary may be stale, check `ls -lh ($bin)` vs latest build"
+                } else {
+                    $"failed to start: missing Nix dependency ($lib)"
+                }
+                return [(issue "kanata" "error" $msg "just darwin")]
             }
 
             if (has-no-devices "/tmp/kanata.err.log") {
