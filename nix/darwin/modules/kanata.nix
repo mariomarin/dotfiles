@@ -51,6 +51,10 @@ in
       KeepAlive = true;
       StandardErrorPath = "/tmp/kanata.err.log";
       StandardOutPath = "/tmp/kanata.out.log";
+      EnvironmentVariables = {
+        # Ensure dyld can find Nix store libraries when running via launchd
+        DYLD_FALLBACK_LIBRARY_PATH = "/nix/store";
+      };
     };
   };
 
