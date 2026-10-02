@@ -42,3 +42,47 @@ export def "result map" [f: closure]: record -> record {
 export def "result unwrap-or" [default: any]: record -> any {
   if ($in | is-ok) {$in.value} else {$default}
 }
+
+# --- Validation ADT - accumulates errors (unlike Result which short-circuits) ---
+
+export def valid [value: any]: nothing -> record<valid: bool, value: any> {
+  {valid: true, value: $value}
+}
+
+export def invalid [errors: list]: nothing -> record<valid: bool, errors: list> {
+  {valid: false, errors: $errors}
+}
+
+export def is-valid []: record -> bool {
+  $in.valid? == true
+}
+
+export def is-invalid []: record -> bool {
+  not ($in | is-valid)
+}
+
+# Combine multiple validations - accumulates ALL errors
+export def "validation combine" [validators: list<closure>]: any -> record {
+  let val = $in
+  let results = ($validators | each {|f| do $f $val})
+  let all_errors = ($results
+    | where {|r| $r | is-invalid}
+    | get errors
+    | flatten
+  )
+
+  if ($all_errors | is-empty) {
+    valid $val
+  } else {
+    invalid $all_errors
+  }
+}
+
+# Collect issues from multiple checks (returns list of issues)
+export def collect-issues [checks: list<closure>]: any -> list {
+  let val = $in
+  $checks
+  | each {|check| do $check $val}
+  | flatten
+  | where {|issue| $issue != null and ($issue | is-not-empty)}
+}
