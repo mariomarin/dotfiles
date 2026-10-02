@@ -89,7 +89,7 @@ def find-denied-permissions [log: string]: nothing -> list<string> {
     if not ($log | path exists) { return [] }
     open --raw $log
     | lines
-    | last 5
+    | last 10
     | parse --regex 'macOS (?<perm>Input Monitoring|Accessibility) permission'
     | get perm
 }
@@ -129,8 +129,8 @@ def check-permissions [bin: string, label: string]: nothing -> list<record> {
     $perms
     | each {|perm|
         let why = if $perm in $stale {"stale entry from an older build"} else {"not granted"}
-        let fix = $"System Settings → Privacy & Security → ($perm), remove kanata \(−\), re-add ($bin) \(+, ⌘⇧G\), then: ($cmd)"
-        issue "permissions" "error" $"($perm) permission denied \(($why)\)" $fix
+        let fix = $"System Settings → Privacy & Security → ($perm), add ($bin) \(+, paste path with ⌘⇧G\), then: ($cmd)"
+        issue "permissions" "error" $"($perm) permission denied \(($why)\)\nBinary path to add: ($bin)" $fix
     }
 }
 
@@ -149,6 +149,9 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
         "codesigning-killed" => [(issue "kanata" "error" "killed by codesigning" $"sudo codesign --force --sign - ($bin), then re-grant Input Monitoring")]
         "running" | "spawn-scheduled" => {
             # Service says running but might be crash-looping
+            let perm_issues = (check-permissions $bin $label)
+            if ($perm_issues | is-not-empty) {return $perm_issues}
+
             let dyld = (has-dyld-error "/tmp/kanata.err.log")
             if $dyld.has_error {
                 let lib = ($dyld.lib? | default "unknown library")
