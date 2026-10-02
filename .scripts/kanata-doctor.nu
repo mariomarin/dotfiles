@@ -100,12 +100,26 @@ def check-cfg [file: string]: nothing -> list<record> {
 def check-vhid [label: string]: nothing -> list<record> {
     let s = (launchd-state $label)
     # spawn-scheduled is acceptable - service is configured and will start on demand
-    if $s.state == "running" or $s.state == "spawn-scheduled" {
-        []
-    } else {
+    if $s.state != "running" and $s.state != "spawn-scheduled" {
         let cmd = (restart-cmd $label)
-        [(issue "vhid" "error" "karabiner-vhid not running" $cmd)]
+        return [(issue "vhid" "error" "karabiner-vhid not loaded" $cmd)]
     }
+
+    # Check if daemon socket directory exists
+    let socket_dir = "/Library/Application Support/org.pqrs/tmp/rootonly/vhidd_server"
+    let socket_check = (run-cmd {^sudo test -d $socket_dir})
+    if ($socket_check | is-err) {
+        let cmd = (restart-cmd $label)
+        return [(issue "vhid" "error" "vhid socket missing - daemon not ready" $cmd)]
+    }
+
+    # Check driver extension is loaded
+    let dext = (run-cmd {^systemextensionsctl list})
+    if ($dext | is-ok) and not ($dext.value.stdout | str contains "org.pqrs.Karabiner-DriverKit-VirtualHIDDevice") {
+        return [(issue "vhid" "error" "Karabiner driver extension not activated" "Activate via System Settings → Privacy & Security")]
+    }
+
+    []
 }
 
 # kanata needs both permissions but only reports the first one it fails on,
