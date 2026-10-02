@@ -115,10 +115,11 @@ def check-permissions [bin: string, label: string]: nothing -> list<record> {
     let perms = $stale | append $denied | uniq
     if ($perms | is-empty) {return []}
 
+    let cmd = (restart-cmd $label)
     $perms
     | each {|perm|
         let why = if $perm in $stale {"stale entry from an older build"} else {"not granted"}
-        let fix = $"System Settings → Privacy & Security → ($perm), remove kanata \(−\), re-add ($bin) \(+, ⌘⇧G\), then: ($restart-cmd $label)"
+        let fix = $"System Settings → Privacy & Security → ($perm), remove kanata \(−\), re-add ($bin) \(+, ⌘⇧G\), then: ($cmd)"
         issue "permissions" "error" $"($perm) permission denied \(($why)\)" $fix
     }
 }
