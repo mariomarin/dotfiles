@@ -4,7 +4,9 @@
 { config, pkgs, pkgs-unstable, ... }:
 
 let
-  kanataStablePath = "/usr/local/bin/kanata";
+  # Use Nix store path directly - TCC permissions will need re-granting on updates,
+  # but this avoids dyld library loading issues from copied binaries
+  kanataPath = "${pkgs-unstable.kanata}/bin/kanata";
   karabinerDaemon = "${pkgs.karabiner-dk}/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon";
 in
 {
@@ -26,13 +28,15 @@ in
   };
 
   # Kanata keyboard remapper
-  # Binary is copied to stable path so Input Monitoring permission survives updates
+  # Uses Nix store path directly - TCC permissions need re-granting after updates
+  # but this avoids dyld library loading issues
   #
   # First-time setup (one-time):
   # 1. Activate Karabiner extension:
   #    sudo "/Applications/Nix Apps/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate
   # 2. Approve extension in System Settings > Privacy & Security
-  # 3. Grant Input Monitoring to /usr/local/bin/kanata
+  # 3. Grant Input Monitoring to the kanata binary (path shown in kanata-doctor output)
+  # 4. After each nix-darwin rebuild that updates kanata, re-grant Input Monitoring
   #
   # IMPORTANT: Do NOT manually run Karabiner-VirtualHIDDevice-Daemon!
   # The launchd service above manages it automatically. Running it manually
@@ -41,7 +45,7 @@ in
     serviceConfig = {
       Label = "org.nixos.kanata";
       ProgramArguments = [
-        kanataStablePath
+        kanataPath
         "--cfg"
         "/Users/${config.system.primaryUser}/.config/kanata/darwin.kbd"
         "--port"
@@ -51,17 +55,13 @@ in
       KeepAlive = true;
       StandardErrorPath = "/tmp/kanata.err.log";
       StandardOutPath = "/tmp/kanata.out.log";
-      EnvironmentVariables = {
-        # Ensure dyld can find Nix store libraries when running via launchd
-        DYLD_FALLBACK_LIBRARY_PATH = "/nix/store";
-      };
     };
   };
 
   # Karabiner in systemPackages so nix-darwin copies .app to /Applications
   environment.systemPackages = [ pkgs.karabiner-dk ];
 
-  # Copy kanata to stable path and create Karabiner socket directory
+  # Create Karabiner socket directory
   system.activationScripts.postActivation.text = ''
     # Create required directory for Karabiner socket
     mkdir -p "/Library/Application Support/org.pqrs/tmp"
@@ -69,20 +69,5 @@ in
 
     # Kill any manually-started Karabiner daemons to prevent conflicts
     pkill -f "Karabiner-VirtualHIDDevice-Daemon activate" || true
-
-    # Copy kanata binary to stable path only if the nix store source changed.
-    # Compare against a hash sentinel file (not the signed binary — codesign changes its hash).
-    new_hash=$(shasum -a 256 ${pkgs-unstable.kanata}/bin/kanata | cut -d' ' -f1)
-    sentinel="${kanataStablePath}.sha256"
-    old_hash=$(cat "$sentinel" 2>/dev/null || true)
-
-    if [ "$new_hash" != "$old_hash" ]; then
-      cp -f ${pkgs-unstable.kanata}/bin/kanata ${kanataStablePath}
-      chmod 755 ${kanataStablePath}
-      # Re-sign with proper adhoc signature (linker-signed from nix is rejected by macOS)
-      codesign --force --sign - ${kanataStablePath}
-      echo "$new_hash" > "$sentinel"
-      osascript -e 'display notification "Kanata binary updated — re-grant Input Monitoring in System Settings → Privacy & Security" with title "Kanata"'
-    fi
   '';
 }
