@@ -43,36 +43,44 @@ def restart-cmd [label: string]: nothing -> string {
     $"sudo launchctl kickstart -k system/($label)"
 }
 
-def check-wrapper [wrapper: string]: nothing -> list<record> {
-    if not ($wrapper | path exists) {
-        return [(issue "wrapper" "error" "wrapper script missing" "just darwin")]
+def check-binary [bin: string]: nothing -> list<record> {
+    if not ($bin | path exists) {
+        return [(issue "binary" "error" "binary missing" "just darwin")]
     }
 
-    # Extract Nix store path from: exec "/nix/store/.../bin/kanata" "$@"
-    let wrapped_path = (open --raw $wrapper
-        | lines
-        | where {|l| $l | str contains 'exec'}
-        | first
-        | parse --regex 'exec "([^"]+)"'
-        | get capture0.0?
-        | default "")
-
-    if ($wrapped_path | is-empty) {
-        return [(issue "wrapper" "error" "cannot parse wrapped binary path" "just darwin")]
+    # Check if it's a script or binary
+    let file_type = (run-cmd {^file $bin})
+    if ($file_type | is-err) {
+        return [(issue "binary" "error" "cannot check binary type" "just darwin")]
     }
 
-    # Check if wrapped binary exists
-    if not ($wrapped_path | path exists) {
-        return [(issue "wrapper" "error" $"wrapper points to missing binary: ($wrapped_path)" "just darwin")]
+    let is_script = ($file_type.value.stdout | str contains "script")
+
+    if $is_script {
+        # It's a wrapper script - extract what it wraps
+        let wrapped_path = (open --raw $bin
+            | lines
+            | where {|l| $l | str contains 'exec'}
+            | first
+            | parse --regex 'exec "([^"]+)"'
+            | get capture0.0?
+            | default "")
+
+        if ($wrapped_path | is-empty) {
+            return [(issue "binary" "error" "wrapper script doesn't exec anything" "just darwin")]
+        }
+
+        if not ($wrapped_path | path exists) {
+            return [(issue "binary" "error" $"wrapper points to missing binary: ($wrapped_path)" "just darwin")]
+        }
     }
 
-    # Check signature
-    let sig = (run-cmd {^codesign -d --verbose=2 $wrapped_path})
+    # Check signature (on actual binary, not wrapper)
+    let sig = (run-cmd {^codesign -d --verbose=2 $bin})
     if ($sig | is-ok) and ($sig.value.stderr | str contains "linker-signed") {
-        return [(issue "wrapper" "error" $"wrapped binary has linker signature: ($wrapped_path)" $"sudo codesign --force --sign - ($wrapped_path)")]
+        return [(issue "binary" "error" "bad signature (linker-signed)" $"sudo codesign --force --sign - ($bin)")]
     }
 
-    # All good - return empty, but we could add info about what it wraps
     []
 }
 
@@ -166,7 +174,18 @@ def format-permission-issue [perm: string, bin: string, is_stale: bool, label: s
     }
 }
 
+def is-kanata-running []: nothing -> bool {
+    let result = (run-cmd {pgrep -x kanata})
+    $result | is-ok
+}
+
 def check-permissions [bin: string, label: string]: nothing -> list<record> {
+    # Only check log-based permissions if kanata is NOT running
+    # If running, old log errors are stale
+    if (is-kanata-running) {
+        return []
+    }
+
     let stale = (find-stale-permissions $bin)
     let denied = (find-denied-permissions "/tmp/kanata.err.log")
     let perms = $stale | append $denied | uniq
@@ -248,27 +267,46 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
     }
 }
 
-def show-wrapper-info [wrapper: string]: nothing -> nothing {
-    if not ($wrapper | path exists) {
-        print $"Wrapper: not found at ($wrapper)"
+def show-binary-info [bin: string]: nothing -> nothing {
+    if not ($bin | path exists) {
+        print $"Binary: not found at ($bin)"
         return
     }
 
-    # Read wrapper content
-    let wrapped = (open --raw $wrapper
-        | lines
-        | where {|l| $l | str contains 'exec'}
-        | first
-        | parse --regex 'exec "([^"]+)"'
-        | get capture0.0?
-        | default "unknown")
+    let file_type = (run-cmd {^file $bin})
+    if ($file_type | is-err) {
+        print $"Binary: cannot check type"
+        return
+    }
 
-    print $"Wrapper: ($wrapper)"
-    print $"  → wraps: ($wrapped)"
+    let is_script = ($file_type.value.stdout | str contains "script")
 
-    if ($wrapped != "unknown") and ($wrapped | path exists) {
-        let wrapped_date = (ls -l $wrapped | get modified.0 | format date "%Y-%m-%d %H:%M")
-        print $"  → binary: ($wrapped_date)"
+    if $is_script {
+        let wrapped = (open --raw $bin
+            | lines
+            | where {|l| $l | str contains 'exec'}
+            | first
+            | parse --regex 'exec "([^"]+)"'
+            | get capture0.0?
+            | default "unknown")
+
+        print $"Binary: ($bin) \(wrapper script\)"
+        print $"  → wraps: ($wrapped)"
+
+        if ($wrapped != "unknown") and ($wrapped | path exists) {
+            let wrapped_date = (ls -l $wrapped | get modified.0 | format date "%Y-%m-%d %H:%M")
+            print $"  → binary: ($wrapped_date)"
+        }
+    } else {
+        let bin_date = (ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M")
+        let deps = (run-cmd {^otool -L $bin})
+        let nix_deps = if ($deps | is-ok) {
+            $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length
+        } else {0}
+
+        print $"Binary: ($bin)"
+        print $"  → date: ($bin_date)"
+        print $"  → Nix dependencies: ($nix_deps)"
     }
 }
 
@@ -278,13 +316,13 @@ def doctor-darwin [] {
     let vhid_label = "org.pqrs.Karabiner-VirtualHIDDevice-Daemon"
     let config = $env.HOME | path join ".config/kanata/darwin.kbd"
 
-    # Show wrapper info before checking issues
-    show-wrapper-info $bin
+    # Show binary info before checking issues
+    show-binary-info $bin
     print ""
 
     # Collect all issues using applicative validation pattern
     let issues = (collect-issues [
-        {|| check-wrapper $bin}
+        {|| check-binary $bin}
         {|| check-sock-dir}
         {|| check-cfg $config}
         {|| check-vhid $vhid_label}
