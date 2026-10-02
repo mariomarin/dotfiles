@@ -119,19 +119,37 @@ def has-dyld-error [log: string]: nothing -> record {
     {has_error: true, lib: $lib}
 }
 
+def format-permission-issue [perm: string, bin: string, is_stale: bool, label: string]: nothing -> record {
+    let cmd = (restart-cmd $label)
+
+    if $is_stale {
+        let msg = [
+            $"($perm) permission has stale entry from older build"
+            $"Current binary: ($bin)"
+        ] | str join "\n"
+
+        let fix = [
+            $"System Settings → Privacy & Security → ($perm):"
+            $"  1. Remove old kanata entry \(find different path, click −\)"
+            $"  2. Add: ($bin) \(+, then ⌘⇧G to paste path\)"
+            $"  3. ($cmd)"
+        ] | str join "\n"
+
+        issue "permissions" "error" $msg $fix
+    } else {
+        let msg = $"($perm) not granted\nAdd: ($bin)"
+        let fix = $"System Settings → Privacy & Security → ($perm), add path \(+, ⌘⇧G\), then: ($cmd)"
+        issue "permissions" "error" $msg $fix
+    }
+}
+
 def check-permissions [bin: string, label: string]: nothing -> list<record> {
     let stale = (find-stale-permissions $bin)
     let denied = (find-denied-permissions "/tmp/kanata.err.log")
     let perms = $stale | append $denied | uniq
     if ($perms | is-empty) {return []}
 
-    let cmd = (restart-cmd $label)
-    $perms
-    | each {|perm|
-        let why = if $perm in $stale {"stale entry from an older build"} else {"not granted"}
-        let fix = $"System Settings → Privacy & Security → ($perm), add ($bin) \(+, paste path with ⌘⇧G\), then: ($cmd)"
-        issue "permissions" "error" $"($perm) permission denied \(($why)\)\nBinary path to add: ($bin)" $fix
-    }
+    $perms | each {|perm| format-permission-issue $perm $bin ($perm in $stale) $label}
 }
 
 def format-log-tail [log: string]: nothing -> list<string> {
