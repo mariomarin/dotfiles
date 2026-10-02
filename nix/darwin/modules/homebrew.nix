@@ -12,6 +12,7 @@ _:
       "bruno" # API testing GUI - nixpkgs version uses EOL electron
       "docker-desktop"
       "firefox" # Better macOS integration via homebrew
+      "macfuse" # Mount Linux filesystems (ext4, etc.) on macOS
     ];
   };
 }
