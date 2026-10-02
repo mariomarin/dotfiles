@@ -2,6 +2,8 @@
 # Service reload functions for chezmoi run_onchange scripts
 # Tracks checksums to only reload services whose configs changed
 
+use adt.nu [ok, err, is-ok, is-err, run-cmd]
+
 const STATE_FILE = "~/.cache/chezmoi-service-checksums.nuon"
 
 # Load previous checksums from state file
@@ -23,84 +25,82 @@ def has-changed [name: string, hash: string, state: record] {
 }
 
 # Check if process is running via pgrep
-def is-running-pgrep [process: string] {
-    (do { pgrep -x $process } | complete).exit_code == 0
+def is-running-pgrep [process: string]: nothing -> bool {
+    run-cmd {pgrep -x $process} | is-ok
 }
 
 # Reload a launchctl service (macOS)
-def reload-launchctl [service: string] {
+def reload-launchctl [service: string]: nothing -> record {
     let process = $service | split row "." | last
     if not (is-running-pgrep $process) {
-        return {ok: true, skipped: "not running"}
+        return (ok {skipped: "not running"})
     }
     let uid = id -u | str trim
-    let domain = if (do { sudo launchctl list $service } | complete).exit_code == 0 { "system" } else { $"gui/($uid)" }
-    let result = do { sudo launchctl kickstart -k $"($domain)/($service)" } | complete
-    if $result.exit_code != 0 {
-        return {ok: false, error: $result.stderr}
+    let is_system = (run-cmd {sudo launchctl list $service} | is-ok)
+    let domain = if $is_system {"system"} else {$"gui/($uid)"}
+    let result = (run-cmd {sudo launchctl kickstart -k $"($domain)/($service)"})
+    if ($result | is-err) {
+        return (err $result.error.stderr)
     }
-    {ok: true}
+    ok {}
 }
 
 # Reload a systemctl service (Linux)
-def reload-systemctl [service: string, --user] {
-    let scope = if $user { [--user] } else { [] }
-    let enabled = do { systemctl ...$scope is-enabled $service } | complete
-    if $enabled.exit_code != 0 { return {ok: true, skipped: "not enabled"} }
+def reload-systemctl [service: string, --user]: nothing -> record {
+    let scope = if $user {[--user]} else {[]}
+    let enabled = (run-cmd {systemctl ...$scope is-enabled $service})
+    if ($enabled | is-err) {return (ok {skipped: "not enabled"})}
 
     if $user {
-        do { systemctl --user daemon-reload } | complete | ignore
+        run-cmd {systemctl --user daemon-reload} | ignore
     }
 
     let result = if $user {
-        do { systemctl --user restart $service } | complete
+        run-cmd {systemctl --user restart $service}
     } else {
-        do { sudo systemctl restart $service } | complete
+        run-cmd {sudo systemctl restart $service}
     }
-    if $result.exit_code != 0 { return {ok: false, error: $result.stderr} }
-    {ok: true}
+    if ($result | is-err) {return (err $result.error.stderr)}
+    ok {}
 }
 
 # Reload a service by running a command (generic)
-def reload-command [check: string, reload: string, name: string] {
-    let running = do { nu -c $check } | complete
-    if $running.exit_code != 0 {
-        return {ok: true, skipped: "not running"}
+def reload-command [check: string, reload: string, name: string]: nothing -> record {
+    let running = (run-cmd {nu -c $check})
+    if ($running | is-err) {
+        return (ok {skipped: "not running"})
     }
-    let result = do { nu -c $reload } | complete
-    if $result.exit_code != 0 {
-        return {ok: false, error: $result.stderr}
+    let result = (run-cmd {nu -c $reload})
+    if ($result | is-err) {
+        return (err $result.error.stderr)
     }
-    {ok: true}
+    ok {}
 }
 
 # Reload Windows task-based service
-def reload-windows-task [task: string, exe: string] {
-    let running = do { tasklist /FI $"IMAGENAME eq ($exe)" /NH } | complete
-    if $running.exit_code != 0 or ($running.stdout | str contains "INFO:") {
-        return {ok: true, skipped: "not running"}
+def reload-windows-task [task: string, exe: string]: nothing -> record {
+    let running = (run-cmd {tasklist /FI $"IMAGENAME eq ($exe)" /NH})
+    if ($running | is-err) or ($running.value.stdout | str contains "INFO:") {
+        return (ok {skipped: "not running"})
     }
     taskkill /IM $exe /F | ignore
     sleep 1sec
 
-    let task_exists = (do { schtasks /Query /TN $task } | complete).exit_code == 0
-    if $task_exists {
-        let result = do { schtasks /Run /TN $task } | complete
-        if $result.exit_code != 0 {
-            return {ok: false, error: $result.stderr}
+    let task_check = (run-cmd {schtasks /Query /TN $task})
+    if ($task_check | is-ok) {
+        let result = (run-cmd {schtasks /Run /TN $task})
+        if ($result | is-err) {
+            return (err $result.error.stderr)
         }
     } else {
         let exe_path = $env.LOCALAPPDATA | path join "kanata" "kanata.exe"
         let config_path = $env.USERPROFILE | path join ".config" "kanata" "windows.kbd"
         if not ($exe_path | path exists) {
-            return {
-                ok: false
-                error: $"executable not found at ($exe_path)"
-            }
+            return (err $"executable not found at ($exe_path)")
         }
         conhost --headless $exe_path --cfg $config_path
     }
-    {ok: true}
+    ok {}
 }
 
 # Process a single service - reload if changed
@@ -118,18 +118,15 @@ def process-service [svc: record, state: record] {
         "systemctl" => { reload-systemctl $svc.service }
         "systemctl-user" => { reload-systemctl $svc.service --user }
         "command" => { reload-command $svc.check $svc.reload $name }
-        "windows-task" => { reload-windows-task $svc.task $svc.exe }
-        _ => { {
-            ok: false
-            error: $"unknown type: ($svc.type)"
-        } }
+        "windows-task" => {reload-windows-task $svc.task $svc.exe}
+        _ => {err $"unknown type: ($svc.type)"}
     }
 
-    if ($result | get -o "skipped" | is-not-empty) {
+    if ($result | is-ok) and ($result.value | get -o "skipped" | is-not-empty) {
         return {name: $name, hash: $hash}
     }
 
-    if not $result.ok {
+    if ($result | is-err) {
         print -e $"✗ ($name): ($result.error)"
         return {name: $name, hash: $prev_hash}
     }
