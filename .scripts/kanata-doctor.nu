@@ -154,7 +154,12 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
                 let lib = ($dyld.lib? | default "unknown library")
                 let exists = ($lib | path exists)
                 let msg = if $exists {
-                    $"crash-looping: dyld cannot load ($lib) - binary may be stale, check `ls -lh ($bin)` vs latest build"
+                    let bin_date = (ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M")
+                    let deps = (run-cmd {^otool -L $bin})
+                    let nix_deps = if ($deps | is-ok) {
+                        $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length
+                    } else {0}
+                    $"crash-looping: binary from ($bin_date) has ($nix_deps) Nix dependencies, dyld cannot load ($lib)\nLibrary exists but binary wasn't updated by last darwin-rebuild"
                 } else {
                     $"crash-looping: missing Nix dependency ($lib)"
                 }
@@ -171,7 +176,12 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
                 let lib = ($dyld.lib? | default "unknown library")
                 let exists = ($lib | path exists)
                 let msg = if $exists {
-                    $"failed to start: dyld cannot load ($lib) - binary may be stale, check `ls -lh ($bin)` vs latest build"
+                    let bin_date = (ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M")
+                    let deps = (run-cmd {^otool -L $bin})
+                    let nix_deps = if ($deps | is-ok) {
+                        $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length
+                    } else {0}
+                    $"failed to start: binary from ($bin_date) has ($nix_deps) Nix dependencies, dyld cannot load ($lib)\nLibrary exists but binary wasn't updated by last darwin-rebuild"
                 } else {
                     $"failed to start: missing Nix dependency ($lib)"
                 }
