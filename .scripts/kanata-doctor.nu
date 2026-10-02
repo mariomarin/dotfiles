@@ -205,18 +205,23 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
 }
 
 def doctor-darwin [] {
-    # Find kanata binary from launchd plist (it's in Nix store now)
-    let plist_bin = (run-cmd {^launchctl print system/org.nixos.kanata})
-    let bin = if ($plist_bin | is-ok) {
-        $plist_bin.value.stdout
-        | lines
-        | where {|l| $l | str contains "path ="}
-        | first
-        | parse "path = {path}"
-        | get path.0
-        | str trim
+    # Find kanata binary from launchd plist
+    let plist = "/Library/LaunchDaemons/org.nixos.kanata.plist"
+    let bin = if ($plist | path exists) {
+        let result = (run-cmd {^plutil -p $plist})
+        if ($result | is-ok) {
+            let lines = ($result.value.stdout | lines | where {|l| $l | str contains 'bin/kanata'})
+            if ($lines | is-not-empty) {
+                # Extract path from: 0 => "/nix/store/.../bin/kanata"
+                $lines | first | str replace --regex '.*"([^"]+)".*' '$1'
+            } else {
+                "/usr/local/bin/kanata"  # fallback
+            }
+        } else {
+            "/usr/local/bin/kanata"  # fallback
+        }
     } else {
-        "/nix/store/*/bin/kanata"  # fallback pattern
+        "/usr/local/bin/kanata"  # fallback
     }
     let vhid_label = "org.pqrs.Karabiner-VirtualHIDDevice-Daemon"
     let config = $env.HOME | path join ".config/kanata/darwin.kbd"
