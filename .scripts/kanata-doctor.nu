@@ -109,6 +109,16 @@ def has-no-devices [log: string]: nothing -> bool {
     open --raw $log | lines | last 5 | any {|l| $l | str contains "Couldn't register any device" }
 }
 
+def has-dyld-error [log: string]: nothing -> record {
+    if not ($log | path exists) { return {has_error: false} }
+    let lines = (open --raw $log | lines | last 10)
+    let dyld_line = ($lines | where {|l| $l | str contains "Library not loaded:"} | first)
+    if ($dyld_line | is-empty) { return {has_error: false} }
+
+    let lib = ($dyld_line | parse "Library not loaded: {path}" | get path.0? | default "")
+    {has_error: true, lib: $lib}
+}
+
 def check-permissions [bin: string, label: string]: nothing -> list<record> {
     let stale = (find-stale-permissions $bin)
     let denied = (find-denied-permissions "/tmp/kanata.err.log")
@@ -137,9 +147,25 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
     match $s.state {
         "not-loaded" => [(issue "kanata" "error" "kanata service not loaded" "just darwin")]
         "codesigning-killed" => [(issue "kanata" "error" "killed by codesigning" $"sudo codesign --force --sign - ($bin), then re-grant Input Monitoring")]
+        "running" | "spawn-scheduled" => {
+            # Service says running but might be crash-looping
+            let dyld = (has-dyld-error "/tmp/kanata.err.log")
+            if $dyld.has_error {
+                let lib = ($dyld.lib? | default "unknown library")
+                return [(issue "kanata" "error" $"crash-looping: missing Nix dependency ($lib)" "just darwin")]
+            }
+            []
+        }
         "stopped" => {
             let perm_issues = (check-permissions $bin $label)
             if ($perm_issues | is-not-empty) {return $perm_issues}
+
+            let dyld = (has-dyld-error "/tmp/kanata.err.log")
+            if $dyld.has_error {
+                let lib = ($dyld.lib? | default "unknown library")
+                return [(issue "kanata" "error" $"failed to start: missing Nix dependency ($lib)" "just darwin")]
+            }
+
             if (has-no-devices "/tmp/kanata.err.log") {
                 return [(issue "kanata" "error" "no configured keyboard connected" "compare `kanata --list` with macos-dev-names-include in ~/.config/kanata/darwin.kbd")]
             }
