@@ -6,8 +6,11 @@
 let
   # Wrapper script at stable path that execs Nix store binary
   # TCC permissions are granted to the wrapper (stable path)
-  # The wrapper sets environment and execs the real binary
+  # SIP blocks DYLD_* in launchd, but we can use DYLD_LIBRARY_PATH in the wrapper itself
+  # since the wrapper is what launchd runs, not a dyld-loaded binary
   kanataWrapper = pkgs.writeShellScript "kanata-wrapper" ''
+    # Set library path for Nix dependencies
+    export DYLD_FALLBACK_LIBRARY_PATH="/nix/store:''${DYLD_FALLBACK_LIBRARY_PATH:-}"
     exec "${pkgs-unstable.kanata}/bin/kanata" "$@"
   '';
   kanataStablePath = "/usr/local/bin/kanata";
