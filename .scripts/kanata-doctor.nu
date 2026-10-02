@@ -43,14 +43,37 @@ def restart-cmd [label: string]: nothing -> string {
     $"sudo launchctl kickstart -k system/($label)"
 }
 
-def check-bin [bin: string]: nothing -> list<record> {
-    if not ($bin | path exists) {
-        return [(issue "binary" "error" "binary missing" "just darwin")]
+def check-wrapper [wrapper: string]: nothing -> list<record> {
+    if not ($wrapper | path exists) {
+        return [(issue "wrapper" "error" "wrapper script missing" "just darwin")]
     }
-    let sig = (run-cmd {^codesign -d --verbose=2 $bin})
+
+    # Extract Nix store path from: exec "/nix/store/.../bin/kanata" "$@"
+    let wrapped_path = (open --raw $wrapper
+        | lines
+        | where {|l| $l | str contains 'exec'}
+        | first
+        | parse --regex 'exec "([^"]+)"'
+        | get capture0.0?
+        | default "")
+
+    if ($wrapped_path | is-empty) {
+        return [(issue "wrapper" "error" "cannot parse wrapped binary path" "just darwin")]
+    }
+
+    # Check if wrapped binary exists
+    if not ($wrapped_path | path exists) {
+        return [(issue "wrapper" "error" $"wrapper points to missing binary: ($wrapped_path)" "just darwin")]
+    }
+
+    # Check signature
+    let sig = (run-cmd {^codesign -d --verbose=2 $wrapped_path})
     if ($sig | is-ok) and ($sig.value.stderr | str contains "linker-signed") {
-        [(issue "binary" "error" "bad signature (linker-signed)" $"sudo codesign --force --sign - ($bin)")]
-    } else {[]}
+        return [(issue "wrapper" "error" $"wrapped binary has linker signature: ($wrapped_path)" $"sudo codesign --force --sign - ($wrapped_path)")]
+    }
+
+    # All good - return empty, but we could add info about what it wraps
+    []
 }
 
 def check-sock-dir []: nothing -> list<record> {
@@ -225,15 +248,43 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
     }
 }
 
+def show-wrapper-info [wrapper: string]: nothing -> nothing {
+    if not ($wrapper | path exists) {
+        print $"Wrapper: not found at ($wrapper)"
+        return
+    }
+
+    # Read wrapper content
+    let wrapped = (open --raw $wrapper
+        | lines
+        | where {|l| $l | str contains 'exec'}
+        | first
+        | parse --regex 'exec "([^"]+)"'
+        | get capture0.0?
+        | default "unknown")
+
+    print $"Wrapper: ($wrapper)"
+    print $"  → wraps: ($wrapped)"
+
+    if ($wrapped != "unknown") and ($wrapped | path exists) {
+        let wrapped_date = (ls -l $wrapped | get modified.0 | format date "%Y-%m-%d %H:%M")
+        print $"  → binary: ($wrapped_date)"
+    }
+}
+
 def doctor-darwin [] {
     # Kanata uses wrapper at stable path for TCC permissions
     let bin = "/usr/local/bin/kanata"
     let vhid_label = "org.pqrs.Karabiner-VirtualHIDDevice-Daemon"
     let config = $env.HOME | path join ".config/kanata/darwin.kbd"
 
+    # Show wrapper info before checking issues
+    show-wrapper-info $bin
+    print ""
+
     # Collect all issues using applicative validation pattern
     let issues = (collect-issues [
-        {|| check-bin $bin}
+        {|| check-wrapper $bin}
         {|| check-sock-dir}
         {|| check-cfg $config}
         {|| check-vhid $vhid_label}
