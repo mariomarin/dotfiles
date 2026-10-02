@@ -1,10 +1,31 @@
 #!/usr/bin/env nu
 # j - jj workflow helper (git-branchless ergonomics for jujutsu)
 
+# --- Functional core: Light ADT helpers ---
+
+# Result type helpers - functional core for error handling
+def ok [value: any]: nothing -> record<ok: bool, value: any> {
+  {ok: true, value: $value}
+}
+
+def err [error: string]: nothing -> record<ok: bool, error: string> {
+  {ok: false, error: $error}
+}
+
+def is-ok []: record -> bool {
+  $in.ok? == true
+}
+
+def is-err []: record -> bool {
+  not ($in | is-ok)
+}
+
+# --- Parsing and validation ---
+
 def parse-bookmark-lines []: list<string> -> list<record<value: string, description: string>> {
   $in
   | where {|l| not ($l | is-empty) }
-  | each {|b| { value: $b, description: "bookmark" } }
+  | each {|b| {value: $b, description: "bookmark"} }
 }
 
 def parse-revision-lines []: list<string> -> list<record<value: string, description: string>> {
@@ -12,16 +33,16 @@ def parse-revision-lines []: list<string> -> list<record<value: string, descript
   | where {|l| not ($l | is-empty) }
   | each {|l|
     let parts = ($l | split row " " --number 2)
-    { value: ($parts | first), description: ($parts | skip 1 | str join " " | default "") }
+    {value: ($parts | first), description: ($parts | skip 1 | str join " " | default "")}
   }
 }
 
 def run-or-fail [label: string, cmd: closure] {
   let result = (do $cmd | complete)
   if $result.exit_code != 0 {
-    if ($result.stdout | is-not-empty) { print -e $result.stdout }
-    if ($result.stderr | is-not-empty) { print -e $result.stderr }
-    error make { msg: $"($label) failed" }
+    if ($result.stdout | is-not-empty) {print -e $result.stdout}
+    if ($result.stderr | is-not-empty) {print -e $result.stderr}
+    error make {msg: $"($label) failed"}
   }
   $result
 }
@@ -35,12 +56,12 @@ def "nu-complete j revisions" [] {
   | lines | parse-revision-lines
 }
 
-# Resolve bookmark from current/parent state — returns record with result or error
+# Resolve bookmark from current/parent state
 def resolve-bookmark [current: string, is_empty_commit: bool, parent: string] {
-  if not ($current | is-empty) { return { ok: true, value: $current } }
-  if not $is_empty_commit { return { ok: false, error: "No bookmark found for @ (commit has changes)" } }
-  if not ($parent | is-empty) { return { ok: true, value: $parent } }
-  { ok: false, error: "No bookmark found for @ or @-" }
+  if not ($current | is-empty) {return (ok $current)}
+  if not $is_empty_commit {return (err "No bookmark found for @ (commit has changes)")}
+  if not ($parent | is-empty) {return (ok $parent)}
+  err "No bookmark found for @ or @-"
 }
 
 def get-current-bookmark [] {
@@ -49,7 +70,14 @@ def get-current-bookmark [] {
   let parent = (^jj log -r '@-' --no-graph -T 'bookmarks' err> /dev/null | str trim)
 
   let result = (resolve-bookmark $current $is_empty_commit $parent)
-  if $result.ok { $result.value } else { error make { msg: $result.error } }
+  if ($result | is-ok) {$result.value} else {error make {msg: $result.error}}
+}
+
+# Check if a revision is empty and has no description
+def is-empty-no-desc [revision: string]: nothing -> bool {
+  let empty = (^jj log -r $revision --no-graph -T 'if(empty, "true", "")' err> /dev/null | str trim) == "true"
+  let no_desc = (^jj log -r $revision --no-graph -T 'if(description, "", "true")' err> /dev/null | str trim) == "true"
+  $empty and $no_desc
 }
 
 # Revset for all local work above a base
@@ -208,9 +236,12 @@ def "main push" [
 
 # Set main bookmark and push via jj-hp
 def "main push-main" [] {
-  run-or-fail "Bookmark set" { ^jj bookmark set main }
-  let result = (run-or-fail "Push" { ^jj-hp push --bookmark main })
-  if ($result.stdout | is-not-empty) { print $result.stdout }
+  if (is-empty-no-desc "@") {
+    error make {msg: "Cannot move main to empty commit with no description"}
+  }
+  run-or-fail "Bookmark set" {^jj bookmark set main}
+  let result = (run-or-fail "Push" {^jj-hp push --bookmark main})
+  if ($result.stdout | is-not-empty) {print $result.stdout}
 }
 
 # Push directly via jj git push (no hooks)
