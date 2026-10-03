@@ -2,23 +2,8 @@
 # j - jj workflow helper (git-branchless ergonomics for jujutsu)
 
 # --- Functional core: Light ADT helpers ---
-
-# Result type helpers - functional core for error handling
-def ok [value: any]: nothing -> record<ok: bool, value: any> {
-  {ok: true, value: $value}
-}
-
-def err [error: string]: nothing -> record<ok: bool, error: string> {
-  {ok: false, error: $error}
-}
-
-def is-ok []: record -> bool {
-  $in.ok? == true
-}
-
-def is-err []: record -> bool {
-  not ($in | is-ok)
-}
+# Shared from adt.nu, deployed alongside this script by chezmoi.
+use adt.nu [ok, err, is-ok, is-err, run-cmd]
 
 # --- Parsing and validation ---
 
@@ -34,16 +19,6 @@ def parse-revision-lines []: list<string> -> list<record<value: string, descript
   | each {|l|
     let parts = ($l | split row " " --number 2)
     {value: ($parts | first), description: ($parts | skip 1 | str join " " | default "")}
-  }
-}
-
-# Run command and return Result - functional core
-def run-cmd [cmd: closure]: nothing -> record<ok: bool> {
-  let result = (do $cmd | complete)
-  if $result.exit_code == 0 {
-    ok {stdout: $result.stdout, stderr: $result.stderr}
-  } else {
-    err {stdout: $result.stdout, stderr: $result.stderr, code: $result.exit_code}
   }
 }
 
@@ -186,7 +161,7 @@ def "main pr" [
     if ($pr_check | is-ok) and not (($pr_check.value.stdout | str trim) | is-empty) {
       let push = (run-cmd {^jj git push --bookmark $bm --force})
       if ($push | is-err) {
-        print -e $"($bm): ($push.value.stderr)"
+        print -e $"($bm): ($push.error.stderr)"
         return $bm
       }
       if ($push.value.stdout | is-not-empty) {print $push.value.stdout}
@@ -203,7 +178,7 @@ def "main pr" [
       | if not ($extra | is-empty) {append $extra} else {$in})
     let create = (run-cmd {^gh ...$gh_args})
     if ($create | is-err) {
-      print -e $"($bm): ($create.value.stderr)"
+      print -e $"($bm): ($create.error.stderr)"
       return $bm
     }
     if ($create.value.stdout | is-not-empty) {print $create.value.stdout}

@@ -1,16 +1,27 @@
 # Tests for j (jj workflow helper)
 use std/assert
 
-const SCRIPT = "private_dot_local/bin/executable_j"
+# j imports its ADT helpers with `use adt.nu`, resolved relative to the script.
+# In the deployed layout chezmoi puts adt.nu beside j; in-source it only exists
+# as adt.nu.tmpl, so stage both into a tempdir to source j in isolation.
+def with-j [body: closure] {
+    let dir = (mktemp -d)
+    cp private_dot_local/bin/executable_j $"($dir)/j"
+    cp .scripts/adt.nu $"($dir)/adt.nu"
+    let result = (do $body $"($dir)/j")
+    rm -rf $dir
+    $result
+}
 
 def "test script parses" [] {
-    do { nu -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
+    let result = with-j {|j| do { nu -n -c $"source ($j)" } | complete }
+    assert equal $result.exit_code 0 $result.stderr
 }
 
 def "test has subcommands" [] {
-    let cmds = do {
-        nu -n -c $"source ($SCRIPT); scope commands | where name =~ 'main' | get name | to nuon"
-    } | complete | get stdout | str trim | from nuon
+    let cmds = with-j {|j|
+        do { nu -n -c $"source ($j); scope commands | where name =~ 'main' | get name | to nuon" } | complete
+    } | get stdout | str trim | from nuon
 
     [
         "main sync"
@@ -28,9 +39,10 @@ def "test has subcommands" [] {
 }
 
 def "test parse-bookmark-lines filters empty" [] {
-    let result = do {
-        nu -n -c 'source private_dot_local/bin/executable_j; ["feat-x" "" "fix-y"] | parse-bookmark-lines | to nuon'
-    } | complete
+    let result = with-j {|j|
+        let snippet = '["feat-x" "" "fix-y"] | parse-bookmark-lines | to nuon'
+        do { nu -n -c $"source ($j); ($snippet)" } | complete
+    }
     assert equal $result.exit_code 0
     let parsed = $result.stdout | str trim | from nuon
     assert equal ($parsed | length) 2
@@ -39,9 +51,10 @@ def "test parse-bookmark-lines filters empty" [] {
 }
 
 def "test parse-revision-lines" [] {
-    let result = do {
-        nu -n -c 'source private_dot_local/bin/executable_j; ["abc123 fix the thing" "def456 add feature" ""] | parse-revision-lines | to nuon'
-    } | complete
+    let result = with-j {|j|
+        let snippet = '["abc123 fix the thing" "def456 add feature" ""] | parse-revision-lines | to nuon'
+        do { nu -n -c $"source ($j); ($snippet)" } | complete
+    }
     assert equal $result.exit_code 0
     let parsed = $result.stdout | str trim | from nuon
     assert equal ($parsed | length) 2
@@ -52,9 +65,9 @@ def "test parse-revision-lines" [] {
 }
 
 def "test resolve-bookmark returns current when set" [] {
-    let result = do {
-        nu -n -c 'source private_dot_local/bin/executable_j; resolve-bookmark "my-branch" true "" | to nuon'
-    } | complete
+    let result = with-j {|j|
+        do { nu -n -c $"source ($j); resolve-bookmark \"my-branch\" true \"\" | to nuon" } | complete
+    }
     assert equal $result.exit_code 0
     let r = $result.stdout | str trim | from nuon
     assert equal $r.ok true
@@ -62,9 +75,9 @@ def "test resolve-bookmark returns current when set" [] {
 }
 
 def "test resolve-bookmark falls back to parent on empty commit" [] {
-    let result = do {
-        nu -n -c 'source private_dot_local/bin/executable_j; resolve-bookmark "" true "parent-bm" | to nuon'
-    } | complete
+    let result = with-j {|j|
+        do { nu -n -c $"source ($j); resolve-bookmark \"\" true \"parent-bm\" | to nuon" } | complete
+    }
     assert equal $result.exit_code 0
     let r = $result.stdout | str trim | from nuon
     assert equal $r.ok true
@@ -72,9 +85,9 @@ def "test resolve-bookmark falls back to parent on empty commit" [] {
 }
 
 def "test resolve-bookmark errors when commit has changes" [] {
-    let result = do {
-        nu -n -c 'source private_dot_local/bin/executable_j; resolve-bookmark "" false "parent-bm" | to nuon'
-    } | complete
+    let result = with-j {|j|
+        do { nu -n -c $"source ($j); resolve-bookmark \"\" false \"parent-bm\" | to nuon" } | complete
+    }
     assert equal $result.exit_code 0
     let r = $result.stdout | str trim | from nuon
     assert equal $r.ok false
@@ -82,9 +95,9 @@ def "test resolve-bookmark errors when commit has changes" [] {
 }
 
 def "test resolve-bookmark errors when nothing found" [] {
-    let result = do {
-        nu -n -c 'source private_dot_local/bin/executable_j; resolve-bookmark "" true "" | to nuon'
-    } | complete
+    let result = with-j {|j|
+        do { nu -n -c $"source ($j); resolve-bookmark \"\" true \"\" | to nuon" } | complete
+    }
     assert equal $result.exit_code 0
     let r = $result.stdout | str trim | from nuon
     assert equal $r.ok false

@@ -42,6 +42,13 @@ def main [...files: string] {
           return null
         }
 
+        # Skip j — imports a sibling adt.nu that exists only in the deployed
+        # layout (chezmoi generates it from .scripts/adt.nu). Parse-validated
+        # by test_j.nu, which stages adt.nu alongside it.
+        if $basename == "executable_j" {
+          return null
+        }
+
         let shebang = (
           try {
             open $path --raw | lines | first | default ""
