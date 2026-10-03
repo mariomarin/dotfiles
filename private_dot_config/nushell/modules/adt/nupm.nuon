@@ -1,0 +1,7 @@
+{
+    name: "adt"
+    version: "1.0.0"
+    description: "ADT-based error handling for Nushell: Result (railway), Validation (accumulating), Either"
+    type: "module"
+    license: "MIT"
+}
