@@ -1,5 +1,8 @@
 #!/usr/bin/env nu
-# Light ADT helpers - functional core for error handling
+# ADT-based error handling.
+# - Result: railway-oriented — flat-map/map/bimap short-circuit on err.
+# - Validation: applicative — combine/collect-issues accumulate all errors.
+# - Either: bare left/right tags.
 
 # Result type constructors
 export def ok [value: any]: nothing -> record<ok: bool, value: any> {
