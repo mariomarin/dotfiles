@@ -1,5 +1,3 @@
 #!/usr/bin/env nu
-# bitwarden hash: {{ include "private_dot_config/nushell/modules/bitwarden/nupm.nuon" | sha256sum }}
-# claude-helpers hash: {{ include "private_dot_config/nushell/modules/claude-helpers/nupm.nuon" | sha256sum }}
-# sesh hash: {{ include "private_dot_config/nushell/modules/sesh/nupm.nuon" | sha256sum }}
+# installer hash: {{ include ".scripts/nupm-install.nu" | sha256sum }}
 nu {{ joinPath .chezmoi.sourceDir ".scripts/nupm-install.nu" | quote }}

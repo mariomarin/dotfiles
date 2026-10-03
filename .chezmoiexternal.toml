@@ -1,0 +1,20 @@
+# Nushell package manager and test framework.
+# Cloned declaratively so they exist before the nupm-install script runs.
+# env.nu puts ~/.local/share/nupm/nupm on NU_LIB_DIRS (the nupm module dir).
+# git-repo externals need git in $PATH and are not shown by `chezmoi diff`;
+# nupm's runtime installs under ~/.local/share/nupm/modules are left to git.
+
+[".local/share/nupm"]
+    type = "git-repo"
+    url = "https://github.com/nushell/nupm.git"
+    refreshPeriod = "168h"
+    [".local/share/nupm".pull]
+        args = ["--ff-only"]
+
+# nutest is not in the nupm registry; nupm-install.nu installs it from this clone.
+[".cache/nutest-src"]
+    type = "git-repo"
+    url = "https://github.com/vyadh/nutest.git"
+    refreshPeriod = "168h"
+    [".cache/nutest-src".pull]
+        args = ["--ff-only"]
