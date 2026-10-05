@@ -3,7 +3,7 @@ _:
 {
   homebrew = {
     enable = true;
-    onActivation.cleanup = "zap"; # Remove unlisted casks
+    # No onActivation.cleanup: brew bundle --cleanup now requires --force
 
     # Only apps not available in nixpkgs or better via homebrew on macOS
     # NOTE: Karabiner-DriverKit-VirtualHIDDevice installed separately for kanata
