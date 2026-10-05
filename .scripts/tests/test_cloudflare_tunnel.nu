@@ -8,7 +8,7 @@ def "test script parses" [] {
 }
 
 def "test help output" [] {
-    let help = nu $SCRIPT | str lowercase
+    let help = nu $SCRIPT
     [
         "quick"
         "ssh"
@@ -16,7 +16,7 @@ def "test help output" [] {
         "url"
         "status"
         "stop"
-    ] | each {|term| assert str contains $help $term } | ignore
+    ] | each {|term| assert ($help | str contains -i $term) } | ignore
 }
 
 def "test parse-tunnel-url extracts url" [] {
