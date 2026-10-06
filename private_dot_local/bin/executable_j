@@ -71,6 +71,18 @@ def revset-local [base: string] {
   $"roots\(($base)..mutable\(\)\)"
 }
 
+# Mutable commits within scope that are not yet in base
+def local-work [base: string, scope: string]: nothing -> string {
+  $"\(($scope)\) & mutable\(\) & ~::\(($base)\)"
+}
+
+# Roots of local work sitting directly on base history.
+# `base..x` would also pull in immutable ancestors (e.g. pushed branches
+# tracked only remotely), so stacks on those are left in place.
+def sync-roots [base: string, scope: string]: nothing -> string {
+  $"roots\((local-work $base $scope)\) & children\(::\(($base)\)\)"
+}
+
 # Sync with remote: fetch + rebase all local work onto trunk
 def "main sync" [
   bookmark?: string@"nu-complete j bookmarks"  # Sync specific bookmark only
@@ -98,26 +110,22 @@ def "main sync" [
     }
   }
 
-  if ($bookmark | is-not-empty) {
-    run-or-fail "Rebase" { ^jj rebase -b $bookmark -d $base }
-    return
-  }
-
-  if $current {
-    run-or-fail "Rebase" { ^jj rebase -d $base }
-    return
-  }
-
-  let revset = if $mine {
-    $"roots\(($base)..mine\(\)\)"
+  let scope = if ($bookmark | is-not-empty) {
+    $"::\(($bookmark)\)"
+  } else if $current {
+    "::@"
+  } else if $mine {
+    "mine()"
   } else {
-    $"roots\(($base)..mutable\(\)\)"
+    "all()"
   }
 
-  run-or-fail "Rebase" { ^jj rebase -s $revset -d $base }
-  ^jj abandon $"($base)..mutable\(\) & empty\(\) & ~@" err> /dev/null
+  run-or-fail "Rebase" { ^jj rebase -s (sync-roots $base $scope) -d $base }
+  if ($bookmark | is-not-empty) or $current { return }
 
-  let conflicted = (^jj log -r $"($base)..mutable\(\) & conflicts\(\)" --no-graph -T 'change_id.short() ++ "\n"' err> /dev/null | lines | where {|l| not ($l | is-empty) })
+  ^jj abandon $"(local-work $base 'all()') & empty\(\) & ~@" err> /dev/null
+
+  let conflicted = (^jj log -r $"(local-work $base 'all()') & conflicts\(\)" --no-graph -T 'change_id.short() ++ "\n"' err> /dev/null | lines | where {|l| not ($l | is-empty) })
 
   if ($conflicted | length) > 0 {
     print -e $"($conflicted | length) conflict\(s\):"
