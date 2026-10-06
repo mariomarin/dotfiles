@@ -10,6 +10,14 @@
 # This is correct when tmux is always started from the same context it's
 # used in (SSH→SSH, local→local). If tmux was started locally and you
 # attach over SSH, none of these will be set — which is the right behavior.
+#
+# Input is handled as bytes end to end. nu types stdin by sniffing it (valid
+# UTF-8 → string, anything else → binary) and `decode utf-8` is lossy, so
+# decoding would corrupt non-UTF-8 input. Clipboard tools take bytes anyway.
+
+use adt.nu [ok, err, run-cmd, "result map", "result flat-map"]
+
+const CLIPPER_PORT = 8377
 
 def select-backend [env_flags: record<ssh: bool, macos: bool, wsl: bool, has_xclip: bool, has_wl_copy: bool>]: nothing -> string {
     if $env_flags.ssh { return "ssh" }
@@ -18,6 +26,19 @@ def select-backend [env_flags: record<ssh: bool, macos: bool, wsl: bool, has_xcl
     if $env_flags.has_xclip { return "xclip" }
     if $env_flags.has_wl_copy { return "wl-copy" }
     "none"
+}
+
+# Command line for a backend. pbcopy decodes stdin using the locale and falls
+# back to MacRoman without one (launchd, tmux run-shell), so pin it to UTF-8.
+def backend-argv [backend: string]: nothing -> record {
+    match $backend {
+        "ssh"      => (ok [nc -N localhost ($CLIPPER_PORT | into string)])
+        "pbcopy"   => (ok [env LC_CTYPE=UTF-8 pbcopy])
+        "clip.exe" => (ok [clip.exe])
+        "xclip"    => (ok [xclip -selection clipboard])
+        "wl-copy"  => (ok [wl-copy])
+        _          => (err "no clipboard backend found (pbcopy, clip.exe, xclip, wl-copy)")
+    }
 }
 
 def is-ssh []: nothing -> bool {
@@ -37,46 +58,34 @@ def has-cmd [cmd: string]: nothing -> bool {
     (which $cmd | is-not-empty)
 }
 
-# Decode raw bytes as UTF-8, or pass a value that is already a string through
-# unchanged. stdin and `open --raw` yield binary; decoding explicitly preserves
-# multibyte UTF-8 instead of mangling it the way `into string` on binary does.
-def into-utf8 []: any -> string {
-    let input = $in
-    match ($input | describe) {
-        "nothing" => ""
-        "binary" => ($input | decode utf-8)
-        _ => ($input | into string)
+# Normalize any input to bytes: strings become their UTF-8 encoding, binary
+# passes through untouched, nothing becomes empty.
+def to-bytes []: any -> binary {
+    match $in {
+        null => 0x[]
+        $input => ($input | into binary)
     }
 }
 
-def read-file [path: string]: nothing -> string {
-    if not ($path | path exists) {
-        error make {
-            msg: $"clip: file not found: ($path)"
-            label: {
-                text: "this path does not exist"
-                span: (metadata $path).span
-            }
-        }
+def read-file [path: string]: nothing -> record {
+    match ($path | path exists) {
+        true => (ok (open --raw $path | to-bytes))
+        false => (err $"file not found: ($path)")
     }
-    open --raw $path | into-utf8
 }
 
-def copy-via-ssh-tunnel [input: string]: nothing -> nothing {
-    let result = ($input | ^nc -N localhost 8377 | complete)
-
-    if $result.exit_code != 0 {
-        error make {
-            msg: $"clip: nc exited with code ($result.exit_code) — clipper may not be running or port 8377 is not forwarded"
-            label: {
-                text: "nc failed here"
-                span: (metadata $input).span
-            }
-        }
+def require-bytes []: binary -> record {
+    match $in {
+        $b if ($b | is-empty) => (err "no input provided (stdin was empty and no args given)")
+        $b => (ok $b)
     }
+}
 
-    if ($result.stderr | is-not-empty) {
-        print --stderr $"clip: nc stderr: ($result.stderr)"
+# Bytes from args: first arg as a file if it exists, else args as text
+def read-args [args: list<string>]: nothing -> record {
+    match $args {
+        [$path, ..] if ($path | path exists) => (read-file $path)
+        _ => (ok ($args | str join " " | to-bytes))
     }
 }
 
@@ -90,20 +99,27 @@ def resolve-backend []: nothing -> string {
     }
 }
 
-def copy-to-clipboard [input: string, backend: string]: nothing -> nothing {
-    match $backend {
-        "ssh"      => { copy-via-ssh-tunnel $input }
-        "pbcopy"   => { $input | ^pbcopy }
-        "clip.exe" => { $input | ^clip.exe }
-        "xclip"    => { $input | ^xclip -selection clipboard }
-        "wl-copy"  => { $input | ^wl-copy }
-        "none"     => {
-            error make {
-                msg: "clip: no clipboard backend found"
-                label: {
-                    text: "none of: pbcopy, clip.exe, xclip, wl-copy found in PATH"
-                    span: (metadata $input).span
-                }
+# Human-readable message for a failed run-cmd
+def describe-failure [cmd: string, failure: record]: nothing -> string {
+    let hint = match $cmd {
+        "nc" => $" — clipper may not be running or port ($CLIPPER_PORT) is not forwarded"
+        _ => ""
+    }
+    let detail = match ($failure.stderr | str trim) {
+        "" => ""
+        $stderr => $": ($stderr)"
+    }
+    $"($cmd) exited with code ($failure.code)($hint)($detail)"
+}
+
+# Pipe bytes into argv, reporting failures as a message
+def copy-bytes [bytes: binary, argv: list<string>]: nothing -> record {
+    match $argv {
+        [$cmd, ..] if not (has-cmd $cmd) => (err $"($cmd) not found in PATH")
+        [$cmd, ..$rest] => {
+            match (run-cmd { $bytes | ^$cmd ...$rest }) {
+                {ok: true} => (ok null)
+                {error: $failure} => (err (describe-failure $cmd $failure))
             }
         }
     }
@@ -113,26 +129,19 @@ export def main [
     --verbose (-v)  # Print the backend being used
     ...args: string # File path or literal text; omit to read stdin
 ] {
-    let input = if ($args | is-not-empty) {
-        let first = $args.0
-        if ($first | path exists) {
-            read-file $first
-        } else {
-            $args | str join " "
-        }
-    } else {
-        $in | into-utf8
-    }
-
-    if ($input | is-empty) {
-        error make { msg: "clip: no input provided (stdin was empty and no args given)" }
-    }
-
     let backend = resolve-backend
+    if $verbose { print $"clip: using ($backend)" }
 
-    if $verbose {
-        print $"clip: using ($backend)"
+    # Read stdin only without args: otherwise a piped-but-open stdin blocks.
+    # An `if`, not `match`: `$in` in a match arm hits a nu 0.115 IR bug.
+    let input = if ($args | is-empty) { ok ($in | to-bytes) } else { read-args $args }
+    let result = ($input
+        | result flat-map {|bytes| $bytes | require-bytes }
+        | result flat-map {|bytes| backend-argv $backend | result map {|argv| {bytes: $bytes, argv: $argv} } }
+        | result flat-map {|job| copy-bytes $job.bytes $job.argv })
+
+    match $result {
+        {ok: true} => null
+        {error: $message} => (error make --unspanned { msg: $"clip: ($message)" })
     }
-
-    copy-to-clipboard $input $backend
 }
