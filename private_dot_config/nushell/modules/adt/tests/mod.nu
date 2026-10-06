@@ -61,14 +61,14 @@ def "result unwrap-or returns default on error" [] {
 
 @test
 def "run-cmd success" [] {
-    let result = (run-cmd {echo "test"})
+    let result = (run-cmd {^echo "test"})
     assert ($result | is-ok)
     assert ($result.value.stdout | str contains "test")
 }
 
 @test
 def "run-cmd failure" [] {
-    let result = (run-cmd {false})
+    let result = (run-cmd {^false})
     assert ($result | is-err)
     assert ($result.error.code != 0)
 }
@@ -133,7 +133,7 @@ def "validation combine accumulates errors" [] {
     ]
     let result = (-5 | validation combine $validators)
     assert ($result | is-invalid)
-    assert ($result.errors | str contains "must be positive")
+    assert ("must be positive" in $result.errors)
 }
 
 @test

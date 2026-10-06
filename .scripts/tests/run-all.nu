@@ -3,7 +3,6 @@
 
 def main [] {
     let test_files = [
-        ".scripts/tests/test_adt.nu"
         ".scripts/tests/test_kanata_doctor.nu"
         ".scripts/tests/test_integration.nu"
     ]
