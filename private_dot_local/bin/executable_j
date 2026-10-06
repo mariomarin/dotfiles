@@ -68,11 +68,6 @@ def is-empty-no-desc [revision: string]: nothing -> bool {
   $empty and $no_desc
 }
 
-# Revset for all local work above a base
-def revset-local [base: string] {
-  $"roots\(($base)..mutable\(\)\)"
-}
-
 # --- Sync: revsets (pure) ---
 
 # Revset scope selected by sync arguments

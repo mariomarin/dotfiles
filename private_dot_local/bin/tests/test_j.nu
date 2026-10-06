@@ -103,3 +103,101 @@ def "test resolve-bookmark errors when nothing found" [] {
     assert equal $r.ok false
     assert ($r.error | str contains "No bookmark found")
 }
+
+# Evaluate a snippet with j sourced; returns the `complete` record
+def j-eval [snippet: string]: nothing -> record {
+    with-j {|j| do { nu -n -c $"source ($j); ($snippet)" } | complete }
+}
+
+def "test sync-scope defaults to all" [] {
+    assert equal (j-eval 'sync-scope' | get stdout | str trim) "all()"
+}
+
+def "test sync-scope bookmark wins over flags" [] {
+    assert equal (j-eval 'sync-scope feat --current --mine' | get stdout | str trim) "::(feat)"
+}
+
+def "test sync-scope current and mine" [] {
+    assert equal (j-eval 'sync-scope --current' | get stdout | str trim) "::@"
+    assert equal (j-eval 'sync-scope --mine' | get stdout | str trim) "mine()"
+}
+
+def "test local-work excludes immutable and base" [] {
+    let r = (j-eval 'local-work "trunk()" "all()"' | get stdout | str trim)
+    assert equal $r "(all()) & mutable() & ~::(trunk())"
+}
+
+def "test sync-roots avoids range operator" [] {
+    let r = (j-eval 'sync-roots "trunk()" "W"' | get stdout | str trim)
+    assert equal $r "roots(W) & children(::(trunk()))"
+    # `base..x` pulls in immutable ancestors of x
+    assert not ($r | str contains "..")
+}
+
+def "test run-or-fail returns stdout on success" [] {
+    let r = (j-eval 'run-or-fail "Echo" { ^echo hi } | get stdout | str trim')
+    assert equal ($r.stdout | str trim) "hi"
+}
+
+def "test run-or-fail raises labelled error" [] {
+    let r = (j-eval 'run-or-fail "Boom" { ^false }')
+    assert not equal $r.exit_code 0
+    assert ($r.stderr | str contains "Boom failed")
+}
+
+def "test warn-err prints only on err" [] {
+    assert equal (j-eval '{ok: true, value: {}} | warn-err "step"' | get stderr) ""
+    let r = (j-eval '{ok: false, error: {stderr: "bad\n"}} | warn-err "step"')
+    assert ($r.stderr | str contains "warning: step failed: bad")
+}
+
+# Run jj inside a repo dir; flags pass through untouched
+def --wrapped jj-in [repo: string, ...args: string]: nothing -> record {
+    do { cd $repo; ^jj ...$args } | complete
+}
+
+def exact [d: string]: nothing -> string { $"description\(exact:\"($d)\n\"\)" }
+
+# Integration: sync must not touch immutable side branches (remote-only bookmarks)
+def "test sync leaves stacks on immutable branches" [] {
+    if (which jj | is-empty) { return }
+    let repo = (mktemp -d)
+    jj-in $repo git init . | ignore
+    jj-in $repo config set --repo user.name t | ignore
+    jj-in $repo config set --repo user.email t@t | ignore
+    jj-in $repo config set --repo 'revset-aliases."trunk()"' 'present(main)' | ignore
+    jj-in $repo config set --repo 'revset-aliases."immutable_heads()"' 'trunk() | present(side)' | ignore
+
+    # A ── B(side, immutable) ── C
+    #  ├── D            (moves)
+    #  ├── E            (conflicts with A2 on f)
+    #  ├── EMPTY        (abandoned)
+    #  └── A2(main)
+    jj-in $repo describe -m A | ignore; "a" | save $"($repo)/f"
+    jj-in $repo new -m B | ignore; "b" | save $"($repo)/b"
+    jj-in $repo bookmark create side -r @ | ignore
+    jj-in $repo new -m C | ignore; "c" | save $"($repo)/c"
+    jj-in $repo new (exact A) -m D | ignore; "d" | save $"($repo)/d"
+    jj-in $repo new (exact A) -m E | ignore; "e" | save -f $"($repo)/f"
+    jj-in $repo new (exact A) -m EMPTY | ignore
+    jj-in $repo new (exact A) -m A2 | ignore; "a2" | save -f $"($repo)/f"
+    jj-in $repo bookmark create main -r @ | ignore
+    jj-in $repo new main | ignore
+
+    let sync = with-j {|j| do { cd $repo; ^nu -n $j sync --no-pull } | complete }
+    let parent = {|d| jj-in $repo log -r $"(exact $d)-" --no-graph -T 'description.first_line()' | get stdout }
+    let state = {
+        c: (do $parent C)
+        d: (do $parent D)
+        e_conflict: (jj-in $repo log -r $"(exact E) & conflicts\(\)" --no-graph -T '"y"' | get stdout)
+        empty: (jj-in $repo log -r (exact EMPTY) --no-graph -T '"y"' | get stdout)
+    }
+    rm -rf $repo
+
+    assert equal $sync.exit_code 0 $sync.stderr
+    assert equal $state.c "B" "stack on immutable branch must stay put"
+    assert equal $state.d "A2" "local work on old trunk must move"
+    assert equal $state.e_conflict "y"
+    assert equal $state.empty "" "empty commits are abandoned"
+    assert ($sync.stderr | str contains "1 conflict(s)")
+}
