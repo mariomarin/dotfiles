@@ -54,6 +54,8 @@ in
       serviceConfig = {
         Label = "org.local.clipper";
         ProgramArguments = [ "${pkgs.clipper}/bin/clipper" "--address" "127.0.0.1" "--port" "8377" ];
+        # pbcopy decodes stdin as MacRoman without a UTF-8 locale
+        EnvironmentVariables.LC_CTYPE = "UTF-8";
         KeepAlive = true;
         RunAtLoad = true;
         ProcessType = "Background";
