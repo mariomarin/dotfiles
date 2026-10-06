@@ -3,7 +3,7 @@ use std assert
 
 # Test has-dyld-error function by creating mock log files
 
-def setup_test_log [content: string]: string -> string {
+def setup_test_log [content: string]: nothing -> string {
     let test_log = $"/tmp/test-kanata-($env.PWD | path basename)-($content | hash md5).log"
     $content | save -f $test_log
     $test_log
@@ -19,8 +19,8 @@ export def "test dyld error detection with library not loaded" [] {
     # Test the has-dyld-error function inline
     let result = (nu -c $'
         source .scripts/kanata-doctor.nu
-        has-dyld-error "($log)"
-    ')
+        has-dyld-error "($log)" | to nuon
+    ' | from nuon)
 
     assert ($result.has_error == true)
     assert ($result.lib | str contains "libiconv")
@@ -37,8 +37,8 @@ connect_failed asio.system:61"
 
     let result = (nu -c $'
         source .scripts/kanata-doctor.nu
-        has-dyld-error "($log)"
-    ')
+        has-dyld-error "($log)" | to nuon
+    ' | from nuon)
 
     assert ($result.has_error == false)
 
@@ -48,8 +48,8 @@ connect_failed asio.system:61"
 export def "test dyld error detection with missing log" [] {
     let result = (nu -c '
         source .scripts/kanata-doctor.nu
-        has-dyld-error "/tmp/nonexistent-kanata-test.log"
-    ')
+        has-dyld-error "/tmp/nonexistent-kanata-test.log" | to nuon
+    ' | from nuon)
 
     assert ($result.has_error == false)
 }
@@ -63,8 +63,8 @@ More logs"
 
     let result = (nu -c $'
         source .scripts/kanata-doctor.nu
-        has-dyld-error "($log)"
-    ')
+        has-dyld-error "($log)" | to nuon
+    ' | from nuon)
 
     assert ($result.has_error == true)
     assert ($result.lib == "/nix/store/abc123-foo/lib/libfoo.dylib")
@@ -81,8 +81,8 @@ failed to start"
 
     let result = (nu -c $'
         source .scripts/kanata-doctor.nu
-        has-no-devices "($log)"
-    ')
+        has-no-devices "($log)" | to nuon
+    ' | from nuon)
 
     assert ($result == true)
 
@@ -98,8 +98,8 @@ device registered"
 
     let result = (nu -c $'
         source .scripts/kanata-doctor.nu
-        has-no-devices "($log)"
-    ')
+        has-no-devices "($log)" | to nuon
+    ' | from nuon)
 
     assert ($result == false)
 
