@@ -3,7 +3,7 @@
 
 # --- Functional core: Light ADT helpers ---
 # Shared from adt.nu, deployed alongside this script by chezmoi.
-use adt.nu [ok, err, is-ok, is-err, run-cmd]
+use adt.nu [ok, err, is-ok, is-err, run-cmd, "result map", "result flat-map", "result unwrap-or"]
 
 # --- Parsing and validation ---
 
@@ -24,13 +24,15 @@ def parse-revision-lines []: list<string> -> list<record<value: string, descript
 
 # Run command or fail - imperative shell for side effects
 def run-or-fail [label: string, cmd: closure] {
-  let result = (do $cmd | complete)
-  if $result.exit_code != 0 {
-    if ($result.stdout | is-not-empty) {print -e $result.stdout}
-    if ($result.stderr | is-not-empty) {print -e $result.stderr}
-    error make {msg: $"($label) failed"}
-  }
-  $result
+  let result = (run-cmd $cmd)
+  if ($result | is-ok) {return $result.value}
+  [$result.error.stdout $result.error.stderr] | where {|s| $s | is-not-empty} | each {|s| print -e $s} | ignore
+  error make {msg: $"($label) failed"}
+}
+
+# Print a failed Result as a warning; sync tidy-up steps are best effort
+def warn-err [label: string]: record -> nothing {
+  if ($in | is-err) {print -e $"warning: ($label) failed: ($in.error.stderr | str trim)"}
 }
 
 def "nu-complete j bookmarks" [] {
@@ -71,6 +73,16 @@ def revset-local [base: string] {
   $"roots\(($base)..mutable\(\)\)"
 }
 
+# --- Sync: revsets (pure) ---
+
+# Revset scope selected by sync arguments
+def sync-scope [bookmark?: string, --current, --mine]: nothing -> string {
+  if ($bookmark | is-not-empty) {return $"::\(($bookmark)\)"}
+  if $current {return "::@"}
+  if $mine {return "mine()"}
+  "all()"
+}
+
 # Mutable commits within scope that are not yet in base
 def local-work [base: string, scope: string]: nothing -> string {
   $"\(($scope)\) & mutable\(\) & ~::\(($base)\)"
@@ -79,8 +91,34 @@ def local-work [base: string, scope: string]: nothing -> string {
 # Roots of local work sitting directly on base history.
 # `base..x` would also pull in immutable ancestors (e.g. pushed branches
 # tracked only remotely), so stacks on those are left in place.
-def sync-roots [base: string, scope: string]: nothing -> string {
-  $"roots\((local-work $base $scope)\) & children\(::\(($base)\)\)"
+def sync-roots [base: string, work: string]: nothing -> string {
+  $"roots\(($work)\) & children\(::\(($base)\)\)"
+}
+
+# --- Sync: effects (Results) ---
+
+# Change ids matching a revset
+def change-ids [revset: string]: nothing -> record {
+  run-cmd {^jj log -r $revset --no-graph -T 'change_id.short() ++ "\n"'}
+  | result map {|out| $out.stdout | lines | where {|l| $l | is-not-empty}}
+}
+
+# Remote jj-spr tracking branches, if this repo uses jj-spr
+def find-spr-branches []: nothing -> record {
+  run-cmd {^jj config get --repo spr.githubRepository}
+  | result flat-map {|out|
+    if ($out.stdout | str trim | is-empty) {return (ok [])}
+    run-cmd {^git branch -r}
+    | result map {|br| $br.stdout | lines | str trim | where {|b| $b | str starts-with "origin/spr/"}}
+  }
+}
+
+# Delete stale jj-spr tracking branches and re-import refs
+def prune-spr-branches []: nothing -> nothing {
+  let branches = (find-spr-branches | result unwrap-or [])
+  if ($branches | is-empty) {return}
+  $branches | each {|b| run-cmd {^git branch -rD $b} | warn-err $"delete ($b)"} | ignore
+  run-cmd {^jj git import} | warn-err "jj git import"
 }
 
 # Sync with remote: fetch + rebase all local work onto trunk
@@ -95,42 +133,19 @@ def "main sync" [
     run-or-fail "Fetch" { ^jj git fetch --all-remotes }
   }
 
-  # Remove stale jj-spr tracking branches
-  let spr_check = (run-cmd {^jj config get --repo spr.githubRepository})
-  if ($spr_check | is-ok) and not (($spr_check.value.stdout | str trim) | is-empty) {
-    let branches = (run-cmd {^git branch -r})
-    if ($branches | is-ok) {
-      $branches.value.stdout | lines
-      | str trim
-      | where {|b| $b | str starts-with "origin/spr/"}
-      | each {|b| run-cmd {^git branch -rD $b}; null}
-      | ignore
+  prune-spr-branches
 
-      run-cmd {^jj git import} | ignore
-    }
-  }
+  let work = (local-work $base (sync-scope $bookmark --current=$current --mine=$mine))
+  run-or-fail "Rebase" { ^jj rebase -s (sync-roots $base $work) -d $base }
+  run-cmd {^jj abandon $"($work) & empty\(\) & ~@"} | warn-err "abandon empty commits"
 
-  let scope = if ($bookmark | is-not-empty) {
-    $"::\(($bookmark)\)"
-  } else if $current {
-    "::@"
-  } else if $mine {
-    "mine()"
-  } else {
-    "all()"
-  }
+  let conflicts = (change-ids $"($work) & conflicts\(\)")
+  $conflicts | warn-err "conflict check"
+  let conflicted = ($conflicts | result unwrap-or [])
+  if ($conflicted | is-empty) {return}
 
-  run-or-fail "Rebase" { ^jj rebase -s (sync-roots $base $scope) -d $base }
-  if ($bookmark | is-not-empty) or $current { return }
-
-  ^jj abandon $"(local-work $base 'all()') & empty\(\) & ~@" err> /dev/null
-
-  let conflicted = (^jj log -r $"(local-work $base 'all()') & conflicts\(\)" --no-graph -T 'change_id.short() ++ "\n"' err> /dev/null | lines | where {|l| not ($l | is-empty) })
-
-  if ($conflicted | length) > 0 {
-    print -e $"($conflicted | length) conflict\(s\):"
-    ^jj log -r ($conflicted | str join " | ")
-  }
+  print -e $"($conflicted | length) conflict\(s\):"
+  ^jj log -r ($conflicted | str join " | ")
 }
 
 # Land PR via jj-spr and sync
