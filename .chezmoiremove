@@ -2,3 +2,4 @@
 # Managed by chezmoi - these files will be deleted when running chezmoi apply
 
 .config/nvim/lua/plugins/clipboard.lua
+.local/bin/hastepaste
