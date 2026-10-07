@@ -1,0 +1,30 @@
+{{- if lookPath "atuin" -}}
+# Atuin integration for nushell. chezmoi renders `atuin init nu` at apply time
+# so the hooks match the installed atuin; keybindings follow (init adds none).
+
+{{ output "atuin" "init" "nu" | trim }}
+# Keybindings to match zsh vi-mode atuin configuration
+$env.config = (
+    $env.config | upsert keybindings (
+        $env.config.keybindings
+        | append [
+            # Ctrl+R: Full interactive search in all modes
+            {
+                name: atuin_search
+                modifier: control
+                keycode: char_r
+                mode: [emacs, vi_normal, vi_insert]
+                event: { send: executehostcommand cmd: (_atuin_search_cmd) }
+            }
+            # Up arrow: Prefix search (like zsh up-arrow with atuin)
+            {
+                name: atuin_up_search
+                modifier: none
+                keycode: up
+                mode: [emacs, vi_normal, vi_insert]
+                event: { send: executehostcommand cmd: (_atuin_search_cmd '--shell-up-key-binding') }
+            }
+        ]
+    )
+)
+{{- end }}
