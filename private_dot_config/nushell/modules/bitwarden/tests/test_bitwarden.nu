@@ -13,12 +13,6 @@ def bw-eval [snippet: string, --cwd: string]: nothing -> any {
 }
 
 @test
-def "mod.nu parses" [] {
-    let result = do { ^$nu.current-exe -n -c $"source ($MOD)" } | complete
-    assert equal $result.exit_code 0 $result.stderr
-}
-
-@test
 def "stored session round-trips through .env.local" [] {
     let dir = (mktemp -d)
     assert equal (bw-eval --cwd $dir "get_stored_session") null

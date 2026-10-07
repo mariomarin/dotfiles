@@ -6,3 +6,5 @@
 .config/nushell/modules/adt/tests/mod.nu
 .config/nushell/nupm
 .config/nushell/modules/bitwarden/tests/mod.nu
+.config/nushell/modules/claude-helpers/tests
+.config/nushell/modules/sesh/tests

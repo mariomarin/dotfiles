@@ -15,3 +15,12 @@ def "test all scripts parse" [] {
     }
     | ignore
 }
+
+def "test all nushell modules parse" [] {
+    glob "private_dot_config/nushell/modules/{*/mod.nu,*.nu}"
+    | each { |module|
+        let result = do { nu -n -c $"source ($module)" } | complete
+        assert equal $result.exit_code 0 $"($module): ($result.stderr)"
+    }
+    | ignore
+}
