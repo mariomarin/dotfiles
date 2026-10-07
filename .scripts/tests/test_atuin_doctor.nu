@@ -118,10 +118,10 @@ def "test version-issues" [] {
     assert equal (doctor-eval "version-issues 18.21.0 18.21.0") []
 }
 
-def "test parse-status-address" [] {
-    let out = "Atuin v18.21.0\n\n[Remote]\nAddress: http://localhost:8888/\nUsername: someone"
-    assert equal (doctor-eval $"($out | to nuon) | parse-status-address") "http://localhost:8888"
-    assert equal (doctor-eval "'[Local]' | parse-status-address") null
+def "test resolve-sync-address precedence" [] {
+    assert equal (doctor-eval "resolve-sync-address http://env:8888/ http://cfg:8888") {addr: "http://env:8888", source: "$ATUIN_SYNC_ADDRESS"}
+    assert equal (doctor-eval "resolve-sync-address '' http://cfg:8888").source "sync_address in config.toml"
+    assert equal (doctor-eval "resolve-sync-address").addr "https://api.atuin.sh"
 }
 
 def "test summarize-problems dedupes and counts" [] {

@@ -3,7 +3,7 @@
 # where the atuin-server user unit exists, the server (state, journal).
 # Silent when healthy; prints `atuin:` issues and exits 1 otherwise.
 
-use adt.nu [ok, err, run-cmd, collect-issues, "result map", "result flat-map", "result unwrap-or"]
+use adt.nu [ok, err, run-cmd, collect-issues, "result map", "result flat-map", "result unwrap-or", "result bimap"]
 
 const SERVER_UNIT = "atuin-server.service"
 # Window of log history worth reporting (atuin keeps 4 days of client logs)
@@ -107,12 +107,14 @@ def version-issues [client: string, server: string]: nothing -> list<record> {
     }
 }
 
-# `Address: http://localhost:8888/` from `atuin status`
-def parse-status-address []: string -> any {
-    match ($in | parse --regex '(?m)^Address:\s*(?<addr>\S+)') {
-        [{addr: $a}] => ($a | str trim --right --char "/")
-        _ => null
+# Sync server the way atuin picks it: env, then config.toml, then default
+def resolve-sync-address [env_value?: string, config_value?: string]: nothing -> record {
+    match [$env_value $config_value] {
+        [$e, _] if ($e | is-not-empty) => {addr: $e, source: "$ATUIN_SYNC_ADDRESS"}
+        [_, $c] if ($c | is-not-empty) => {addr: $c, source: "sync_address in config.toml"}
+        _ => {addr: "https://api.atuin.sh", source: "atuin default"}
     }
+    | update addr {|r| $r.addr | str trim --right --char "/" }
 }
 
 # Latest occurrence of each distinct problem, newest last
@@ -159,24 +161,25 @@ def check-sync [now: datetime]: nothing -> list<record> {
 
 def server-version [addr: string]: nothing -> record {
     run-cmd {^curl -fsS -m 5 $"($addr)/"}
-    | result flat-map {|out| match (try { $out.stdout | from json } catch { null }) {
+    | result bimap {|out| $out.stdout } {|failure| $failure.stderr | str trim }
+    | result flat-map {|body| match (try { $body | from json } catch { null }) {
         {version: $v} => (ok $v)
         _ => (err $"unexpected response from ($addr)")
     } }
 }
 
 def check-server-reachable []: nothing -> list<record> {
-    let status = (run-cmd {^atuin status})
-    let addr = ($status | result map {|out| $out.stdout | parse-status-address } | result unwrap-or null)
-    if $addr == null { return [(issue "sync" "error" "atuin status failed or shows no server address" "atuin status")] }
+    let config = ($env.HOME | path join ".config" "atuin" "config.toml")
+    let configured = if ($config | path exists) { open $config | get -o sync_address } else { null }
+    let sync = (resolve-sync-address $env.ATUIN_SYNC_ADDRESS? $configured)
 
     let client = (run-cmd {^atuin --version} | result map {|out| $out.stdout | parse --regex '(?<v>\d+\.\d+\.\d+)' | get 0.v } | result unwrap-or "")
-    match (server-version $addr) {
+    match (server-version $sync.addr) {
         {ok: true, value: $server} => (version-issues $client $server)
         {error: $e} => {
-            let local = ($addr =~ '//(localhost|127\.0\.0\.1)[:/]')
-            let fix = if $local and not (has-server-unit) { "start the SSH tunnel that forwards port 8888" } else { server-hint }
-            [(issue "sync" "error" $"server ($addr) unreachable: ($e | to text | str trim)" $fix)]
+            let local = ($sync.addr =~ '//(localhost|127\.0\.0\.1)[:/]')
+            let fix = if $local and not (has-server-unit) { "start the SSH tunnel that forwards port 8888" } else { $"check ($sync.source)" }
+            [(issue "sync" "error" $"server ($sync.addr) \(from ($sync.source)\) unreachable: ($e)" $fix)]
         }
     }
 }
