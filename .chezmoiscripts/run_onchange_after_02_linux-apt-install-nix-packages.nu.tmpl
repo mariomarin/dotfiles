@@ -1,6 +1,13 @@
 #!/usr/bin/env nu
 # hash: {{ include "nix/common/modules/cli-tools.nix" | sha256sum }}
 # hash: {{ include "nix/nixos/flake.nix" | sha256sum }}
+# hash: {{ include "nix/nixos/flake.lock" | sha256sum }}
+# hash: {{ include "nix/common/modules/cli-tools-pkgs.nix" | sha256sum }}
 cd {{ joinPath .chezmoi.sourceDir "nix/nixos" | quote }}
 $env.ATUIN_NOBIND = "true"
 nu nixos.nu linux-apt ribosome
+
+# atuin-server runs from ribosome-env: restart it onto the rebuilt binary
+if (do { ^systemctl --user is-active --quiet atuin-server.service } | complete).exit_code == 0 {
+    ^systemctl --user restart atuin-server.service
+}
