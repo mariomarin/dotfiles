@@ -4,22 +4,62 @@
 # Over SSH: forwards to xdg-open-svc on Mac via tunnel (port 2226)
 # Local: uses native opener
 #
-# Same SSH_TTY caveat as clip: reflects tmux server start context.
+# Same SSH detection as clip, with its caveat: reflects tmux server start context.
+
+use adt.nu [ok, err, run-cmd]
+
+const OPEN_SVC_PORT = 2226
 
 def select-opener [ssh: bool, macos: bool, wsl: bool]: nothing -> string {
     if $ssh { "nc" } else if $macos { "open" } else if $wsl { "wslview" } else { "xdg-open" }
+}
+
+def is-ssh []: nothing -> bool {
+    [SSH_TTY SSH_CONNECTION SSH_CLIENT]
+    | any {|key| ($env | get --optional $key | is-not-empty) }
+}
+
+# Command line for an opener; nc instead reads the target from stdin
+def opener-argv [opener: string, args: list<string>]: nothing -> list<string> {
+    match $opener {
+        "nc" => [nc -w1 localhost ($OPEN_SVC_PORT | into string)]
+        "open" => [/usr/bin/open ...$args]
+        "wslview" => [wslview ...$args]
+        _ => [xdg-open ...$args]
+    }
+}
+
+# Run an opener command line, feeding input on stdin
+def run-opener [argv: list<string>, input: string]: nothing -> record {
+    match $argv {
+        [$cmd, ..] if (which $cmd | is-empty) => (err $"($cmd) not found in PATH")
+        [$cmd, ..$rest] => {
+            match (run-cmd { $input | ^$cmd ...$rest }) {
+                {ok: true} => (ok null)
+                {error: $failure} => {
+                    let hint = match $cmd {
+                        "nc" => $" — xdg-open-svc may not be running or port ($OPEN_SVC_PORT) is not forwarded"
+                        _ => ""
+                    }
+                    err $"($cmd) exited with code ($failure.code)($hint)"
+                }
+            }
+        }
+    }
+}
+
+def open-target [opener: string, target: string, args: list<string>]: nothing -> record {
+    let input = match $opener { "nc" => $target, _ => "" }
+    run-opener (opener-argv $opener $args) $input
 }
 
 def main [...args: string] {
     let target = ($args | str join " ")
     if ($target | is-empty) { return }
 
-    let opener = (select-opener ($env.SSH_TTY? | is-not-empty) ((^uname | str trim) == "Darwin") ("/proc/sys/fs/binfmt_misc/WSLInterop" | path exists))
-
-    match $opener {
-        "nc" => { $target | nc -w1 localhost 2226 }
-        "open" => { ^/usr/bin/open ...$args }
-        "wslview" => { ^wslview ...$args }
-        "xdg-open" => { ^xdg-open ...$args }
+    let opener = (select-opener (is-ssh) ((^uname | str trim) == "Darwin") ("/proc/sys/fs/binfmt_misc/WSLInterop" | path exists))
+    match (open-target $opener $target $args) {
+        {ok: true} => null
+        {error: $message} => (error make --unspanned { msg: $"peek: ($message)" })
     }
 }
