@@ -6,7 +6,7 @@ pkgs: {
     zsh
     bash
     nushell
-    oh-my-posh # Prompt framework
+    unstable.oh-my-posh # Prompt framework (29.x nu init breaks on nu 0.115)
     carapace # Universal completion framework
 
     # ── Terminal multiplexer ────────────────────────────────────────────
