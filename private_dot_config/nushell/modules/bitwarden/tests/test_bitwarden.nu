@@ -20,3 +20,29 @@ def "stored session round-trips through .env.local" [] {
     assert equal (bw-eval --cwd $dir "clear_stored_session; get_stored_session") null
     rm -rf $dir
 }
+
+# Fake bw: `status` reports the session it was given; `get` fails for "missing"
+def with-fake-bw [body: closure]: nothing -> any {
+    let bin = (mktemp -d)
+    "#!/bin/sh\ncase \"$1\" in\n  status) echo \"{\\\"status\\\":\\\"unlocked\\\",\\\"session\\\":\\\"$BW_SESSION\\\"}\";;\n  get) [ \"$3\" = missing ] && exit 1; echo '{\"name\":\"'\"$3\"'\"}';;\nesac\n" | save $"($bin)/bw"
+    ^chmod +x $"($bin)/bw"
+    let result = with-env {PATH: ($env.PATH | prepend $bin), BW_SESSION: "from-env"} { do $body }
+    rm -rf $bin
+    $result
+}
+
+@test
+def "get-bw-status checks the given session" [] {
+    with-fake-bw {
+        assert equal (bw-eval "get-bw-status stored-tok").session "stored-tok"
+        assert equal (bw-eval "get-bw-status").session "from-env"
+    }
+}
+
+@test
+def "get item returns null when bw fails" [] {
+    with-fake-bw {
+        assert equal (bw-eval "get item github").name "github"
+        assert equal (bw-eval "get item missing") null
+    }
+}

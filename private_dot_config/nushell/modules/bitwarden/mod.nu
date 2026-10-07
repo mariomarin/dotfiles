@@ -1,5 +1,7 @@
 # Bitwarden utilities module for Nushell
 
+use ../adt/mod.nu [run-cmd]
+
 # Check if bw is available (used by commands that need it)
 def bw-available [] {
     which bw | is-not-empty
@@ -28,16 +30,15 @@ def clear_stored_session [] {
     if (".env.local" | path exists) { rm .env.local }
 }
 
-# Get bw status safely (returns null on failure or if bw not available)
+# Get bw status safely (null on failure or if bw is not available).
+# With a session, check that one rather than the current BW_SESSION.
 def get-bw-status [session?: string] {
     if not (bw-available) { return null }
-    let result = if ($session | is-not-empty) {
-        do { bw status } | complete
-    } else {
-        do { bw status } | complete
+    let session_env = if ($session | is-not-empty) { {BW_SESSION: $session} } else { {} }
+    match (with-env $session_env { run-cmd { ^bw status } }) {
+        {ok: true, value: $out} => ($out.stdout | from json)
+        _ => null
     }
-    if $result.exit_code != 0 { return null }
-    $result.stdout | from json
 }
 
 # Unlock Bitwarden vault and save session token
@@ -138,9 +139,10 @@ export def "get item" [name: string] {
         exit 1
     }
 
-    let result = do { bw get item $name } | complete
-    if $result.exit_code != 0 { return null }
-    $result.stdout | from json
+    match (run-cmd { ^bw get item $name }) {
+        {ok: true, value: $out} => ($out.stdout | from json)
+        _ => null
+    }
 }
 
 # Get a field from a Bitwarden item (returns null if not found)
