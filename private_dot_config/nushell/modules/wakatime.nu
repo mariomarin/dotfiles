@@ -11,7 +11,7 @@ export def wakatime-heartbeat [] {
     # Locate wakatime-cli binary
     let wakatime_bin = (
         $env
-        | get -i ZSH_WAKATIME_BIN
+        | get -o ZSH_WAKATIME_BIN
         | default ($nu.home-dir | path join '.wakatime' 'wakatime-cli')
     )
 
@@ -37,13 +37,13 @@ export def wakatime-heartbeat [] {
     }
 
     # Build offline flag
-    let offline_flag = if ($env | get -i WAKATIME_DISABLE_OFFLINE | default 0) == 1 {
+    let offline_flag = if ($env | get -o WAKATIME_DISABLE_OFFLINE | default 0) == 1 {
         '--disable-offline'
     } else {
         ''
     }
 
-    let timeout = $env | get -i WAKATIME_TIMEOUT | default '5'
+    let timeout = $env | get -o WAKATIME_TIMEOUT | default '5'
 
     # Send heartbeat in background (ignore errors)
     do { ^$wakatime_bin --write --plugin 'nushell-wakatime/0.1.0' --entity-type app --entity $cmd --project $project --language sh --timeout $timeout $offline_flag & o> /dev/null e> /dev/null } | complete | ignore
