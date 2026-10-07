@@ -3,6 +3,7 @@
 # Usage: nu run-for-files.nu file1.nu file2.nu ...
 
 use std/assert
+use run-nutest.nu run-suites
 
 def get-test-funcs [test_file: string] {
     let result = do {
@@ -22,6 +23,8 @@ def run-test [test_file: string, func: string] {
 }
 
 def run-test-file [test_file: string] {
+    # Module suites are nutest (@test attributes), the rest `test …` commands
+    if ($test_file | str contains "modules/") { return (run-suites ($test_file | path dirname)) }
     get-test-funcs $test_file | each {|func| run-test $test_file $func }
 }
 
@@ -44,11 +47,9 @@ def find-tests [source_file: string] {
         if ($test | path exists) { return [$test] }
     }
 
-    # modules/*/mod.nu → modules/*/tests/mod.nu
+    # modules/*/mod.nu → modules/*/tests/test_*.nu (nutest)
     if ($source_file | str contains "modules/") and ($dir | path basename) != "tests" {
-        let module_dir = if $name == "mod" { $dir } else { $dir }
-        let test = $"($module_dir)/tests/mod.nu"
-        if ($test | path exists) { return [$test] }
+        return (glob $"($dir)/tests/test_*.nu")
     }
 
     []

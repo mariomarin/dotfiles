@@ -2,6 +2,7 @@
 # Test runner for .scripts/*.nu files
 
 use std/assert
+use run-nutest.nu run-suites
 
 def get-test-funcs [test_file: string] {
     let result = do {
@@ -48,6 +49,20 @@ def main [] {
             }
         }
     | flatten
+    | append (
+        glob "private_dot_config/nushell/modules/*/tests/test_*.nu"
+        | each {|f| $f | path dirname } | uniq
+        | each {|dir|
+            print $"📁 ($dir) \(nutest\)"
+            run-suites $dir | each {|r|
+                let icon = if $r.passed { "✅" } else { "❌" }
+                print $"   ($icon) ($r.name)"
+                if not $r.passed { print $"      ($r.error)" }
+                $r
+            }
+        }
+        | flatten
+    )
 
     let passed = $results | where passed | length
     let total = $results | length

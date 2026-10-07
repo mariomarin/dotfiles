@@ -1,9 +1,8 @@
-# nutest suite for the adt module
-# SPIKE: imports adt by BARE NAME to test NU_LIB_DIRS resolution inside nutest.
+# nutest suite for the adt module (run by .scripts/tests/run-nutest.nu)
 # Self-contained: property checks use native `random int`, no helpers.nu.
 use std assert
 use std/testing *
-use adt *
+use ../mod.nu *
 
 # --- Result ADT tests ---
 
