@@ -2,8 +2,14 @@
 
 # Krew plugin management script
 
+use adt.nu [ok, err, run-cmd]
+
 def main [] {
     main sync
+}
+
+def krewfile []: nothing -> string {
+    $nu.home-dir | path join ".krewfile"
 }
 
 def ensure-krew [] {
@@ -21,26 +27,30 @@ def parse-krewfile [content: string]: nothing -> list<string> {
 }
 
 def load-krewfile []: nothing -> list<string> {
-    let krewfile = $"($nu.home-dir)/.krewfile"
-    if not ($krewfile | path exists) {
-        error make {msg: $"Krewfile not found at ($krewfile)"}
+    let file = (krewfile)
+    if not ($file | path exists) {
+        error make {msg: $"Krewfile not found at ($file)"}
     }
-    parse-krewfile (open $krewfile)
+    parse-krewfile (open $file)
 }
 
-# Sync plugins from Krewfile
+def install-plugin [plugin: string]: nothing -> record {
+    match (run-cmd { ^krew install $plugin }) {
+        {ok: true} => (ok $plugin)
+        {error: $failure} => (err $"($plugin): ($failure.stderr | str trim)")
+    }
+}
+
+# Sync plugins from Krewfile; exits 1 if any fail so topgrade notices
 def "main sync" [] {
     ensure-krew
-    let plugins = load-krewfile
-
-    $plugins
-    | each {|plugin|
-        let result = do { krew install $plugin } | complete
-        if $result.exit_code != 0 {
-            print -e $"✗ ($plugin): ($result.stderr)"
-        }
-    }
-    | ignore
+    let failures = (load-krewfile
+        | each {|plugin| install-plugin $plugin }
+        | where {|r| not $r.ok }
+        | get -o error)
+    if ($failures | is-empty) { return }
+    $failures | each {|f| print -e $"✗ ($f)" } | ignore
+    exit 1
 }
 
 # List installed krew plugins
@@ -48,13 +58,14 @@ def "main list" [] {
     krew list
 }
 
-# Install a plugin and add to Krewfile
+# Install a plugin and add it to the Krewfile (once)
 def "main install" [plugin: string] {
-    let result = do { krew install $plugin } | complete
-    if $result.exit_code != 0 {
-        error make {msg: $"Failed to install ($plugin): ($result.stderr)"}
+    match (install-plugin $plugin) {
+        {ok: true} => null
+        {error: $e} => (error make {msg: $"Failed to install ($e)"})
     }
-
-    let krewfile = $"($nu.home-dir)/.krewfile"
-    $"($plugin)\n" | save --append $krewfile
+    let file = (krewfile)
+    let listed = if ($file | path exists) { parse-krewfile (open $file) } else { [] }
+    if $plugin in $listed { return }
+    $"($plugin)\n" | save --append $file
 }
