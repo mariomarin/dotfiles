@@ -7,7 +7,6 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'Morantron/tmux-fingers'
 set -g @plugin 'farzadmf/tmux-tilish'
 set -g @plugin 'Chaitanyabsprip/tmux-harpoon'
-set -g @plugin 'schasse/tmux-jump'
 set -g @plugin 'roosta/tmux-fuzzback'
 set -g @plugin 'niksingh710/minimal-tmux-status'
 
@@ -37,12 +36,13 @@ set -g @yank_selection 'clipboard'
 set -g @yank_selection_mouse 'clipboard'
 set -g @yank_with_mouse 'on'
 
-# tmux-fingers (prefix + Space). Binary comes from chezmoi (~/.local/bin), so
-# skip the plugin's install wizard. Only prefix + Space is bound: the default
-# F/J bindings are off (jump mode duplicates tmux-jump on prefix + j).
+# tmux-fingers: prefix + Space for hints, prefix + j for jump mode (moves the
+# copy-mode cursor to a match, replacing tmux-jump). Default F/J bindings are
+# off. Binary comes from chezmoi (~/.local/bin), so skip the install wizard.
 set -g @fingers-skip-wizard 1
 set -g @fingers-enable-bindings 0
 bind Space run -b "#{@fingers-cli} start #{pane_id}"
+bind j run -b "#{@fingers-cli} start #{pane_id} --mode jump"
 # Actions read the match on stdin: "$t" is never re-parsed by the shell, and
 # ## escapes # so display-message cannot expand formats or #(commands).
 # Hint: copy via OSC52 (set-buffer -w) and clip (best-effort, over SSH too)
@@ -51,9 +51,6 @@ set -g @fingers-main-action 't=$(cat); tmux set-buffer -w -- "$t"; printf %s "$t
 set -g @fingers-shift-action 't=$(cat); tmux set-buffer -- "$t"; peek "$t"; tmux display-message "Opening: $(printf %s "$t" | sed "s/#/##/g")"'
 # Ctrl+hint: paste into the pane (fingers' default shift behaviour)
 set -g @fingers-ctrl-action ':paste:'
-
-# tmux-jump (EasyMotion for copy-mode, prefix + j to activate)
-set -g @jump-key 'j'
 
 # tmux-tilish (direct M-key bindings, i3wm-style)
 set -g @tilish-navigator 'on'

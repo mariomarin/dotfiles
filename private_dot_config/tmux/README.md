@@ -50,7 +50,8 @@ For a complete list of keybindings, see **[keybindings.md](../../../docs/keybind
 
 ## Hints (tmux-fingers)
 
-`prefix Space` labels URLs, paths, hashes, IPs, etc. with hints:
+`prefix Space` labels URLs, paths, hashes, IPs, etc. with hints; `prefix j`
+(jump mode) instead moves the copy-mode cursor to the chosen match.
 
 | Key in hint mode | Action                           |
 | ---------------- | -------------------------------- |
