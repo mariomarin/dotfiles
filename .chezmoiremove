@@ -4,3 +4,4 @@
 .config/nvim/lua/plugins/clipboard.lua
 .local/bin/hastepaste
 .config/nushell/modules/adt/tests/mod.nu
+.config/nushell/nupm
