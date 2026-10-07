@@ -2,6 +2,8 @@
 # WSL NixOS Setup and Management Script
 # Main entry point with subcommands
 
+use ../.scripts/adt.nu [run-cmd, "result map", "result unwrap-or"]
+
 # Check if running on Windows
 def check-os [] {
     if $nu.os-info.name != "windows" {
@@ -11,42 +13,57 @@ def check-os [] {
     }
 }
 
-# Distro names from `wsl --list --quiet` output. wsl.exe writes UTF-16LE
-# unless WSL_UTF8=1 (older builds ignore it); as UTF-8 that reads as text
-# with a NUL after every character, so strip NULs before comparing names.
+# wsl.exe writes UTF-16LE unless WSL_UTF8=1 (older builds ignore it); read
+# as UTF-8 that is text with a NUL after every character, so strip NULs.
+def wsl-text []: string -> string {
+    str replace -a (char nul) ""
+}
+
+# Run wsl.exe for its output: Result of NUL-free stdout
+def --wrapped wsl-run [...args: string]: nothing -> record {
+    with-env {WSL_UTF8: "1"} { run-cmd { ^wsl ...$args } }
+    | result map {|out| $out.stdout | wsl-text }
+}
+
+def has-wsl []: nothing -> bool {
+    (wsl-run --version).ok
+}
+
+# Distro names from `wsl --list --quiet` output
 def parse-distros [stdout: string]: nothing -> list<string> {
-    $stdout | str replace -a (char nul) "" | lines | str trim | where {|l| $l | is-not-empty }
+    $stdout | wsl-text | lines | str trim | where {|l| $l | is-not-empty }
 }
 
 # Whether a distro is listed (--running: only running ones)
 def has-distro [name: string, --running]: nothing -> bool {
     let flags = if $running { [--running] } else { [] }
-    let result = (with-env {WSL_UTF8: "1"} { do { ^wsl --list --quiet ...$flags } | complete })
-    $result.exit_code == 0 and ($name in (parse-distros $result.stdout))
+    $name in (wsl-run --list --quiet ...$flags | result map {|out| parse-distros $out } | result unwrap-or [])
 }
 
 # Check if WSL2 is installed
 def "main check-wsl" [] {
     check-os
     print "🔍 Checking WSL2 installation..."
-    let result = do { wsl --version } | complete
-    if $result.exit_code != 0 {
-        print "❌ WSL is not installed"
-        print "   Run: nu wsl.nu install-wsl"
-        exit 1
+    match (wsl-run --version) {
+        {ok: true, value: $version} => {
+            print $version
+            print "✅ WSL2 is installed"
+        }
+        _ => {
+            print "❌ WSL is not installed"
+            print "   Run: nu wsl.nu install-wsl"
+            exit 1
+        }
     }
-    print $result.stdout
-    print "✅ WSL2 is installed"
 }
 
 # Install WSL2 (requires Administrator privileges)
 def "main install-wsl" [] {
     check-os
     # Check if WSL is already installed
-    let wsl_installed = (do { wsl --version } | complete | get exit_code) == 0
-    if $wsl_installed {
+    if (has-wsl) {
         print "✅ WSL2 is already installed"
-        wsl --version
+        print (wsl-run --version | result unwrap-or "")
         exit 0
     }
 
@@ -171,8 +188,7 @@ def "main doctor" [] {
     check-os
     mut issues = []
 
-    let wsl_installed = (do { ^wsl --version } | complete | get exit_code) == 0
-    if not $wsl_installed {
+    if not (has-wsl) {
         $issues = ($issues | append "WSL2 not installed — run: wsl --install")
         print "wsl:"
         $issues | each {|i| print $"  ($i)" } | ignore
@@ -212,8 +228,7 @@ def "main setup" [] {
     # Step 1: Check WSL
     print ""
     print "Step 1: Checking WSL2..."
-    let wsl_installed = (do { wsl --version } | complete | get exit_code) == 0
-    if not $wsl_installed {
+    if not (has-wsl) {
         print "Installing WSL2..."
         main install-wsl
         print "⚠️  Please restart your computer and run 'nu wsl.nu setup' again"

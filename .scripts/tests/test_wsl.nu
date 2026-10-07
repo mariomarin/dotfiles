@@ -19,3 +19,13 @@ def "test parse-distros reads utf-16le output" [] {
     let snippet = '"NixOS\r\nUbuntu\r\n" | split chars | each {|c| $c + (char nul) } | str join | parse-distros $in'
     assert equal (wsl-eval $snippet) [NixOS Ubuntu]
 }
+
+def "test wsl-run passes flags and strips NULs" [] {
+    # Fake wsl.exe: echo args back as UTF-16-style text, record WSL_UTF8
+    let bin = (mktemp -d)
+    "#!/bin/sh\nprintf '%s' \"$WSL_UTF8 $*\" | sed 's/./&\\x00/g'\n" | save $"($bin)/wsl"
+    ^chmod +x $"($bin)/wsl"
+    let r = with-env {PATH: ($env.PATH | prepend $bin)} { wsl-eval "wsl-run --list --quiet" }
+    rm -rf $bin
+    assert equal $r {ok: true, value: "1 --list --quiet"}
+}
