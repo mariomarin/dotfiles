@@ -8,3 +8,4 @@
 .config/nushell/modules/bitwarden/tests/mod.nu
 .config/nushell/modules/claude-helpers/tests
 .config/nushell/modules/sesh/tests
+.config/nushell/oh-my-posh.nu

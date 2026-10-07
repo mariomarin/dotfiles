@@ -57,7 +57,9 @@ match $nu.os-info.name {
 # Oh-my-posh integration (cross-platform)
 if (which oh-my-posh | is-not-empty) {
     $env.POSH_THEME = ($nu.default-config-dir | path join 'oh-my-posh' 'themes' 'spaceship.omp.json')
-    oh-my-posh init nu --config $env.POSH_THEME | save --force ($nu.default-config-dir | path join 'oh-my-posh.nu')
+    # init writes its script to the vendor autoload dir and prints only on failure
+    let init_error = (oh-my-posh init nu --config $env.POSH_THEME)
+    if ($init_error | is-not-empty) { print -e $init_error }
 }
 
 # -----------------------------------------------------------------------------
