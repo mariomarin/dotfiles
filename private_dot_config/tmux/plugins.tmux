@@ -4,7 +4,7 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'fcsonline/tmux-thumbs'
+set -g @plugin 'Morantron/tmux-fingers'
 set -g @plugin 'farzadmf/tmux-tilish'
 set -g @plugin 'Chaitanyabsprip/tmux-harpoon'
 set -g @plugin 'schasse/tmux-jump'
@@ -37,13 +37,20 @@ set -g @yank_selection 'clipboard'
 set -g @yank_selection_mouse 'clipboard'
 set -g @yank_with_mouse 'on'
 
-# tmux-thumbs (prefix + F to activate)
-set -g @thumbs-key Space
-# Clipboard: OSC52 via set-buffer -w (primary), clip (best-effort, explicit path)
-# Note: {} interpolation is not fully shell-safe for all inputs (embedded quotes, $(...))
-set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | clip 2>/dev/null; tmux display-message "Copied: {}"'
-# Open: no clipboard side-effect
-set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; peek "{}"; tmux display-message "Opening: {}"'
+# tmux-fingers (prefix + Space). Binary comes from chezmoi (~/.local/bin), so
+# skip the plugin's install wizard. Only prefix + Space is bound: the default
+# F/J bindings are off (jump mode duplicates tmux-jump on prefix + j).
+set -g @fingers-skip-wizard 1
+set -g @fingers-enable-bindings 0
+bind Space run -b "#{@fingers-cli} start #{pane_id}"
+# Actions read the match on stdin: "$t" is never re-parsed by the shell, and
+# ## escapes # so display-message cannot expand formats or #(commands).
+# Hint: copy via OSC52 (set-buffer -w) and clip (best-effort, over SSH too)
+set -g @fingers-main-action 't=$(cat); tmux set-buffer -w -- "$t"; printf %s "$t" | clip 2>/dev/null; tmux display-message "Copied: $(printf %s "$t" | sed "s/#/##/g")"'
+# Shift+hint: open via peek, no clipboard side effect
+set -g @fingers-shift-action 't=$(cat); tmux set-buffer -- "$t"; peek "$t"; tmux display-message "Opening: $(printf %s "$t" | sed "s/#/##/g")"'
+# Ctrl+hint: paste into the pane (fingers' default shift behaviour)
+set -g @fingers-ctrl-action ':paste:'
 
 # tmux-jump (EasyMotion for copy-mode, prefix + j to activate)
 set -g @jump-key 'j'

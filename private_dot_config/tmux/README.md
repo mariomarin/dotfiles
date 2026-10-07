@@ -42,11 +42,23 @@ For a complete list of keybindings, see **[keybindings.md](../../../docs/keybind
 | tmux-yank           | System clipboard integration        |
 | tmux-resurrect      | Session persistence                 |
 | tmux-continuum      | Auto-save + auto-start              |
-| tmux-thumbs         | Copy text with hints (like Vimium) — requires manual `cargo build` on macOS with Nix Rust (see CLAUDE.md) |
+| tmux-fingers        | Copy/open text with hints (like Vimium) |
 | tmux-tilish         | i3wm-style navigation and layouts   |
 | tmux-harpoon        | Quick jump to saved sessions/panes  |
 | tmux-fuzzback       | Search scrollback with fzf          |
 | minimal-tmux-status | Clean status bar theme              |
+
+## Hints (tmux-fingers)
+
+`prefix Space` labels URLs, paths, hashes, IPs, etc. with hints:
+
+| Key in hint mode | Action                           |
+| ---------------- | -------------------------------- |
+| `hint`           | Copy (OSC52 + `clip`)            |
+| `Shift+hint`     | Open with `peek`                 |
+| `Ctrl+hint`      | Paste into the pane              |
+| `Tab`            | Multi-select, `Tab` again to end |
+| `q`/`Esc`        | Exit                             |
 
 ## Session Persistence & Auto-Start
 

@@ -91,11 +91,11 @@ This repository uses **chezmoi** for dotfile management instead of home-manager:
 
 ```bash
 # ❌ Template abuse - chezmoi template for runtime value
-set -g @thumbs-command '{{ if eq .chezmoi.os "darwin" }}open{{ else }}xdg-open{{ end }}'
+set -g @fingers-ctrl-action '{{ if eq .chezmoi.os "darwin" }}open{{ else }}xdg-open{{ end }}'
 
 # ✅ Runtime detection - tmux if-shell
-if-shell "uname | grep -q Darwin" "set -g @thumbs-command 'open'"
-if-shell "uname | grep -q Linux" "set -g @thumbs-command 'xdg-open'"
+if-shell "uname | grep -q Darwin" "set -g @fingers-ctrl-action 'open'"
+if-shell "uname | grep -q Linux" "set -g @fingers-ctrl-action 'xdg-open'"
 
 # ✅ Platform filtering - use .chezmoiignore
 # In .chezmoiignore:

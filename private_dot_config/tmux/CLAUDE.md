@@ -145,7 +145,7 @@ clipboard path. `clip`/`open` remain server-environment scoped via `$SSH_TTY`.
 
 ### How it works
 
-- **tmux-thumbs** calls `clip` and `open` directly (no platform branching in tmux config)
+- **tmux-fingers** actions call `clip` and `peek` directly (no platform branching in tmux config)
 - **OSC52** (`set -s set-clipboard external`) handles tmux buffer → client terminal clipboard
 - **SSH tunnels** (RemoteForward 8377, 2226) bridge remote → local Mac services
 - **clipper** daemon on Mac accepts clipboard content on port 8377
@@ -170,11 +170,12 @@ If tmux were started by systemd and later attached over SSH, `clip`/`open` would
 incorrectly use the local path. OSC52 (`set-buffer -w`) handles this correctly
 since it routes to the actual attached terminal.
 
-### Thumbs interpolation
+### Fingers actions
 
-`{}` is interpolated by tmux-thumbs before shell execution. Double-quoting
-(`"{}"`) handles spaces and `&` but is NOT fully safe for all shell metacharacters
-(embedded quotes, `$(...)`, backticks). This is a known tmux-thumbs limitation.
+tmux-fingers pipes the match to the action on stdin. Actions read it into `$t`
+and only expand it inside double quotes, so quotes, `$(...)` and backticks in a
+match stay data. `display-message` expands `#{}`/`#()` formats, so `#` is doubled
+before showing the match.
 
 `clip` is best-effort (`;` not `&&`) so OSC52 clipboard works even if clip fails.
 `peek` does NOT write to clipboard (`set-buffer` without `-w`).
@@ -192,27 +193,18 @@ in the same context it runs in. OSC52 (`set-buffer -w`) is the truly client-awar
 clipboard path.
 
 ```tmux
-set -g @thumbs-command 'tmux set-buffer -w -- "{}"; echo -n "{}" | clip 2>/dev/null; ...'
-set -g @thumbs-upcase-command 'tmux set-buffer -- "{}"; peek "{}"; ...'
+set -g @fingers-main-action 't=$(cat); tmux set-buffer -w -- "$t"; printf %s "$t" | clip 2>/dev/null; ...'
+set -g @fingers-shift-action 't=$(cat); tmux set-buffer -- "$t"; peek "$t"; ...'
 ```
 
 ## Troubleshooting
 
-### tmux-thumbs fails to build on macOS (Nix-managed Rust)
+### tmux-fingers binary
 
-TPM runs `cargo build --release` inside `~/.local/share/tmux/plugins/tmux-thumbs/`.
-With Nix-provided Rust, the linker fails with `library not found for -liconv`.
-
-Fix — build manually with rustup toolchain and SDK library path:
-
-```bash
-cd ~/.local/share/tmux/plugins/tmux-thumbs
-LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/usr/lib" \
-PATH="/Users/mario/.rustup/toolchains/stable-aarch64-apple-darwin/bin:$PATH" \
-cargo build --release
-```
-
-The binaries land in `target/release/` which is where the plugin scripts expect them.
+The binary is a chezmoi external (`~/.local/bin/tmux-fingers`, prebuilt for
+linux-x86_64 and macos-arm64), not built by TPM. `@fingers-skip-wizard 1` stops
+the plugin's install wizard; if `prefix + Space` does nothing, check
+`command -v tmux-fingers` in the tmux server's PATH.
 
 ## Important Notes
 
