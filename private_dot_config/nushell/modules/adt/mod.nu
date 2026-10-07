@@ -23,34 +23,33 @@ export def is-err []: record -> bool {
 
 # Run command and return Result
 export def run-cmd [cmd: closure]: nothing -> record<ok: bool> {
-  let result = (do $cmd | complete)
-  if $result.exit_code == 0 {
-    ok {stdout: $result.stdout, stderr: $result.stderr}
-  } else {
-    err {stdout: $result.stdout, stderr: $result.stderr, code: $result.exit_code}
+  match (do $cmd | complete) {
+    {exit_code: 0, stdout: $stdout, stderr: $stderr} => (ok {stdout: $stdout, stderr: $stderr})
+    {exit_code: $code, stdout: $stdout, stderr: $stderr} => (err {stdout: $stdout, stderr: $stderr, code: $code})
   }
 }
 
 # Result map - apply function to success value
 export def "result map" [f: closure]: record -> record {
-  if ($in | is-ok) {
-    ok (do $f $in.value)
-  } else {
-    $in
+  match $in {
+    {ok: true, value: $value} => (ok (do $f $value))
+    $result => $result
   }
 }
 
 # Result unwrap with default
 export def "result unwrap-or" [default: any]: record -> any {
-  if ($in | is-ok) {$in.value} else {$default}
+  match $in {
+    {ok: true, value: $value} => $value
+    _ => $default
+  }
 }
 
 # Result flatMap - chain computations that may fail
 export def "result flat-map" [f: closure]: record -> record {
-  if ($in | is-ok) {
-    do $f $in.value
-  } else {
-    $in
+  match $in {
+    {ok: true, value: $value} => (do $f $value)
+    $result => $result
   }
 }
 
@@ -59,22 +58,18 @@ export def "result bimap" [
   on_ok: closure
   on_err: closure
 ]: record -> record {
-  if ($in | is-ok) {
-    ok (do $on_ok $in.value)
-  } else {
-    err (do $on_err $in.error)
+  match $in {
+    {ok: true, value: $value} => (ok (do $on_ok $value))
+    {error: $error} => (err (do $on_err $error))
   }
 }
 
 # Sequence a list of Results - fails if any fail
 export def "result sequence" []: list<record> -> record {
   let results = $in
-  let errors = ($results | where {|r| $r | is-err})
-
-  if ($errors | is-not-empty) {
-    err ($errors | get error)
-  } else {
-    ok ($results | get value)
+  match ($results | where {|r| $r | is-err}) {
+    [] => (ok ($results | get value))
+    $errors => (err ($errors | get error))
   }
 }
 
@@ -116,10 +111,9 @@ export def "validation combine" [validators: list<closure>]: any -> record {
     | flatten
   )
 
-  if ($all_errors | is-empty) {
-    valid $val
-  } else {
-    invalid $all_errors
+  match $all_errors {
+    [] => (valid $val)
+    $errors => (invalid $errors)
   }
 }
 
@@ -134,16 +128,18 @@ export def collect-issues [checks: list<closure>]: any -> list {
 
 # Validation map - transform valid value
 export def "validation map" [f: closure]: record -> record {
-  if ($in | is-valid) {
-    valid (do $f $in.value)
-  } else {
-    $in
+  match $in {
+    {valid: true, value: $value} => (valid (do $f $value))
+    $validation => $validation
   }
 }
 
 # Validation recover - provide fallback for invalid
 export def "validation recover" [default: any]: record -> any {
-  if ($in | is-valid) {$in.value} else {$default}
+  match $in {
+    {valid: true, value: $value} => $value
+    _ => $default
+  }
 }
 
 # Either type helpers (for more explicit left/right semantics)
