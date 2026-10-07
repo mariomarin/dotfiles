@@ -1,12 +1,13 @@
 #!/usr/bin/env nu
 # Doctor: report only problems with actionable fixes
 
-def check-cmd [cmd: string]: nothing -> record<name: string, fix: string> {
-    let result = do { ^sh -c $"command -v ($cmd)" } | complete
-    if $result.exit_code != 0 {
-        {name: $cmd, fix: "install it or check PATH"}
-    } else {
-        null
+use adt.nu [run-cmd]
+
+# Missing command as {name, fix}, or null when it is on PATH
+def check-cmd [cmd: string]: nothing -> any {
+    match (which $cmd | where type == external) {
+        [] => {name: $cmd, fix: "install it or check PATH"}
+        _ => null
     }
 }
 
@@ -34,13 +35,15 @@ def "main all" [] {
         "atuin"
     ]
     let failures = ($components | each {|c|
-        let result = do { ^just $"($c)-doctor" } | complete
-        if $result.exit_code != 0 {
-            let out = $result.stdout | str trim
-            if ($out | is-not-empty) { print $out }
-            $c
-        } else { null }
-    } | where {|r| $r != null })
+        match (run-cmd { ^just $"($c)-doctor" }) {
+            {ok: true} => null
+            {error: $failure} => {
+                let out = ($failure.stdout | str trim)
+                if ($out | is-not-empty) { print $out }
+                $c
+            }
+        }
+    } | compact)
 
     if ($failures | is-empty) {
         print "All good."
