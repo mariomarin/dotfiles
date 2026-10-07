@@ -203,6 +203,43 @@ def check-server-unit []: nothing -> list<record> {
     }
 }
 
+# `ExecStart={ path=/x/atuin-server ; argv[]=… }` from `systemctl show`
+def parse-exec-path []: string -> any {
+    match ($in | parse --regex 'path=(?<path>[^ ;]+)') {
+        [{path: $p}, ..] => $p
+        _ => null
+    }
+}
+
+# `Environment=ATUIN_HOST=127.0.0.1 ATUIN_PORT=8888` → server base URL
+def parse-server-url []: string -> string {
+    let vars = ($in | parse --regex '(?<key>ATUIN_HOST|ATUIN_PORT)=(?<value>\S+)' | transpose -r -d)
+    let vars = if ($vars | describe | str starts-with "record") { $vars } else { {} }
+    $"http://($vars.ATUIN_HOST? | default '127.0.0.1'):($vars.ATUIN_PORT? | default '8888')"
+}
+
+def stale-binary-issues [installed: string, running: string]: nothing -> list<record> {
+    if $installed == $running { return [] }
+    [(issue "server" "error" $"runs ($running) but ($installed) is installed" $"systemctl --user restart ($SERVER_UNIT)")]
+}
+
+# A rebuilt ribosome-env replaces the binary under a running server
+def check-server-binary []: nothing -> list<record> {
+    let show = (run-cmd {^systemctl --user show $SERVER_UNIT -p ExecStart -p Environment -p ActiveState}
+        | result map {|out| $out.stdout } | result unwrap-or "")
+    if not ($show | str contains "ActiveState=active") { return [] }
+    let exec = ($show | parse-exec-path)
+    if $exec == null { return [] }
+    let installed = (run-cmd {^$exec --version}
+        | result map {|out| $out.stdout | parse --regex '(?<v>\d+\.\d+\.\d+)' | get 0?.v }
+        | result unwrap-or null)
+    match [$installed (server-version ($show | parse-server-url))] {
+        [null, _] => []
+        [$v, {ok: true, value: $running}] => (stale-binary-issues $v $running)
+        [_, {error: $e}] => [(issue "server" "error" $"active but not answering: ($e | to text | str trim)" $"journalctl --user -u ($SERVER_UNIT)")]
+    }
+}
+
 def check-server-journal []: nothing -> list<record> {
     run-cmd {^journalctl --user -u $SERVER_UNIT --since $"($LOG_WINDOW / 1hr | math round) hours ago" -o json --no-pager}
     | result map {|out| $out.stdout | parse-journal-json | journal-problems | summarize-problems "server log" }
@@ -223,7 +260,7 @@ def report-issues [issues: list<record>] {
 def main [] {
     if (which atuin | is-empty) { return }
     let now = (date now)
-    let server_checks = if (has-server-unit) { [{|| check-server-unit} {|| check-server-journal}] } else { [] }
+    let server_checks = if (has-server-unit) { [{|| check-server-unit} {|| check-server-binary} {|| check-server-journal}] } else { [] }
     let issues = (null | collect-issues ([
         {|| check-sync $now}
         {|| check-server-reachable}

@@ -169,3 +169,21 @@ def "test server checks quiet when active" [] {
     let r = with-fake-systemd "ActiveState=active\nSubState=running\nNRestarts=0" "" "(check-server-unit) ++ (check-server-journal)"
     assert equal $r.issues []
 }
+
+def "test parse-exec-path" [] {
+    let show = "ExecStart={ path=/home/u/.local/share/ribosome-env/bin/atuin-server ; argv[]=/home/u/.local/share/ribosome-env/bin/atuin-server start ; ignore_errors=no }"
+    assert equal (doctor-eval $"($show | to nuon) | parse-exec-path") "/home/u/.local/share/ribosome-env/bin/atuin-server"
+    assert equal (doctor-eval "'ExecStart=' | parse-exec-path") null
+}
+
+def "test parse-server-url" [] {
+    assert equal (doctor-eval "'Environment=ATUIN_HOST=0.0.0.0 ATUIN_PORT=9999 ATUIN_DB_URI=x' | parse-server-url") "http://0.0.0.0:9999"
+    assert equal (doctor-eval "'Environment=' | parse-server-url") "http://127.0.0.1:8888"
+}
+
+def "test stale-binary-issues" [] {
+    assert equal (doctor-eval "stale-binary-issues 18.21.0 18.21.0") []
+    let r = doctor-eval "stale-binary-issues 18.21.0 18.16.1"
+    assert equal $r.0.message "runs 18.16.1 but 18.21.0 is installed"
+    assert ($r.0.fix | str contains "restart")
+}
