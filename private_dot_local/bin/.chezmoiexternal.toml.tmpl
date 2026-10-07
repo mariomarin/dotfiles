@@ -198,3 +198,17 @@
     executable = true
     refreshPeriod = "168h"
 {{- end }}
+
+# tmux-fingers binary for the TPM plugin, which finds it on PATH and so skips
+# its install wizard. Prebuilt for linux-x86_64 (static) and macos-arm64 only.
+{{- $fingersAsset := "" }}
+{{- if and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "arm64") }}{{ $fingersAsset = "macos-arm64" }}{{ end }}
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.arch "amd64") }}{{ $fingersAsset = "linux-x86_64" }}{{ end }}
+{{- if $fingersAsset }}
+{{- $fingersRelease := gitHubLatestRelease "Morantron/tmux-fingers" }}
+["tmux-fingers"]
+    type = "file"
+    url = "https://github.com/Morantron/tmux-fingers/releases/download/{{ $fingersRelease.TagName }}/tmux-fingers-{{ $fingersRelease.TagName }}-{{ $fingersAsset }}"
+    executable = true
+    refreshPeriod = "168h"
+{{- end }}
