@@ -1,0 +1,6 @@
+{{- if lookPath "zoxide" -}}
+# Zoxide for nushell. chezmoi renders `zoxide init nushell` at apply time
+# so it matches the installed zoxide.
+
+{{ output "zoxide" "init" "nushell" | trim }}
+{{- end }}
