@@ -31,6 +31,7 @@ def "main all" [] {
         "tmux"
         "zim"
         "kanata"
+        "atuin"
     ]
     let failures = ($components | each {|c|
         let result = do { ^just $"($c)-doctor" } | complete

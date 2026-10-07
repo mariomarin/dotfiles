@@ -236,6 +236,10 @@ darwin-doctor:
 kanata-doctor:
     nu .scripts/kanata-doctor.nu
 
+# Atuin client sync/logs, plus server unit and journal where it runs
+atuin-doctor:
+    nu .scripts/atuin-doctor.nu
+
 # Read-only disk report: space, snapshots, dupes, caches, docker, backups
 disk-doctor *args:
     nu .scripts/disk-doctor.nu {{ args }}
