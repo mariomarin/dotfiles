@@ -48,19 +48,6 @@ For a complete list of keybindings, see **[keybindings.md](../../../docs/keybind
 | tmux-fuzzback       | Search scrollback with fzf          |
 | minimal-tmux-status | Clean status bar theme              |
 
-## Hints (tmux-fingers)
-
-`prefix Space` labels URLs, paths, hashes, IPs, etc. with hints; `prefix j`
-(jump mode) instead moves the copy-mode cursor to the chosen match.
-
-| Key in hint mode | Action                           |
-| ---------------- | -------------------------------- |
-| `hint`           | Copy (OSC52 + `clip`)            |
-| `Shift+hint`     | Open with `peek`                 |
-| `Ctrl+hint`      | Paste into the pane              |
-| `Tab`            | Multi-select, `Tab` again to end |
-| `q`/`Esc`        | Exit                             |
-
 ## Session Persistence & Auto-Start
 
 Two plugins work together to persist sessions across reboots:
