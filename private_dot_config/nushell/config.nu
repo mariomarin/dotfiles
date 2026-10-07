@@ -424,17 +424,16 @@ $env.config.table = {
 # EXTERNAL TOOL INTEGRATIONS
 # -----------------------------------------------------------------------------
 
+# Optional init scripts: `source` resolves at parse time, so a runtime `if`
+# can't guard it. A const path and `source null` (a no-op) skip missing files.
+
 # Atuin history (if available)
-let atuin_init = $nu.default-config-dir | path join 'atuin.nu'
-if (which atuin | is-not-empty) and ($atuin_init | path exists) {
-    source ~/.config/nushell/atuin.nu
-}
+const ATUIN_INIT = $nu.default-config-dir | path join 'atuin.nu'
+source (if ($ATUIN_INIT | path exists) { $ATUIN_INIT } else { null })
 
 # Zoxide directory navigation (if available)
-let zoxide_init = $nu.default-config-dir | path join 'zoxide.nu'
-if (which zoxide | is-not-empty) and ($zoxide_init | path exists) {
-    source ~/.config/nushell/zoxide.nu
-}
+const ZOXIDE_INIT = $nu.default-config-dir | path join 'zoxide.nu'
+source (if ($ZOXIDE_INIT | path exists) { $ZOXIDE_INIT } else { null })
 
 # Carapace completer (if available)
 if (which carapace | is-not-empty) {
@@ -473,14 +472,8 @@ use ($nu.default-config-dir | path join 'modules' 'aws-sso-cli-completions') *
 use ($nu.default-config-dir | path join 'modules' 'jj-completions.nu') *
 
 # Source jj completions if available (generate with: jj update-completions)
-let jj_completions = (
-    [$nu.default-config-dir, '..', 'cache', 'nushell', 'jj-completions.nu']
-    | path join
-    | path expand
-)
-if ($jj_completions | path exists) {
-    source ~/.cache/nushell/jj-completions.nu
-}
+const JJ_COMPLETIONS = $nu.home-dir | path join '.cache' 'nushell' 'jj-completions.nu'
+source (if ($JJ_COMPLETIONS | path exists) { $JJ_COMPLETIONS } else { null })
 
 # jj workflow aliases (mirrors jj-helpers zsh module)
 source ($nu.default-config-dir | path join 'scripts' 'jj-aliases.nu')
