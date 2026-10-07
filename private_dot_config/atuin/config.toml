@@ -2,10 +2,9 @@
 ## See: https://docs.atuin.sh/configuration/config/
 
 ## Sync configuration
-## Set these in ~/.local/share/chezmoi/.env.work (NOT tracked in git):
-##   ATUIN_SYNC_ADDRESS=https://your-server.com
-##   ATUIN_SYNC_KEY=your-encryption-key
-## Generate sync key with: atuin key
+## Set ATUIN_SYNC_ADDRESS per machine in ~/.config/zsh/.zshenv.local.
+## The encryption key is a file (key_path), not an env var: print it with
+## `atuin key` and pass it to `atuin login -k` on every other machine.
 ## Set up server: https://docs.atuin.sh/self-hosting/server-setup/
 
 ## Sync settings

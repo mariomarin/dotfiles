@@ -75,19 +75,17 @@ Or manually: `ssh -L 8888:127.0.0.1:8888 <server-host>`
 
 ### 2. Configure Client
 
-Create `~/.local/share/chezmoi/.env.work` (NOT tracked in git):
+Add to `~/.config/zsh/.zshenv.local` (machine-local, not tracked). Not
+`.env.work`: direnv only loads that inside the chezmoi directory.
 
 ```bash
 export ATUIN_SYNC_ADDRESS="http://127.0.0.1:8888"
-export ATUIN_SYNC_KEY="<key-from-server>"
 ```
-
-Reload: `cd ~/.local/share/chezmoi && direnv allow`
 
 ### 3. Login and Sync
 
 ```bash
-atuin login -u <username> -p <password>
+atuin login -u <username> -p <password> -k "<atuin key from the first machine>"
 atuin import auto
 atuin sync
 ```
@@ -96,17 +94,16 @@ atuin sync
 
 #### 1. Configure Client
 
-Create `~/.local/share/chezmoi/.env.work`:
+Add to `~/.config/zsh/.zshenv.local`:
 
 ```bash
 export ATUIN_SYNC_ADDRESS="http://127.0.0.1:8888"
-export ATUIN_SYNC_KEY="<key-from-server>"
 ```
 
 #### 2. Login and Sync
 
 ```bash
-atuin login -u <username> -p <password>
+atuin login -u <username> -p <password> -k "<atuin key from the first machine>"
 atuin import auto
 atuin sync
 ```
@@ -189,13 +186,12 @@ journalctl --user -u atuin-server -n 50
 **Solution**: Verify credentials
 
 ```bash
-# Check environment variables are set
-echo $ATUIN_SYNC_ADDRESS  # Should be http://127.0.0.1:8888
-echo $ATUIN_SYNC_KEY      # Should be atuin_...
+# Diagnose address, server, version skew and logs
+just atuin-doctor
 
-# Re-login if needed
+# Keys must match: compare `atuin key` on both machines, then re-login
 atuin logout
-atuin login -u <username> -p <password>
+atuin login -u <username> -p <password> -k "<atuin key from the first machine>"
 ```
 
 ### Shell Integration Not Working
