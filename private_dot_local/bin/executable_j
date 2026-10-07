@@ -3,7 +3,7 @@
 
 # --- Functional core: Light ADT helpers ---
 # Shared from adt.nu, deployed alongside this script by chezmoi.
-use adt.nu [ok, err, is-ok, is-err, run-cmd, "result map", "result flat-map", "result unwrap-or"]
+use adt.nu [ok, err, run-cmd, "result map", "result flat-map", "result unwrap-or"]
 
 # --- Parsing and validation ---
 
@@ -24,15 +24,21 @@ def parse-revision-lines []: list<string> -> list<record<value: string, descript
 
 # Run command or fail - imperative shell for side effects
 def run-or-fail [label: string, cmd: closure] {
-  let result = (run-cmd $cmd)
-  if ($result | is-ok) {return $result.value}
-  [$result.error.stdout $result.error.stderr] | where {|s| $s | is-not-empty} | each {|s| print -e $s} | ignore
-  error make {msg: $"($label) failed"}
+  match (run-cmd $cmd) {
+    {ok: true, value: $out} => $out
+    {error: $failure} => {
+      [$failure.stdout $failure.stderr] | where {|s| $s | is-not-empty} | each {|s| print -e $s} | ignore
+      error make {msg: $"($label) failed"}
+    }
+  }
 }
 
 # Print a failed Result as a warning; sync tidy-up steps are best effort
 def warn-err [label: string]: record -> nothing {
-  if ($in | is-err) {print -e $"warning: ($label) failed: ($in.error.stderr | str trim)"}
+  match $in {
+    {ok: true} => null
+    {error: $failure} => (print -e $"warning: ($label) failed: ($failure.stderr | str trim)")
+  }
 }
 
 def "nu-complete j bookmarks" [] {
@@ -46,10 +52,12 @@ def "nu-complete j revisions" [] {
 
 # Resolve bookmark from current/parent state
 def resolve-bookmark [current: string, is_empty_commit: bool, parent: string] {
-  if not ($current | is-empty) {return (ok $current)}
-  if not $is_empty_commit {return (err "No bookmark found for @ (commit has changes)")}
-  if not ($parent | is-empty) {return (ok $parent)}
-  err "No bookmark found for @ or @-"
+  match [$current $is_empty_commit $parent] {
+    [$bm, _, _] if ($bm | is-not-empty) => (ok $bm)
+    [_, false, _] => (err "No bookmark found for @ (commit has changes)")
+    [_, true, $bm] if ($bm | is-not-empty) => (ok $bm)
+    _ => (err "No bookmark found for @ or @-")
+  }
 }
 
 def get-current-bookmark [] {
@@ -57,8 +65,10 @@ def get-current-bookmark [] {
   let is_empty_commit = (^jj log -r @ --no-graph -T 'if(empty, "true", "")' err> /dev/null | str trim) == "true"
   let parent = (^jj log -r '@-' --no-graph -T 'bookmarks' err> /dev/null | str trim)
 
-  let result = (resolve-bookmark $current $is_empty_commit $parent)
-  if ($result | is-ok) {$result.value} else {error make {msg: $result.error}}
+  match (resolve-bookmark $current $is_empty_commit $parent) {
+    {ok: true, value: $bm} => $bm
+    {error: $msg} => (error make {msg: $msg})
+  }
 }
 
 # Check if a revision is empty and has no description
@@ -102,9 +112,11 @@ def change-ids [revset: string]: nothing -> record {
 def find-spr-branches []: nothing -> record {
   run-cmd {^jj config get --repo spr.githubRepository}
   | result flat-map {|out|
-    if ($out.stdout | str trim | is-empty) {return (ok [])}
-    run-cmd {^git branch -r}
-    | result map {|br| $br.stdout | lines | str trim | where {|b| $b | str starts-with "origin/spr/"}}
+    match ($out.stdout | str trim) {
+      "" => (ok [])
+      _ => (run-cmd {^git branch -r}
+        | result map {|br| $br.stdout | lines | str trim | where {|b| $b | str starts-with "origin/spr/"}})
+    }
   }
 }
 
@@ -157,6 +169,20 @@ def "main land" [
   main sync
 }
 
+# Print a per-bookmark command's output; the bookmark if it failed, else null
+def report-run [bm: string]: record -> any {
+  match $in {
+    {ok: true, value: $out} => {
+      if ($out.stdout | is-not-empty) {print $out.stdout}
+      null
+    }
+    {error: $failure} => {
+      print -e $"($bm): ($failure.stderr)"
+      $bm
+    }
+  }
+}
+
 # Create or update PR from bookmark
 def "main pr" [
   bookmark?: string@"nu-complete j bookmarks"  # Bookmark to push (default: current)
@@ -174,33 +200,22 @@ def "main pr" [
   }
 
   let failures = ($bookmarks | each {|bm|
-    let pr_check = (run-cmd {^gh pr list --head $bm --json number --jq '.[0].number'})
+    let pr = (run-cmd {^gh pr list --head $bm --json number --jq '.[0].number'}
+      | result map {|out| $out.stdout | str trim})
 
-    if ($pr_check | is-ok) and not (($pr_check.value.stdout | str trim) | is-empty) {
-      let push = (run-cmd {^jj git push --bookmark $bm --force})
-      if ($push | is-err) {
-        print -e $"($bm): ($push.error.stderr)"
-        return $bm
+    match [$pr $create] {
+      [{ok: true, value: $number}, _] if ($number | is-not-empty) => (run-cmd {^jj git push --bookmark $bm --force} | report-run $bm)
+      [_, false] => {
+        print -e $"($bm): no PR found, use --create"
+        $bm
       }
-      if ($push.value.stdout | is-not-empty) {print $push.value.stdout}
-      return null
+      _ => {
+        let gh_args = (["pr" "create" "--head" $bm "--fill"]
+          | if $draft {append "--draft"} else {$in}
+          | if not ($extra | is-empty) {append $extra} else {$in})
+        run-cmd {^gh ...$gh_args} | report-run $bm
+      }
     }
-
-    if not $create {
-      print -e $"($bm): no PR found, use --create"
-      return $bm
-    }
-
-    let gh_args = (["pr" "create" "--head" $bm "--fill"]
-      | if $draft {append "--draft"} else {$in}
-      | if not ($extra | is-empty) {append $extra} else {$in})
-    let create = (run-cmd {^gh ...$gh_args})
-    if ($create | is-err) {
-      print -e $"($bm): ($create.error.stderr)"
-      return $bm
-    }
-    if ($create.value.stdout | is-not-empty) {print $create.value.stdout}
-    null
   } | where {|it| $it != null})
 
   if not ($failures | is-empty) {
@@ -270,11 +285,13 @@ def "main spr" [
   if not $skip_hooks {
     run-or-fail "Hooks" { ^jj-hp run @ }
   }
-  let result = (do { if $all { ^jj-spr diff --all } else { ^jj-spr diff } } | complete)
-  if ($result.stdout | is-not-empty) { print $result.stdout }
-  if $result.exit_code != 0 {
-    if ($result.stderr | is-not-empty) { print -e $result.stderr }
-    exit $result.exit_code
+  match (run-cmd { if $all { ^jj-spr diff --all } else { ^jj-spr diff } }) {
+    {ok: true, value: $out} => { if ($out.stdout | is-not-empty) { print $out.stdout } }
+    {error: $failure} => {
+      if ($failure.stdout | is-not-empty) { print $failure.stdout }
+      if ($failure.stderr | is-not-empty) { print -e $failure.stderr }
+      exit $failure.code
+    }
   }
 }
 

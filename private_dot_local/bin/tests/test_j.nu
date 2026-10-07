@@ -156,6 +156,19 @@ def --wrapped jj-in [repo: string, ...args: string]: nothing -> record {
     do { cd $repo; ^jj ...$args } | complete
 }
 
+def "test report-run prints stdout and returns null on ok" [] {
+    let r = j-eval "ok {stdout: 'pushed', stderr: ''} | report-run bm | to nuon"
+    assert equal $r.exit_code 0 $r.stderr
+    assert equal ($r.stdout | lines) ["pushed" "null"]
+}
+
+def "test report-run returns bookmark on err" [] {
+    let r = j-eval "err {stdout: '', stderr: 'denied', code: 1} | report-run bm | to nuon"
+    assert equal $r.exit_code 0 $r.stderr
+    assert equal ($r.stdout | str trim) '"bm"'
+    assert equal ($r.stderr | str trim) "bm: denied"
+}
+
 def exact [d: string]: nothing -> string { $"description\(exact:\"($d)\n\"\)" }
 
 # Integration: sync must not touch immutable side branches (remote-only bookmarks)
