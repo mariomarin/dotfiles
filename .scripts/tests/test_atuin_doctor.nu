@@ -87,6 +87,7 @@ def "test parse-atuin-doctor skips banner" [] {
 
 def "test parse-last-sync reads utc timestamps" [] {
     assert equal (doctor-eval "parse-last-sync '2026-10-02 22:37:04.477336 +00:00:00'") 2026-10-02T22:37:04Z
+    assert equal (doctor-eval "parse-last-sync '2026-10-07 2:27:07.771436 +00:00:00'") 2026-10-07T02:27:07Z
     assert equal (doctor-eval "parse-last-sync ''") null
 }
 

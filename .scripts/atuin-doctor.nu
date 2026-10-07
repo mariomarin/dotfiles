@@ -74,10 +74,11 @@ def parse-atuin-doctor []: string -> record {
     }
 }
 
-# `last_sync` looks like `2026-10-02 22:37:04.477336 +00:00:00` (UTC)
+# `last_sync` looks like `2026-10-02 22:37:04.477336 +00:00:00` (UTC); the
+# hour is not zero-padded (`2026-10-07 2:27:07…`)
 def parse-last-sync [raw: string]: nothing -> any {
-    match ($raw | parse --regex '^(?<date>\d{4}-\d\d-\d\d) (?<time>\d\d:\d\d:\d\d)') {
-        [{date: $d, time: $t}] => ($"($d)T($t)Z" | into datetime)
+    match ($raw | parse --regex '^(?<date>\d{4}-\d\d-\d\d) (?<hour>\d{1,2}):(?<rest>\d\d:\d\d)') {
+        [{date: $d, hour: $h, rest: $r}] => ($"($d)T($h | fill -a right -c '0' -w 2):($r)Z" | into datetime)
         _ => null
     }
 }
