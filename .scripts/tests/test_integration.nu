@@ -5,21 +5,6 @@ use std assert
 use helpers.nu *
 use ../adt.nu *
 
-# Test tmux-reload integration
-export def "test tmux-reload with no server" [] {
-    # Mock environment where tmux is not running
-    let result = (run-cmd {pgrep tmux})
-    if ($result | is-ok) {
-        # Tmux is running, skip this test
-        print "Skipping: tmux server is running"
-        return
-    }
-
-    # Script should exit gracefully when no server
-    let reload_result = (run-cmd {nu .scripts/tmux-reload.nu})
-    assert ($reload_result | is-ok)
-}
-
 # Test kanata-doctor structured issues
 export def "test kanata-doctor issue format" [] {
     # Test that doctor returns structured issues

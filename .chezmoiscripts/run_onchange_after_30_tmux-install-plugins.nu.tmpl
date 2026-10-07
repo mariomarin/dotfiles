@@ -1,3 +1,4 @@
 #!/usr/bin/env nu
 # plugins.tmux hash: {{ include "private_dot_config/tmux/plugins.tmux" | sha256sum }}
+# installer hash: {{ include ".scripts/tmux-plugins.nu" | sha256sum }}
 nu {{ joinPath .chezmoi.sourceDir ".scripts/tmux-plugins.nu" | quote }}
