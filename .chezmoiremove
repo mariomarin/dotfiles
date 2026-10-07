@@ -5,3 +5,4 @@
 .local/bin/hastepaste
 .config/nushell/modules/adt/tests/mod.nu
 .config/nushell/nupm
+.config/nushell/modules/bitwarden/tests/mod.nu
