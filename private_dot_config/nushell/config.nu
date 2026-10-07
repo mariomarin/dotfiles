@@ -462,12 +462,6 @@ use ($nu.default-config-dir | path join 'modules' 'claude-helpers') *
 # Sesh session manager
 use ($nu.default-config-dir | path join 'modules' 'sesh') *
 
-# Container-use completions
-use ($nu.default-config-dir | path join 'modules' 'container-use-completions') *
-
-# AWS SSO CLI completions
-use ($nu.default-config-dir | path join 'modules' 'aws-sso-cli-completions') *
-
 # Jujutsu (jj) completions module (provides 'jj update-completions' command)
 use ($nu.default-config-dir | path join 'modules' 'jj-completions.nu') *
 
