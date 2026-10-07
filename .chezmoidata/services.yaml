@@ -31,6 +31,7 @@ services:
     - name: atuin-server
       configs:
         - private_dot_config/systemd/user/atuin-server.service
+        - private_dot_config/systemd/user/atuin-server.service.d/override.conf
       type: systemctl-user
       service: atuin-server
     - name: clipper
