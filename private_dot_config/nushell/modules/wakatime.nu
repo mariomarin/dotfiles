@@ -12,7 +12,7 @@ export def wakatime-heartbeat [] {
     let wakatime_bin = (
         $env
         | get -i ZSH_WAKATIME_BIN
-        | default ($nu.home-path | path join '.wakatime' 'wakatime-cli')
+        | default ($nu.home-dir | path join '.wakatime' 'wakatime-cli')
     )
 
     if not ($wakatime_bin | path exists) {

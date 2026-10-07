@@ -503,7 +503,7 @@ source ($nu.default-config-dir | path join 'scripts' 'jj-aliases.nu')
 
 # Register clipboard plugin if installed via nupm
 let clipboard_plugin = (
-    $nu.home-path
+    $nu.home-dir
     | path join '.local' 'share' 'nupm' 'modules' 'nu_plugin_clipboard' 'target' 'release' 'nu_plugin_clipboard'
 )
 if ($clipboard_plugin | path exists) {

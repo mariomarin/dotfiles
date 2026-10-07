@@ -19,7 +19,7 @@ $env.ENV_CONVERSIONS = {
 # -----------------------------------------------------------------------------
 # NUPM (Nushell Package Manager) CONFIGURATION
 # -----------------------------------------------------------------------------
-$env.NUPM_HOME = ($nu.home-path | path join '.local' 'share' 'nupm')
+$env.NUPM_HOME = ($nu.home-dir | path join '.local' 'share' 'nupm')
 
 # Directories to search for scripts when calling source or use
 $env.NU_LIB_DIRS = [
@@ -40,8 +40,8 @@ $env.NU_PLUGIN_DIRS = [
 # -----------------------------------------------------------------------------
 # Cross-platform PATH setup
 let path_additions = [
-    ($nu.home-path | path join '.local' 'bin')
-    ($nu.home-path | path join 'go' 'bin')
+    ($nu.home-dir | path join '.local' 'bin')
+    ($nu.home-dir | path join 'go' 'bin')
     ($env.NUPM_HOME | path join 'scripts')
 ]
 
