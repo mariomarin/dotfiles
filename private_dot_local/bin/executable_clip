@@ -4,6 +4,7 @@
 # Usage: echo "text" | clip
 #        clip file.txt
 #        clip "some text"
+#        cmd | clip --haste   # upload to $HASTE_SERVER, copy the URL
 #
 # SSH detection: layers SSH_TTY, SSH_CONNECTION, and SSH_CLIENT to cover
 # interactive shells, non-TTY sessions, and older SSH implementations.
@@ -15,7 +16,7 @@
 # UTF-8 → string, anything else → binary) and `decode utf-8` is lossy, so
 # decoding would corrupt non-UTF-8 input. Clipboard tools take bytes anyway.
 
-use adt.nu [ok, err, run-cmd, "result map", "result flat-map"]
+use adt.nu [ok, err, run-cmd, "result map", "result flat-map", "result bimap"]
 
 const CLIPPER_PORT = 8377
 
@@ -125,8 +126,76 @@ def copy-bytes [bytes: binary, argv: list<string>]: nothing -> record {
     }
 }
 
+# --- Haste (Hastebin-compatible paste server) ---
+
+def normalize-url [raw: string]: nothing -> string {
+    match ($raw | str trim | str replace -r '/$' '') {
+        $url if ($url =~ '^https?://') => $url
+        $host => $"https://($host)"
+    }
+}
+
+def haste-server []: nothing -> record {
+    match ($env.HASTE_SERVER? | default "" | str trim) {
+        "" => (err "HASTE_SERVER not set")
+        $server => (ok (normalize-url $server))
+    }
+}
+
+def parse-haste-response [body: string]: nothing -> record {
+    let trimmed = ($body | str trim)
+    if ($trimmed | is-empty) { return (err "empty response") }
+    match (try { $trimmed | from json } catch { null }) {
+        {key: $key} if ($key | is-not-empty) => (ok $key)
+        $doc if ($doc | describe | str starts-with "record") => (err $"no key in response: ($trimmed)")
+        # from json is lenient (bare words parse as strings): non-records are invalid
+        _ => (err $"invalid JSON: ($trimmed)")
+    }
+}
+
+def build-paste-url [server: string, key: string, ext: string]: nothing -> string {
+    match $ext {
+        "" => $"($server)/($key)"
+        _ => $"($server)/($key).($ext)"
+    }
+}
+
+# Paste servers store text: decode (lossily) and drop terminal colors
+def haste-text []: binary -> string {
+    decode utf-8 | ansi strip
+}
+
+# Syntax highlighting extension: from the file being pasted, if any
+def paste-ext [args: list<string>]: nothing -> string {
+    match $args {
+        [$path, ..] if ($path | path exists) => ($path | path parse | get extension)
+        _ => ""
+    }
+}
+
+def upload-haste [server: string, bytes: binary, ext: string]: nothing -> record {
+    if not (has-cmd curl) { return (err "curl not found in PATH") }
+    let text = ($bytes | haste-text)
+    run-cmd { $text | ^curl -sS -X POST --data-binary @- $"($server)/documents" }
+    | result bimap {|out| $out.stdout } {|failure| describe-failure curl $failure }
+    | result flat-map {|body| parse-haste-response $body }
+    | result map {|key| build-paste-url $server $key $ext }
+}
+
+# Clipboard payload: the input itself, or with --haste the URL it was pasted to
+def payload [bytes: binary, haste: bool, ext: string]: nothing -> record {
+    match $haste {
+        false => (ok {bytes: $bytes, url: null})
+        true => (haste-server
+            | result flat-map {|server| upload-haste $server $bytes $ext }
+            | result map {|url| {bytes: ($url | to-bytes), url: $url} })
+    }
+}
+
 export def main [
     --verbose (-v)  # Print the backend being used
+    --haste (-H)    # Upload to $HASTE_SERVER and copy the paste URL instead
+    --ext (-e): string # Haste syntax extension (default: the file's extension)
     ...args: string # File path or literal text; omit to read stdin
 ] {
     let backend = resolve-backend
@@ -135,13 +204,20 @@ export def main [
     # Read stdin only without args: otherwise a piped-but-open stdin blocks.
     # An `if`, not `match`: `$in` in a match arm hits a nu 0.115 IR bug.
     let input = if ($args | is-empty) { ok ($in | to-bytes) } else { read-args $args }
-    let result = ($input
+    let ext = ($ext | default (paste-ext $args))
+    let job = match ($input
         | result flat-map {|bytes| $bytes | require-bytes }
-        | result flat-map {|bytes| backend-argv $backend | result map {|argv| {bytes: $bytes, argv: $argv} } }
-        | result flat-map {|job| copy-bytes $job.bytes $job.argv })
+        | result flat-map {|bytes| payload $bytes $haste $ext }) {
+        {ok: true, value: $job} => $job
+        {error: $message} => (error make --unspanned { msg: $"clip: ($message)" })
+    }
 
-    match $result {
+    # Print the URL first: it is the result even if no clipboard is available
+    if $job.url != null { print $job.url }
+
+    match (backend-argv $backend | result flat-map {|argv| copy-bytes $job.bytes $argv }) {
         {ok: true} => null
+        {error: $message} if $haste => (print -e $"clip: warning: URL not copied: ($message)")
         {error: $message} => (error make --unspanned { msg: $"clip: ($message)" })
     }
 }
