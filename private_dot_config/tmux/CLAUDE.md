@@ -44,12 +44,8 @@ private_dot_config/tmux/
 - Plugin declarations and settings
 - Custom keybindings for plugins
 - Plugin-specific configuration
-- **Note**: tmux-tilish configured with modal prefix `M-Space`
-  - All tilish commands require `M-Space` first (e.g., `M-Space h` not `M-h`)
-  - Frees up all `M-<key>` bindings for other plugins and tools
-  - Follows i3wm-style modal pattern
-- **Note**: tmux-harpoon replaced tmux-fzf for session navigation
-  - Custom bindings: `M-a` and `C-S-a` (no conflicts with modal tilish)
+- **Note**: tmux-tilish binds `M-<key>` directly (i3wm-style, no prefix): `M-h` focuses left
+- **Note**: tmux-harpoon custom bindings `M-a` and `C-S-a` avoid tilish's keys
 
 ### mappings/
 
@@ -59,10 +55,12 @@ private_dot_config/tmux/
 
 ## Plugin Management
 
-Plugins are managed declaratively through chezmoi:
+chezmoi installs TPM; TPM installs the plugins listed in `plugins.tmux`:
 
-- Defined in `private_dot_local/share/tmux/plugins/.chezmoiexternal.toml`
-- Automatically downloaded/updated with `chezmoi apply`
+- TPM itself: `private_dot_local/share/tmux/plugins/.chezmoiexternal.toml`
+- Plugins: `run_onchange_after_30_tmux-install-plugins` runs `.scripts/tmux-plugins.nu`
+  (TPM install, then clean to remove unlisted plugins) when `plugins.tmux` changes
+- Plugin binaries (tmux-fingers) are chezmoi externals in `private_dot_local/bin/`
 - No manual TPM commands needed
 
 ## Neovim Integration
@@ -75,19 +73,12 @@ Currently using **aserowy/tmux.nvim** for seamless integration:
 - tmux-resurrect configured to restore nvim without special session commands
 - Sessions are saved automatically by persistence.nvim
 
-### Modal Navigation & Resizing
+### Navigation & Resizing
 
-- Navigation: `M-Space h/j/k/l` between tmux panes and Neovim splits (unified with tmux-tilish)
-  - Modal prefix: `M-Space` (Alt+Space) followed by direction key
-  - Works seamlessly in both tmux and Neovim with vim awareness
-- Resizing: Omarchy-style keybindings (tmux-tilish smart splits + tmux.nvim)
-  - `M-Space =` (Alt+Space, then =): Grow pane to the left
-  - `M-Space -` (Alt+Space, then -): Grow pane to the right
-  - `M-Space +` (Alt+Space, then Shift+=): Grow pane down
-  - `M-Space _` (Alt+Space, then Shift+-): Grow pane up
+- Navigation: `M-h/j/k/l` between tmux panes and Neovim splits (tmux-tilish + tmux.nvim, vim-aware)
+- Resizing: `M-=` / `M--` / `M-+` / `M-_` grow left / right / down / up (tilish smart splits)
 - Clipboard sync between Neovim instances
-- Configured in Neovim's `lua/plugins/tmux-navigation.lua`
-- tmux-tilish configured with modal prefix in `plugins.tmux`
+- Configured in Neovim's `lua/plugins/tmux-navigation.lua` and tilish options in `plugins.tmux`
 
 ## Common Tasks
 
