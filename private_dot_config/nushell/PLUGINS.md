@@ -6,10 +6,10 @@ Plugins extend Nushell with additional data formats, integrations, and utilities
 
 | Plugin        | NixOS/Darwin | Windows | Usage                                   |
 | ------------- | ------------ | ------- | --------------------------------------- |
-| **clipboard** | manual       | nupm    | `clipboard copy`, `clipboard paste`     |
-| **formats**   | nixpkgs      | nupm    | Auto-loaded (EML, ICS, INI, plist, VCF) |
-| **query**     | nixpkgs      | nupm    | `query web`, `query json`               |
-| **gstat**     | nixpkgs      | nupm    | `gstat` (git status data)               |
+| **clipboard** | manual       | cargo   | `clipboard copy`, `clipboard paste`     |
+| **formats**   | nixpkgs      | bundled | Auto-loaded (EML, ICS, INI, plist, VCF) |
+| **query**     | nixpkgs      | bundled | `query web`, `query json`               |
+| **gstat**     | nixpkgs      | bundled | `gstat` (git status data)               |
 
 ## Installation Methods
 
@@ -25,9 +25,10 @@ nushellPlugins.gstat
 
 Auto-registered via system PATH.
 
-### Windows (via nupm)
+### Windows
 
-Plugins declared in `~/.config/nushell/plugins.nuon`, installed by chezmoi script:
+Plugins declared in `~/.config/nushell/plugins.nuon`. Official plugins bundled next to
+`nu.exe` are registered with `plugin add`; others are built with `cargo install`:
 
 ```bash
 # Add plugins to plugins.nuon, then apply

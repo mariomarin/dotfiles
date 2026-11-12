@@ -1,5 +1,6 @@
 {{- if eq .chezmoi.os "windows" -}}
 #!/usr/bin/env nu
 # plugins.nuon hash: {{ include "private_dot_config/nushell/plugins.nuon" | sha256sum }}
+# script hash: {{ include ".scripts/windows-nushell-plugins.nu" | sha256sum }}
 nu {{ joinPath .chezmoi.sourceDir ".scripts/windows-nushell-plugins.nu" | quote }}
 {{- end }}
