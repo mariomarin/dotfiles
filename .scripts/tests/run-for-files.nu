@@ -4,35 +4,13 @@
 
 use std/assert
 use run-nutest.nu run-suites
-
-def get-test-funcs [test_file: string]: nothing -> list<string> {
-
-    # Fresh interpreter per file: source needs a parse-time path
-    let result = do {
-        ^$nu.current-exe -n -c $"source ($test_file); scope commands | where name =~ '^test ' | get name | to nuon"
-    } | complete
-    if $result.exit_code != 0 { return [] }
-    try {
-        $result.stdout | str trim | from nuon
-    } catch {
-        []
-    }
-}
-
-def run-test [test_file: string, func: string]: nothing -> record<name: string, passed: bool, error: string> {
-    let result = do { ^$nu.current-exe -n -c $"source ($test_file); ($func)" } | complete
-    {
-        name: $func
-        passed: ($result.exit_code == 0)
-        error: ($result.stderr | str trim)
-    }
-}
+use run-lib.nu [run-file]
 
 def run-test-file [test_file: string]: nothing -> list<record> {
 
     # Module suites are nutest (@test attributes), the rest `test …` commands
     if $test_file =~ modules/ { return (run-suites ($test_file | path dirname)) }
-    get-test-funcs $test_file | each {|func| run-test $test_file $func }
+    run-file $test_file
 }
 
 # Map source file to its test file(s)

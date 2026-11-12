@@ -3,39 +3,7 @@
 
 use std/assert
 use run-nutest.nu run-suites
-use ../adt.nu [run-cmd "result map"]
-
-# Result of the file's "test ..." command names; err when it fails to parse
-def load-test-funcs [test_file: string]: nothing -> record {
-    run-cmd {
-        ^$nu.current-exe -n -c $"source ($test_file); scope commands | where name =~ '^test ' | get name | to nuon"
-    }
-    | result map {|out| $out.stdout | str trim | from nuon }
-}
-
-# Run each "test ..." command in a file; a parse failure is one failed result
-def run-file [test_file: string]: nothing -> list<record> {
-    let loaded = load-test-funcs $test_file
-    if not $loaded.ok {
-        return [
-            {
-                name: "load file"
-                passed: false
-                error: ($loaded.error.stderr | str trim)
-            }
-        ]
-    }
-    $loaded.value | each {|func| run-test $test_file $func }
-}
-
-def run-test [test_file: string, func: string] {
-    let result = do { ^$nu.current-exe -n -c $"source ($test_file); ($func)" } | complete
-    {
-        name: $func
-        passed: ($result.exit_code == 0)
-        error: ($result.stderr | str trim)
-    }
-}
+use run-lib.nu [run-file]
 
 def main [] {
     print "🧪 Running all Nushell tests..."
