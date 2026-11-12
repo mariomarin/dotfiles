@@ -1,10 +1,11 @@
 # Run nutest suites (modules/*/tests/test_*.nu) as {name, passed, error}
 # records, so run.nu and run-for-files.nu can report them with the rest.
 
-# Directory holding nutest/mod.nu: a nupm install, else the chezmoi clone
+# Directory holding nutest/mod.nu: devenv's pin, a nupm install, else the chezmoi clone
 export def find-nutest []: nothing -> any {
     let nupm_home = $env.NUPM_HOME? | default ($nu.home-dir | path join ".local" "share" "nupm")
     [
+        ($env.NUTEST_LIB? | default "")
         ($nupm_home | path join "modules")
         ($nu.home-dir | path join ".cache" "nutest-src")
     ]

@@ -2,6 +2,11 @@
 
 let
   pkgs-unstable = import inputs.nixpkgs-unstable { system = pkgs.stdenv.hostPlatform.system; };
+  # nutest isn't in nixpkgs; pinned for the module test suites
+  nutest = builtins.fetchGit {
+    url = "https://github.com/vyadh/nutest";
+    rev = "c46af12bc6e3819b95d69f54f35526ca3e5810d6";
+  };
 in
 
 {
@@ -56,7 +61,12 @@ in
     # Nushell linter and formatter (unstable for latest versions)
     pkgs-unstable.nu-lint
     pkgs-unstable.nufmt
+
+    # disk-doctor integration test runs the real rmlint
+    rmlint
   ];
+
+  env.NUTEST_LIB = "${nutest}";
 
   # Claude Code integration
   claude.code = {
