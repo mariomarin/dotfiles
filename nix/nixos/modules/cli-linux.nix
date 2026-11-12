@@ -8,7 +8,7 @@
       gitFull # git gui, gitk, git-send-email (GUI tools need X11)
 
       # ── System info ────────────────────────────────────────────────────
-      lfs # List filesystem info (Linux only)
+      dysk # List filesystem info (Linux only)
 
       # ── Shell utilities ───────────────────────────────────────────────
       pipr # Interactive pipe evaluation (uses bubblewrap, Linux only)
