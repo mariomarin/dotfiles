@@ -43,6 +43,7 @@ jobs:
         uses: nix-community/cache-nix-action/restore@v7
         with:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('nix/nixos/flake.lock', 'nix/nixos/pkgs/**') }}
+          paths: ~/.cache/nix
           restore-prefixes-first-match: nix-${{ runner.os }}-
       - if: matrix.name == 'nix'
         run: nix flake update --flake ./nix/nixos
@@ -91,6 +92,7 @@ jobs:
         uses: nix-community/cache-nix-action/save@v7
         with:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('nix/nixos/flake.lock', 'nix/nixos/pkgs/**') }}
+          paths: ~/.cache/nix
           purge: true
           purge-prefixes: nix-${{ runner.os }}-
           purge-created: 0
