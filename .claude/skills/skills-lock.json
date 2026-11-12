@@ -1,0 +1,7 @@
+{
+  "nushell": {
+    "repo": "nushell/nu_scripts",
+    "path": "skills/nushell",
+    "rev": "7541123b229e599671b3f8da80747a7224cf95af"
+  }
+}
