@@ -20,7 +20,7 @@ def store_session [session: string] {
 # Retrieve session from .env.local file (returns null if not found)
 def get_stored_session [] {
     if not (".env.local" | path exists) { return null }
-    let content = open .env.local | str trim
+    let content = open --raw .env.local | str trim
     if ($content | is-empty) { return null }
     $content | str replace "BW_SESSION=" "" | str trim
 }
