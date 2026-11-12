@@ -8,7 +8,7 @@ This repository uses two different approaches for managing systemd user services
 | --- | --- | --- |
 | **Service Type** | System-wide user services | User-specific services |
 | **Configuration** | Declarative (Nix) | Imperative (Shell scripts) |
-| **Examples** | Syncthing, topgrade timer, atuin (symbiont) | clipper |
+| **Examples** | Syncthing, topgrade timer | clipper |
 | **Location** | `/etc/systemd/user/` | `~/.config/systemd/user/` |
 | **Activation** | `nixos-rebuild` | `chezmoi apply` |
 | **Persistence** | Survives user deletion | Tied to user home directory |
