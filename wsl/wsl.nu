@@ -26,7 +26,7 @@ def --wrapped wsl-run [...args: string]: nothing -> record {
 }
 
 # Run wsl.exe attached to the terminal (interactive, streamed): Result
-def --wrapped wsl-interactive [...args: string]: nothing -> record {
+def --wrapped wsl-run-attached [...args: string]: nothing -> record {
     null | result try {|_| ^wsl ...$args; null }
 }
 
@@ -52,7 +52,7 @@ def has-distro [name: string, --running]: nothing -> bool {
 # Target NixOS configuration (see nix/nixos/flake.nix)
 const NIX_HOST = "symbiont"
 const NIX_USER = "mario"
-const FLAKE = "github:mariomarin/dotfiles?dir=nix/nixos"
+const NIX_FLAKE = "github:mariomarin/dotfiles?dir=nix/nixos"
 
 # Hostname of the NixOS distro, or null if it cannot be queried
 def find-nixos-hostname []: nothing -> any {
@@ -244,8 +244,8 @@ def "main provision-nixos" [] {
     check-os
     if (is-provisioned) { return }
 
-    let rebuild = (wsl-interactive -d NixOS -u root --exec nixos-rebuild switch
-        --flake $"($FLAKE)#($NIX_HOST)"
+    let rebuild = (wsl-run-attached -d NixOS -u root --exec nixos-rebuild switch
+        --flake $"($NIX_FLAKE)#($NIX_HOST)"
         --extra-experimental-features "nix-command flakes")
     if ($rebuild | is-err) {
         print "❌ nixos-rebuild failed — rerun: nu wsl.nu provision-nixos"
@@ -269,7 +269,7 @@ def "main apply-dotfiles" [] {
         "export BW_SESSION"
         "chezmoi init --apply mariomarin"
     ] | str join "; "
-    if (wsl-interactive -d NixOS -u $NIX_USER --exec bash -lc $script | is-err) {
+    if (wsl-run-attached -d NixOS -u $NIX_USER --exec bash -lc $script | is-err) {
         print "❌ Applying dotfiles failed — rerun: nu wsl.nu apply-dotfiles"
         exit 1
     }

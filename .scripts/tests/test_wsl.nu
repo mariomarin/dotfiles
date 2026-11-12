@@ -67,7 +67,7 @@ def "test has-dotfiles queries chezmoi source of NIX_USER" [] {
     assert equal $args "-d NixOS -u mario --exec test -d /home/mario/.local/share/chezmoi"
 }
 
-def "test wsl-interactive returns Result" [] {
-    assert equal (with-fake-wsl "exit 0" "wsl-interactive --exec ok-cmd | get ok") true
-    assert equal (with-fake-wsl "exit 3" "wsl-interactive --exec bad-cmd | get ok") false
+def "test wsl-run-attached returns Result" [] {
+    assert equal (with-fake-wsl "exit 0" "wsl-run-attached --exec ok-cmd | get ok") true
+    assert equal (with-fake-wsl "exit 3" "wsl-run-attached --exec bad-cmd | get ok") false
 }
