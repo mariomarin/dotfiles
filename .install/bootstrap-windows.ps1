@@ -215,6 +215,7 @@ if (!(bw login --check 2>$null)) {
 Write-Host "Unlocking vault..." -ForegroundColor White
 Set-Location $chezmoiPath
 just bw-unlock
+if ($LASTEXITCODE -ne 0) { throw "Bitwarden unlock failed" }
 
 Write-Host "" -ForegroundColor Green
 Write-Host "✅ Bootstrap complete!" -ForegroundColor Green
