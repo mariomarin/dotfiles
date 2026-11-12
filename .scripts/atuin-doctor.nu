@@ -1,11 +1,11 @@
 #!/usr/bin/env nu
 # Atuin doctor: client (sync state, server reachability, ~/.atuin/logs) and,
-# where the atuin-server user unit exists, the server (state, journal).
+# where the NixOS atuin unit exists (mitosis), the server (state, journal).
 # Silent when healthy; prints `atuin:` issues and exits 1 otherwise.
 
 use adt.nu [ok, err, run-cmd, collect-issues, "result map", "result flat-map", "result unwrap-or", "result bimap"]
 
-const SERVER_UNIT = "atuin-server.service"
+const SERVER_UNIT = "atuin.service"
 # Window of log history worth reporting (atuin keeps 4 days of client logs)
 const LOG_WINDOW = 1day
 const STALE_SYNC = 1day
@@ -56,10 +56,10 @@ def journal-problems []: table -> table {
 def classify-server-error [msg: string]: nothing -> any {
     match $msg {
         $m if ($m =~ '(?i)address already in use') => (issue "server" "error" "port already in use" "ss -ltnp 'sport = :8888' to find the other listener")
-        $m if ($m =~ '(?i)unable to open database|readonly database|permission denied') => (issue "server" "error" $"cannot write its database: ($m)" "check ~/.local/share/atuin is in the unit's ReadWritePaths")
+        $m if ($m =~ '(?i)unable to open database|readonly database|permission denied') => (issue "server" "error" $"cannot write its database: ($m)" "check the database: sudo systemctl status postgresql")
         $m if ($m =~ '(?i)database is locked') => (issue "server" "warning" "database is locked" "stop other atuin-server instances")
-        $m if ($m =~ '(?i)payload too large|record too large|413') => (issue "server" "error" "rejected an oversized record" "raise ATUIN_MAX_RECORD_SIZE in atuin-server.service.d/override.conf")
-        $m if ($m =~ 'Start request repeated too quickly') => (issue "server" "error" "crash-looped and systemd gave up" $"systemctl --user reset-failed ($SERVER_UNIT) && systemctl --user start ($SERVER_UNIT)")
+        $m if ($m =~ '(?i)payload too large|record too large|413') => (issue "server" "error" "rejected an oversized record" "raise ATUIN_MAX_RECORD_SIZE via systemd.services.atuin.environment on mitosis")
+        $m if ($m =~ 'Start request repeated too quickly') => (issue "server" "error" "crash-looped and systemd gave up" $"sudo systemctl reset-failed ($SERVER_UNIT) && sudo systemctl start ($SERVER_UNIT)")
         $m if ($m =~ 'panicked') => (issue "server" "error" $"panicked: ($m)")
         _ => null
     }
@@ -103,7 +103,7 @@ def version-parts [v: string]: nothing -> list<int> {
 def version-issues [client: string, server: string]: nothing -> list<record> {
     match [(version-parts $client) (version-parts $server)] {
         [[$cm, $cn, ..], [$sm, $sn, ..]] if $cm != $sm => [(issue "sync" "error" $"client ($client) and server ($server) major versions differ" "upgrade the older side")]
-        [[_, $cn, ..], [_, $sn, ..]] if $cn > $sn => [(issue "sync" "warning" $"client ($client) is newer than server ($server)" "upgrade atuin-server")]
+        [[_, $cn, ..], [_, $sn, ..]] if $cn > $sn => [(issue "sync" "warning" $"client ($client) is newer than server ($server)" "update the server on mitosis (nix flake update, redeploy)")]
         _ => []
     }
 }
@@ -185,69 +185,32 @@ def check-server-reachable []: nothing -> list<record> {
     }
 }
 
-# --- Server (only where the user unit exists) ---
+# --- Server (only where the system unit exists) ---
 
 def server-hint []: nothing -> string {
     if (has-server-unit) { "see server issues" } else { "run `just atuin-doctor` on the sync server for its logs" }
 }
 
 def has-server-unit []: nothing -> bool {
-    (which systemctl | is-not-empty) and (run-cmd {^systemctl --user cat $SERVER_UNIT} | get ok)
+    (which systemctl | is-not-empty) and (run-cmd {^systemctl cat $SERVER_UNIT} | get ok)
 }
 
 def check-server-unit []: nothing -> list<record> {
-    let props = (run-cmd {^systemctl --user show $SERVER_UNIT -p ActiveState -p SubState -p NRestarts}
+    let props = (run-cmd {^systemctl show $SERVER_UNIT -p ActiveState -p SubState -p NRestarts}
         | result map {|out| $out.stdout | lines | parse "{key}={value}" | transpose -r -d }
         | result unwrap-or {})
     match $props {
-        {ActiveState: "active"} if (($props.NRestarts? | default "0" | into int) > 0) => [(issue "server" "warning" $"restarted ($props.NRestarts) times since boot" $"journalctl --user -u ($SERVER_UNIT)")]
+        {ActiveState: "active"} if (($props.NRestarts? | default "0" | into int) > 0) => [(issue "server" "warning" $"restarted ($props.NRestarts) times since boot" $"journalctl -u ($SERVER_UNIT)")]
         {ActiveState: "active"} => []
-        {ActiveState: $state} => [(issue "server" "error" $"($SERVER_UNIT) is ($state)/($props.SubState? | default '?')" $"systemctl --user restart ($SERVER_UNIT)")]
-        _ => [(issue "server" "error" "cannot read unit state" $"systemctl --user status ($SERVER_UNIT)")]
-    }
-}
-
-# `ExecStart={ path=/x/atuin-server ; argv[]=… }` from `systemctl show`
-def parse-exec-path []: string -> any {
-    match ($in | parse --regex 'path=(?<path>[^ ;]+)') {
-        [{path: $p}, ..] => $p
-        _ => null
-    }
-}
-
-# `Environment=ATUIN_HOST=127.0.0.1 ATUIN_PORT=8888` → server base URL
-def parse-server-url []: string -> string {
-    let vars = ($in | parse --regex '(?<key>ATUIN_HOST|ATUIN_PORT)=(?<value>\S+)' | transpose -r -d)
-    let vars = if ($vars | describe | str starts-with "record") { $vars } else { {} }
-    $"http://($vars.ATUIN_HOST? | default '127.0.0.1'):($vars.ATUIN_PORT? | default '8888')"
-}
-
-def stale-binary-issues [installed: string, running: string]: nothing -> list<record> {
-    if $installed == $running { return [] }
-    [(issue "server" "error" $"runs ($running) but ($installed) is installed" $"systemctl --user restart ($SERVER_UNIT)")]
-}
-
-# A rebuilt ribosome-env replaces the binary under a running server
-def check-server-binary []: nothing -> list<record> {
-    let show = (run-cmd {^systemctl --user show $SERVER_UNIT -p ExecStart -p Environment -p ActiveState}
-        | result map {|out| $out.stdout } | result unwrap-or "")
-    if not ($show | str contains "ActiveState=active") { return [] }
-    let exec = ($show | parse-exec-path)
-    if $exec == null { return [] }
-    let installed = (run-cmd {^$exec --version}
-        | result map {|out| $out.stdout | parse --regex '(?<v>\d+\.\d+\.\d+)' | get 0?.v }
-        | result unwrap-or null)
-    match [$installed (server-version ($show | parse-server-url))] {
-        [null, _] => []
-        [$v, {ok: true, value: $running}] => (stale-binary-issues $v $running)
-        [_, {error: $e}] => [(issue "server" "error" $"active but not answering: ($e | to text | str trim)" $"journalctl --user -u ($SERVER_UNIT)")]
+        {ActiveState: $state} => [(issue "server" "error" $"($SERVER_UNIT) is ($state)/($props.SubState? | default '?')" $"sudo systemctl restart ($SERVER_UNIT)")]
+        _ => [(issue "server" "error" "cannot read unit state" $"systemctl status ($SERVER_UNIT)")]
     }
 }
 
 def check-server-journal []: nothing -> list<record> {
-    run-cmd {^journalctl --user -u $SERVER_UNIT --since $"($LOG_WINDOW / 1hr | math round) hours ago" -o json --no-pager}
+    run-cmd {^journalctl -u $SERVER_UNIT --since $"($LOG_WINDOW / 1hr | math round) hours ago" -o json --no-pager}
     | result map {|out| $out.stdout | parse-journal-json | journal-problems | summarize-problems "server log" }
-    | result unwrap-or [(issue "server" "warning" "cannot read journal" $"journalctl --user -u ($SERVER_UNIT)")]
+    | result unwrap-or [(issue "server" "warning" "cannot read journal" $"journalctl -u ($SERVER_UNIT)")]
 }
 
 # --- Report ---
@@ -264,7 +227,7 @@ def report-issues [issues: list<record>] {
 def main [] {
     if (which atuin | is-empty) { return }
     let now = (date now)
-    let server_checks = if (has-server-unit) { [{|| check-server-unit} {|| check-server-binary} {|| check-server-journal}] } else { [] }
+    let server_checks = if (has-server-unit) { [{|| check-server-unit} {|| check-server-journal}] } else { [] }
     let issues = (null | collect-issues ([
         {|| check-sync $now}
         {|| check-server-reachable}

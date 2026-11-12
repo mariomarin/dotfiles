@@ -29,6 +29,16 @@ _:
   };
 
   services = {
+    # Atuin sync server: localhost only, clients connect over an SSH tunnel.
+    # Set openRegistration = false after the first `atuin register`.
+    atuin = {
+      enable = true;
+      host = "127.0.0.1";
+      port = 8888;
+      openRegistration = true;
+      maxHistoryLength = 81920;
+    };
+
     # Essential services for headless operation
     openssh = {
       enable = true;
