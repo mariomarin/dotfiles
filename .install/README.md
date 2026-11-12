@@ -8,6 +8,7 @@ One-line bootstrap for automated setup.
 | -------- | ------- |
 | **macOS/NixOS** | See below |
 | **Windows** | See below |
+| **Codespaces/devcontainers** | Set this repo as your dotfiles repo; `install.sh` runs automatically |
 
 macOS/NixOS:
 
@@ -37,6 +38,7 @@ chezmoi templates fetch secrets, topgrade validates session. No manual `export` 
 | **Restart required (Windows)** | Restart PowerShell after tools install |
 | **bitwarden-cli missing (NixOS)** | `nix-env -iA nixos.bitwarden-cli` |
 
-**Platforms:** Windows (winget DSC), macOS (nix-darwin), NixOS (nixos-rebuild). Other Linux not supported.
+**Platforms:** Windows (winget DSC), macOS (nix-darwin), NixOS (nixos-rebuild).
+Other Linux gets a user-level setup (chezmoi + release binaries in `~/.local/bin`), no Nix or Bitwarden.
 
 **Security:** Review [bootstrap scripts](.install/) before running.

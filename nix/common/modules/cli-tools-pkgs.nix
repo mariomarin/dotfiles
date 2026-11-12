@@ -1,5 +1,5 @@
-# Package lists for CLI tools — shared between cli-tools.nix (NixOS/darwin) and
-# the ribosome-env bundle (linux-apt). Returns { base, modern } lists.
+# Package lists for CLI tools used by cli-tools.nix (NixOS/darwin).
+# Returns { base, modern } lists.
 pkgs: {
   base = with pkgs; [
     # ── Shells ──────────────────────────────────────────────────────────
