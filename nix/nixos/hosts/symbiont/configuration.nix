@@ -32,9 +32,6 @@
   };
 
   custom = {
-    # No desktop environment - pure CLI
-    desktop.enable = lib.mkForce false;
-
     # Enable CLI tools with modern replacements
     # Per-project tools should come from devenv.nix
     cli = {
@@ -46,12 +43,7 @@
     development.enable = true;
   };
 
-  # Disable incompatible services for WSL
-  boot = {
-    loader.systemd-boot.enable = lib.mkForce false;
-    loader.efi.canTouchEfiVariables = lib.mkForce false;
-    tmp.cleanOnBoot = true;
-  };
+  boot.tmp.cleanOnBoot = true;
 
   # Enable Docker for containers
   virtualisation.docker = {

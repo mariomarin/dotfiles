@@ -1,15 +1,10 @@
-{ config, pkgs, lib, userConfig, ... }:
+{ pkgs, lib, userConfig, ... }:
 
 let
-  isDesktop = config.custom.desktop.enable or false;
   inherit (userConfig) username;
   homeDir = "/home/${username}";
 in
 {
-  imports = [
-    ./services/kanata.nix
-  ];
-
   config = lib.mkMerge [
     # All hosts
     {
@@ -59,127 +54,5 @@ in
         };
       };
     }
-
-    # Desktop-only services
-    (lib.mkIf isDesktop {
-      # Fingerprint sensor
-      services = {
-        fprintd.enable = true;
-
-        # File manager support
-        gvfs.enable = true;
-        tumbler.enable = true;
-
-        # Power management
-        upower.enable = true;
-      };
-
-      security.pam.services = {
-        login.fprintAuth = lib.mkForce true;
-        xscreensaver.fprintAuth = true;
-      };
-
-      systemd.user = {
-        services = {
-          # Polkit authentication agent
-          polkit-gnome-authentication-agent-1 = {
-            description = "polkit-gnome-authentication-agent-1";
-            wantedBy = [ "graphical-session.target" ];
-            wants = [ "graphical-session.target" ];
-            after = [ "graphical-session.target" ];
-            serviceConfig = {
-              Type = "simple";
-              ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-              Restart = "on-failure";
-              RestartSec = 1;
-              TimeoutStopSec = 10;
-            };
-          };
-
-          # Wallpaper rotation
-          wallpaper-rotation = {
-            description = "Rotate wallpaper using feh";
-            after = [ "graphical-session.target" ];
-            serviceConfig = {
-              Type = "oneshot";
-              Environment = "DISPLAY=:0";
-              ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.feh}/bin/feh --bg-fill --randomize ~/.wallpapers/*'";
-            };
-          };
-
-          # Picom compositor
-          picom = {
-            description = "Picom X11 compositor";
-            after = [ "graphical-session.target" ];
-            partOf = [ "graphical-session.target" ];
-            wantedBy = [ "default.target" ];
-            serviceConfig = {
-              Type = "simple";
-              ExecStart = "${pkgs.picom}/bin/picom --config %h/.config/picom/picom.conf";
-              Restart = "on-failure";
-              RestartSec = 1;
-            };
-          };
-
-          # Polybar status bar
-          polybar = {
-            description = "Polybar status bar";
-            after = [ "graphical-session.target" ];
-            partOf = [ "graphical-session.target" ];
-            wants = [ "tray.target" ];
-            wantedBy = [ "default.target" ];
-            path = [ "/run/current-system/sw" ];
-            serviceConfig = {
-              Type = "exec";
-              ExecStart = "%h/.config/polybar/launch.sh";
-              Restart = "on-failure";
-              RestartSec = 2;
-            };
-          };
-
-          # Battery monitor for Polybar
-          battery-combined-udev = {
-            description = "Battery Combined UDev Monitor for Polybar";
-            after = [ "graphical-session.target" ];
-            wantedBy = [ "default.target" ];
-            serviceConfig = {
-              Type = "simple";
-              ExecStart = "%h/.config/polybar/battery-combined-udev.sh";
-              Restart = "on-failure";
-              RestartSec = 5;
-            };
-          };
-
-          # Monitor change handler (restarts polybar on display change)
-          "monitor-change@" = {
-            description = "Monitor change handler for %i";
-            after = [ "graphical-session.target" ];
-            serviceConfig = {
-              Type = "oneshot";
-              Environment = "DISPLAY=:0";
-              ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 2 && systemctl --user restart polybar.service'";
-            };
-          };
-        };
-
-        timers.wallpaper-rotation = {
-          description = "Rotate wallpaper every 30 minutes";
-          wantedBy = [ "timers.target" ];
-          timerConfig = {
-            OnActiveSec = "0";
-            OnUnitActiveSec = "30min";
-            Persistent = true;
-          };
-        };
-      };
-
-      programs = {
-        # Light control
-        light.enable = true;
-
-        # KDE Connect - Phone/computer integration
-        kdeconnect.enable = true;
-      };
-    })
   ];
 }
