@@ -39,11 +39,17 @@ def "test script parses" [] {
 
 def "test parse-du converts KiB to bytes" [] {
     let input = "4\t/a\n2\t/b c" | to nuon
-    assert equal (eval $"($input) | parse-du") [
-        [path size];
-        ["/a" 4096b]
-        ["/b c" 2048b]
+    let expected = [
+        {
+            path: "/a"
+            size: 4096b
+        }
+        {
+            path: "/b c"
+            size: 2048b
+        }
     ]
+    assert equal (eval $"($input) | parse-du") $expected
 }
 
 def "test parse-du empty input" [] {
@@ -204,6 +210,11 @@ def "test main never modifies scanned files" [] {
     rm --recursive --force $dir
 
     assert equal $result.exit_code 0 $result.stderr
-    assert ($result.stdout | ansi strip | str trim | is-not-empty)
+    assert (
+        $result.stdout
+        | ansi strip
+        | str trim
+        | is-not-empty
+    )
     assert equal $after $before
 }

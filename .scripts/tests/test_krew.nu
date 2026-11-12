@@ -40,20 +40,29 @@ def with-fake-krew [krewfile: string, body: closure]: nothing -> record {
 }
 
 def "test sync exits 1 and names failed plugins" [] {
-    let r = with-fake-krew "ctx\nbad-one\nns\n" { do { nu -n $SCRIPT sync } | complete }
+    let r = with-fake-krew "ctx\nbad-one\nns\n" {
+        do { nu -n $SCRIPT sync } | complete
+    }
     assert equal $r.exit_code 1
     assert ($r.stderr | str contains "✗ bad-one: no such plugin") $r.stderr
     assert not ($r.stderr | str contains "ctx")
 }
 
 def "test sync succeeds quietly" [] {
-    let r = with-fake-krew "ctx\nns\n" { do { nu -n $SCRIPT sync } | complete }
+    let r = with-fake-krew "ctx\nns\n" {
+        do { nu -n $SCRIPT sync } | complete
+    }
     assert equal $r.exit_code 0 $r.stderr
     assert equal $r.stderr ""
 }
 
 def "test install appends a plugin only once" [] {
-    let r = with-fake-krew "ctx\n" { do { nu -n $SCRIPT install ctx; nu -n $SCRIPT install ns } | complete }
+    let r = with-fake-krew "ctx\n" {
+        do {
+            nu -n $SCRIPT install ctx
+            nu -n $SCRIPT install ns
+        } | complete
+    }
     assert equal $r.exit_code 0 $r.stderr
     assert equal $r.krewfile "ctx\nns\n"
 }

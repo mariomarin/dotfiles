@@ -8,24 +8,21 @@ export def test-case [name: string, test: closure]: nothing -> record {
     try {
         do $test
         {name: $name, result: "pass", error: null}
-    } catch {|e|
-        {name: $name, result: "fail", error: $e}
-    }
+    } catch {|e| {name: $name, result: "fail", error: $e} }
 }
 
 # Property-based testing: check property holds for all generated values
-export def check-property [
-    property: closure
-    generator: closure
-    --count: int = 100
-]: nothing -> record {
+export def check-property [property: closure, generator: closure, --count: int = 100]: nothing -> record {
     let failures = (1..$count
         | each {|| do $generator}
         | where {|val| not (do $property $val)}
     )
 
     if ($failures | is-empty) {
-        {passed: true, failures: []}
+        {
+            passed: true
+            failures: []
+        }
     } else {
         {passed: false, failures: $failures}
     }
@@ -40,10 +37,7 @@ export def gen-string [--length: int = 10]: nothing -> string {
     random chars --length $length
 }
 
-export def gen-list [
-    element_gen: closure
-    --size: int = 10
-]: nothing -> list {
+export def gen-list [element_gen: closure, --size: int = 10]: nothing -> list<any> {
     1..$size | each {|| do $element_gen}
 }
 
@@ -68,17 +62,17 @@ export def assert-invalid [validation: record]: nothing -> nothing {
     assert ($validation.valid? == false) $"Expected invalid, got: ($validation | to json)"
 }
 
-export def assert-contains [haystack: any, needle: any]: nothing -> nothing {
+export def assert-contains [haystack, needle]: nothing -> nothing {
     assert ($haystack | str contains $needle) $"Expected '($haystack)' to contain '($needle)'"
 }
 
-export def assert-length [list: list, expected: int]: nothing -> nothing {
-    let actual = ($list | length)
+export def assert-length [list: list<any>, expected: int]: nothing -> nothing {
+    let actual = $list | length
     assert ($actual == $expected) $"Expected length ($expected), got ($actual)"
 }
 
 # Snapshot testing helper
-export def snapshot [name: string, value: any]: nothing -> nothing {
+export def snapshot [name: string, value]: nothing -> nothing {
     let snapshot_dir = ".scripts/tests/snapshots"
     mkdir $snapshot_dir
     let snapshot_file = $"($snapshot_dir)/($name).json"
@@ -93,16 +87,8 @@ export def snapshot [name: string, value: any]: nothing -> nothing {
 }
 
 # Mock command execution for testing
-export def mock-cmd [
-    expected_exit: int = 0
-    expected_stdout: string = ""
-    expected_stderr: string = ""
-]: nothing -> record {
-    {
-        exit_code: $expected_exit
-        stdout: $expected_stdout
-        stderr: $expected_stderr
-    }
+export def mock-cmd [expected_exit: int = 0, expected_stdout: string = "", expected_stderr: string = ""]: nothing -> record {
+    {exit_code: $expected_exit, stdout: $expected_stdout, stderr: $expected_stderr}
 }
 
 # Run all test functions in a module
