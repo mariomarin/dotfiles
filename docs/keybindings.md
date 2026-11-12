@@ -16,8 +16,7 @@ Single source of truth for keybindings across the stack. Check the conflict guid
 | `C-S-a` | tmux-harpoon | Jump to slot 1 |
 | `C-S-h` | tmux-harpoon | Add session |
 | `C-a` | tmux prefix | — |
-| `Ctrl+Alt+…` | LeftWM / Hammerspoon | Sent by the Kanata `=` layer |
-| `Super+…` | LeftWM | Window manager (Linux only) |
+| `Ctrl+Alt+…` | Hammerspoon | Sent by the Kanata `=` layer (macOS) |
 | `Hyper+…` | Hammerspoon | App launchers (macOS only) |
 | `<Space>` | Neovim leader | — |
 
@@ -28,28 +27,26 @@ Physical keys
   └── Kanata (Caps→Esc/Ctrl, Space or RAlt→Nav, = →Ctrl+Alt window layer)
         └── Terminal / tmux (prefix=C-a, tilish M-keys, harpoon, fingers)
               └── Neovim (leader=Space, harpoon2, flash)
-LeftWM / Hammerspoon (Super, Ctrl+Alt, Hyper — window manager level, bypass tmux)
+Hammerspoon (Ctrl+Alt, Hyper — macOS window manager level, bypass tmux)
 ```
 
 ## Kanata
 
-Configs: `darwin.kbd` (macOS), `laptop.kbd` / `windows.kbd` (standalone Linux / Windows), `core.kbd` (NixOS service).
+Configs: `darwin.kbd` (macOS), `windows.kbd` (Windows). Linux hosts are headless (no kanata).
 
 | Physical key | Tap | Hold | Platforms |
 | ------------ | --- | ---- | --------- |
 | Caps Lock | Esc | Ctrl | All |
-| Tab | Tab | Hyper (Ctrl+Alt+Cmd, +Shift on macOS/NixOS) | All |
+| Tab | Tab | Hyper (Ctrl+Alt+Cmd, +Shift on macOS) | All |
 | Left / Right Shift | `(` / `)` | Shift | All |
-| Left Ctrl | `{` | Ctrl | macOS, laptop, Windows |
-| Space | Space | Nav layer | macOS, laptop, Windows |
-| Left Alt | `<` | Alt | NixOS |
-| Right Alt | `>` | Nav layer | NixOS |
-| `=` | `=` | Window layer | macOS, NixOS |
-| `` ` `` (and `§` on MacBook) | `` ` `` | Accent layer | macOS, laptop, Windows |
+| Left Ctrl | `{` | Ctrl | All |
+| Space | Space | Nav layer | All |
+| `=` | `=` | Window layer | macOS |
+| `` ` `` (and `§` on MacBook) | `` ` `` | Accent layer | All |
 
 **Nav layer**: `h/j/k/l` arrows, `y/u/i/o` Home / PgDn / PgUp / End.
 
-**Window layer**: every key is sent as `Ctrl+Alt+key` (Shift passes through), handled by LeftWM or Hammerspoon below.
+**Window layer**: every key is sent as `Ctrl+Alt+key` (Shift passes through), handled by Hammerspoon below.
 
 **Accent layer**:
 
@@ -139,33 +136,11 @@ Leader: `<Space>`. LazyVim defaults apply; see the [LazyVim keymaps](https://www
 | `<leader>cc` / `<leader>c.` / `<leader>cr` | Claude Code: toggle / continue / reload modified files |
 | `<leader>o…` | Obsidian: `n` new, `o` open, `s` search, `q` switch, `t`/`y`/`d` daily notes, `b` backlinks, `l` follow link, `g` tags |
 
-## LeftWM
-
-Mod: `Super`. Most actions are mirrored on `Ctrl+Alt` (sent by the Kanata `=` layer).
-
-| Key | Action |
-| --- | ------ |
-| `Super+h` / `Super+l` | Previous / next workspace |
-| `Super+j` / `Super+k` | Focus window down / up |
-| `Super+Shift+j` / `Super+Shift+k` | Move window down / up |
-| `Super+Shift+,` / `Super+Shift+.` | Move window to previous / next workspace |
-| `Super+1-9` / `Super+Shift+1-9` | Go to / move window to tag |
-| `Super+Tab`, `Super+w` | Swap tags between workspaces |
-| `Super+Shift+w` | Move to last workspace |
-| `Super+Return` | Move window to top of stack |
-| `Super+f` | Fullscreen |
-| `Super+Shift+q` | Close window |
-| `Super+Ctrl+k` / `Super+Ctrl+j` | Next / previous layout |
-| `Super+Shift+Left/Right` | Shrink / grow main width |
-| `Super+Space` | Rofi launcher |
-| `Super+Shift+Return`, `Super+t` | Terminal |
-| `Super+b/m/o/s/y/p` | Firefox / Spotify / Obsidian / Slack / ytfzf / power menu |
-| `Super+Shift+l` | Lock screen |
-| `Super+Shift+r` / `Super+Shift+x` | Reload / exit |
+## Window Management
 
 ### Hammerspoon (macOS)
 
-Mirrors LeftWM through the Kanata `=` layer (`Ctrl+Alt+key`):
+Driven by the Kanata `=` layer (`Ctrl+Alt+key`):
 
 | Key | Action |
 | --- | ------ |

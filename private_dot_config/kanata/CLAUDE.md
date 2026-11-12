@@ -8,7 +8,6 @@ This directory contains Kanata configuration for advanced keyboard remapping.
 private_dot_config/kanata/
 ├── CLAUDE.md        # This file - AI guidance
 ├── README.md        # User documentation
-├── laptop.kbd       # Linux/NixOS configuration
 ├── darwin.kbd       # macOS configuration (ANSI Spanish LatAm)
 └── windows.kbd      # Windows configuration
 ```
@@ -48,13 +47,7 @@ See [keybindings.md](../../../docs/keybindings.md) for complete key mapping refe
 
 ## Platform Support
 
-Kanata is available on all desktop platforms:
-
-### Linux (NixOS)
-
-- Configured as systemd service in `nixos/modules/services/kanata.nix`
-- Uses `uinput` for input/output
-- Requires `input` and `uinput` groups
+Kanata runs on macOS and Windows (all Linux hosts are headless):
 
 ### macOS (nix-darwin)
 
@@ -98,10 +91,10 @@ Physical Keyboard → Kanata → Hammerspoon → macOS Spaces API
 
 ### Setup
 
-1. **Install Hammerspoon**: Already in `Brewfile`, install with `brew bundle`
+1. **Install Hammerspoon**: add the `hammerspoon` cask to `nix/darwin/modules/homebrew.nix`
 2. **Config location**: `~/.config/hammerspoon/init.lua` (managed by chezmoi, auto-reloads on change)
    - Hammerspoon configured to use XDG path via `defaults write`
-3. **Auto-start**: Configured automatically via `run_onchange_after_darwin-brew-setup-hammerspoon.nu`
+3. **Auto-start**: Enable "Launch Hammerspoon at login" in its preferences
 4. **Grant permissions**: Accessibility permission for Hammerspoon on first launch
 5. **Create desktops**: Manually create 9 desktops in Mission Control (macOS doesn't allow programmatic creation)
 
@@ -120,7 +113,7 @@ Physical Keyboard → Kanata → Hammerspoon → macOS Spaces API
 | `=+Shift+.` | `Ctrl+Alt+Shift+.` | Move window to next monitor |
 | `=+i` | `Ctrl+Alt+i` | Show desktop info (debug) |
 
-**Design**: Matches LeftWM keybindings for cross-platform muscle memory.
+**Design**: Same `=` layer keys as the Windows config for cross-platform muscle memory.
 
 ### Reload Hammerspoon
 
@@ -138,16 +131,10 @@ After editing `~/.hammerspoon/init.lua`:
 Before applying system-wide:
 
 ```bash
-sudo kanata -d ~/.config/kanata/laptop.kbd
+sudo kanata -d ~/.config/kanata/darwin.kbd
 ```
 
 ### Finding Keyboard Device
-
-**Linux:**
-
-```bash
-ls -la /dev/input/by-path/ | grep kbd
-```
 
 **macOS:**
 
@@ -160,12 +147,6 @@ ioreg -c IOHIDKeyboard -r | grep -i "Product"
 Uses `low-level-hook` - no device path needed.
 
 ### Debugging
-
-**Linux:**
-
-```bash
-journalctl -u kanata-laptop -f
-```
 
 **macOS:**
 
@@ -186,12 +167,6 @@ sudo launchctl start org.nixos.kanata
 **WARNING**: Do NOT use `launchctl kickstart` — it blocks waiting for the process and hangs.
 
 ## Important Notes
-
-**Linux:**
-
-- Kanata requires kernel module `uinput`
-- User must be in `input` and `uinput` groups
-- Device paths may vary between systems
 
 **macOS:**
 
