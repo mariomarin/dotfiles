@@ -34,9 +34,9 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - if: matrix.name == 'nix'
-        uses: DeterminateSystems/nix-installer-action@v22
+        uses: DeterminateSystems/nix-installer-action@v23
       - if: matrix.name == 'nix'
         run: nix flake update --flake ./nix/nixos
       - if: matrix.name == 'nix'
