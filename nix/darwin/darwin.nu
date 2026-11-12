@@ -44,7 +44,7 @@ def "main doctor" [] {
         {|| check-nix }
         {|| check-darwin-rebuild }
         {|| check-flake }
-        {|| check-lock }
+        {|| nix-common check-lock ../nixos/flake.lock "cd ../nixos && nix flake update" }
     ]
     if ($issues | is-empty) { return }
     print "darwin:"
@@ -66,17 +66,6 @@ def check-darwin-rebuild []: nothing -> oneof<string, nothing> {
 def check-flake []: nothing -> oneof<string, nothing> {
     if ("../nixos/flake.nix" | path exists) { return null }
     "flake.nix missing"
-}
-
-def check-lock []: nothing -> oneof<string, nothing> {
-    let lock = "../nixos/flake.lock"
-    if not ($lock | path exists) {
-        return "flake.lock missing — run: cd ../nixos && nix flake update"
-    }
-    let modified = ls -l $lock | get 0.modified
-    let age = (date now) - $modified
-    if $age <= 30day { return null }
-    $"flake.lock is ($age // 1day) days old — run: cd ../nixos && nix flake update"
 }
 
 # Show help

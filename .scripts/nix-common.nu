@@ -25,3 +25,12 @@ export def show-help [
         print $"  ($padded_name)($cmd.description)"
     }
 }
+
+# Doctor issue for a missing or month-old flake.lock, else null
+export def check-lock [lock: path, update: string]: nothing -> oneof<string, nothing> {
+    if not ($lock | path exists) { return $"flake.lock missing — run: ($update)" }
+    let modified = ls -l $lock | get 0.modified
+    let age = (date now) - $modified
+    if $age <= 30day { return null }
+    $"flake.lock is ($age // 1day) days old — run: ($update)"
+}
