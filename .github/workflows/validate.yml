@@ -30,5 +30,4 @@ jobs:
           name: devenv
       - name: Run checks
         run: >-
-          nix run github:cachix/devenv/v2.1.2 -- shell --
-          prek run --from-ref ${{ github.event.pull_request.base.sha || github.event.before }} --to-ref HEAD
+          nix run github:cachix/devenv/v2.1.2 -- shell -- prek run --from-ref ${{ github.event.pull_request.base.sha || github.event.before }} --to-ref HEAD
