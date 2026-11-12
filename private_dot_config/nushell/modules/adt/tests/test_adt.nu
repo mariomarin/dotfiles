@@ -171,15 +171,15 @@ def "result flat-map short-circuits on error" [] {
 @test
 def "result bimap transforms both paths" [] {
     let double = {|x| $x * 2}
-    let uppercase = {|s| $s | str uppercase}
+    let tag = {|s| $"E: ($s)"}
 
-    let result1 = (ok 5 | result bimap $double $uppercase)
+    let result1 = (ok 5 | result bimap $double $tag)
     assert ($result1 | is-ok)
     assert ($result1.value == 10)
 
-    let result2 = (err "error" | result bimap $double $uppercase)
+    let result2 = (err "error" | result bimap $double $tag)
     assert ($result2 | is-err)
-    assert ($result2.error == "ERROR")
+    assert ($result2.error == "E: error")
 }
 
 @test
