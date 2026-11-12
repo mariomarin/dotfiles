@@ -10,6 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
+      # Saved by update-deps.yml on main
+      - uses: nix-community/cache-nix-action/restore@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('nix/nixos/flake.lock', 'nix/nixos/pkgs/**') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
       - name: Evaluate flake outputs
         run: |
           nix eval --raw ./nix/nixos#nixosConfigurations.symbiont.config.system.build.toplevel.drvPath
