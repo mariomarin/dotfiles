@@ -1,5 +1,6 @@
 # Tests for doctor.nu
 use std/assert
+use helpers.nu [with-fake-bins]
 
 const SCRIPT = ".scripts/doctor.nu"
 
@@ -19,11 +20,17 @@ def "test has subcommands" [] {
 }
 
 def "test summary passes when tools exist" [] {
-    let result = (
+    let fakes = {
+        chezmoi: "exit 0"
+        nvim: "exit 0"
+        tmux: "exit 0"
+        zsh: "exit 0"
+    }
+    let result = with-fake-bins $fakes {||
         do { ^$nu.current-exe --no-config-file -c "source .scripts/doctor.nu; main summary" }
         | complete
-    )
-    assert equal $result.exit_code 0
+    }
+    assert equal $result.exit_code 0 $result.stdout
 }
 
 def "test check-cmd reports only missing externals" [] {
