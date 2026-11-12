@@ -7,8 +7,8 @@ use ../.scripts/adt.nu [run-cmd, is-err, "result map", "result unwrap-or", "resu
 # Check if running on Windows
 def check-os [] {
     if $nu.os-info.name != "windows" {
-        print "❌ Error: WSL setup commands are only for Windows"
-        print "   These commands help set up NixOS on WSL2 from Windows"
+        print -e "❌ Error: WSL setup commands are only for Windows"
+        print -e "   These commands help set up NixOS on WSL2 from Windows"
         exit 1
     }
 }
@@ -55,7 +55,7 @@ const NIX_USER = "mario"
 const NIX_FLAKE = "github:mariomarin/dotfiles?dir=nix/nixos"
 
 # Hostname of the NixOS distro, or null if it cannot be queried
-def find-nixos-hostname []: nothing -> any {
+def find-nixos-hostname []: nothing -> oneof<string, nothing> {
     wsl-run -d NixOS -u root --exec hostname
     | result map {|out| $out | str trim }
     | result unwrap-or null
@@ -71,7 +71,7 @@ def has-dotfiles []: nothing -> bool {
 }
 
 # Check if WSL2 is installed
-def "main check-wsl" [] {
+def "main check-wsl" []: nothing -> nothing {
     check-os
     print "🔍 Checking WSL2 installation..."
     match (wsl-run --version) {
@@ -80,15 +80,15 @@ def "main check-wsl" [] {
             print "✅ WSL2 is installed"
         }
         _ => {
-            print "❌ WSL is not installed"
-            print "   Run: nu wsl.nu install-wsl"
+            print -e "❌ WSL is not installed"
+            print -e "   Run: nu wsl.nu install-wsl"
             exit 1
         }
     }
 }
 
 # Install WSL2 (requires Administrator privileges)
-def "main install-wsl" [] {
+def "main install-wsl" []: nothing -> nothing {
     check-os
     # Check if WSL is already installed
     if (has-wsl) {
@@ -109,7 +109,7 @@ def "main install-wsl" [] {
 }
 
 # Import NixOS into WSL
-def "main import-nixos" [] {
+def "main import-nixos" []: nothing -> nothing {
     check-os
     # Check if NixOS is already imported
     if (has-distro NixOS) {
@@ -124,8 +124,8 @@ def "main import-nixos" [] {
     print "📦 Importing NixOS into WSL..."
 
     if not ("nixos.wsl" | path exists) {
-        print "❌ nixos.wsl not found"
-        print "   Run 'chezmoi apply' from parent directory to download it"
+        print -e "❌ nixos.wsl not found"
+        print -e "   Run 'chezmoi apply' from parent directory to download it"
         exit 1
     }
 
@@ -142,21 +142,21 @@ def "main import-nixos" [] {
 }
 
 # Start NixOS WSL instance
-def "main start-nixos" [] {
+def "main start-nixos" []: nothing -> nothing {
     check-os
     print "🚀 Starting NixOS WSL..."
     wsl -d NixOS
 }
 
 # List installed WSL distributions
-def "main list-distros" [] {
+def "main list-distros" []: nothing -> nothing {
     check-os
     print "📋 Installed WSL distributions:"
     wsl --list --verbose
 }
 
 # Set NixOS as default WSL distribution
-def "main set-default" [] {
+def "main set-default" []: nothing -> nothing {
     check-os
     print "⚙️  Setting NixOS as default WSL distribution..."
     wsl --set-default NixOS
@@ -165,7 +165,7 @@ def "main set-default" [] {
 }
 
 # Stop NixOS WSL instance
-def "main stop-nixos" [] {
+def "main stop-nixos" []: nothing -> nothing {
     check-os
     print "🛑 Stopping NixOS WSL..."
     wsl --terminate NixOS
@@ -173,7 +173,7 @@ def "main stop-nixos" [] {
 }
 
 # Unregister/remove NixOS from WSL
-def "main uninstall-nixos" [] {
+def "main uninstall-nixos" []: nothing -> nothing {
     check-os
     print "⚠️  WARNING: This will remove NixOS and all its data!"
     print "Press Ctrl+C to cancel, or Enter to continue..."
@@ -189,20 +189,20 @@ def "main uninstall-nixos" [] {
 # Run a command in NixOS WSL
 def "main run" [
     command: string  # Command to run in NixOS WSL
-] {
+]: nothing -> nothing {
     check-os
     wsl -d NixOS --exec $command
 }
 
 # Open NixOS WSL in Windows Terminal
-def "main terminal" [] {
+def "main terminal" []: nothing -> nothing {
     check-os
     print "🖥️  Opening NixOS in Windows Terminal..."
     wt -w 0 new-tab -p "NixOS"
 }
 
 # Show WSL system information
-def "main info" [] {
+def "main info" []: nothing -> nothing {
     check-os
     print "ℹ️  WSL System Information"
     print "========================="
@@ -214,22 +214,22 @@ def "main info" [] {
 }
 
 # Health check for WSL setup
-def "main doctor" [] {
+def "main doctor" []: nothing -> nothing {
     check-os
     mut issues = []
 
     if not (has-wsl) {
-        $issues = ($issues | append "WSL2 not installed — run: wsl --install")
+        $issues ++= ["WSL2 not installed — run: wsl --install"]
         print "wsl:"
         $issues | each {|i| print $"  ($i)" } | ignore
         exit 1
     }
 
     if not (has-distro NixOS) {
-        $issues = ($issues | append "NixOS not imported — run: just wsl-setup")
+        $issues ++= ["NixOS not imported — run: just wsl-setup"]
     } else {
         if not (has-distro NixOS --running) {
-            $issues = ($issues | append "NixOS not running — run: just wsl-start")
+            $issues ++= ["NixOS not running — run: just wsl-start"]
         }
     }
 
@@ -240,7 +240,7 @@ def "main doctor" [] {
 }
 
 # Switch the fresh distro to the flake config (hostname, user, packages)
-def "main provision-nixos" [] {
+def "main provision-nixos" []: nothing -> nothing {
     check-os
     if (is-provisioned) { return }
 
@@ -248,7 +248,7 @@ def "main provision-nixos" [] {
         --flake $"($NIX_FLAKE)#($NIX_HOST)"
         --extra-experimental-features "nix-command flakes")
     if ($rebuild | is-err) {
-        print "❌ nixos-rebuild failed — rerun: nu wsl.nu provision-nixos"
+        print -e "❌ nixos-rebuild failed — rerun: nu wsl.nu provision-nixos"
         exit 1
     }
 
@@ -257,7 +257,7 @@ def "main provision-nixos" [] {
 }
 
 # Unlock Bitwarden and apply chezmoi dotfiles (interactive)
-def "main apply-dotfiles" [] {
+def "main apply-dotfiles" []: nothing -> nothing {
     check-os
     if (has-dotfiles) { return }
 
@@ -270,13 +270,13 @@ def "main apply-dotfiles" [] {
         "chezmoi init --apply mariomarin"
     ] | str join "; "
     if (wsl-run-attached -d NixOS -u $NIX_USER --exec bash -lc $script | is-err) {
-        print "❌ Applying dotfiles failed — rerun: nu wsl.nu apply-dotfiles"
+        print -e "❌ Applying dotfiles failed — rerun: nu wsl.nu apply-dotfiles"
         exit 1
     }
 }
 
 # Complete WSL NixOS setup (one-command install)
-def "main setup" [] {
+def "main setup" []: nothing -> nothing {
     check-os
     print "🚀 Complete WSL NixOS Setup"
     print "==========================="
@@ -308,15 +308,15 @@ def "main setup" [] {
     print ""
     print "Step 2: Checking for NixOS-WSL tarball..."
     if not ("nixos.wsl" | path exists) {
-        print "❌ nixos.wsl not found"
-        print ""
-        print "The tarball is downloaded automatically by chezmoi."
-        print "Please run 'chezmoi apply' from the parent directory first:"
-        print ""
-        print "  cd .."
-        print "  chezmoi apply"
-        print "  cd wsl"
-        print "  just setup"
+        print -e "❌ nixos.wsl not found"
+        print -e ""
+        print -e "The tarball is downloaded automatically by chezmoi."
+        print -e "Please run 'chezmoi apply' from the parent directory first:"
+        print -e ""
+        print -e "  cd .."
+        print -e "  chezmoi apply"
+        print -e "  cd wsl"
+        print -e "  just setup"
         exit 1
     }
     print "✅ nixos.wsl found"
@@ -354,7 +354,7 @@ def "main setup" [] {
 }
 
 # Show help
-def "main help" [] {
+def "main help" []: nothing -> nothing {
     print "WSL NixOS Setup and Management"
     print "==============================="
     print ""
@@ -385,6 +385,6 @@ def "main help" [] {
     print "      when you run 'chezmoi apply' on Windows systems."
 }
 
-def main [] {
+def main []: nothing -> nothing {
     main help
 }
