@@ -2,6 +2,12 @@ name: Validate
 on:
   pull_request:
     branches: [main]
+  # Runs on main save the Nix store cache where PR runs can restore it
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  actions: write
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -10,8 +16,19 @@ jobs:
         with:
           fetch-depth: 0
       - uses: cachix/install-nix-action@v31
+      - uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: devenv-${{ runner.os }}-${{ hashFiles('devenv.nix', 'devenv.yaml', 'devenv.lock') }}
+          restore-prefixes-first-match: devenv-${{ runner.os }}-
+          paths: ~/.cache/nix
+          purge: true
+          purge-prefixes: devenv-${{ runner.os }}-
+          purge-created: 0
+          purge-primary-key: never
       - uses: cachix/cachix-action@v17
         with:
           name: devenv
       - name: Run checks
-        run: nix run github:cachix/devenv/v2.1.2 -- shell -- prek run --from-ref origin/main --to-ref HEAD
+        run: >-
+          nix run github:cachix/devenv/v2.1.2 -- shell --
+          prek run --from-ref ${{ github.event.pull_request.base.sha || github.event.before }} --to-ref HEAD
