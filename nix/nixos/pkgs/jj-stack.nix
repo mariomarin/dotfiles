@@ -7,7 +7,7 @@ buildNpmPackage {
   src = fetchFromGitHub {
     owner = "keanemind";
     repo = "jj-stack";
-    rev = "main";
+    rev = "65f8a6d9ab3beba2b7a721aa4a95b1da121e2fee";
     hash = "sha256-fk+FZv4lu+noM6ig4NFGAlRy4AWdEjkLIDZZ877bKLs=";
   };
 
