@@ -7,9 +7,6 @@
       # ── Git (full version with extras) ──────────────────────────────────
       gitFull # git gui, gitk, git-send-email (GUI tools need X11)
 
-      # ── Desktop notifications ──────────────────────────────────────────
-      libnotify # notify-send (Linux desktop only)
-
       # ── System info ────────────────────────────────────────────────────
       lfs # List filesystem info (Linux only)
 
