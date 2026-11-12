@@ -1,6 +1,5 @@
 # Bumps `uses: owner/action@vN` pins in .github/workflows, keeping major-only tags
 name: GitHub Actions
-
 autodiscovery:
   crawlers:
     github/action:

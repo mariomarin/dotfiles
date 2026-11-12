@@ -1,6 +1,5 @@
 # Pins that no lockfile or rolling channel covers. Preview: just updatecli-diff
 name: Pinned versions
-
 sources:
   kubectl:
     kind: shell
@@ -16,7 +15,6 @@ sources:
     kind: shell
     spec:
       command: git ls-remote https://github.com/vyadh/nutest HEAD | cut -f1
-
 targets:
   kubectl:
     name: Bump kubectl (linux-apt)
