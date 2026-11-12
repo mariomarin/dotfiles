@@ -29,6 +29,7 @@ build:
 # Flake management
 update:
     nix flake update
+    nix shell nixpkgs#nix-update -c nu ../../.scripts/update-pkgs.nu
 
 check:
     nix flake check

@@ -14,7 +14,9 @@ jobs:
       matrix:
         include:
           - name: nix
-            lockfile: nix/nixos/flake.lock
+            lockfile: |
+              nix/nixos/flake.lock
+              nix/nixos/pkgs
             file: flake.lock
           - name: nvim
             lockfile: private_dot_config/nvim/lazy-lock.json
@@ -30,6 +32,12 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@v22
       - if: matrix.name == 'nix'
         run: nix flake update --flake ./nix/nixos
+      - if: matrix.name == 'nix'
+        id: pkgs
+        continue-on-error: true
+        run: nix shell nixpkgs#nix-update nixpkgs#nushell -c nu .scripts/update-pkgs.nu
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - if: matrix.name == 'nvim'
         uses: rhysd/action-setup-vim@v1
         with:
@@ -57,6 +65,7 @@ jobs:
         run: |
           nix eval --raw ./nix/nixos#nixosConfigurations.symbiont.config.system.build.toplevel.drvPath
           nix eval --raw ./nix/nixos#darwinConfigurations.malus.config.system.build.toplevel.drvPath
+          nix run nixpkgs#nushell -- .scripts/build-pkgs.nu
       - uses: peter-evans/create-pull-request@v8
         id: cpr
         with:
@@ -71,5 +80,5 @@ jobs:
       # Bot PRs don't trigger Validate/Automerge; merge here if checks passed
       - if: matrix.name != 'skills' && steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
         run: gh pr merge --squash --delete-branch "${{ steps.cpr.outputs.pull-request-url }}"
-      - if: steps.check.outcome == 'failure'
+      - if: steps.check.outcome == 'failure' || steps.pkgs.outcome == 'failure'
         run: exit 1

@@ -41,6 +41,17 @@
 
   outputs = { nixpkgs, nixpkgs-unstable, nixos-wsl, nix-darwin, nur, claude-code-nix, ... }@inputs:
     let
+      # Packages from ./pkgs; also exposed as `packages` for nix-update and CI builds
+      localPackages = pkgs: {
+        tmux-harpoon = pkgs.callPackage ./pkgs/tmux-harpoon.nix { };
+        tmux-tilish = pkgs.callPackage ./pkgs/tmux-tilish.nix { };
+        bitbucket-cli = pkgs.callPackage ./pkgs/bitbucket-cli.nix { };
+        jj-spr = pkgs.callPackage ./pkgs/jj-spr.nix { };
+        jj-stack = pkgs.callPackage ./pkgs/jj-stack.nix { };
+        jj-hooks = pkgs.callPackage ./pkgs/jj-hooks.nix { };
+        clipper = pkgs.callPackage ./pkgs/clipper.nix { };
+      };
+
       # Common overlays shared by all hosts
       commonOverlays = [
         nur.overlays.default
@@ -49,14 +60,7 @@
             inherit (final) system;
             config.allowUnfree = true;
           };
-          tmux-harpoon = final.callPackage ./pkgs/tmux-harpoon.nix { };
-          tmux-tilish = final.callPackage ./pkgs/tmux-tilish.nix { };
-          bitbucket-cli = final.callPackage ./pkgs/bitbucket-cli.nix { };
-          jj-spr = final.callPackage ./pkgs/jj-spr.nix { };
-          jj-stack = final.callPackage ./pkgs/jj-stack.nix { };
-          jj-hooks = final.callPackage ./pkgs/jj-hooks.nix { };
-          clipper = final.callPackage ./pkgs/clipper.nix { };
-        })
+        } // localPackages final)
         claude-code-nix.overlays.default
       ];
 
@@ -94,6 +98,9 @@
         };
     in
     {
+      packages = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ]
+        (system: localPackages nixpkgs.legacyPackages.${system});
+
       nixosConfigurations = {
         # symbiont - NixOS on WSL (two systems coexisting)
         symbiont = mkSystem {
