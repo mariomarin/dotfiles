@@ -276,7 +276,7 @@ in
         enable = true;
         name = "nushell-test";
         entry = "nu .scripts/tests/run-for-files.nu";
-        files = "\\.nu$";
+        files = "(\\.nu$|/executable_[^.]+$)";
         types = [ ]; # Disable auto-detection of nushell type
         types_or = [ "text" ];
         language = "system";
