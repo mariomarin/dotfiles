@@ -1,6 +1,6 @@
 # NixOS Configuration
 
-Flake-based NixOS for **symbiont** (NixOS on WSL, also the atuin sync server). The same flake
+Flake-based NixOS for **symbiont** (NixOS on WSL). The same flake
 holds the darwin config (`malus`). Host details: [hosts/symbiont/README.md](hosts/symbiont/README.md).
 
 ## Layout
@@ -8,7 +8,7 @@ holds the darwin config (`malus`). Host details: [hosts/symbiont/README.md](host
 ```text
 common.nix            # Universal settings (nix, gc, state version)
 configuration.nix     # Module imports
-hosts/symbiont/       # WSL, Docker, SSH, atuin server
+hosts/symbiont/       # WSL, Docker, SSH
 modules/              # locale, users, services, security, docker, CLI and dev tools
 modules/packages/     # Domain-specific tools (cloud, k8s, git utilities)
 ../common/modules/    # Shared with darwin: cli-tools, development, tmux

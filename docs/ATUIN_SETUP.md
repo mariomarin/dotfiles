@@ -1,36 +1,19 @@
 # Atuin Setup
 
-Encrypted, synced shell history.
+Encrypted, synced shell history using the public server (`api.atuin.sh`, atuin's default).
+No server or `sync_address` to configure.
 
-| Client | Sync server |
-| ------ | ----------- |
-| Linux (symbiont) | Self-hosted on symbiont: NixOS `services.atuin`, `127.0.0.1:8888` |
-| macOS, Windows, Codespaces | Public server (`api.atuin.sh`, atuin's default) |
+## New machine
 
-`ATUIN_SYNC_ADDRESS` is set by `nix/nixos/hosts/symbiont/configuration.nix`; nothing to
-configure elsewhere.
+1. First machine: `atuin register -u <user> -e <email> -p <password>`, then save `atuin key`.
+2. Others: `atuin login -u <user> -p <password> -k "<key>"`, then `atuin sync`.
 
-## Server (symbiont)
-
-| Check | Command |
-| ----- | ------- |
-| Status | `systemctl status atuin.service` |
-| Logs | `journalctl -u atuin.service -f` |
-| Everything | `just atuin-doctor` |
-
-## First setup
-
-1. `just nixos` on symbiont with `openRegistration = true`.
-2. `atuin register -u <user> -e <email> -p <password>`, then `atuin sync`.
-3. Set `openRegistration = false` and run `just nixos` again.
-
-Session tokens belong to each server: a client moving between servers needs
-`atuin logout`, then `atuin login -u <user> -p <password> -k "$(atuin key)"` and `atuin sync`.
+Shell integration (`Ctrl+R`, up-arrow) comes from `~/.config/zsh/atuin-config.zsh`.
 
 ## Troubleshooting
 
-Run `just atuin-doctor` first: it checks the sync address, server reachability, version
-skew, client logs and (on symbiont) the unit and its journal.
+Run `just atuin-doctor` first: it checks login and sync state, server reachability,
+version skew and client logs.
 
 | Symptom | Fix |
 | ------- | --- |

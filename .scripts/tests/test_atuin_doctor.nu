@@ -30,53 +30,6 @@ def "test parse-tracing-lines keeps levels and targets" [] {
     assert equal $parsed.0.ts 2026-10-06T10:00:00.123456Z
 }
 
-def "test parse-journal-json decodes string and byte messages" [] {
-    # journald emits non-UTF-8 MESSAGE as an array of bytes ("caf\xe9 ERROR")
-    let journal = [
-        ({MESSAGE: "listening on 127.0.0.1:8888", PRIORITY: "6", SYSLOG_IDENTIFIER: "atuin-server", __REALTIME_TIMESTAMP: "1791280800000000"} | to json -r)
-        ({MESSAGE: "atuin.service: Failed with result 'exit-code'.", PRIORITY: "4", SYSLOG_IDENTIFIER: "systemd", __REALTIME_TIMESTAMP: "1791280801000000"} | to json -r)
-        ({MESSAGE: [99 97 102 233 32 69 82 82 79 82], PRIORITY: "6", __REALTIME_TIMESTAMP: "1791280802000000"} | to json -r)
-    ] | str join "\n"
-    let entries = doctor-eval $"($journal | to nuon) | parse-journal-json"
-    assert equal ($entries | length) 3
-    assert equal $entries.0.msg "listening on 127.0.0.1:8888"
-    assert equal $entries.1.source "systemd"
-    assert equal $entries.2.msg "caf� ERROR"
-    assert equal $entries.0.ts (1791280800 * 1_000_000_000 | into datetime)
-}
-
-def "test journal-problems filters noise" [] {
-    let entries = [
-        [priority msg];
-        [6 "listening on 127.0.0.1:8888"]
-        [3 "something at err priority"]
-        [6 "2026-10-06T10:00:00Z ERROR atuin_server: boom"]
-        [4 "atuin-server.service: Failed with result 'exit-code'."]
-        [6 "Error: Address already in use (os error 98)"]
-    ]
-    let kept = doctor-eval $"($entries | to nuon) | journal-problems | get msg"
-    assert equal ($kept | length) 4
-    assert ("listening on 127.0.0.1:8888" not-in $kept)
-}
-
-def "test classify-server-error recognises known failures" [] {
-    [
-        [msg expected];
-        ["Error: Address already in use (os error 98)" "port already in use"]
-        ["error returned from database: unable to open database file" "cannot write its database"]
-        ["database is locked" "database is locked"]
-        ["413 Payload Too Large" "oversized record"]
-        ["atuin-server.service: Start request repeated too quickly." "crash-looped"]
-        ["thread 'main' panicked at src/main.rs" "panicked"]
-    ]
-    | each {|case|
-        let r = doctor-eval $"classify-server-error ($case.msg | to nuon)"
-        assert ($r.message | str contains $case.expected) $r.message
-    }
-    | ignore
-    assert equal (doctor-eval "classify-server-error 'all good'") null
-}
-
 def "test parse-atuin-doctor skips banner" [] {
     let out = "Atuin Doctor\nChecking for diagnostics\n\n{\n  \"atuin\": {\"version\": \"18.21.0\"}\n}"
     let r = doctor-eval $"($out | to nuon) | parse-atuin-doctor"
@@ -130,43 +83,11 @@ def "test summarize-problems dedupes and counts" [] {
         [ts msg];
         [2026-10-06T10:00:00Z "sync failed"]
         [2026-10-06T11:00:00Z "sync failed"]
-        [2026-10-06T10:30:00Z "Error: Address already in use"]
+        [2026-10-06T10:30:00Z "database error"]
     ]
-    let issues = doctor-eval $"($problems | to nuon) | summarize-problems 'server log'"
+    let issues = doctor-eval $"($problems | to nuon) | summarize-problems 'client log'"
     assert equal ($issues | length) 2
-    # newest last; known errors classified, others reported with a count
-    assert equal $issues.0.message "port already in use"
+    # newest last, repeats counted
+    assert equal $issues.0.message "database error"
     assert equal $issues.1.message "sync failed (x2)"
-}
-
-# Run snippet with fake systemctl/journalctl first on PATH
-def with-fake-systemd [show: string, journal: string, snippet: string]: nothing -> any {
-    let bin = (mktemp -d)
-    $show | save $"($bin)/show.txt"
-    $"#!/bin/sh\ncase \"$1\" in cat\) exit 0;; show\) cat ($bin)/show.txt;; esac\n" | save $"($bin)/systemctl"
-    $journal | save $"($bin)/journal.json"
-    $"#!/bin/sh\necho \"$@\" > ($bin)/journalctl.args\ncat ($bin)/journal.json\n" | save $"($bin)/journalctl"
-    ^chmod +x $"($bin)/systemctl" $"($bin)/journalctl"
-    let result = with-env {PATH: ($env.PATH | prepend $bin)} { doctor-eval $"{issues: \(($snippet)\), args: \(open ($bin)/journalctl.args | str trim\)}" }
-    rm -rf $bin
-    $result
-}
-
-def "test server checks read fake systemd" [] {
-    let journal = [
-        ({MESSAGE: "Error: Address already in use (os error 98)", PRIORITY: "6", __REALTIME_TIMESTAMP: "1791280800000000"} | to json -r)
-        ({MESSAGE: "atuin.service: Failed with result 'exit-code'.", PRIORITY: "4", __REALTIME_TIMESTAMP: "1791280801000000"} | to json -r)
-    ] | str join "\n"
-    let r = with-fake-systemd "ActiveState=failed\nSubState=failed\nNRestarts=3" $journal "(check-server-unit) ++ (check-server-journal)"
-    assert equal ($r.issues | get message) [
-        "atuin.service is failed/failed"
-        "port already in use"
-        "atuin.service: Failed with result 'exit-code'."
-    ]
-    assert ($r.args | str contains "--since 24 hours ago") $r.args
-}
-
-def "test server checks quiet when active" [] {
-    let r = with-fake-systemd "ActiveState=active\nSubState=running\nNRestarts=0" "" "(check-server-unit) ++ (check-server-journal)"
-    assert equal $r.issues []
 }

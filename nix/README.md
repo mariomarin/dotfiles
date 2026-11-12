@@ -40,7 +40,7 @@ All hosts use biology-themed naming. See `.chezmoidata/machines.yaml` for comple
 
 | Host         | Platform  | Type    | Description                           |
 | ------------ | --------- | ------- | ------------------------------------- |
-| **symbiont** | NixOS-WSL | WSL     | NixOS on WSL, atuin sync server       |
+| **symbiont** | NixOS-WSL | WSL     | NixOS on Windows Subsystem for Linux  |
 | **malus**    | Darwin    | Desktop | macOS workstation                     |
 | **prion**    | Windows   | Desktop | Native Windows workstation            |
 
