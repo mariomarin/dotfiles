@@ -4,7 +4,6 @@
 
 const PKGS = [
     [name, branch];
-    [bitbucket-cli, false]
     [clipper, false]
     [jj-hooks, false]
     [jj-spr, true]

@@ -23,7 +23,6 @@ pkgs: {
     git-lfs
     gh # GitHub CLI
     gh-dash # GitHub PR dashboard TUI
-    bitbucket-cli # Bitbucket CLI (custom pkg)
     unstable.jujutsu # Modern VCS (jj command)
     jj-spr # Stacked PRs for jj (write access repos)
     jj-stack # Stacked PRs for jj (read-only repos)
