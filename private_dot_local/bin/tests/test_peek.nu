@@ -12,23 +12,27 @@ def with-peek [body: closure] {
 }
 
 def peek-eval [snippet: string]: nothing -> any {
-    let result = with-peek {|peek| do { nu -n -c $"source ($peek); ($snippet) | to nuon" } | complete }
+    let result = with-peek {|peek|
+        do { nu -n -c $"source ($peek); ($snippet) | to nuon" } | complete
+    }
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
 }
 
 def "test script parses" [] {
-    let result = with-peek {|peek| do { nu -n -c $"source ($peek)" } | complete }
+    let result = with-peek {|peek|
+        do { nu -n -c $"source ($peek)" } | complete
+    }
     assert equal $result.exit_code 0 $result.stderr
 }
 
 def "test select-opener priority" [] {
     [
-        [args expected];
-        ["true true false" "nc"]
-        ["false true false" "open"]
-        ["false false true" "wslview"]
-        ["false false false" "xdg-open"]
+        [args, expected];
+        ["true true false", "nc"]
+        ["false true false", "open"]
+        ["false false true", "wslview"]
+        ["false false false", "xdg-open"]
     ]
     | each {|case| assert equal (peek-eval $"select-opener ($case.args)") $case.expected }
     | ignore
@@ -41,17 +45,14 @@ def "test opener-argv" [] {
 }
 
 def "test is-ssh checks all ssh vars" [] {
-    let result = with-peek {|peek|
-        with-env {SSH_TTY: null, SSH_CONNECTION: "1.2.3.4 1 5.6.7.8 22", SSH_CLIENT: null} {
-            do { nu -n -c $"source ($peek); is-ssh | to nuon" } | complete
-        }
-    }
+    let ssh_env = {SSH_TTY: null, SSH_CONNECTION: "1.2.3.4 1 5.6.7.8 22", SSH_CLIENT: null}
+    let result = with-peek {|peek| with-env $ssh_env { do { nu -n -c $"source ($peek); is-ssh | to nuon" } | complete } }
     assert equal ($result.stdout | str trim) "true"
 }
 
+# Port 1: nothing listens, so nc fails like a missing tunnel (and never
+# reaches a real xdg-open-svc on 2226)
 def "test run-opener reports nc failures with a hint" [] {
-    # Port 1: nothing listens, so nc fails like a missing tunnel (and never
-    # reaches a real xdg-open-svc on 2226)
     let r = peek-eval "run-opener [nc -w1 localhost 1] https://example.invalid"
     assert equal $r.ok false
     assert ($r.error | str contains "xdg-open-svc may not be running") $r.error
