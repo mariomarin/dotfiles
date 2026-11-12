@@ -498,7 +498,7 @@ automatically detects and updates:
 
 Most dependencies are rolling (`gitHubLatestRelease`, git-repo externals, lockfiles).
 Anything pinned without a lockfile is bumped by [updatecli](https://www.updatecli.io/)
-manifests in `updatecli/`, run by `update-deps.yml` (needs an `UPDATECLI_TOKEN` PAT with
+manifests in `updatecli/updatecli.d/`, run by `update-deps.yml` (needs an `UPDATECLI_TOKEN` PAT with
 `workflow` scope). Preview locally: `just updatecli-diff`. When adding a pin, add a target there.
 
 ### Automatic Updates

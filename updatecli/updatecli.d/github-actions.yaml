@@ -6,6 +6,9 @@ autodiscovery:
     github/action:
       rootdir: .github/workflows
       digest: false
+      ignore:
+        - actions:
+            updatecli/updatecli-action: ""
       versionfilter:
         kind: regex/semver
         regex: '^(v\d+)$'
