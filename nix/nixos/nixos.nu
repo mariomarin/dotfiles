@@ -52,9 +52,14 @@ def "main doctor" [
     if not ($lock | path exists) {
         $issues = ($issues | append "flake.lock missing — run: nix flake update")
     } else {
-        let age = (date now) - ((ls -l $lock | get 0.modified) | into datetime)
+        let modified = ls -l $lock | get 0.modified | into datetime
+        let now = date now
+        let age = $now - $modified
         if $age > 30day {
-            $issues = ($issues | append $"flake.lock is ($age | into int | $in / 86400000000000) days old — run: nix flake update")
+            $issues = (
+                $issues
+                | append $"flake.lock is ($age | into int | $in / 86400000000000) days old — run: nix flake update"
+            )
         }
     }
 
