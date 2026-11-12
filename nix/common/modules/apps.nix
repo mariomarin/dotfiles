@@ -5,9 +5,6 @@
 
 {
   environment.systemPackages = with pkgs; [
-    # Web Browsers
-    brave
-
     # Terminal Emulators
     alacritty
 
