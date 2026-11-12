@@ -475,17 +475,7 @@ source ($nu.default-config-dir | path join 'scripts' 'jj-aliases.nu')
 # -----------------------------------------------------------------------------
 # PLUGIN REGISTRATION
 # -----------------------------------------------------------------------------
-# Plugins installed via NixOS packages or nupm need to be registered
-
-# Register clipboard plugin if installed via nupm
-let clipboard_plugin = (
-    $nu.home-dir
-    | path join '.local' 'share' 'nupm' 'modules' 'nu_plugin_clipboard' 'target' 'release' 'nu_plugin_clipboard'
-)
-if ($clipboard_plugin | path exists) {
-    do { plugin add $clipboard_plugin } | complete | ignore
-}
-
+# Windows plugins are registered once by .scripts/windows-nushell-plugins.nu
 # NixOS plugins are automatically registered via system PATH
 
 # -----------------------------------------------------------------------------
