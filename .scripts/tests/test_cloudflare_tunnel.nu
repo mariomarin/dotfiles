@@ -4,7 +4,7 @@ use std/assert
 const SCRIPT = ".scripts/cloudflare-tunnel.nu"
 
 def "test script parses" [] {
-    do { nu -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
+    do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
 def "test help output" [] {
@@ -21,7 +21,7 @@ def "test help output" [] {
 
 def "test parse-tunnel-url extracts url" [] {
     let result = do {
-        nu -n -c 'source .scripts/cloudflare-tunnel.nu; parse-tunnel-url "INFO: https://some-tunnel-abc.trycloudflare.com connected" | to nuon'
+        ^$nu.current-exe -n -c 'source .scripts/cloudflare-tunnel.nu; parse-tunnel-url "INFO: https://some-tunnel-abc.trycloudflare.com connected" | to nuon'
     } | complete
     assert equal $result.exit_code 0
     assert equal ($result.stdout | str trim | from nuon) "https://some-tunnel-abc.trycloudflare.com"
@@ -29,7 +29,7 @@ def "test parse-tunnel-url extracts url" [] {
 
 def "test parse-tunnel-url returns null on no match" [] {
     let result = do {
-        nu -n -c 'source .scripts/cloudflare-tunnel.nu; parse-tunnel-url "no url here" | to nuon'
+        ^$nu.current-exe -n -c 'source .scripts/cloudflare-tunnel.nu; parse-tunnel-url "no url here" | to nuon'
     } | complete
     assert equal $result.exit_code 0
     assert equal ($result.stdout | str trim | from nuon) null

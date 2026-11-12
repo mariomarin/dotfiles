@@ -13,7 +13,7 @@ const RMLINT_JSON = r#'[
 ]'#
 
 def eval [expr: string]: nothing -> any {
-    let result = do { nu -n -c $"source ($SCRIPT); ($expr) | to nuon" } | complete
+    let result = do { ^$nu.current-exe -n -c $"source ($SCRIPT); ($expr) | to nuon" } | complete
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
 }
@@ -34,7 +34,7 @@ def facts [overrides: record = {}]: nothing -> string {
 }
 
 def "test script parses" [] {
-    do { nu -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
+    do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
 def "test parse-du converts KiB to bytes" [] {

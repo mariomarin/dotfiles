@@ -10,7 +10,7 @@ def "test all scripts parse" [] {
         not ($f | str contains "/tests/") and not ($name in $SKIP)
     }
     | each { |script|
-        let result = do { nu -n -c $"source ($script)" } | complete
+        let result = do { ^$nu.current-exe -n -c $"source ($script)" } | complete
         assert equal $result.exit_code 0 $"($script): ($result.stderr)"
     }
     | ignore
@@ -19,7 +19,7 @@ def "test all scripts parse" [] {
 def "test all nushell modules parse" [] {
     glob "private_dot_config/nushell/modules/{*/mod.nu,*.nu}"
     | each { |module|
-        let result = do { nu -n -c $"source ($module)" } | complete
+        let result = do { ^$nu.current-exe -n -c $"source ($module)" } | complete
         assert equal $result.exit_code 0 $"($module): ($result.stderr)"
     }
     | ignore

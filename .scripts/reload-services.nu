@@ -66,11 +66,11 @@ def reload-systemctl [service: string, --user]: nothing -> record {
 
 # Reload a service by running a command (generic)
 def reload-command [check: string, reload: string, name: string]: nothing -> record {
-    let running = (run-cmd {nu -c $check})
+    let running = (run-cmd {^$nu.current-exe -c $check})
     if ($running | is-err) {
         return (ok {skipped: "not running"})
     }
-    let result = (run-cmd {nu -c $reload})
+    let result = (run-cmd {^$nu.current-exe -c $reload})
     if ($result | is-err) {
         return (err $result.error.stderr)
     }

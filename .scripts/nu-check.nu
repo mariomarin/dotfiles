@@ -63,7 +63,7 @@ def main [...files: string] {
 
         let path_lit = $path | to nuon
         let result = (do {
-          ^nu --no-config-file --commands $"nu-check --debug ($path_lit)"
+          ^$nu.current-exe --no-config-file --commands $"nu-check --debug ($path_lit)"
         } | complete)
 
         if $result.exit_code != 0 {

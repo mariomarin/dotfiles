@@ -6,7 +6,7 @@ use run-nutest.nu run-suites
 
 def get-test-funcs [test_file: string] {
     let result = do {
-        nu -n -c $"source ($test_file); scope commands | where name =~ '^test ' | get name | to nuon"
+        ^$nu.current-exe -n -c $"source ($test_file); scope commands | where name =~ '^test ' | get name | to nuon"
     } | complete
 
     if $result.exit_code != 0 { return [] }
@@ -14,7 +14,7 @@ def get-test-funcs [test_file: string] {
 }
 
 def run-test [test_file: string, func: string] {
-    let result = do { nu -n -c $"source ($test_file); ($func)" } | complete
+    let result = do { ^$nu.current-exe -n -c $"source ($test_file); ($func)" } | complete
     {
         name: $func
         passed: ($result.exit_code == 0)

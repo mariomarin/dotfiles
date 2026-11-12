@@ -17,7 +17,7 @@ export def "test dyld error detection with library not loaded" [] {
     let log = (setup_test_log $content)
 
     # Test the has-dyld-error function inline
-    let result = (nu -c $'
+    let result = (^$nu.current-exe -c $'
         source .scripts/kanata-doctor.nu
         has-dyld-error "($log)" | to nuon
     ' | from nuon)
@@ -35,7 +35,7 @@ connect_failed asio.system:61"
 
     let log = (setup_test_log $content)
 
-    let result = (nu -c $'
+    let result = (^$nu.current-exe -c $'
         source .scripts/kanata-doctor.nu
         has-dyld-error "($log)" | to nuon
     ' | from nuon)
@@ -46,7 +46,7 @@ connect_failed asio.system:61"
 }
 
 export def "test dyld error detection with missing log" [] {
-    let result = (nu -c '
+    let result = (^$nu.current-exe -c '
         source .scripts/kanata-doctor.nu
         has-dyld-error "/tmp/nonexistent-kanata-test.log" | to nuon
     ' | from nuon)
@@ -61,7 +61,7 @@ More logs"
 
     let log = (setup_test_log $content)
 
-    let result = (nu -c $'
+    let result = (^$nu.current-exe -c $'
         source .scripts/kanata-doctor.nu
         has-dyld-error "($log)" | to nuon
     ' | from nuon)
@@ -79,7 +79,7 @@ failed to start"
 
     let log = (setup_test_log $content)
 
-    let result = (nu -c $'
+    let result = (^$nu.current-exe -c $'
         source .scripts/kanata-doctor.nu
         has-no-devices "($log)" | to nuon
     ' | from nuon)
@@ -96,7 +96,7 @@ device registered"
 
     let log = (setup_test_log $content)
 
-    let result = (nu -c $'
+    let result = (^$nu.current-exe -c $'
         source .scripts/kanata-doctor.nu
         has-no-devices "($log)" | to nuon
     ' | from nuon)

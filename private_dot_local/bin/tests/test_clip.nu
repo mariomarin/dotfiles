@@ -18,7 +18,7 @@ def with-clip [body: closure] {
 # Evaluate a snippet with clip sourced; returns the nuon-decoded result
 def clip-eval [snippet: string]: nothing -> any {
     let result = with-clip {|clip|
-        do { nu -n -c $"source ($clip); ($snippet) | to nuon" } | complete
+        do { ^$nu.current-exe -n -c $"source ($clip); ($snippet) | to nuon" } | complete
     }
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
@@ -48,7 +48,7 @@ const NO_CLIPBOARD = 'env not found in PATH|no clipboard backend'
 
 def "test script parses" [] {
     let result = with-clip {|clip|
-        do { nu -n -c $"source ($clip)" } | complete
+        do { ^$nu.current-exe -n -c $"source ($clip)" } | complete
     }
     assert equal $result.exit_code 0 $result.stderr
 }

@@ -13,7 +13,7 @@ def with-peek [body: closure] {
 
 def peek-eval [snippet: string]: nothing -> any {
     let result = with-peek {|peek|
-        do { nu -n -c $"source ($peek); ($snippet) | to nuon" } | complete
+        do { ^$nu.current-exe -n -c $"source ($peek); ($snippet) | to nuon" } | complete
     }
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
@@ -21,7 +21,7 @@ def peek-eval [snippet: string]: nothing -> any {
 
 def "test script parses" [] {
     let result = with-peek {|peek|
-        do { nu -n -c $"source ($peek)" } | complete
+        do { ^$nu.current-exe -n -c $"source ($peek)" } | complete
     }
     assert equal $result.exit_code 0 $result.stderr
 }
@@ -46,7 +46,7 @@ def "test opener-argv" [] {
 
 def "test is-ssh checks all ssh vars" [] {
     let ssh_env = {SSH_TTY: null, SSH_CONNECTION: "1.2.3.4 1 5.6.7.8 22", SSH_CLIENT: null}
-    let result = with-peek {|peek| with-env $ssh_env { do { nu -n -c $"source ($peek); is-ssh | to nuon" } | complete } }
+    let result = with-peek {|peek| with-env $ssh_env { do { ^$nu.current-exe -n -c $"source ($peek); is-ssh | to nuon" } | complete } }
     assert equal ($result.stdout | str trim) "true"
 }
 
