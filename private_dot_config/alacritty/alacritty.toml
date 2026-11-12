@@ -1,0 +1,28 @@
+[window]
+opacity = 0.97
+blur = true
+# macOS: Use Option as Alt/Meta key for tmux-tilish, zellij, and Neovim navigation
+# Note: This option is ignored on Linux/Windows
+option_as_alt = "Both"
+
+[font]
+size = 14.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[general]
+import = ["~/.config/alacritty/themes/themes/ayu_light.toml"]
+
+[terminal]
+# OSC 52 clipboard support - allows remote/tmux to write to local clipboard
+osc52 = "CopyPaste"

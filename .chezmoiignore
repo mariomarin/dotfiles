@@ -72,8 +72,6 @@ private_dot_local/bin/tests/**
 .config/tmux/**
 .config/zsh
 .config/zsh/**
-.config/tridactyl
-.config/tridactyl/**
 .config/systemd
 .config/systemd/**
 {{ end }}

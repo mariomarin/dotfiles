@@ -69,8 +69,8 @@ blacklistadd calendar.google.com
 blacklistadd meet.google.com
 
 " === Editor ===
-" Use neovim in terminal for editing
-set editorcmd open -W -na Ghostty --args -e nvim %f
+" Use neovim in terminal for editing (Alacritty on Windows, Ghostty on macOS)
+jsb browser.runtime.getPlatformInfo().then(p => tri.config.set("editorcmd", p.os === "win" ? "alacritty -e nvim %f" : "open -W -na Ghostty --args -e nvim %f"))
 
 " === New tab ===
 " Open new tabs with DuckDuckGo
