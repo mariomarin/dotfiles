@@ -3,26 +3,25 @@
 # hash: {{ gitHubLatestRelease "nix-community/NixOS-WSL" | toJson }}
 
 {{- $nixosWslRelease := gitHubLatestRelease "nix-community/NixOS-WSL" -}}
-{{- $version := $nixosWslRelease.TagName -}}
+{{- $version := $nixosWslRelease.TagName }}
 
-print "📥 Downloading NixOS-WSL {{ $version }}..."
-
+let version = "{{ $version }}"
 let wsl_dir = ("{{ .chezmoi.sourceDir }}" | path join "wsl")
 let target_file = ($wsl_dir | path join "nixos.wsl")
+let version_file = ($wsl_dir | path join "nixos.wsl.version")
+let part_file = ($wsl_dir | path join "nixos.wsl.part")
 
-# Check if already downloaded
-if ($target_file | path exists) {
-    print $"✅ nixos.wsl already exists in ($wsl_dir)"
-    exit 0
-}
+# Version marker is written only after a complete download, so a
+# truncated file from an interrupted run is never treated as done
+let current = if ($version_file | path exists) { open $version_file | str trim } else { "" }
+if ($target_file | path exists) and $current == $version { exit 0 }
 
-print $"📂 Target: ($target_file)"
+let url = $"https://github.com/nix-community/NixOS-WSL/releases/download/($version)/nixos.wsl"
+print $"📥 Downloading NixOS-WSL ($version) from ($url)"
 
-# Download the file
-let url = "https://github.com/nix-community/NixOS-WSL/releases/download/{{ $version }}/nixos.wsl"
-print $"🔗 URL: ($url)"
+rm -f $part_file
+http get --raw $url | save --force $part_file
+mv --force $part_file $target_file
+$version | save --force $version_file
 
-http get $url | save $target_file
-
-print "✅ Downloaded nixos.wsl"
-print $"💡 File saved to: ($target_file)"
+print $"✅ Saved ($target_file)"

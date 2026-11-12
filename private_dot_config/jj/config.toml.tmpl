@@ -1,8 +1,14 @@
 #:schema https://docs.jj-vcs.dev/latest/config-schema.json
 
 [user]
-name = "{{ output "git" "config" "user.name" | trim }}"
-email = "{{ output "git" "config" "user.email" | trim }}"
+{{- $name := output "git" "config" "--default" "" "user.name" | trim }}
+{{- $email := output "git" "config" "--default" "" "user.email" | trim }}
+{{- if $name }}
+name = {{ $name | quote }}
+{{- end }}
+{{- if $email }}
+email = {{ $email | quote }}
+{{- end }}
 
 [ui]
 pager = ":builtin"
