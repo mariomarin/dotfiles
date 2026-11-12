@@ -54,9 +54,21 @@
   # Add user to docker group
   users.users.${userConfig.username}.extraGroups = [ "docker" ];
 
+  # Linux atuin clients sync here; macOS/Windows use the public server
+  environment.variables.ATUIN_SYNC_ADDRESS = "http://127.0.0.1:8888";
+
   services = {
     xserver.enable = lib.mkForce false;
     resolved.enable = lib.mkForce false; # WSL manages resolv.conf
+
+    # Atuin sync server (localhost only)
+    atuin = {
+      enable = true;
+      host = "127.0.0.1";
+      port = 8888;
+      openRegistration = true; # set false after the first `atuin register`
+      maxHistoryLength = 81920;
+    };
 
     # Enable SSH server for remote access
     openssh = {
