@@ -13,7 +13,7 @@ def build-with-nupm [nupm: string, name: string]: nothing -> record<ok: bool, er
     if (which cargo | is-empty) { return {ok: false, error: "cargo not found"} }
     # Never wait on a hidden git credential prompt
     try {
-        with-env {GIT_TERMINAL_PROMPT: "0"} { ^nu -c $"use ($nupm); nupm install ($name)" }
+        with-env {GIT_TERMINAL_PROMPT: "0"} { nu -c $"use ($nupm); nupm install ($name)" }
         {ok: true, error: ""}
     } catch {|e| {ok: false, error: $e.msg} }
 }
@@ -34,7 +34,7 @@ def main []: nothing -> nothing {
     if not ($plugins_file | path exists) { return }
 
     let plugins = try { open $plugins_file } catch {|e|
-        print -e $"cannot read ($plugins_file): ($e.msg)"
+        print --stderr $"cannot read ($plugins_file): ($e.msg)"
         exit 1
     }
 
@@ -43,6 +43,6 @@ def main []: nothing -> nothing {
         | where not ok
 
     if ($failures | is-empty) { return }
-    $failures | each {|f| print -e $"($f.name): ($f.error)" } | ignore
+    for f in $failures { print --stderr $"($f.name): ($f.error)" }
     exit 1
 }
