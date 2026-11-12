@@ -35,6 +35,9 @@ in
     shfmt
     bash-language-server
 
+    # Bumps pinned versions (updatecli/)
+    updatecli
+
     # JSON LSP
     vscode-langservers-extracted # Includes JSON, HTML, CSS LSPs
 

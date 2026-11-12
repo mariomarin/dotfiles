@@ -24,6 +24,13 @@ jobs:
           - name: skills
             lockfile: .claude/skills
             file: skills-lock.json
+          # Pins with no lockfile or rolling channel; see updatecli/
+          - name: updatecli
+            lockfile: |
+              .github/workflows
+              devenv.nix
+              private_dot_local/bin/.chezmoiexternal.toml.tmpl
+            file: pinned versions
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -59,6 +66,13 @@ jobs:
             nu .scripts/update-skills.nu
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
+      - if: matrix.name == 'updatecli'
+        run: |
+          curl -fsSL https://github.com/updatecli/updatecli/releases/latest/download/updatecli_Linux_x86_64.tar.gz \
+            | tar xz -C "$RUNNER_TEMP" updatecli
+          "$RUNNER_TEMP/updatecli" apply --config updatecli/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - if: matrix.name == 'nix'
         id: check
         continue-on-error: true
@@ -69,6 +83,8 @@ jobs:
       - uses: peter-evans/create-pull-request@v8
         id: cpr
         with:
+          # GITHUB_TOKEN can't push .github/workflows changes; PR then runs Validate
+          token: ${{ matrix.name == 'updatecli' && secrets.UPDATECLI_TOKEN || github.token }}
           commit-message: "chore(${{ matrix.name }}): update ${{ matrix.file }}"
           title: "chore(${{ matrix.name }}): update ${{ matrix.file }}"
           branch: chore/update-${{ matrix.name }}-lock
@@ -78,7 +94,8 @@ jobs:
           labels: ${{ matrix.name == 'skills' && 'dependencies' || 'dependencies,automerge' }}
           add-paths: ${{ matrix.lockfile }}
       # Bot PRs don't trigger Validate/Automerge; merge here if checks passed
-      - if: matrix.name != 'skills' && steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
+      # updatecli PRs are pushed with a PAT, so Automerge handles them after Validate
+      - if: matrix.name != 'skills' && matrix.name != 'updatecli' && steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
         run: gh pr merge --squash --delete-branch "${{ steps.cpr.outputs.pull-request-url }}"
       - if: steps.check.outcome == 'failure' || steps.pkgs.outcome == 'failure'
         run: exit 1

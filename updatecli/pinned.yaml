@@ -1,0 +1,44 @@
+# Pins that no lockfile or rolling channel covers. Preview: just updatecli-diff
+name: Pinned versions
+
+sources:
+  kubectl:
+    kind: shell
+    spec:
+      command: curl -fsSL https://dl.k8s.io/release/stable.txt
+  devenv:
+    kind: gittag
+    spec:
+      url: https://github.com/cachix/devenv.git
+      versionfilter:
+        kind: semver
+  nutest:
+    kind: shell
+    spec:
+      command: git ls-remote https://github.com/vyadh/nutest HEAD | cut -f1
+
+targets:
+  kubectl:
+    name: Bump kubectl (linux-apt)
+    kind: file
+    sourceid: kubectl
+    spec:
+      file: private_dot_local/bin/.chezmoiexternal.toml.tmpl
+      matchpattern: 'dl\.k8s\.io/release/v[0-9.]+/'
+      replacepattern: 'dl.k8s.io/release/{{ source "kubectl" }}/'
+  devenv:
+    name: Bump devenv in CI
+    kind: file
+    sourceid: devenv
+    spec:
+      file: .github/workflows/validate.yml
+      matchpattern: 'github:cachix/devenv/v[0-9.]+'
+      replacepattern: 'github:cachix/devenv/{{ source "devenv" }}'
+  nutest:
+    name: Bump nutest in devenv
+    kind: file
+    sourceid: nutest
+    spec:
+      file: devenv.nix
+      matchpattern: '(url = "https://github.com/vyadh/nutest";\s+rev = ")[0-9a-f]{40}'
+      replacepattern: '${1}{{ source "nutest" }}'
