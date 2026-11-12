@@ -1,20 +1,40 @@
 #!/usr/bin/env nu
-# Install nushell plugins via nupm registry (Windows)
+# Register nushell plugins (Windows): official plugins ship next to nu.exe,
+# third-party ones are built with nupm (requires cargo)
+
+def find-bundled [name: string] {
+    let exe = $nu.current-exe | path dirname | path join $"($name).exe"
+    if ($exe | path exists) { $exe } else { null }
+}
+
+def build-with-nupm [nupm: string, name: string] {
+    if (which cargo | is-empty) {
+        print -e $"skipping ($name): cargo not found"
+        return
+    }
+    # Never wait on a hidden git credential prompt
+    with-env {GIT_TERMINAL_PROMPT: "0"} {
+        ^nu -c $"use ($nupm); nupm install ($name)"
+    }
+}
 
 def main [] {
     let home = $env.HOME? | default $env.USERPROFILE?
-    let nupm_path = $home | path join '.local' 'share' 'nupm' 'nupm'
+    let nupm = $home | path join '.local' 'share' 'nupm' 'nupm'
     let plugins_file = $home | path join '.config' 'nushell' 'plugins.nuon'
+    if not ($plugins_file | path exists) { return }
 
-    if not ($nupm_path | path exists) { exit 0 }
-    if not ($plugins_file | path exists) { exit 0 }
-
-    let plugins = open $plugins_file
-
-    let failures = ($plugins | each {|plugin|
-    let result = do { ^nu -c $"use ($nupm_path); nupm install ($plugin)" } | complete
-    if $result.exit_code != 0 { $plugin } else { null }
-  } | where {|r| $r != null })
+    let failures = open $plugins_file | each {|name|
+        try {
+            let bundled = find-bundled $name
+            if ($bundled | is-not-empty) {
+                plugin add $bundled
+            } else if ($nupm | path exists) {
+                build-with-nupm $nupm $name
+            }
+            null
+        } catch { $name }
+    } | compact
 
     if ($failures | is-not-empty) {
         error make {msg: $"plugins failed: ($failures | str join ', ')"}
