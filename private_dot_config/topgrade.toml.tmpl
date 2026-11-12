@@ -55,14 +55,14 @@ cleanup = true
 "Tmux Plugins" = "~/.local/share/tmux/plugins/tpm/bin/update_plugins all"
 # Sync krew plugins from Krewfile
 "Krew Plugins" = "cd $(chezmoi source-path) && just krew-sync"
+{{- if ne .machineConfig.platform "linux-apt" }}
 # Update Nix flake.lock then rebuild
 "Nix Flake Update" = "cd $(chezmoi source-path)/nix/nixos && nix flake update"
 {{- if eq .chezmoi.os "darwin" }}
 "Nix Flake Rebuild" = "cd $(chezmoi source-path) && sudo just darwin"
-{{- else if eq .machineConfig.platform "linux-apt" }}
-"Nix Flake Rebuild" = "cd $(chezmoi source-path)/nix/nixos && nu nixos.nu linux-apt ribosome"
 {{- else }}
 "Nix Flake Rebuild" = "cd $(chezmoi source-path) && just nixos"
+{{- end }}
 {{- end }}
 {{- end }}
 

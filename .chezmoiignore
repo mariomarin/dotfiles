@@ -111,18 +111,10 @@ nix/darwin/**
 .kube/config
 {{ end }}
 
-# linux-apt platform only (Nix user packages and atuin sync server)
+# linux-apt platform only
 {{ if ne $platform "linux-apt" }}
 .config/environment.d
 .config/environment.d/**
-nix/nixos/hosts/ribosome
-nix/nixos/hosts/ribosome/**
-.config/systemd/user/atuin-server.service
-.config/systemd/user/atuin-server.service.d
-.config/systemd/user/atuin-server.service.d/**
-.chezmoiscripts/02_linux-apt-install-nix-packages.nu
-.chezmoiscripts/linux-apt-setup-atuin-server.nu
-.chezmoiscripts/linux-apt-enable-linger.nu
 {{ end }}
 
 # darwin-specific
