@@ -2,14 +2,33 @@
 # Atuin doctor: sync state, server reachability and version, ~/.atuin/logs.
 # Silent when healthy; prints `atuin:` issues and exits 1 otherwise.
 
-use adt.nu [ok, err, run-cmd, collect-issues, "result map", "result flat-map", "result unwrap-or", "result bimap"]
+use adt.nu [
+    ok
+    err
+    run-cmd
+    collect-issues
+    "result map"
+    "result flat-map"
+    "result unwrap-or"
+    "result bimap"
+]
 
 # Window of log history worth reporting (atuin keeps 4 days of client logs)
 const LOG_WINDOW = 1day
 const STALE_SYNC = 1day
 
-def issue [component: string, severity: string, message: string, fix?: string]: nothing -> record {
-    {component: $component, severity: $severity, message: $message, fix: ($fix | default null)}
+def issue [
+    component: string
+    severity: string
+    message: string
+    fix?: string
+]: nothing -> record {
+    {
+        component: $component
+        severity: $severity
+        message: $message
+        fix: ($fix | default null)
+    }
 }
 
 # --- Parsing (pure) ---
@@ -24,8 +43,12 @@ def parse-tracing-lines []: list<string> -> table {
 
 # `atuin doctor` prints a banner, then JSON
 def parse-atuin-doctor []: string -> record {
-    let json = ($in | lines | skip until {|l| $l | str starts-with "{" } | str join "\n")
-    match (try { $json | from json } catch { null }) {
+    let json = $in | lines | skip until {|l| $l | str starts-with "{" } | str join "\n"
+    match (
+        try {
+            $json | from json
+        } catch { null }
+    ) {
         null => (err "could not parse `atuin doctor` output")
         $report => (ok $report)
     }
@@ -34,7 +57,10 @@ def parse-atuin-doctor []: string -> record {
 # `last_sync` looks like `2026-10-02 22:37:04.477336 +00:00:00` (UTC); the
 # hour is not zero-padded (`2026-10-07 2:27:07…`)
 def parse-last-sync [raw: string]: nothing -> any {
-    match ($raw | parse --regex '^(?<date>\d{4}-\d\d-\d\d) (?<hour>\d{1,2}):(?<rest>\d\d:\d\d)') {
+    match (
+        $raw
+        | parse --regex '^(?<date>\d{4}-\d\d-\d\d) (?<hour>\d{1,2}):(?<rest>\d\d:\d\d)'
+    ) {
         [{date: $d, hour: $h, rest: $r}] => ($"($d)T($h | fill -a right -c '0' -w 2):($r)Z" | into datetime)
         _ => null
     }
@@ -42,12 +68,32 @@ def parse-last-sync [raw: string]: nothing -> any {
 
 def sync-issues [sync: record, now: datetime]: nothing -> list<record> {
     if not ($sync.auth_state? | default "" | str contains "authenticated") {
-        return [(issue "sync" "error" $"not logged in \(($sync.auth_state? | default 'unknown')\)" "atuin login")]
+        return [
+            (
+                (issue
+                    "sync"
+                    "error"
+                    $"not logged in \(($sync.auth_state? | default 'unknown')\)"
+                    "atuin login"
+                )
+            )
+        ]
     }
     if not ($sync.auto_sync? | default false) { return [] }
     match (parse-last-sync ($sync.last_sync? | default "")) {
-        null => [(issue "sync" "error" "has never synced" "atuin sync")]
-        $last if ($now - $last) > $STALE_SYNC => [(issue "sync" "error" $"last sync ((($now - $last) / 1day) | math floor)d ago despite auto_sync" "atuin sync")]
+        null => [
+            (issue "sync" "error" "has never synced" "atuin sync")
+        ]
+        $last if ($now - $last) > $STALE_SYNC => [
+            (
+                (issue
+                    "sync"
+                    "error"
+                    $"last sync ((($now - $last) / 1day) | math floor)d ago despite auto_sync"
+                    "atuin sync"
+                )
+            )
+        ]
         _ => []
     }
 }
@@ -58,9 +104,30 @@ def version-parts [v: string]: nothing -> list<int> {
 }
 
 def version-issues [client: string, server: string]: nothing -> list<record> {
-    match [(version-parts $client) (version-parts $server)] {
-        [[$cm, $cn, ..], [$sm, $sn, ..]] if $cm != $sm => [(issue "sync" "error" $"client ($client) and server ($server) major versions differ" "upgrade the older side")]
-        [[_, $cn, ..], [_, $sn, ..]] if $cn > $sn => [(issue "sync" "warning" $"client ($client) is newer than server ($server)" "downgrade atuin or wait for the server to update")]
+    match [
+        (version-parts $client)
+        (version-parts $server)
+    ] {
+        [[$cm, $cn, ..], [$sm, $sn, ..]] if $cm != $sm => [
+            (
+                (issue
+                    "sync"
+                    "error"
+                    $"client ($client) and server ($server) major versions differ"
+                    "upgrade the older side"
+                )
+            )
+        ]
+        [[_, $cn, ..], [_, $sn, ..]] if $cn > $sn => [
+            (
+                (issue
+                    "sync"
+                    "warning"
+                    $"client ($client) is newer than server ($server)"
+                    "downgrade atuin or wait for the server to update"
+                )
+            )
+        ]
         _ => []
     }
 }
@@ -91,8 +158,10 @@ def summarize-problems [label: string]: table -> list<record> {
 # --- Client ---
 
 def client-log-dir []: nothing -> string {
-    let config = ($env.HOME | path join ".config" "atuin" "config.toml")
-    let dir = if ($config | path exists) { open $config | get -o logs.dir } else { null }
+    let config = $env.HOME | path join ".config" "atuin" "config.toml"
+    let dir = if ($config | path exists) {
+        open $config | get -o logs.dir
+    } else { null }
     $dir | default ($env.HOME | path join ".atuin" "logs") | path expand
 }
 
@@ -113,7 +182,15 @@ def check-sync [now: datetime]: nothing -> list<record> {
     | result map {|report| sync-issues $report.atuin.sync $now }
     | match $in {
         {ok: true, value: $issues} => $issues
-        {error: $e} => [(issue "sync" "error" $"atuin doctor failed: ($e | to text | str trim)")]
+        {error: $e} => [
+            (
+                (issue
+                    "sync"
+                    "error"
+                    $"atuin doctor failed: ($e | to text | str trim)"
+                )
+            )
+        ]
     }
 }
 
@@ -127,15 +204,30 @@ def server-version [addr: string]: nothing -> record {
 }
 
 def check-server-reachable []: nothing -> list<record> {
-    let config = ($env.HOME | path join ".config" "atuin" "config.toml")
-    let configured = if ($config | path exists) { open $config | get -o sync_address } else { null }
+    let config = $env.HOME | path join ".config" "atuin" "config.toml"
+    let configured = if ($config | path exists) {
+        open $config | get -o sync_address
+    } else { null }
     let sync = (resolve-sync-address $env.ATUIN_SYNC_ADDRESS? $configured)
 
-    let client = (run-cmd {^atuin --version} | result map {|out| $out.stdout | parse --regex '(?<v>\d+\.\d+\.\d+)' | get 0.v } | result unwrap-or "")
+    let client = (
+        run-cmd {^atuin --version}
+        | result map {|out| $out.stdout | parse --regex '(?<v>\d+\.\d+\.\d+)' | get 0.v }
+        | result unwrap-or ""
+    )
     match (server-version $sync.addr) {
         {ok: true, value: $server} => (version-issues $client $server)
         {error: $e} => {
-            [(issue "sync" "error" $"server ($sync.addr) \(from ($sync.source)\) unreachable: ($e)" $"check ($sync.source)")]
+            [
+                (
+                    (issue
+                        "sync"
+                        "error"
+                        $"server ($sync.addr) \(from ($sync.source)\) unreachable: ($e)"
+                        $"check ($sync.source)"
+                    )
+                )
+            ]
         }
     }
 }

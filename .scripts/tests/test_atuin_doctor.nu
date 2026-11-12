@@ -47,12 +47,12 @@ def "test parse-last-sync reads utc timestamps" [] {
 def "test sync-issues" [] {
     let authed = "Self-hosted (authenticated)"
     [
-        [sync expected];
-        [{auth_state: "Not logged in", auto_sync: true, last_sync: ""} "not logged in"]
-        [{auth_state: $authed, auto_sync: true, last_sync: "2026-10-02 22:37:04.477336 +00:00:00"} "last sync 3d ago"]
-        [{auth_state: $authed, auto_sync: true, last_sync: ""} "never synced"]
-        [{auth_state: $authed, auto_sync: true, last_sync: "2026-10-06 11:00:00.0 +00:00:00"} null]
-        [{auth_state: $authed, auto_sync: false, last_sync: "2020-01-01 00:00:00.0 +00:00:00"} null]
+        [sync, expected];
+        [{auth_state: "Not logged in", auto_sync: true, last_sync: ""}, "not logged in"]
+        [{auth_state: $authed, auto_sync: true, last_sync: "2026-10-02 22:37:04.477336 +00:00:00"}, "last sync 3d ago"]
+        [{auth_state: $authed, auto_sync: true, last_sync: ""}, "never synced"]
+        [{auth_state: $authed, auto_sync: true, last_sync: "2026-10-06 11:00:00.0 +00:00:00"}, null]
+        [{auth_state: $authed, auto_sync: false, last_sync: "2020-01-01 00:00:00.0 +00:00:00"}, null]
     ]
     | each {|case|
         let issues = doctor-eval $"sync-issues ($case.sync | to nuon) ($NOW | to nuon)"
@@ -80,10 +80,10 @@ def "test resolve-sync-address precedence" [] {
 
 def "test summarize-problems dedupes and counts" [] {
     let problems = [
-        [ts msg];
-        [2026-10-06T10:00:00Z "sync failed"]
-        [2026-10-06T11:00:00Z "sync failed"]
-        [2026-10-06T10:30:00Z "database error"]
+        [ts, msg];
+        [2026-10-06T10:00:00Z, "sync failed"]
+        [2026-10-06T11:00:00Z, "sync failed"]
+        [2026-10-06T10:30:00Z, "database error"]
     ]
     let issues = doctor-eval $"($problems | to nuon) | summarize-problems 'client log'"
     assert equal ($issues | length) 2
