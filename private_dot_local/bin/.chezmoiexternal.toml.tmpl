@@ -1,25 +1,35 @@
-{{- /* GitHub binaries for linux-apt platform */ -}}
+{{- /* GitHub binaries for linux-apt (Codespaces, devcontainers): no Nix, no root */ -}}
 {{- $platform := index .machineConfig "platform" | default "" -}}
 
 {{- if eq $platform "linux-apt" -}}
 {{- $arch := .chezmoi.arch -}}
 {{- $linuxArch := "x86_64" -}}
-{{- if eq $arch "arm64" }}{{ $linuxArch = "aarch64" }}{{ end -}}
+{{- $goArch := "amd64" -}}
+{{- $releaseArch := "x86_64" -}}
+{{- if eq $arch "arm64" }}{{ $linuxArch = "aarch64" }}{{ $goArch = "arm64" }}{{ $releaseArch = "arm64" }}{{ end -}}
 
-# Shells and prompts (nushell from apt.fury.io)
-{{- $ompRelease := gitHubLatestRelease "JanDeDobbeleer/oh-my-posh" }}
-["oh-my-posh"]
-    type = "file"
-    url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/{{ $ompRelease.TagName }}/posh-linux-amd64"
+# Shells and prompts
+{{- $nuRelease := gitHubLatestRelease "nushell/nushell" }}
+["nu"]
+    type = "archive-file"
+    url = "https://github.com/nushell/nushell/releases/download/{{ $nuRelease.TagName }}/nu-{{ $nuRelease.TagName }}-{{ $linuxArch }}-unknown-linux-musl.tar.gz"
+    path = "nu-{{ $nuRelease.TagName }}-{{ $linuxArch }}-unknown-linux-musl/nu"
     executable = true
     refreshPeriod = "168h"
 
-# Version control (gh managed by Chef)
+{{- $ompRelease := gitHubLatestRelease "JanDeDobbeleer/oh-my-posh" }}
+["oh-my-posh"]
+    type = "file"
+    url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/{{ $ompRelease.TagName }}/posh-linux-{{ $goArch }}"
+    executable = true
+    refreshPeriod = "168h"
+
+# Version control
 {{- $lazygitRelease := gitHubLatestRelease "jesseduffield/lazygit" }}
 {{- $lazygitVersion := trimPrefix "v" $lazygitRelease.TagName }}
 ["lazygit"]
     type = "archive-file"
-    url = "https://github.com/jesseduffield/lazygit/releases/download/{{ $lazygitRelease.TagName }}/lazygit_{{ $lazygitVersion }}_Linux_x86_64.tar.gz"
+    url = "https://github.com/jesseduffield/lazygit/releases/download/{{ $lazygitRelease.TagName }}/lazygit_{{ $lazygitVersion }}_Linux_{{ $releaseArch }}.tar.gz"
     path = "lazygit"
     executable = true
     refreshPeriod = "168h"
@@ -29,12 +39,12 @@
 {{- $millerVersion := trimPrefix "v" $millerRelease.TagName }}
 ["mlr"]
     type = "archive-file"
-    url = "https://github.com/johnkerl/miller/releases/download/{{ $millerRelease.TagName }}/miller-{{ $millerVersion }}-linux-amd64.tar.gz"
-    path = "miller-{{ $millerVersion }}-linux-amd64/mlr"
+    url = "https://github.com/johnkerl/miller/releases/download/{{ $millerRelease.TagName }}/miller-{{ $millerVersion }}-linux-{{ $goArch }}.tar.gz"
+    path = "miller-{{ $millerVersion }}-linux-{{ $goArch }}/mlr"
     executable = true
     refreshPeriod = "168h"
 
-# Modern CLI (bat, fd, ripgrep, eza from apt)
+# Modern CLI
 {{- $deltaRelease := gitHubLatestRelease "dandavison/delta" }}
 ["delta"]
     type = "archive-file"
@@ -73,40 +83,32 @@
 {{- $kubeloginRelease := gitHubLatestRelease "Azure/kubelogin" }}
 ["kubelogin"]
     type = "archive-file"
-    url = "https://github.com/Azure/kubelogin/releases/download/{{ $kubeloginRelease.TagName }}/kubelogin-linux-amd64.zip"
-    path = "bin/linux_amd64/kubelogin"
+    url = "https://github.com/Azure/kubelogin/releases/download/{{ $kubeloginRelease.TagName }}/kubelogin-linux-{{ $goArch }}.zip"
+    path = "bin/linux_{{ $goArch }}/kubelogin"
     executable = true
     refreshPeriod = "168h"
 
 {{- $krewRelease := gitHubLatestRelease "kubernetes-sigs/krew" }}
 ["krew"]
     type = "archive-file"
-    url = "https://github.com/kubernetes-sigs/krew/releases/download/{{ $krewRelease.TagName }}/krew-linux_amd64.tar.gz"
-    path = "./krew-linux_amd64"
+    url = "https://github.com/kubernetes-sigs/krew/releases/download/{{ $krewRelease.TagName }}/krew-linux_{{ $goArch }}.tar.gz"
+    path = "./krew-linux_{{ $goArch }}"
     executable = true
     refreshPeriod = "168h"
 
 ["kubectl"]
     type = "file"
-    url = "https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl"
+    url = "https://dl.k8s.io/release/v1.32.0/bin/linux/{{ $goArch }}/kubectl"
     executable = true
     refreshPeriod = "720h"
 
 # Shell utilities
-# Atuin: shell history sync and search
-# Server setup: see docs/ATUIN_SETUP.md
+# Atuin: shell history sync and search (server: mitosis, see docs/ATUIN_SETUP.md)
 {{- $atuinRelease := gitHubLatestRelease "atuinsh/atuin" }}
 ["atuin"]
     type = "archive-file"
     url = "https://github.com/atuinsh/atuin/releases/download/{{ $atuinRelease.TagName }}/atuin-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
     path = "atuin-{{ $linuxArch }}-unknown-linux-gnu/atuin"
-    executable = true
-    refreshPeriod = "168h"
-
-["atuin-server"]
-    type = "archive-file"
-    url = "https://github.com/atuinsh/atuin/releases/download/{{ $atuinRelease.TagName }}/atuin-server-{{ $linuxArch }}-unknown-linux-gnu.tar.gz"
-    path = "atuin-server-{{ $linuxArch }}-unknown-linux-gnu/atuin-server"
     executable = true
     refreshPeriod = "168h"
 
@@ -121,17 +123,18 @@
 {{- $tealdeerRelease := gitHubLatestRelease "tealdeer-rs/tealdeer" }}
 ["tldr"]
     type = "file"
-    url = "https://github.com/tealdeer-rs/tealdeer/releases/download/{{ $tealdeerRelease.TagName }}/tealdeer-linux-x86_64-musl"
+    url = "https://github.com/tealdeer-rs/tealdeer/releases/download/{{ $tealdeerRelease.TagName }}/tealdeer-linux-{{ $linuxArch }}-musl"
     executable = true
     refreshPeriod = "168h"
 
 # Network
 ["cloudflared"]
     type = "file"
-    url = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64"
+    url = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-{{ $goArch }}"
     executable = true
     refreshPeriod = "168h"
 
+{{- if eq $arch "amd64" }}
 {{- $viddyRelease := gitHubLatestRelease "sachaos/viddy" }}
 ["viddy"]
     type = "archive-file"
@@ -139,6 +142,7 @@
     path = "viddy"
     executable = true
     refreshPeriod = "168h"
+{{- end }}
 
 # Terminal multiplexers
 {{- $zellijRelease := gitHubLatestRelease "zellij-org/zellij" }}
@@ -152,30 +156,32 @@
 {{- $seshRelease := gitHubLatestRelease "joshmedeski/sesh" }}
 ["sesh"]
     type = "archive-file"
-    url = "https://github.com/joshmedeski/sesh/releases/download/{{ $seshRelease.TagName }}/sesh_Linux_x86_64.tar.gz"
+    url = "https://github.com/joshmedeski/sesh/releases/download/{{ $seshRelease.TagName }}/sesh_Linux_{{ $releaseArch }}.tar.gz"
     path = "sesh"
     executable = true
     refreshPeriod = "168h"
 
+{{- if eq $arch "amd64" }}
 {{- $zeshRelease := gitHubLatestRelease "roberte777/zesh" }}
 ["zesh"]
     type = "file"
     url = "https://github.com/roberte777/zesh/releases/download/{{ $zeshRelease.TagName }}/zesh"
     executable = true
     refreshPeriod = "168h"
+{{- end }}
 
 # Secrets
 {{- $ageRelease := gitHubLatestRelease "FiloSottile/age" }}
 ["age"]
     type = "archive-file"
-    url = "https://github.com/FiloSottile/age/releases/download/{{ $ageRelease.TagName }}/age-{{ $ageRelease.TagName }}-linux-amd64.tar.gz"
+    url = "https://github.com/FiloSottile/age/releases/download/{{ $ageRelease.TagName }}/age-{{ $ageRelease.TagName }}-linux-{{ $goArch }}.tar.gz"
     path = "age/age"
     executable = true
     refreshPeriod = "168h"
 
 ["age-keygen"]
     type = "archive-file"
-    url = "https://github.com/FiloSottile/age/releases/download/{{ $ageRelease.TagName }}/age-{{ $ageRelease.TagName }}-linux-amd64.tar.gz"
+    url = "https://github.com/FiloSottile/age/releases/download/{{ $ageRelease.TagName }}/age-{{ $ageRelease.TagName }}-linux-{{ $goArch }}.tar.gz"
     path = "age/age-keygen"
     executable = true
     refreshPeriod = "168h"

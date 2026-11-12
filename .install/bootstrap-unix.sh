@@ -12,18 +12,16 @@ success() { printf "✅ %s\n" "$1" >&2; }
 step() { printf "\n==> %s\n" "$1" >&2; }
 
 # Detection helpers
-is_chef_managed() { [ -d /opt/chef ] || command -v chef-client > /dev/null 2>&1; }
 is_nixos() { grep -q "ID=nixos" /etc/os-release 2> /dev/null; }
 is_darwin() { [ "$(uname -s)" = "Darwin" ]; }
 
 # Platform detection
-# - Darwin + chef → darwin-brew (no nix)
-# - Darwin + no chef → darwin (nix-darwin)
+# - Darwin → darwin (nix-darwin)
 # - Linux + NixOS → nixos
-# - Linux + other → linux-apt (apt/WSL/codespaces)
+# - Linux + other → linux-apt (Codespaces, devcontainers: no Nix, no root)
 detect_platform() {
     if is_darwin; then
-        is_chef_managed && echo "darwin-brew" || echo "darwin"
+        echo "darwin"
   else
         is_nixos && echo "nixos" || echo "linux-apt"
   fi
@@ -42,34 +40,6 @@ ensure_nix() {
     success "Nix installed"
 }
 
-ensure_devenv() {
-    command -v devenv > /dev/null && {
-        success "devenv installed"
-        return 0
-  }
-    step "Install devenv"
-    curl -sfL https://install.determinate.systems/devenv | sh -s -- install
-    success "devenv installed"
-}
-
-ensure_nushell() {
-    command -v nu > /dev/null && {
-        success "Nushell installed"
-        return 0
-  }
-    step "Install Nushell from Gemfury"
-    KEY_FILE="/etc/apt/keyrings/fury-nushell.gpg"
-    if [ ! -f "$KEY_FILE" ]; then
-        sudo mkdir -p /etc/apt/keyrings
-        wget -qO- https://apt.fury.io/nushell/gpg.key | sudo gpg --dearmor -o "$KEY_FILE"
-        echo "deb [signed-by=$KEY_FILE] https://apt.fury.io/nushell/ /" |
-            sudo tee /etc/apt/sources.list.d/nushell.list > /dev/null
-        sudo apt-get update -qq
-  fi
-    sudo apt-get install -y -qq nushell
-    success "Nushell installed"
-}
-
 ensure_homebrew() {
     command -v brew > /dev/null && {
         success "Homebrew installed"
@@ -81,27 +51,7 @@ ensure_homebrew() {
     success "Homebrew installed"
 }
 
-ensure_nushell_brew() {
-    command -v nu > /dev/null && {
-        success "Nushell installed"
-        return 0
-  }
-    step "Install Nushell via Homebrew"
-    brew install nushell
-    success "Nushell installed"
-}
-
-ensure_chezmoi_brew() {
-    command -v chezmoi > /dev/null && {
-        success "chezmoi installed"
-        return 0
-  }
-    step "Install chezmoi via Homebrew"
-    brew install chezmoi
-    success "chezmoi installed"
-}
-
-ensure_chezmoi_apt() {
+ensure_chezmoi() {
     command -v chezmoi > /dev/null && {
         success "chezmoi installed"
         return 0
@@ -154,12 +104,8 @@ setup_nix_env() {
 
 # Bootstrap flows
 bootstrap_linux_apt() {
-    ensure_nix && ensure_devenv && ensure_nushell && ensure_chezmoi_apt && init_and_apply
-    printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
-}
-
-bootstrap_darwin_brew() {
-    ensure_homebrew && ensure_nushell_brew && ensure_chezmoi_brew && init_and_apply
+    export PATH="$HOME/.local/bin:$PATH"
+    ensure_chezmoi && init_and_apply
     printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
 }
 
@@ -194,7 +140,6 @@ main() {
 
     case "$PLATFORM" in
         linux-apt)    bootstrap_linux_apt ;;
-        darwin-brew)  bootstrap_darwin_brew ;;
         darwin)       bootstrap_darwin ;;
         nixos)        bootstrap_nixos ;;
   esac

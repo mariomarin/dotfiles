@@ -44,10 +44,6 @@ hosts:
 doctor:
     nu nixos.nu doctor {{ HOST }}
 
-# Linux-apt (ribosome) - install packages via nix profile
-linux-apt:
-    nu nixos.nu linux-apt ribosome
-
 # Help target
 help:
     @echo "NixOS targets (HOST defaults to hostname)"
