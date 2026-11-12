@@ -277,11 +277,13 @@ def "main provision-nixos" []: nothing -> nothing {
     check-os
     if (is-provisioned) { return }
 
-    let rebuild = (
-        wsl-run-attached -d NixOS -u root --exec nixos-rebuild switch
-        --flake $"($NIX_FLAKE)#($NIX_HOST)"
-        --extra-experimental-features "nix-command flakes"
-    )
+    let script = [
+        "nixos-rebuild switch"
+        $"--flake \"($NIX_FLAKE)#($NIX_HOST)\""
+        "--extra-experimental-features \"nix-command flakes\""
+    ] | str join " "
+
+    let rebuild = (wsl-run-attached -d NixOS -u root --exec bash -lc $script)
     if ($rebuild | is-err) {
         print --stderr "❌ nixos-rebuild failed — rerun: nu wsl.nu provision-nixos"
         exit 1
