@@ -34,3 +34,6 @@ etc-personal/
 
 # Generated at build time — username is now hardcoded per-host in flake.nix
 nix/nixos/user.nix
+
+# NixOS-WSL image downloaded by chezmoi script
+wsl/nixos.wsl*

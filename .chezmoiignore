@@ -20,6 +20,7 @@ shell.nix
 devenv.nix
 chezmoi
 chezmoi/**
+wsl/nixos.wsl*
 Makefile
 README.md
 CLAUDE.md
