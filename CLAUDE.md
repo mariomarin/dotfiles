@@ -201,6 +201,10 @@ set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
 ## Nushell and Justfile Standards
 
+General Nushell syntax and idioms come from the vendored
+[`nushell` skill](.claude/skills/nushell/SKILL.md). The rules below are repo-specific and win on conflict
+(e.g. `^` prefix only for commands that shadow builtins).
+
 ### Extract Complex Nushell Code to `.nu` Files
 
 **IMPORTANT**: Justfiles with embedded Nushell code (`#!/usr/bin/env nu`) are NOT validated by git hooks.
