@@ -17,6 +17,7 @@ nix/**
 nixos
 nixos/**
 shell.nix
+install.sh
 devenv.nix
 chezmoi
 chezmoi/**

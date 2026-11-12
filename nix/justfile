@@ -8,5 +8,5 @@ default:
     } else if ("/etc/nixos" | path exists) {
         just --justfile nixos/justfile switch
     } else {
-        just --justfile nixos/justfile linux-apt
+        print "no Nix system config on this platform"
     }
