@@ -42,10 +42,10 @@ def main [...files: string] {
           return null
         }
 
-        # Skip j — imports a sibling adt.nu that exists only in the deployed
-        # layout (chezmoi generates it from .scripts/adt.nu). Parse-validated
-        # by test_j.nu, which stages adt.nu alongside it.
-        if $basename == "executable_j" {
+        # Skip scripts importing a sibling adt.nu that exists only once
+        # deployed (chezmoi renders it from adt.nu.tmpl). Their tests
+        # ("test script parses") stage adt.nu alongside and parse them.
+        if ($path | path dirname | path join "adt.nu.tmpl" | path exists) {
           return null
         }
 
