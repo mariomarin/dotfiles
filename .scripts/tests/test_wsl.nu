@@ -24,21 +24,21 @@ def "test parse-distros reads utf-16le output" []: nothing -> nothing {
 def "test wsl-run passes flags and strips NULs" []: nothing -> nothing {
 
     # Fake wsl.exe: echo args back as UTF-16-style text, record WSL_UTF8
-    let bin = (mktemp -d)
+    let bin = (mktemp --directory)
     "#!/bin/sh\nprintf '%s' \"$WSL_UTF8 $*\" | sed 's/./&\\x00/g'\n" | save $"($bin)/wsl"
-    ^chmod +x $"($bin)/wsl"
+    chmod +x $"($bin)/wsl"
     let r = with-env {PATH: ($env.PATH | prepend $bin)} { wsl-eval "wsl-run --list --quiet" }
-    rm -rf $bin
+    rm --recursive --force $bin
     assert equal $r {ok: true, value: "1 --list --quiet"}
 }
 
 # Evaluate snippet with a fake wsl.exe running the given sh body
 def with-fake-wsl [body: string, snippet: string]: nothing -> any {
-    let bin = (mktemp -d)
+    let bin = (mktemp --directory)
     $"#!/bin/sh\n($body)\n" | save $"($bin)/wsl"
-    ^chmod +x $"($bin)/wsl"
+    chmod +x $"($bin)/wsl"
     let r = with-env {PATH: ($env.PATH | prepend $bin)} { wsl-eval $snippet }
-    rm -rf $bin
+    rm --recursive --force $bin
     $r
 }
 
@@ -63,7 +63,7 @@ def "test has-dotfiles queries chezmoi source of NIX_USER" []: nothing -> nothin
     let log = (mktemp)
     with-fake-wsl $"echo \"$*\" > ($log)" "has-dotfiles" | ignore
     let args = open $log | str trim
-    rm -f $log
+    rm --force $log
     assert equal $args "-d NixOS -u mario --exec test -d /home/mario/.local/share/chezmoi"
 }
 

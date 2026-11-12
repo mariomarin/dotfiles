@@ -7,8 +7,8 @@ use ../.scripts/adt.nu [run-cmd, is-err, "result map", "result unwrap-or", "resu
 # Check if running on Windows
 def check-os [] {
     if $nu.os-info.name != "windows" {
-        print -e "❌ Error: WSL setup commands are only for Windows"
-        print -e "   These commands help set up NixOS on WSL2 from Windows"
+        print --stderr "❌ Error: WSL setup commands are only for Windows"
+        print --stderr "   These commands help set up NixOS on WSL2 from Windows"
         exit 1
     }
 }
@@ -16,18 +16,18 @@ def check-os [] {
 # wsl.exe writes UTF-16LE unless WSL_UTF8=1 (older builds ignore it); read
 # as UTF-8 that is text with a NUL after every character, so strip NULs.
 def wsl-text []: string -> string {
-    str replace -a (char nul) ""
+    str replace --all (char nul) ""
 }
 
 # Run wsl.exe for its output: Result of NUL-free stdout
 def --wrapped wsl-run [...args: string]: nothing -> record {
-    with-env {WSL_UTF8: "1"} { run-cmd { ^wsl ...$args } }
+    with-env {WSL_UTF8: "1"} { run-cmd { wsl ...$args } }
     | result map {|out| $out.stdout | wsl-text }
 }
 
 # Run wsl.exe attached to the terminal (interactive, streamed): Result
 def --wrapped wsl-run-attached [...args: string]: nothing -> record {
-    null | result try {|_| ^wsl ...$args; null }
+    null | result try {|_| wsl ...$args; null }
 }
 
 def has-wsl []: nothing -> bool {
@@ -80,8 +80,8 @@ def "main check-wsl" []: nothing -> nothing {
             print "✅ WSL2 is installed"
         }
         _ => {
-            print -e "❌ WSL is not installed"
-            print -e "   Run: nu wsl.nu install-wsl"
+            print --stderr "❌ WSL is not installed"
+            print --stderr "   Run: nu wsl.nu install-wsl"
             exit 1
         }
     }
@@ -124,8 +124,8 @@ def "main import-nixos" []: nothing -> nothing {
     print "📦 Importing NixOS into WSL..."
 
     if not ("nixos.wsl" | path exists) {
-        print -e "❌ nixos.wsl not found"
-        print -e "   Run 'chezmoi apply' from parent directory to download it"
+        print --stderr "❌ nixos.wsl not found"
+        print --stderr "   Run 'chezmoi apply' from parent directory to download it"
         exit 1
     }
 
@@ -248,7 +248,7 @@ def "main provision-nixos" []: nothing -> nothing {
         --flake $"($NIX_FLAKE)#($NIX_HOST)"
         --extra-experimental-features "nix-command flakes")
     if ($rebuild | is-err) {
-        print -e "❌ nixos-rebuild failed — rerun: nu wsl.nu provision-nixos"
+        print --stderr "❌ nixos-rebuild failed — rerun: nu wsl.nu provision-nixos"
         exit 1
     }
 
@@ -270,7 +270,7 @@ def "main apply-dotfiles" []: nothing -> nothing {
         "chezmoi init --apply mariomarin"
     ] | str join "; "
     if (wsl-run-attached -d NixOS -u $NIX_USER --exec bash -lc $script | is-err) {
-        print -e "❌ Applying dotfiles failed — rerun: nu wsl.nu apply-dotfiles"
+        print --stderr "❌ Applying dotfiles failed — rerun: nu wsl.nu apply-dotfiles"
         exit 1
     }
 }
@@ -308,15 +308,15 @@ def "main setup" []: nothing -> nothing {
     print ""
     print "Step 2: Checking for NixOS-WSL tarball..."
     if not ("nixos.wsl" | path exists) {
-        print -e "❌ nixos.wsl not found"
-        print -e ""
-        print -e "The tarball is downloaded automatically by chezmoi."
-        print -e "Please run 'chezmoi apply' from the parent directory first:"
-        print -e ""
-        print -e "  cd .."
-        print -e "  chezmoi apply"
-        print -e "  cd wsl"
-        print -e "  just setup"
+        print --stderr "❌ nixos.wsl not found"
+        print --stderr ""
+        print --stderr "The tarball is downloaded automatically by chezmoi."
+        print --stderr "Please run 'chezmoi apply' from the parent directory first:"
+        print --stderr ""
+        print --stderr "  cd .."
+        print --stderr "  chezmoi apply"
+        print --stderr "  cd wsl"
+        print --stderr "  just setup"
         exit 1
     }
     print "✅ nixos.wsl found"
