@@ -747,7 +747,8 @@ Nerd Fonts are installed on desktop platforms for Unicode symbols (⎋ ⭾ ⇪ �
 - `nerd-fonts.iosevka` - Alternative monospace
 - `nerd-fonts.symbols-only` - Standalone symbols fallback
 
-**Adding fonts**: Update the common module for macOS, or winget DSC for Windows. Linux hosts are headless (WSL uses Windows fonts).
+**Adding fonts**: Update the common module for macOS, or winget DSC for Windows.
+Linux hosts are headless (WSL uses Windows fonts).
 
 ## NixOS Integration
 
