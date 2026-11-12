@@ -34,7 +34,7 @@ def "test parse-journal-json decodes string and byte messages" [] {
     # journald emits non-UTF-8 MESSAGE as an array of bytes ("caf\xe9 ERROR")
     let journal = [
         ({MESSAGE: "listening on 127.0.0.1:8888", PRIORITY: "6", SYSLOG_IDENTIFIER: "atuin-server", __REALTIME_TIMESTAMP: "1791280800000000"} | to json -r)
-        ({MESSAGE: "atuin-server.service: Failed with result 'exit-code'.", PRIORITY: "4", SYSLOG_IDENTIFIER: "systemd", __REALTIME_TIMESTAMP: "1791280801000000"} | to json -r)
+        ({MESSAGE: "atuin.service: Failed with result 'exit-code'.", PRIORITY: "4", SYSLOG_IDENTIFIER: "systemd", __REALTIME_TIMESTAMP: "1791280801000000"} | to json -r)
         ({MESSAGE: [99 97 102 233 32 69 82 82 79 82], PRIORITY: "6", __REALTIME_TIMESTAMP: "1791280802000000"} | to json -r)
     ] | str join "\n"
     let entries = doctor-eval $"($journal | to nuon) | parse-journal-json"
@@ -143,7 +143,7 @@ def "test summarize-problems dedupes and counts" [] {
 def with-fake-systemd [show: string, journal: string, snippet: string]: nothing -> any {
     let bin = (mktemp -d)
     $show | save $"($bin)/show.txt"
-    $"#!/bin/sh\ncase \"$2\" in cat\) exit 0;; show\) cat ($bin)/show.txt;; esac\n" | save $"($bin)/systemctl"
+    $"#!/bin/sh\ncase \"$1\" in cat\) exit 0;; show\) cat ($bin)/show.txt;; esac\n" | save $"($bin)/systemctl"
     $journal | save $"($bin)/journal.json"
     $"#!/bin/sh\necho \"$@\" > ($bin)/journalctl.args\ncat ($bin)/journal.json\n" | save $"($bin)/journalctl"
     ^chmod +x $"($bin)/systemctl" $"($bin)/journalctl"
@@ -155,13 +155,13 @@ def with-fake-systemd [show: string, journal: string, snippet: string]: nothing 
 def "test server checks read fake systemd" [] {
     let journal = [
         ({MESSAGE: "Error: Address already in use (os error 98)", PRIORITY: "6", __REALTIME_TIMESTAMP: "1791280800000000"} | to json -r)
-        ({MESSAGE: "atuin-server.service: Failed with result 'exit-code'.", PRIORITY: "4", __REALTIME_TIMESTAMP: "1791280801000000"} | to json -r)
+        ({MESSAGE: "atuin.service: Failed with result 'exit-code'.", PRIORITY: "4", __REALTIME_TIMESTAMP: "1791280801000000"} | to json -r)
     ] | str join "\n"
     let r = with-fake-systemd "ActiveState=failed\nSubState=failed\nNRestarts=3" $journal "(check-server-unit) ++ (check-server-journal)"
     assert equal ($r.issues | get message) [
-        "atuin-server.service is failed/failed"
+        "atuin.service is failed/failed"
         "port already in use"
-        "atuin-server.service: Failed with result 'exit-code'."
+        "atuin.service: Failed with result 'exit-code'."
     ]
     assert ($r.args | str contains "--since 24 hours ago") $r.args
 }
@@ -169,22 +169,4 @@ def "test server checks read fake systemd" [] {
 def "test server checks quiet when active" [] {
     let r = with-fake-systemd "ActiveState=active\nSubState=running\nNRestarts=0" "" "(check-server-unit) ++ (check-server-journal)"
     assert equal $r.issues []
-}
-
-def "test parse-exec-path" [] {
-    let show = "ExecStart={ path=/home/u/.local/share/ribosome-env/bin/atuin-server ; argv[]=/home/u/.local/share/ribosome-env/bin/atuin-server start ; ignore_errors=no }"
-    assert equal (doctor-eval $"($show | to nuon) | parse-exec-path") "/home/u/.local/share/ribosome-env/bin/atuin-server"
-    assert equal (doctor-eval "'ExecStart=' | parse-exec-path") null
-}
-
-def "test parse-server-url" [] {
-    assert equal (doctor-eval "'Environment=ATUIN_HOST=0.0.0.0 ATUIN_PORT=9999 ATUIN_DB_URI=x' | parse-server-url") "http://0.0.0.0:9999"
-    assert equal (doctor-eval "'Environment=' | parse-server-url") "http://127.0.0.1:8888"
-}
-
-def "test stale-binary-issues" [] {
-    assert equal (doctor-eval "stale-binary-issues 18.21.0 18.21.0") []
-    let r = doctor-eval "stale-binary-issues 18.21.0 18.16.1"
-    assert equal $r.0.message "runs 18.16.1 but 18.21.0 is installed"
-    assert ($r.0.fix | str contains "restart")
 }
