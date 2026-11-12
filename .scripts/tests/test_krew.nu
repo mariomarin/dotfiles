@@ -1,5 +1,6 @@
 # Tests for krew.nu
 use std/assert
+use helpers.nu [with-fake-bins]
 
 const SCRIPT = ".scripts/krew.nu"
 
@@ -27,16 +28,13 @@ def "test parse-krewfile empty input" [] {
 
 # Run krew.nu with a fake krew (fails for plugins named bad-*) and HOME
 def with-fake-krew [krewfile: string, body: closure]: nothing -> record {
-    let home = (mktemp -d)
-    let bin = $"($home)/bin"
-    mkdir $bin
-    "#!/bin/sh\ncase \"$2\" in bad-*) echo \"no such plugin\" >&2; exit 1;; esac\n" | save $"($bin)/krew"
-    ^chmod +x $"($bin)/krew"
-    $krewfile | save $"($home)/.krewfile"
-    let result = with-env {HOME: $home, PATH: ($env.PATH | prepend $bin)} { do $body }
-    let after = (open --raw $"($home)/.krewfile")
-    rm -rf $home
-    $result | insert krewfile $after
+    let fake = 'case "$2" in bad-*) echo "no such plugin" >&2; exit 1;; esac'
+    with-fake-bins {krew: $fake} {|home|
+        let path = $home | path join .krewfile
+        $krewfile | save $path
+        let result = with-env {HOME: $home} { do $body }
+        $result | insert krewfile (open --raw $path)
+    }
 }
 
 def "test sync exits 1 and names failed plugins" [] {

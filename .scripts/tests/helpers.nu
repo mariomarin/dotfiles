@@ -2,6 +2,7 @@
 # Test helpers and property-based testing utilities
 
 use std assert
+use ../adt.nu [run-cmd]
 
 # Test runner that captures exceptions
 export def test-case [name: string, test: closure]: nothing -> record {
@@ -102,5 +103,27 @@ export def run-tests []: nothing -> table {
     $test_functions
     | each {|test_name|
         test-case $test_name {|| (do $test_name)}
+    }
+}
+
+# Run body with fake executables on PATH; bins maps name -> sh script body.
+# The body gets the temp dir; it is removed even when the body fails.
+export def with-fake-bins [bins: record, body: closure]: nothing -> any {
+    let dir = mktemp --directory
+    try {
+        $bins | items {|name, script| write-fake-bin ($dir | path join $name) $script } | ignore
+        with-env {PATH: ($env.PATH | prepend $dir)} { do $body $dir }
+    } finally {
+        rm --recursive --force $dir
+    }
+}
+
+def write-fake-bin [path: path, script: string]: nothing -> nothing {
+    $"#!/bin/sh\n($script)\n" | save --force $path
+    match (run-cmd { ^chmod +x $path }) {
+        {ok: true} => null
+        {error: $failure} => (
+            error make {msg: $"chmod +x ($path) failed: ($failure.stderr | str trim)"}
+        )
     }
 }
