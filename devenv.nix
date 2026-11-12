@@ -170,6 +170,17 @@ in
         stages = [ "post-commit" ];
       };
 
+      # Pre-push gate: same checks as CI (validate.yml) on the branch diff
+      pre-push-check = {
+        enable = true;
+        name = "Run CI checks before push";
+        entry = "just check";
+        language = "system";
+        pass_filenames = false;
+        always_run = true;
+        stages = [ "pre-push" ];
+      };
+
       # Nix formatting
       nixpkgs-fmt.enable = true;
 

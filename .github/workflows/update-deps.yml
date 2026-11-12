@@ -1,0 +1,58 @@
+name: Update dependencies
+on:
+  schedule:
+    - cron: "0 9 * * 1,4"
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: nix
+            lockfile: nix/nixos/flake.lock
+            file: flake.lock
+          - name: nvim
+            lockfile: private_dot_config/nvim/lazy-lock.json
+            file: lazy-lock.json
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - if: matrix.name == 'nix'
+        uses: DeterminateSystems/nix-installer-action@v22
+      - if: matrix.name == 'nix'
+        run: nix flake update --flake ./nix/nixos
+      - if: matrix.name == 'nvim'
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: stable
+      - if: matrix.name == 'nvim'
+        run: nvim --headless "+Lazy! update" +qa
+        env:
+          HOME: /root
+      - if: matrix.name == 'nix'
+        id: check
+        continue-on-error: true
+        run: |
+          nix eval --raw ./nix/nixos#packages.x86_64-linux.ribosome-env.drvPath
+          nix eval --raw ./nix/nixos#darwinConfigurations.malus.config.system.build.toplevel.drvPath
+      - uses: peter-evans/create-pull-request@v8
+        id: cpr
+        with:
+          commit-message: "chore(${{ matrix.name }}): update ${{ matrix.file }}"
+          title: "chore(${{ matrix.name }}): update ${{ matrix.file }}"
+          branch: chore/update-${{ matrix.name }}-lock
+          delete-branch: true
+          labels: dependencies,automerge
+          add-paths: ${{ matrix.lockfile }}
+      # Bot PRs don't trigger Validate/Automerge; merge here if checks passed
+      - if: steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
+        run: gh pr merge --squash --delete-branch "${{ steps.cpr.outputs.pull-request-url }}"
+      - if: steps.check.outcome == 'failure'
+        run: exit 1

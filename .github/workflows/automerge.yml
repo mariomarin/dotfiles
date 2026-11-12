@@ -1,0 +1,30 @@
+name: Automerge
+on:
+  pull_request:
+    types: [labeled]
+  workflow_run:
+    workflows: [Validate, Nix Build]
+    types: [completed]
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'pull_request' && github.event.label.name == 'automerge' ||
+      github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      PR: ${{ github.event.pull_request.number || github.event.workflow_run.pull_requests[0].number }}
+    steps:
+      - name: Merge if labeled and all checks passed
+        run: |
+          [ -n "$PR" ] || exit 0
+          gh pr view "$PR" --json labels,state \
+            --jq '.state == "OPEN" and any(.labels[]; .name == "automerge")' | grep -q true || exit 0
+          pending=$(gh pr checks "$PR" --json workflow,bucket \
+            --jq '[.[] | select(.workflow != "Automerge" and .bucket != "pass" and .bucket != "skipping")] | length')
+          [ "$pending" = 0 ] || { echo "$pending check(s) not green yet"; exit 0; }
+          gh pr merge "$PR" --squash --delete-branch

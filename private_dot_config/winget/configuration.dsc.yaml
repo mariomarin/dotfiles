@@ -87,7 +87,7 @@ properties:
         description: Install Jujutsu (jj)
         allowPrerelease: true
       settings:
-        id: martinvonz.jj
+        id: jj-vcs.jj
         source: winget
     # Search and text processing
     - resource: Microsoft.WinGet.DSC/WinGetPackage
@@ -258,13 +258,6 @@ properties:
         allowPrerelease: true
       settings:
         id: Mirantis.Lens
-        source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Remote Desktop Manager
-        allowPrerelease: true
-      settings:
-        id: Devolutions.RemoteDesktopManager
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
