@@ -52,23 +52,23 @@ def "main doctor" [] {
     exit 1
 }
 
-def check-nix []: nothing -> any {
+def check-nix []: nothing -> oneof<string, nothing> {
     let nix = do -i { ^nix --version } | complete
     if $nix.exit_code == 0 { return null }
     "nix not installed — run: curl -L https://install.determinate.systems/nix | sh"
 }
 
-def check-darwin-rebuild []: nothing -> any {
+def check-darwin-rebuild []: nothing -> oneof<string, nothing> {
     if (which darwin-rebuild | is-not-empty) { return null }
     "darwin-rebuild missing — run: just first-time"
 }
 
-def check-flake []: nothing -> any {
+def check-flake []: nothing -> oneof<string, nothing> {
     if ("../nixos/flake.nix" | path exists) { return null }
     "flake.nix missing"
 }
 
-def check-lock []: nothing -> any {
+def check-lock []: nothing -> oneof<string, nothing> {
     let lock = "../nixos/flake.lock"
     if not ($lock | path exists) {
         return "flake.lock missing — run: cd ../nixos && nix flake update"
