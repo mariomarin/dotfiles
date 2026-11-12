@@ -25,8 +25,6 @@ nix/
 ├── nixos/          # NixOS configurations
 │   ├── flake.nix   # Main flake with both nixosConfigurations and darwinConfigurations
 │   └── hosts/
-│       ├── dendrite/    # Linux laptop
-│       ├── mitosis/     # Linux VM
 │       └── symbiont/    # Linux WSL
 └── darwin/         # nix-darwin modules
     └── hosts/
