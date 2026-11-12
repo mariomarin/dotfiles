@@ -11,7 +11,7 @@
       libnotify # notify-send (Linux desktop only)
 
       # ── System info ────────────────────────────────────────────────────
-      lfs # List filesystem info (Linux only)
+      dysk # List filesystem info (Linux only)
 
       # ── Shell utilities ───────────────────────────────────────────────
       pipr # Interactive pipe evaluation (uses bubblewrap, Linux only)
