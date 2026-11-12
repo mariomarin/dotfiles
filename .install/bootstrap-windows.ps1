@@ -175,8 +175,7 @@ Write-Host "==> Clone dotfiles repository" -ForegroundColor Cyan
 if (Test-Path "$chezmoiPath/.git") { git -C $chezmoiPath pull --quiet }
 else { git clone --quiet https://github.com/mariomarin/dotfiles.git $chezmoiPath }
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$chezmoiPath/justfile")) {
-    Write-Host "❌ Failed to clone repository to $chezmoiPath" -ForegroundColor Red
-    exit 1
+    throw "Failed to clone repository to $chezmoiPath"
 }
 Write-Host "✅ Repository ready" -ForegroundColor Green
 
