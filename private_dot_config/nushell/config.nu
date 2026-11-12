@@ -225,7 +225,10 @@ $env.config.keybindings = [
         modifier: control_shift
         keycode: char_c
         mode: [vi_insert, vi_normal]
-        event: {send: executehostcommand, cmd: "commandline | clipboard copy; print 'Copied to clipboard'"}
+        event: {
+            send: executehostcommand
+            cmd: "commandline | clipboard copy; print 'Copied to clipboard'"
+        }
     }
     {
 
@@ -234,7 +237,10 @@ $env.config.keybindings = [
         modifier: control_shift
         keycode: char_v
         mode: [vi_insert, vi_normal]
-        event: {send: executehostcommand, cmd: "commandline edit --insert (clipboard paste)"}
+        event: {
+            send: executehostcommand
+            cmd: "commandline edit --insert (clipboard paste)"
+        }
     }
     {
 
@@ -416,7 +422,11 @@ $env.config.table = {
     index_mode: always # Always show row indices
     show_empty: true
     padding: {left: 1, right: 1}
-    trim: {methodology: wrapping, wrapping_try_keep_words: true, truncating_suffix: "..."}
+    trim: {
+        methodology: wrapping
+        wrapping_try_keep_words: true
+        truncating_suffix: "..."
+    }
     header_on_separator: false
 }
 
