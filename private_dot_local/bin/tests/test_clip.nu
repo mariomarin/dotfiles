@@ -17,14 +17,20 @@ def with-clip [body: closure] {
 
 # Evaluate a snippet with clip sourced; returns the nuon-decoded result
 def clip-eval [snippet: string]: nothing -> any {
-    let result = with-clip {|clip| do { nu -n -c $"source ($clip); ($snippet) | to nuon" } | complete }
+    let result = with-clip {|clip|
+        do { ^$nu.current-exe -n -c $"source ($clip); ($snippet) | to nuon" } | complete
+    }
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
 }
 
 # Run the clip script itself with stdin and args; returns `complete` output
-def run-clip [stdin: any, ...args: string]: nothing -> record {
-    with-clip {|clip| do { $stdin | ^nu --stdin $clip ...$args } | complete }
+def run-clip [stdin, ...args: string]: nothing -> record {
+    with-clip {|clip|
+        do {
+            $stdin | ^nu --stdin $clip ...$args
+        } | complete
+    }
 }
 
 # Temp dir with symlinks to external commands only (nu's builtin `uname`
@@ -41,23 +47,31 @@ def stub-path [cmds: list<string>]: nothing -> string {
 const NO_CLIPBOARD = 'env not found in PATH|no clipboard backend'
 
 def "test script parses" [] {
-    let result = with-clip {|clip| do { nu -n -c $"source ($clip)" } | complete }
+    let result = with-clip {|clip|
+        do { ^$nu.current-exe -n -c $"source ($clip)" } | complete
+    }
     assert equal $result.exit_code 0 $result.stderr
 }
 
 def "test select-backend priority" [] {
-    let off = {ssh: false, macos: false, wsl: false, has_xclip: false, has_wl_copy: false}
+    let off = {
+        ssh: false
+        macos: false
+        wsl: false
+        has_xclip: false
+        has_wl_copy: false
+    }
     [
-        [flags expected];
-        [{ssh: true, macos: true} "ssh"]
-        [{macos: true} "pbcopy"]
-        [{wsl: true, has_xclip: true} "clip.exe"]
-        [{has_xclip: true, has_wl_copy: true} "xclip"]
-        [{has_wl_copy: true} "wl-copy"]
-        [{} "none"]
+        [flags, expected];
+        [{ssh: true, macos: true}, "ssh"]
+        [{macos: true}, "pbcopy"]
+        [{wsl: true, has_xclip: true}, "clip.exe"]
+        [{has_xclip: true, has_wl_copy: true}, "xclip"]
+        [{has_wl_copy: true}, "wl-copy"]
+        [{}, "none"]
     ]
     | each {|case|
-        let flags = ($off | merge $case.flags | to nuon)
+        let flags = $off | merge $case.flags | to nuon
         assert equal (clip-eval $"select-backend ($flags)") $case.expected
     }
     | ignore
@@ -109,7 +123,7 @@ def "test require-bytes rejects empty input" [] {
 def "test copy-bytes delivers exact bytes" [] {
     let tmp = (mktemp -t "clip-out-XXXXXX")
     let r = clip-eval $"copy-bytes ($SAMPLE | into binary | to nuon) [sh -c 'cat > ($tmp)']"
-    let written = (open --raw $tmp | into binary)
+    let written = open --raw $tmp | into binary
     rm --force $tmp
     assert equal $r.ok true
     assert equal $written ($SAMPLE | into binary)
@@ -140,13 +154,21 @@ def "test copy-bytes reports missing commands" [] {
     assert ($r.error | str contains "not found in PATH")
 }
 
+# PATH without clipboard tools: clip fails fast instead of copying, and
+# must not wait for `sleep` to close stdin first
 def "test script ignores open stdin when given args" [] {
-    # PATH without clipboard tools: clip fails fast instead of copying, and
-    # must not wait for `sleep` to close stdin first
     let bin = (stub-path [nu uname])
     let started = (date now)
+    let clip_env = {
+        PATH: [$bin]
+        SSH_TTY: null
+        SSH_CONNECTION: null
+        SSH_CLIENT: null
+    }
     let result = with-clip {|clip|
-        do { ^sleep 5 | with-env {PATH: [$bin], SSH_TTY: null, SSH_CONNECTION: null, SSH_CLIENT: null} { ^nu --stdin $clip hi } } | complete
+        do {
+            ^sleep 5 | with-env $clip_env { ^nu --stdin $clip hi }
+        } | complete
     }
     rm -rf $bin
     assert ((date now) - $started < 4sec) "clip blocked on stdin despite args"
@@ -157,12 +179,12 @@ def "test script ignores open stdin when given args" [] {
 
 def "test normalize-url" [] {
     [
-        [raw expected];
-        ["paste.example.com" "https://paste.example.com"]
-        ["paste.example.com/" "https://paste.example.com"]
-        ["https://paste.example.com/" "https://paste.example.com"]
-        ["http://paste.example.com" "http://paste.example.com"]
-        ["  paste.example.com  " "https://paste.example.com"]
+        [raw, expected];
+        ["paste.example.com", "https://paste.example.com"]
+        ["paste.example.com/", "https://paste.example.com"]
+        ["https://paste.example.com/", "https://paste.example.com"]
+        ["http://paste.example.com", "http://paste.example.com"]
+        ["  paste.example.com  ", "https://paste.example.com"]
     ]
     | each {|case| assert equal (clip-eval $"normalize-url '($case.raw)'") $case.expected }
     | ignore
@@ -170,12 +192,12 @@ def "test normalize-url" [] {
 
 def "test parse-haste-response" [] {
     [
-        [body ok expected];
-        ['{"key": "abc123"}' true "abc123"]
-        ['{"key": "xyz", "other": 1}' true "xyz"]
-        ['' false "empty response"]
-        ['not json' false "invalid JSON"]
-        ['{"foo": "bar"}' false "no key in response"]
+        [body, ok, expected];
+        ['{"key": "abc123"}', true, "abc123"]
+        ['{"key": "xyz", "other": 1}', true, "xyz"]
+        ['', false, "empty response"]
+        ['not json', false, "invalid JSON"]
+        ['{"foo": "bar"}', false, "no key in response"]
     ]
     | each {|case|
         let r = clip-eval $"parse-haste-response ($case.body | to nuon)"
@@ -205,19 +227,22 @@ def "test haste-server requires HASTE_SERVER" [] {
     assert ($r.error | str contains "HASTE_SERVER not set")
 }
 
+# Fake curl records the upload; no clipboard tools on PATH
 def "test script hastes and prints url without a clipboard" [] {
-    # Fake curl records the upload; no clipboard tools on PATH
     let bin = (stub-path [nu uname cat])
     $"#!/bin/sh\ncat > ($bin)/body\necho '{\"key\": \"k1\"}'\n" | save $"($bin)/curl"
     ^chmod +x $"($bin)/curl"
     let src = $"($bin)/snippet.rs"
     $"\e[1mfn main\(\) {}\e[0m" | save $src
-    let result = with-clip {|clip|
-        with-env {PATH: [$bin], HASTE_SERVER: "paste.test", SSH_TTY: null, SSH_CONNECTION: null, SSH_CLIENT: null} {
-            do { ^nu --stdin $clip --haste $src } | complete
-        }
+    let clip_env = {
+        PATH: [$bin]
+        HASTE_SERVER: "paste.test"
+        SSH_TTY: null
+        SSH_CONNECTION: null
+        SSH_CLIENT: null
     }
-    let body = (open --raw $"($bin)/body" | decode utf-8)
+    let result = with-clip {|clip| with-env $clip_env { do { ^nu --stdin $clip --haste $src } | complete } }
+    let body = open --raw $"($bin)/body" | decode utf-8
     rm -rf $bin
     assert equal $result.exit_code 0 $result.stderr
     assert equal ($result.stdout | str trim) "https://paste.test/k1.rs"

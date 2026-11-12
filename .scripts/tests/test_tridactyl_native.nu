@@ -4,12 +4,12 @@ use std/assert
 const SCRIPT = ".scripts/tridactyl-native.nu"
 
 def "test script parses" [] {
-    do { nu -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
+    do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
 def "test build-manifest structure" [] {
     let result = do {
-        nu -n -c 'source .scripts/tridactyl-native.nu; build-manifest "/nix/store/abc/bin/native_main" | to nuon'
+        ^$nu.current-exe -n -c 'source .scripts/tridactyl-native.nu; build-manifest "/nix/store/abc/bin/native_main" | to nuon'
     } | complete
     assert equal $result.exit_code 0
     let m = $result.stdout | str trim | from nuon

@@ -14,13 +14,15 @@ def with-j [body: closure] {
 }
 
 def "test script parses" [] {
-    let result = with-j {|j| do { nu -n -c $"source ($j)" } | complete }
+    let result = with-j {|j|
+        do { ^$nu.current-exe -n -c $"source ($j)" } | complete
+    }
     assert equal $result.exit_code 0 $result.stderr
 }
 
 def "test has subcommands" [] {
     let cmds = with-j {|j|
-        do { nu -n -c $"source ($j); scope commands | where name =~ 'main' | get name | to nuon" } | complete
+        do { ^$nu.current-exe -n -c $"source ($j); scope commands | where name =~ 'main' | get name | to nuon" } | complete
     } | get stdout | str trim | from nuon
 
     [
@@ -41,7 +43,7 @@ def "test has subcommands" [] {
 def "test parse-bookmark-lines filters empty" [] {
     let result = with-j {|j|
         let snippet = '["feat-x" "" "fix-y"] | parse-bookmark-lines | to nuon'
-        do { nu -n -c $"source ($j); ($snippet)" } | complete
+        do { ^$nu.current-exe -n -c $"source ($j); ($snippet)" } | complete
     }
     assert equal $result.exit_code 0
     let parsed = $result.stdout | str trim | from nuon
@@ -53,7 +55,7 @@ def "test parse-bookmark-lines filters empty" [] {
 def "test parse-revision-lines" [] {
     let result = with-j {|j|
         let snippet = '["abc123 fix the thing" "def456 add feature" ""] | parse-revision-lines | to nuon'
-        do { nu -n -c $"source ($j); ($snippet)" } | complete
+        do { ^$nu.current-exe -n -c $"source ($j); ($snippet)" } | complete
     }
     assert equal $result.exit_code 0
     let parsed = $result.stdout | str trim | from nuon
@@ -66,7 +68,7 @@ def "test parse-revision-lines" [] {
 
 def "test resolve-bookmark returns current when set" [] {
     let result = with-j {|j|
-        do { nu -n -c $"source ($j); resolve-bookmark \"my-branch\" true \"\" | to nuon" } | complete
+        do { ^$nu.current-exe -n -c $"source ($j); resolve-bookmark \"my-branch\" true \"\" | to nuon" } | complete
     }
     assert equal $result.exit_code 0
     let r = $result.stdout | str trim | from nuon
@@ -76,7 +78,7 @@ def "test resolve-bookmark returns current when set" [] {
 
 def "test resolve-bookmark falls back to parent on empty commit" [] {
     let result = with-j {|j|
-        do { nu -n -c $"source ($j); resolve-bookmark \"\" true \"parent-bm\" | to nuon" } | complete
+        do { ^$nu.current-exe -n -c $"source ($j); resolve-bookmark \"\" true \"parent-bm\" | to nuon" } | complete
     }
     assert equal $result.exit_code 0
     let r = $result.stdout | str trim | from nuon
@@ -86,7 +88,7 @@ def "test resolve-bookmark falls back to parent on empty commit" [] {
 
 def "test resolve-bookmark errors when commit has changes" [] {
     let result = with-j {|j|
-        do { nu -n -c $"source ($j); resolve-bookmark \"\" false \"parent-bm\" | to nuon" } | complete
+        do { ^$nu.current-exe -n -c $"source ($j); resolve-bookmark \"\" false \"parent-bm\" | to nuon" } | complete
     }
     assert equal $result.exit_code 0
     let r = $result.stdout | str trim | from nuon
@@ -96,7 +98,7 @@ def "test resolve-bookmark errors when commit has changes" [] {
 
 def "test resolve-bookmark errors when nothing found" [] {
     let result = with-j {|j|
-        do { nu -n -c $"source ($j); resolve-bookmark \"\" true \"\" | to nuon" } | complete
+        do { ^$nu.current-exe -n -c $"source ($j); resolve-bookmark \"\" true \"\" | to nuon" } | complete
     }
     assert equal $result.exit_code 0
     let r = $result.stdout | str trim | from nuon
@@ -106,7 +108,9 @@ def "test resolve-bookmark errors when nothing found" [] {
 
 # Evaluate a snippet with j sourced; returns the `complete` record
 def j-eval [snippet: string]: nothing -> record {
-    with-j {|j| do { nu -n -c $"source ($j); ($snippet)" } | complete }
+    with-j {|j|
+        do { ^$nu.current-exe -n -c $"source ($j); ($snippet)" } | complete
+    }
 }
 
 def "test sync-scope defaults to all" [] {
@@ -123,19 +127,19 @@ def "test sync-scope current and mine" [] {
 }
 
 def "test local-work excludes immutable and base" [] {
-    let r = (j-eval 'local-work "trunk()" "all()"' | get stdout | str trim)
+    let r = j-eval 'local-work "trunk()" "all()"' | get stdout | str trim
     assert equal $r "(all()) & mutable() & ~::(trunk())"
 }
 
 def "test sync-roots avoids range operator" [] {
-    let r = (j-eval 'sync-roots "trunk()" "W"' | get stdout | str trim)
+    let r = j-eval 'sync-roots "trunk()" "W"' | get stdout | str trim
     assert equal $r "roots(W) & children(::(trunk()))"
     # `base..x` pulls in immutable ancestors of x
     assert not ($r | str contains "..")
 }
 
 def "test run-or-fail returns stdout on success" [] {
-    let r = (j-eval 'run-or-fail "Echo" { ^echo hi } | get stdout | str trim')
+    let r = j-eval 'run-or-fail "Echo" { ^echo hi } | get stdout | str trim'
     assert equal ($r.stdout | str trim) "hi"
 }
 
@@ -147,13 +151,16 @@ def "test run-or-fail raises labelled error" [] {
 
 def "test warn-err prints only on err" [] {
     assert equal (j-eval '{ok: true, value: {}} | warn-err "step"' | get stderr) ""
-    let r = (j-eval '{ok: false, error: {stderr: "bad\n"}} | warn-err "step"')
+    let r = j-eval '{ok: false, error: {stderr: "bad\n"}} | warn-err "step"'
     assert ($r.stderr | str contains "warning: step failed: bad")
 }
 
 # Run jj inside a repo dir; flags pass through untouched
 def --wrapped jj-in [repo: string, ...args: string]: nothing -> record {
-    do { cd $repo; ^jj ...$args } | complete
+    do {
+        cd $repo
+        ^jj ...$args
+    } | complete
 }
 
 def "test report-run prints stdout and returns null on ok" [] {
@@ -179,30 +186,48 @@ def "test sync leaves stacks on immutable branches" [] {
     jj-in $repo config set --repo user.name t | ignore
     jj-in $repo config set --repo user.email t@t | ignore
     jj-in $repo config set --repo 'revset-aliases."trunk()"' 'present(main)' | ignore
-    jj-in $repo config set --repo 'revset-aliases."immutable_heads()"' 'trunk() | present(side)' | ignore
+    let immutable_heads = 'revset-aliases."immutable_heads()"'
+    jj-in $repo config set --repo $immutable_heads 'trunk() | present(side)' | ignore
 
     # A ── B(side, immutable) ── C
     #  ├── D            (moves)
     #  ├── E            (conflicts with A2 on f)
     #  ├── EMPTY        (abandoned)
     #  └── A2(main)
-    jj-in $repo describe -m A | ignore; "a" | save $"($repo)/f"
-    jj-in $repo new -m B | ignore; "b" | save $"($repo)/b"
+    jj-in $repo describe -m A | ignore
+    "a" | save $"($repo)/f"
+    jj-in $repo new -m B | ignore
+    "b" | save $"($repo)/b"
     jj-in $repo bookmark create side -r @ | ignore
-    jj-in $repo new -m C | ignore; "c" | save $"($repo)/c"
-    jj-in $repo new (exact A) -m D | ignore; "d" | save $"($repo)/d"
-    jj-in $repo new (exact A) -m E | ignore; "e" | save -f $"($repo)/f"
+    jj-in $repo new -m C | ignore
+    "c" | save $"($repo)/c"
+    jj-in $repo new (exact A) -m D | ignore
+    "d" | save $"($repo)/d"
+    jj-in $repo new (exact A) -m E | ignore
+    "e" | save -f $"($repo)/f"
     jj-in $repo new (exact A) -m EMPTY | ignore
-    jj-in $repo new (exact A) -m A2 | ignore; "a2" | save -f $"($repo)/f"
+    jj-in $repo new (exact A) -m A2 | ignore
+    "a2" | save -f $"($repo)/f"
     jj-in $repo bookmark create main -r @ | ignore
     jj-in $repo new main | ignore
 
-    let sync = with-j {|j| do { cd $repo; ^nu -n $j sync --no-pull } | complete }
-    let parent = {|d| jj-in $repo log -r $"(exact $d)-" --no-graph -T 'description.first_line()' | get stdout }
+    let sync = with-j {|j|
+        do {
+            cd $repo
+            ^nu -n $j sync --no-pull
+        } | complete
+    }
+    let first_line = 'description.first_line()'
+    let parent = {|d|
+        jj-in $repo log -r $"(exact $d)-" --no-graph -T $first_line | get stdout
+    }
     let state = {
         c: (do $parent C)
         d: (do $parent D)
-        e_conflict: (jj-in $repo log -r $"(exact E) & conflicts\(\)" --no-graph -T '"y"' | get stdout)
+        e_conflict: (
+            jj-in $repo log -r $"(exact E) & conflicts\(\)" --no-graph -T '"y"'
+            | get stdout
+        )
         empty: (jj-in $repo log -r (exact EMPTY) --no-graph -T '"y"' | get stdout)
     }
     rm -rf $repo

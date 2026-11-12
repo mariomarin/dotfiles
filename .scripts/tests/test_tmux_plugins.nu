@@ -5,7 +5,7 @@ const SCRIPT = ".scripts/tmux-plugins.nu"
 
 # Fake TPM scripts log their name; install_plugins fails with $install_stderr
 def run-plugins [install_exit: int, install_stderr: string]: nothing -> record {
-    let home = (mktemp -d | path expand)
+    let home = mktemp -d | path expand
     let bin = $"($home)/bin"
     let tpm = $"($home)/.local/share/tmux/plugins/tpm/bin"
     mkdir $bin $tpm
@@ -14,7 +14,9 @@ def run-plugins [install_exit: int, install_stderr: string]: nothing -> record {
     $"#!/bin/sh\necho clean >> ($home)/tpm.log\n" | save $"($tpm)/clean_plugins"
     ^chmod +x $"($bin)/tmux" $"($tpm)/install_plugins" $"($tpm)/clean_plugins"
     let result = with-env {HOME: $home, PATH: ($env.PATH | prepend $bin)} { do { ^$nu.current-exe -n $SCRIPT } | complete }
-    let log = if ($"($home)/tpm.log" | path exists) { open --raw $"($home)/tpm.log" | lines } else { [] }
+    let log = if ($"($home)/tpm.log" | path exists) {
+        open --raw $"($home)/tpm.log" | lines
+    } else { [] }
     rm -rf $home
     $result | insert calls $log | insert home $home
 }

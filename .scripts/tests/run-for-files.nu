@@ -4,61 +4,31 @@
 
 use std/assert
 use run-nutest.nu run-suites
-
-def get-test-funcs [test_file: string]: nothing -> list<string> {
-
-    # Fresh interpreter per file: source needs a parse-time path
-    let result = do {
-        ^$nu.current-exe -n -c $"source ($test_file); scope commands | where name =~ '^test ' | get name | to nuon"
-    } | complete
-    if $result.exit_code != 0 { return [] }
-    try {
-        $result.stdout | str trim | from nuon
-    } catch {
-        []
-    }
-}
-
-def run-test [test_file: string, func: string]: nothing -> record<name: string, passed: bool, error: string> {
-    let result = do { ^$nu.current-exe -n -c $"source ($test_file); ($func)" } | complete
-    {
-        name: $func
-        passed: ($result.exit_code == 0)
-        error: ($result.stderr | str trim)
-    }
-}
+use run-lib.nu [run-file]
 
 def run-test-file [test_file: string]: nothing -> list<record> {
 
     # Module suites are nutest (@test attributes), the rest `test …` commands
     if $test_file =~ modules/ { return (run-suites ($test_file | path dirname)) }
-    get-test-funcs $test_file | each {|func| run-test $test_file $func }
+    run-file $test_file
 }
 
-# Map source file to its test file(s)
+# Map a changed file to its test file(s); test files map to themselves
 def find-tests [source_file: string]: nothing -> list<string> {
-    let name = $source_file | path basename | str replace ".nu" "" | str replace --all "-" "_"
     let dir = $source_file | path dirname
-
-    # .scripts/*.nu → .scripts/tests/test_*.nu
-    if ($dir | str ends-with ".scripts") {
-        let test = $".scripts/tests/test_($name).nu"
-        if ($test | path exists) { return [$test] }
-        return [".scripts/tests/test_all_scripts.nu"]
-    }
-
-    # private_dot_local/bin/* → private_dot_local/bin/tests/test_*.nu
-    if ($dir | str ends-with "private_dot_local/bin") {
-        let bin_name = $name | str replace "executable_" ""
-        let test = $"private_dot_local/bin/tests/test_($bin_name).nu"
-        if ($test | path exists) { return [$test] }
+    let base = $source_file | path basename
+    if ($dir | path basename) == "tests" {
+        return (if $base starts-with "test_" { [$source_file] } else { [] })
     }
 
     # modules/*/mod.nu → modules/*/tests/test_*.nu (nutest)
-    if $source_file =~ modules/ and ($dir | path basename) != "tests" {
-        return (glob $"($dir)/tests/test_*.nu")
-    }
+    if $source_file =~ modules/ { return (glob $"($dir)/tests/test_*.nu") }
 
+    # foo-bar.nu or executable_foo-bar → <dir>/tests/ or .scripts/tests/test_foo_bar.nu
+    let name = $base | str replace --regex '\.nu$' "" | str replace --regex '^executable_' "" | str replace --all "-" "_"
+    let found = [$"($dir)/tests/test_($name).nu" $".scripts/tests/test_($name).nu"] | where {|t| $t | path exists }
+    if ($found | is-not-empty) { return ($found | first 1) }
+    if ($dir | str ends-with ".scripts") { return [".scripts/tests/test_all_scripts.nu"] }
     []
 }
 
@@ -66,10 +36,10 @@ def main [
     ...files: string # Changed files to run tests for
 ]: nothing -> nothing {
     let tests_to_run = $files
-    | where {|f| $f | str ends-with ".nu" }
-    | where {|f| $f !~ /tests/ }
+    | where {|f| ($f | str ends-with ".nu") or ($f | path basename | str starts-with "executable_") }
     | each {|f| find-tests $f }
     | flatten
+    | path expand
     | uniq
 
     if ($tests_to_run | is-empty) {

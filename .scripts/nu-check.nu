@@ -42,10 +42,10 @@ def main [...files: string] {
           return null
         }
 
-        # Skip j — imports a sibling adt.nu that exists only in the deployed
-        # layout (chezmoi generates it from .scripts/adt.nu). Parse-validated
-        # by test_j.nu, which stages adt.nu alongside it.
-        if $basename == "executable_j" {
+        # Skip scripts importing a sibling adt.nu that exists only once
+        # deployed (chezmoi renders it from adt.nu.tmpl). Their tests
+        # ("test script parses") stage adt.nu alongside and parse them.
+        if ($path | path dirname | path join "adt.nu.tmpl" | path exists) {
           return null
         }
 
@@ -63,7 +63,7 @@ def main [...files: string] {
 
         let path_lit = $path | to nuon
         let result = (do {
-          ^nu --no-config-file --commands $"nu-check --debug ($path_lit)"
+          ^$nu.current-exe --no-config-file --commands $"nu-check --debug ($path_lit)"
         } | complete)
 
         if $result.exit_code != 0 {

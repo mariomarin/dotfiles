@@ -1,5 +1,6 @@
 # Tests for wsl/wsl.nu (pure helpers; wsl.exe itself needs Windows)
 use std/assert
+use helpers.nu [with-fake-bins]
 
 const SCRIPT = "wsl/wsl.nu"
 
@@ -13,33 +14,23 @@ def "test parse-distros reads utf-8 output" []: nothing -> nothing {
     assert equal (wsl-eval '"NixOS\r\nUbuntu\r\n\r\n" | parse-distros') [NixOS Ubuntu]
 }
 
+# What wsl.exe prints without WSL_UTF8, as nu sees it: NUL after each char
+# (nu can decode utf-16le but not encode it, so build the bytes by hand)
 def "test parse-distros reads utf-16le output" []: nothing -> nothing {
-
-    # What wsl.exe prints without WSL_UTF8, as nu sees it: NUL after each char
-    # (nu can decode utf-16le but not encode it, so build the bytes by hand)
     let snippet = '"NixOS\r\nUbuntu\r\n" | split chars | each {|c| $c + (char nul) } | str join | parse-distros'
     assert equal (wsl-eval $snippet) [NixOS Ubuntu]
 }
 
+# Fake wsl.exe: echo args back as UTF-16-style text, record WSL_UTF8
 def "test wsl-run passes flags and strips NULs" []: nothing -> nothing {
-
-    # Fake wsl.exe: echo args back as UTF-16-style text, record WSL_UTF8
-    let bin = (mktemp --directory)
-    "#!/bin/sh\nprintf '%s' \"$WSL_UTF8 $*\" | sed 's/./&\\x00/g'\n" | save $"($bin)/wsl"
-    chmod +x $"($bin)/wsl"
-    let r = with-env {PATH: ($env.PATH | prepend $bin)} { wsl-eval "wsl-run --list --quiet" }
-    rm --recursive --force $bin
+    let fake = "printf '%s' \"$WSL_UTF8 $*\" | sed 's/./&\\x00/g'"
+    let r = with-fake-bins {wsl: $fake} {|| wsl-eval "wsl-run --list --quiet" }
     assert equal $r {ok: true, value: "1 --list --quiet"}
 }
 
 # Evaluate snippet with a fake wsl.exe running the given sh body
 def with-fake-wsl [body: string, snippet: string]: nothing -> any {
-    let bin = (mktemp --directory)
-    $"#!/bin/sh\n($body)\n" | save $"($bin)/wsl"
-    chmod +x $"($bin)/wsl"
-    let r = with-env {PATH: ($env.PATH | prepend $bin)} { wsl-eval $snippet }
-    rm --recursive --force $bin
-    $r
+    with-fake-bins {wsl: $body} {|| wsl-eval $snippet }
 }
 
 def "test is-provisioned matches flake hostname" []: nothing -> nothing {
@@ -60,11 +51,13 @@ def "test has-dotfiles follows exit code" []: nothing -> nothing {
 }
 
 def "test has-dotfiles queries chezmoi source of NIX_USER" []: nothing -> nothing {
-    let log = (mktemp)
-    assert equal (with-fake-wsl $"echo \"$*\" > ($log)" "has-dotfiles") true
-    let args = open $log | str trim
-    rm --force $log
-    assert equal $args "-d NixOS -u mario --exec test -d /home/mario/.local/share/chezmoi"
+    let fake = 'echo "$*" > "$(dirname "$0")/args"'
+    let r = with-fake-bins {wsl: $fake} {|dir|
+        let found = wsl-eval "has-dotfiles"
+        {found: $found, args: (open ($dir | path join args) | str trim)}
+    }
+    assert equal $r.found true
+    assert equal $r.args "-d NixOS -u mario --exec test -d /home/mario/.local/share/chezmoi"
 }
 
 def "test wsl-run-attached returns Result" []: nothing -> nothing {

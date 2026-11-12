@@ -5,13 +5,15 @@ const SCRIPT = ".scripts/tmux-reload.nu"
 
 # Fake tmux: list-sessions exits $SERVER, source-file exits $SOURCE; logs args
 def run-reload [server: int, source: int]: nothing -> record {
-    let home = (mktemp -d | path expand)
+    let home = mktemp -d | path expand
     let bin = $"($home)/bin"
     mkdir $bin
     $"#!/bin/sh\necho \"$@\" >> ($home)/tmux.log\ncase \"$1\" in\n  list-sessions\) exit ($server);;\n  source-file\) echo 'bad config' >&2; exit ($source);;\nesac\n" | save $"($bin)/tmux"
     ^chmod +x $"($bin)/tmux"
     let result = with-env {HOME: $home, PATH: ($env.PATH | prepend $bin)} { do { ^$nu.current-exe -n $SCRIPT } | complete }
-    let log = if ($"($home)/tmux.log" | path exists) { open --raw $"($home)/tmux.log" | lines } else { [] }
+    let log = if ($"($home)/tmux.log" | path exists) {
+        open --raw $"($home)/tmux.log" | lines
+    } else { [] }
     rm -rf $home
     $result | insert calls $log | insert home $home
 }

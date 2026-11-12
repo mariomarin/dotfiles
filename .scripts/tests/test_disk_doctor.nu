@@ -13,7 +13,7 @@ const RMLINT_JSON = r#'[
 ]'#
 
 def eval [expr: string]: nothing -> any {
-    let result = do { nu -n -c $"source ($SCRIPT); ($expr) | to nuon" } | complete
+    let result = do { ^$nu.current-exe -n -c $"source ($SCRIPT); ($expr) | to nuon" } | complete
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
 }
@@ -34,16 +34,22 @@ def facts [overrides: record = {}]: nothing -> string {
 }
 
 def "test script parses" [] {
-    do { nu -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
+    do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
 def "test parse-du converts KiB to bytes" [] {
     let input = "4\t/a\n2\t/b c" | to nuon
-    assert equal (eval $"($input) | parse-du") [
-        [path size];
-        ["/a" 4096b]
-        ["/b c" 2048b]
+    let expected = [
+        {
+            path: "/a"
+            size: 4096b
+        }
+        {
+            path: "/b c"
+            size: 2048b
+        }
     ]
+    assert equal (eval $"($input) | parse-du") $expected
 }
 
 def "test parse-du empty input" [] {
@@ -204,6 +210,11 @@ def "test main never modifies scanned files" [] {
     rm --recursive --force $dir
 
     assert equal $result.exit_code 0 $result.stderr
-    assert ($result.stdout | ansi strip | str trim | is-not-empty)
+    assert (
+        $result.stdout
+        | ansi strip
+        | str trim
+        | is-not-empty
+    )
     assert equal $after $before
 }

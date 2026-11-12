@@ -2,11 +2,11 @@
 # NixOS management utilities
 
 use ../../.scripts/nix-common.nu
-use ../../.scripts/adt.nu [run-cmd]
+use ../../.scripts/adt.nu [run-cmd collect-issues]
 
 # OS compatibility check
 def check-os [] {
-    if (sys host).name == "Windows" {
+    if $nu.os-info.name == windows {
         print "❌ Error: NixOS commands are only available on Linux systems"
         print "   This justfile manages NixOS system configuration and cannot run on Windows"
         exit 1
@@ -43,33 +43,22 @@ def "main hosts" [
 def "main doctor" [
     host: string  # Current hostname
 ] {
-    if (sys host).name != "Linux" { return }
+    if $nu.os-info.name != linux { return }
 
-    mut issues = []
-
-    let lock = "flake.lock"
-    if not ($lock | path exists) {
-        $issues = ($issues | append "flake.lock missing — run: nix flake update")
-    } else {
-        let modified = ls -l $lock | get 0.modified | into datetime
-        let now = date now
-        let age = $now - $modified
-        if $age > 30day {
-            $issues = (
-                $issues
-                | append $"flake.lock is ($age | into int | $in / 86400000000000) days old — run: nix flake update"
-            )
-        }
-    }
-
-    if (run-cmd { ^nix flake check --no-build } | get ok) == false {
-        $issues = ($issues | append "flake check failed — run: nix flake check")
-    }
+    let issues = null | collect-issues [
+        {|| nix-common check-lock flake.lock "nix flake update" }
+        {|| check-flake }
+    ]
 
     if ($issues | is-empty) { return }
     print $"nixos \(($host)\):"
-    $issues | each {|i| print $"  ($i)" } | ignore
+    for issue in $issues { print $"  ($issue)" }
     exit 1
+}
+
+def check-flake []: nothing -> oneof<string, nothing> {
+    if (run-cmd { ^nix flake check --no-build }).ok { return null }
+    "flake check failed — run: nix flake check"
 }
 
 # Show help

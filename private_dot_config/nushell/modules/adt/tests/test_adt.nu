@@ -1,6 +1,6 @@
 # nutest suite for the adt module (run by .scripts/tests/run-nutest.nu)
 # Self-contained: property checks use native `random int`, no helpers.nu.
-use std assert
+use std/assert
 use std/testing *
 use ../mod.nu *
 
@@ -22,14 +22,14 @@ def "err creates error result" [] {
 
 @test
 def "is-ok detects success" [] {
-    assert ((ok "test") | is-ok)
-    assert (not ((err "test") | is-ok))
+    assert (ok "test" | is-ok)
+    assert not (err "test" | is-ok)
 }
 
 @test
 def "is-err detects error" [] {
-    assert ((err "test") | is-err)
-    assert (not ((ok "test") | is-err))
+    assert (err "test" | is-err)
+    assert not (ok "test" | is-err)
 }
 
 @test
@@ -90,14 +90,14 @@ def "invalid creates error validation" [] {
 
 @test
 def "is-valid detects success" [] {
-    assert ((valid "test") | is-valid)
-    assert (not ((invalid ["test"]) | is-valid))
+    assert (valid "test" | is-valid)
+    assert not (invalid ["test"] | is-valid)
 }
 
 @test
 def "is-invalid detects error" [] {
-    assert ((invalid ["test"]) | is-invalid)
-    assert (not ((valid "test") | is-invalid))
+    assert (invalid ["test"] | is-invalid)
+    assert not (valid "test" | is-invalid)
 }
 
 @test
@@ -171,15 +171,15 @@ def "result flat-map short-circuits on error" [] {
 @test
 def "result bimap transforms both paths" [] {
     let double = {|x| $x * 2}
-    let uppercase = {|s| $s | str uppercase}
+    let tag = {|s| $"E: ($s)"}
 
-    let result1 = (ok 5 | result bimap $double $uppercase)
+    let result1 = (ok 5 | result bimap $double $tag)
     assert ($result1 | is-ok)
     assert ($result1.value == 10)
 
-    let result2 = (err "error" | result bimap $double $uppercase)
+    let result2 = (err "error" | result bimap $double $tag)
     assert ($result2 | is-err)
-    assert ($result2.error == "ERROR")
+    assert ($result2.error == "E: error")
 }
 
 @test

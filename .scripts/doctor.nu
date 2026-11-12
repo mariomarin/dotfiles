@@ -38,7 +38,7 @@ def "main all" [] {
         match (run-cmd { ^just $"($c)-doctor" }) {
             {ok: true} => null
             {error: $failure} => {
-                let out = ($failure.stdout | str trim)
+                let out = $failure.stdout | str trim
                 if ($out | is-not-empty) { print $out }
                 $c
             }

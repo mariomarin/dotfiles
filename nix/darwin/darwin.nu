@@ -2,6 +2,7 @@
 # nix-darwin management utilities
 
 use ../../.scripts/nix-common.nu
+use ../../.scripts/adt.nu [collect-issues]
 
 # First-time nix-darwin setup
 def "main first-time" [
@@ -39,32 +40,32 @@ def "main hosts" [
 
 # Health check for nix-darwin system
 def "main doctor" [] {
-    mut issues = []
-
-    let nix = do -i { ^nix --version } | complete
-    if $nix.exit_code != 0 { $issues = (
-        $issues
-        | append "nix not installed — run: curl -L https://install.determinate.systems/nix | sh"
-    ) }
-
-    if (which darwin-rebuild | is-empty) { $issues = ($issues | append "darwin-rebuild missing — run: just first-time") }
-
-    if not ("../nixos/flake.nix" | path exists) { $issues = ($issues | append "flake.nix missing") }
-
-    let lock = "../nixos/flake.lock"
-    if not ($lock | path exists) {
-        $issues = ($issues | append "flake.lock missing — run: cd ../nixos && nix flake update")
-    } else {
-        let age = (date now) - ((ls -l $lock | get 0.modified) | into datetime)
-        if $age > 30day {
-            $issues = ($issues | append $"flake.lock is ($age | into int | $in / 86400000000000) days old — run: cd ../nixos && nix flake update")
-        }
-    }
-
+    let issues = null | collect-issues [
+        {|| check-nix }
+        {|| check-darwin-rebuild }
+        {|| check-flake }
+        {|| nix-common check-lock ../nixos/flake.lock "cd ../nixos && nix flake update" }
+    ]
     if ($issues | is-empty) { return }
     print "darwin:"
-    $issues | each {|i| print $"  ($i)" } | ignore
+    for issue in $issues { print $"  ($issue)" }
     exit 1
+}
+
+def check-nix []: nothing -> oneof<string, nothing> {
+    let nix = do -i { ^nix --version } | complete
+    if $nix.exit_code == 0 { return null }
+    "nix not installed — run: curl -L https://install.determinate.systems/nix | sh"
+}
+
+def check-darwin-rebuild []: nothing -> oneof<string, nothing> {
+    if (which darwin-rebuild | is-not-empty) { return null }
+    "darwin-rebuild missing — run: just first-time"
+}
+
+def check-flake []: nothing -> oneof<string, nothing> {
+    if ("../nixos/flake.nix" | path exists) { return null }
+    "flake.nix missing"
 }
 
 # Show help

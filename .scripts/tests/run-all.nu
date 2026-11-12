@@ -12,7 +12,7 @@ def main [] {
 
     let results = ($test_files | each {|file|
         print $"Running ($file)..."
-        let result = (do { nu $file } | complete)
+        let result = do { nu $file } | complete
 
         if $result.exit_code == 0 {
             {file: $file, status: "PASS"}
@@ -34,8 +34,8 @@ def main [] {
         }
     }
 
-    let failed = ($results | where status == "FAIL" | length)
-    let total = ($results | length)
+    let failed = $results | where status == "FAIL" | length
+    let total = $results | length
     let passed = $total - $failed
 
     print ""
