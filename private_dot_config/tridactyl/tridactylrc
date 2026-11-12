@@ -70,7 +70,7 @@ blacklistadd meet.google.com
 
 " === Editor ===
 " Use neovim in terminal for editing
-set editorcmd alacritty -e nvim %f
+set editorcmd open -W -na Ghostty --args -e nvim %f
 
 " === New tab ===
 " Open new tabs with DuckDuckGo

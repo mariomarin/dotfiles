@@ -22,7 +22,7 @@ Over SSH, yanks automatically go to your **local** clipboard via OSC 52.
 
 **Requirements:**
 
-- Terminal with OSC 52 support (Alacritty, iTerm2, WezTerm, Kitty)
+- Terminal with OSC 52 support (Ghostty, Alacritty, iTerm2, WezTerm, Kitty)
 - tmux `set-clipboard on` and `allow-passthrough on`
 
 #### Clipper (Manual, Unlimited Size)

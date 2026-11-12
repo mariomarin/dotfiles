@@ -1,6 +1,6 @@
 # Nushell Configuration
 
-Modern shell with structured data, vi mode, and shell integration for Alacritty/Windows Terminal/VS Code.
+Modern shell with structured data, vi mode, and shell integration for Ghostty/Alacritty/Windows Terminal/VS Code.
 
 ## Key Features
 

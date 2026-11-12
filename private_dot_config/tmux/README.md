@@ -67,7 +67,7 @@ Two plugins work together to persist sessions across reboots:
 
 | Platform        | Method                                  | Config                                |
 | --------------- | --------------------------------------- | ------------------------------------- |
-| macOS           | LaunchAgent (`~/Library/LaunchAgents`)  | `@continuum-boot-options 'alacritty'` |
+| macOS           | LaunchAgent (`~/Library/LaunchAgents`)  | `@continuum-boot-options 'ghostty'`   |
 | Linux (systemd) | User service (`~/.config/systemd/user`) | `@continuum-systemd-start-cmd`        |
 
 ### Manual Save/Restore
