@@ -13,4 +13,4 @@ jobs:
       - name: Evaluate flake outputs
         run: |
           nix eval --raw ./nix/nixos#packages.x86_64-linux.ribosome-env.drvPath
-          nix eval --raw ./nix/nixos#darwinConfigurations.axon.config.system.build.toplevel.drvPath
+          nix eval --raw ./nix/nixos#darwinConfigurations.malus.config.system.build.toplevel.drvPath

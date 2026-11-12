@@ -6,8 +6,8 @@ set shell := ["nu", "-c"]
 default:
     @just switch
 
-# Auto-detect config: chef-managed → axon, personal → malus
-HOST := env_var_or_default("NIX_HOST", if path_exists("/usr/local/bin/chef-client") == "true" { "axon" } else { "malus" })
+# Host config (override with NIX_HOST)
+HOST := env_var_or_default("NIX_HOST", "malus")
 
 # First-time nix-darwin setup
 first-time:

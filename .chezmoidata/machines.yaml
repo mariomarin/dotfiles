@@ -2,23 +2,7 @@
 # This file defines different machine types and their capabilities
 # Biology-themed naming convention for all hosts
 machines:
-  # dendrite - ThinkPad T470 portable workstation (branches like dendrites)
-  dendrite:
-    type: laptop
-    platform: nixos
-    hostname: dendrite
-    features:
-      desktop: true
-      audio: true
-      bluetooth: true
-      x11: true
-      physical_keyboard: true
-      kanata: true
-    services:
-      - syncthing
-      - kdeconnect
-      - autostart_apps
-  # mitosis - Virtual machine for testing/replication (cell division)
+  # mitosis - Virtual machine, atuin sync server (cell division)
   mitosis:
     type: server
     platform: nixos
@@ -27,11 +11,11 @@ machines:
       desktop: false
       audio: false
       bluetooth: false
-      x11: false
       physical_keyboard: false
       kanata: false
     services:
-      - syncthing # Still useful for file sync
+      - syncthing
+      - atuin
   # symbiont - NixOS on WSL (two systems coexisting)
   symbiont:
     type: wsl
@@ -41,7 +25,6 @@ machines:
       desktop: false
       audio: false
       bluetooth: false
-      x11: false
       physical_keyboard: false
       kanata: false
       wsl: true
@@ -55,7 +38,6 @@ machines:
       desktop: true
       audio: true
       bluetooth: true
-      x11: false # macOS uses native window system
       physical_keyboard: true
       kanata: true
     services:
@@ -69,50 +51,9 @@ machines:
       desktop: true
       audio: true
       bluetooth: true
-      x11: false
       physical_keyboard: true
       kanata: true
     services: []
-  # spore - M365 DevBox cloud Windows environment (dormant cell ready to grow)
-  spore:
-    type: cloud
-    platform: windows
-    hostname: spore
-    features:
-      desktop: true # Full Windows desktop via browser RDP
-      audio: false
-      bluetooth: false
-      x11: false
-      physical_keyboard: false
-      kanata: false # No kanata on DevBox
-    services: []
-  # axon - macOS with brew-only (nerve signal transmission)
-  axon:
-    type: desktop
-    platform: darwin-brew
-    hostname: axon
-    features:
-      desktop: true
-      audio: true
-      bluetooth: true
-      x11: false
-      physical_keyboard: true
-      kanata: true
-    services:
-      - syncthing
-  # ribosome - Ubuntu dev server (protein synthesis factory)
-  ribosome:
-    type: server
-    platform: linux-apt
-    hostname: ribosome
-    features:
-      desktop: false
-      audio: false
-      bluetooth: false
-      x11: false
-      physical_keyboard: false
-      kanata: false
-    services: [] # Chef manages docker, no syncthing needed
 # Default machine type if no match found
 default:
   type: unknown
@@ -120,7 +61,6 @@ default:
     desktop: false
     audio: false
     bluetooth: false
-    x11: false
     physical_keyboard: false
     kanata: false
   services: []

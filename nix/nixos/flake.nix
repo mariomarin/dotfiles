@@ -162,13 +162,6 @@
           username = "mario";
           modules = [ ../darwin/hosts/malus/configuration.nix ];
         };
-
-        # axon - work Mac (nix-darwin for services)
-        axon = mkDarwin {
-          system = "aarch64-darwin";
-          username = "mmarin";
-          modules = [ ../darwin/hosts/axon/configuration.nix ];
-        };
       };
 
       # Package bundles for non-NixOS hosts (linux-apt)
