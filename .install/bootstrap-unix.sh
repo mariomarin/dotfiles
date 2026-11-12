@@ -123,9 +123,9 @@ clone_or_update_repo() {
     git -C "$dir" fetch -q origin main
     if git -C "$dir" rev-parse -q --verify HEAD > /dev/null; then
         git -C "$dir" merge -q --ff-only origin/main || printf "⚠️  Local changes, skipped fast-forward\n" >&2
-    else
+  else
         git -C "$dir" checkout -q -B main --track origin/main
-    fi
+  fi
     success "Repository ready"
 }
 
