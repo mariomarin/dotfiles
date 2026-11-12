@@ -21,7 +21,7 @@ def nupm [nupm_path: string, args: string]: nothing -> record {
 
 def main [] {
     $env.NUPM_HOME = (nupm-home)
-    let nupm_path = ($env.NUPM_HOME | path join 'nupm')
+    let nupm_path = $env.NUPM_HOME | path join 'nupm'
     if not ($nupm_path | path exists) {
         print -e $"nupm not found at ($nupm_path) — chezmoi external may not have cloned yet"
         exit 0
@@ -34,7 +34,7 @@ def main [] {
     }
 
     # nutest is not in the registry; install it from the chezmoi-managed clone
-    let nutest_src = ($nu.home-dir | path join '.cache' 'nutest-src')
+    let nutest_src = $nu.home-dir | path join '.cache' 'nutest-src'
     if not ($nutest_src | path exists) { return }
     match (nupm $nupm_path $"install --path ($nutest_src) --force --no-confirm") {
         {ok: true} => null

@@ -31,6 +31,7 @@ const KINDS = [
     docker
     backup
 ]
+
 const DOCKER_RAW = "Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw"
 
 const ADVICE = {
@@ -300,17 +301,19 @@ def view-volume []: record -> string {
 }
 
 def view-stray-scripts []: list<record> -> string {
+    let lines = $in | each {|i| $"  ($i.path)  \(preview: ($i.path) -n, or remove it if stale\)" }
     [
         "warning: existing rmlint.sh found — running it DELETES files:"
-        ...$in | each {|i| $"  ($i.path)  \(preview: ($i.path) -n, or remove it if stale\)" }
+        ...$lines
         ""
     ] | str join "\n"
 }
 
 def view-snapshots []: list<record> -> string {
+    let lines = $in | each {|i| $"  ($i.name)" }
     [
         "local APFS snapshots (hold deleted files' space; size not reported):"
-        ...$in | each {|i| $"  ($i.name)" }
+        ...$lines
         "  macOS drops them under pressure. delete one by date: sudo tmutil deletelocalsnapshots <YYYY-MM-DD-HHMMSS>\n"
     ] | str join "\n"
 }
@@ -371,17 +374,19 @@ def view-caches [ctx: record]: list<record> -> string {
 }
 
 def view-docker []: list<record> -> string {
+    let rows = $in | select item size reclaimable | table --index false | str trim --right
     [
         "\ndocker:"
-        $in | select item size reclaimable | table --index false | str trim --right
+        $rows
         "  inspect first: docker system df -v · dangling images only: docker image prune"
     ] | str join "\n"
 }
 
 def view-backups []: list<record> -> string {
+    let rows = $in | select path size | table --index false | str trim --right
     [
         "\nbackup copies:"
-        $in | select path size | table --index false | str trim --right
+        $rows
         "  confirm a copy exists elsewhere (NAS, the source machine) before moving it off this disk"
     ] | str join "\n"
 }

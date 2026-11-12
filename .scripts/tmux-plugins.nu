@@ -17,8 +17,8 @@ def run-tpm [script: string, plugin_path: string]: nothing -> record {
 }
 
 def main [] {
-    let plugin_path = ($nu.home-dir | path join '.local' 'share' 'tmux' 'plugins')
-    let tpm_bin = ($plugin_path | path join 'tpm' 'bin')
+    let plugin_path = $nu.home-dir | path join '.local' 'share' 'tmux' 'plugins'
+    let tpm_bin = $plugin_path | path join 'tpm' 'bin'
     if (which tmux | is-empty) or not ($tpm_bin | path exists) { return }
 
     for script in [install_plugins clean_plugins] {

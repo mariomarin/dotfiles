@@ -36,8 +36,8 @@ def reload-launchctl [service: string]: nothing -> record {
         return (ok {skipped: "not running"})
     }
     let uid = id -u | str trim
-    let is_system = (run-cmd {sudo launchctl list $service} | is-ok)
-    let domain = if $is_system {"system"} else {$"gui/($uid)"}
+    let is_system = run-cmd {sudo launchctl list $service} | is-ok
+    let domain = if $is_system { "system" } else { $"gui/($uid)" }
     let result = (run-cmd {sudo launchctl kickstart -k $"($domain)/($service)"})
     if ($result | is-err) {
         return (err $result.error.stderr)
@@ -47,7 +47,7 @@ def reload-launchctl [service: string]: nothing -> record {
 
 # Reload a systemctl service (Linux)
 def reload-systemctl [service: string, --user]: nothing -> record {
-    let scope = if $user {[--user]} else {[]}
+    let scope = if $user { [--user] } else { [] }
     let enabled = (run-cmd {systemctl ...$scope is-enabled $service})
     if ($enabled | is-err) {return (ok {skipped: "not enabled"})}
 
@@ -60,7 +60,7 @@ def reload-systemctl [service: string, --user]: nothing -> record {
     } else {
         run-cmd {sudo systemctl restart $service}
     }
-    if ($result | is-err) {return (err $result.error.stderr)}
+    if ($result | is-err) { return (err $result.error.stderr) }
     ok {}
 }
 
@@ -118,7 +118,7 @@ def process-service [svc: record, state: record] {
         "systemctl" => { reload-systemctl $svc.service }
         "systemctl-user" => { reload-systemctl $svc.service --user }
         "command" => { reload-command $svc.check $svc.reload $name }
-        "windows-task" => {reload-windows-task $svc.task $svc.exe}
+        "windows-task" => { reload-windows-task $svc.task $svc.exe }
         _ => {err $"unknown type: ($svc.type)"}
     }
 
