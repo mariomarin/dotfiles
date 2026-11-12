@@ -19,6 +19,9 @@ jobs:
           - name: nvim
             lockfile: private_dot_config/nvim/lazy-lock.json
             file: lazy-lock.json
+          - name: skills
+            lockfile: .claude/skills
+            file: skills-lock.json
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -36,6 +39,18 @@ jobs:
         run: nvim --headless "+Lazy! update" +qa
         env:
           HOME: /root
+      - if: matrix.name == 'skills'
+        uses: hustcer/setup-nu@v3
+      - if: matrix.name == 'skills'
+        id: skills
+        run: |
+          {
+            echo 'body<<EOF'
+            echo 'Skill text becomes agent instructions: review upstream changes before merging.'
+            echo
+            nu .scripts/update-skills.nu
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
       - if: matrix.name == 'nix'
         id: check
         continue-on-error: true
@@ -49,10 +64,12 @@ jobs:
           title: "chore(${{ matrix.name }}): update ${{ matrix.file }}"
           branch: chore/update-${{ matrix.name }}-lock
           delete-branch: true
-          labels: dependencies,automerge
+          body: ${{ steps.skills.outputs.body }}
+          # Skills are agent instructions (prompt-injection path): never automerge
+          labels: ${{ matrix.name == 'skills' && 'dependencies' || 'dependencies,automerge' }}
           add-paths: ${{ matrix.lockfile }}
       # Bot PRs don't trigger Validate/Automerge; merge here if checks passed
-      - if: steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
+      - if: matrix.name != 'skills' && steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
         run: gh pr merge --squash --delete-branch "${{ steps.cpr.outputs.pull-request-url }}"
       - if: steps.check.outcome == 'failure'
         run: exit 1

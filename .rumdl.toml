@@ -3,3 +3,7 @@ line-length = 120
 
 [MD033]
 allowed-elements = ["details", "summary"]
+
+# Vendored upstream skills stay byte-identical
+[global]
+exclude = [".claude/skills/**"]

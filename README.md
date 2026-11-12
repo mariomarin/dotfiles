@@ -138,6 +138,7 @@ For chezmoi naming conventions, see the
 | WSL setup | [wsl/README.md](wsl/README.md) |
 | Secrets management | [docs/secrets.md](docs/secrets.md) |
 | Keybindings (all) | [docs/keybindings.md](docs/keybindings.md) |
+| Agent skills (vendored; update PRs need manual review) | [.claude/skills/skills-lock.json](.claude/skills/skills-lock.json) |
 
 ## Common Commands
 
