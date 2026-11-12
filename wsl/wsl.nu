@@ -279,7 +279,7 @@ def "main provision-nixos" []: nothing -> nothing {
 
     let script = [
         "NIX_CONFIG='experimental-features = nix-command flakes'"
-        "nixos-rebuild switch"
+        "nixos-rebuild switch --refresh"
         $"--flake '($NIX_FLAKE)#($NIX_HOST)'"
     ] | str join " "
 
