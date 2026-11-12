@@ -6,7 +6,7 @@ Encrypted, synced shell history. Server runs on **mitosis** (NixOS `services.atu
 ## Server (mitosis)
 
 Configured in `nix/nixos/hosts/mitosis/configuration.nix`. Deploy with
-`just deploy-vm TARGET_HOST=user@mitosis` from `nix/nixos`.
+`just deploy-vm user@mitosis` from `nix/nixos`.
 
 | Check | Command |
 | ----- | ------- |

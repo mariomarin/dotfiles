@@ -20,11 +20,7 @@ def issue [
 def main [] {
     match (^uname -s | str trim) {
         "Darwin" => {doctor-darwin}
-        "Linux" => {doctor-linux}
-        $os => {
-            print $"kanata: unsupported OS ($os)"
-            exit 1
-        }
+        _ => {}
     }
 }
 
@@ -344,29 +340,6 @@ def doctor-darwin [] {
             let vhid_ok = ((check-vhid $vhid_label) | is-empty)
             check-kanata "org.nixos.kanata" $bin $vhid_ok
         }
-    ])
-
-    if ($issues | is-empty) {return}
-    report-issues $issues
-}
-
-def check-kanata-linux []: nothing -> list<record> {
-    let status = (run-cmd {^systemctl status kanata-laptop.service})
-    if ($status | is-err) and ($status.error.code == 4) {
-        return [(issue "kanata" "error" "kanata service not found" "just nixos")]
-    }
-    if ($status | is-ok) and (($status.value.stdout | str contains "inactive") or ($status.value.stdout | str contains "failed")) {
-        return [(issue "kanata" "error" "kanata not running" "sudo systemctl restart kanata-laptop.service")]
-    }
-    []
-}
-
-def doctor-linux [] {
-    let config = $env.HOME | path join ".config/kanata/core.kbd"
-
-    let issues = (collect-issues [
-        {|| check-kanata-linux}
-        {|| check-cfg $config}
     ])
 
     if ($issues | is-empty) {return}

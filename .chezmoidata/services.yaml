@@ -17,7 +17,6 @@ services:
     - name: kanata
       configs:
         - private_dot_config/kanata/darwin.kbd
-        - private_dot_config/kanata/core.kbd
       type: launchctl
       service: org.nixos.kanata
     - *tmux
@@ -32,7 +31,6 @@ services:
     - name: kanata
       configs:
         - private_dot_config/kanata/windows.kbd
-        - private_dot_config/kanata/core.kbd
       type: windows-task
       task: Kanata
       exe: kanata.exe

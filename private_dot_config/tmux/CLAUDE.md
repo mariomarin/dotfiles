@@ -129,10 +129,10 @@ platform/SSH detection out of tmux config into helper scripts, reducing
 config-time branching. OSC52 (`set-buffer -w`) is the truly client-aware
 clipboard path. `clip`/`open` remain server-environment scoped via `$SSH_TTY`.
 
-| Script | Purpose | SSH (linux-apt→Mac) | Local Mac | Local Linux | WSL |
-| ------ | ------- | ------------------- | --------- | ----------- | --- |
-| `clip` | Copy to clipboard | nc → clipper:8377 | pbcopy | xclip/wl-copy | clip.exe |
-| `peek` | Open URL/file | nc → xdg-open-svc:2226 | /usr/bin/open | xdg-open | wslview |
+| Script | Purpose | SSH (remote Linux→Mac) | Local Mac | WSL |
+| ------ | ------- | ---------------------- | --------- | --- |
+| `clip` | Copy to clipboard | nc → clipper:8377 | pbcopy | clip.exe |
+| `peek` | Open URL/file | nc → xdg-open-svc:2226 | /usr/bin/open | wslview |
 
 ### How it works
 
@@ -154,8 +154,8 @@ The `clip`/`open` scripts check `$SSH_TTY` to decide SSH vs local. This reflects
 the environment where the **tmux server was started**, not the currently attached
 client. This is correct for our setup because:
 
-- linux-apt: tmux always starts via SSH (`RemoteCommand zsh -l`)
-- macOS/NixOS: tmux always starts locally
+- Remote Linux (mitosis, Codespaces): tmux always starts via SSH (`RemoteCommand zsh -l`)
+- macOS/WSL: tmux always starts locally
 
 If tmux were started by systemd and later attached over SSH, `clip`/`open` would
 incorrectly use the local path. OSC52 (`set-buffer -w`) handles this correctly

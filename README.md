@@ -117,7 +117,6 @@ cd ~/.local/share/chezmoi && just apply
 │   ├── tmux/                     # Tmux configuration
 │   ├── zsh/                      # Zsh shell configuration
 │   ├── zim/                      # Zim framework for Zsh
-│   ├── leftwm/                   # LeftWM window manager
 │   └── kanata/                   # Keyboard remapping
 ├── private_dot_local/            # Local data → ~/.local/
 │   ├── bin/                      # User binaries
