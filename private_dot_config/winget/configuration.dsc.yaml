@@ -82,13 +82,6 @@ properties:
       settings:
         id: GitHub.cli
         source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Jujutsu (jj)
-        allowPrerelease: true
-      settings:
-        id: martinvonz.jj
-        source: winget
     # Search and text processing
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
@@ -258,13 +251,6 @@ properties:
         allowPrerelease: true
       settings:
         id: Mirantis.Lens
-        source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Remote Desktop Manager
-        allowPrerelease: true
-      settings:
-        id: Devolutions.RemoteDesktopManager
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
