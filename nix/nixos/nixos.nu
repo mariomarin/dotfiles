@@ -6,7 +6,7 @@ use ../../.scripts/adt.nu [run-cmd collect-issues]
 
 # OS compatibility check
 def check-os [] {
-    if (sys host).name == "Windows" {
+    if $nu.os-info.name == windows {
         print "❌ Error: NixOS commands are only available on Linux systems"
         print "   This justfile manages NixOS system configuration and cannot run on Windows"
         exit 1
@@ -43,7 +43,7 @@ def "main hosts" [
 def "main doctor" [
     host: string  # Current hostname
 ] {
-    if (sys host).name != "Linux" { return }
+    if $nu.os-info.name != linux { return }
 
     let issues = null | collect-issues [
         {|| nix-common check-lock flake.lock "nix flake update" }
