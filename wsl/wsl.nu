@@ -2,7 +2,7 @@
 # WSL NixOS Setup and Management Script
 # Main entry point with subcommands
 
-use ../.scripts/adt.nu [run-cmd, "result map", "result unwrap-or"]
+use ../.scripts/adt.nu [run-cmd, is-err, "result map", "result unwrap-or", "result try"]
 
 # Check if running on Windows
 def check-os [] {
@@ -25,6 +25,11 @@ def --wrapped wsl-run [...args: string]: nothing -> record {
     | result map {|out| $out.stdout | wsl-text }
 }
 
+# Run wsl.exe attached to the terminal (interactive, streamed): Result
+def --wrapped wsl-interactive [...args: string]: nothing -> record {
+    null | result try {|_| ^wsl ...$args; null }
+}
+
 def has-wsl []: nothing -> bool {
     (wsl-run --version).ok
 }
@@ -38,6 +43,26 @@ def parse-distros [stdout: string]: nothing -> list<string> {
 def has-distro [name: string, --running]: nothing -> bool {
     let flags = if $running { [--running] } else { [] }
     $name in (wsl-run --list --quiet ...$flags | result map {|out| parse-distros $out } | result unwrap-or [])
+}
+
+# Target NixOS configuration (see nix/nixos/flake.nix)
+const NIX_HOST = "symbiont"
+const NIX_USER = "mario"
+const FLAKE = "github:mariomarin/dotfiles?dir=nix/nixos"
+
+# Hostname of the NixOS distro, or null if it cannot be queried
+def find-nixos-hostname []: nothing -> any {
+    wsl-run -d NixOS -u root --exec hostname
+    | result map {|out| $out | str trim }
+    | result unwrap-or null
+}
+
+def is-provisioned []: nothing -> bool {
+    (find-nixos-hostname) == $NIX_HOST
+}
+
+def has-dotfiles []: nothing -> bool {
+    (wsl-run -d NixOS -u $NIX_USER --exec test -d $"/home/($NIX_USER)/.local/share/chezmoi").ok
 }
 
 # Check if WSL2 is installed
@@ -196,7 +221,7 @@ def "main doctor" [] {
     }
 
     if not (has-distro NixOS) {
-        $issues = ($issues | append "NixOS not imported — run: just wsl-import")
+        $issues = ($issues | append "NixOS not imported — run: just wsl-setup")
     } else {
         if not (has-distro NixOS --running) {
             $issues = ($issues | append "NixOS not running — run: just wsl-start")
@@ -209,6 +234,42 @@ def "main doctor" [] {
     exit 1
 }
 
+# Switch the fresh distro to the flake config (hostname, user, packages)
+def "main provision-nixos" [] {
+    check-os
+    if (is-provisioned) { return }
+
+    let rebuild = (wsl-interactive -d NixOS -u root --exec nixos-rebuild switch
+        --flake $"($FLAKE)#($NIX_HOST)"
+        --extra-experimental-features "nix-command flakes")
+    if ($rebuild | is-err) {
+        print "❌ nixos-rebuild failed — rerun: nu wsl.nu provision-nixos"
+        exit 1
+    }
+
+    # Restart so the new hostname and default user take effect
+    wsl --terminate NixOS
+}
+
+# Unlock Bitwarden and apply chezmoi dotfiles (interactive)
+def "main apply-dotfiles" [] {
+    check-os
+    if (has-dotfiles) { return }
+
+    print "🔐 Bitwarden will prompt for your password"
+    let script = [
+        "set -e"
+        "bw login --check >/dev/null 2>&1 || bw login"
+        "BW_SESSION=$(bw unlock --raw)"
+        "export BW_SESSION"
+        "chezmoi init --apply mariomarin"
+    ] | str join "; "
+    if (wsl-interactive -d NixOS -u $NIX_USER --exec bash -lc $script | is-err) {
+        print "❌ Applying dotfiles failed — rerun: nu wsl.nu apply-dotfiles"
+        exit 1
+    }
+}
+
 # Complete WSL NixOS setup (one-command install)
 def "main setup" [] {
     check-os
@@ -219,8 +280,10 @@ def "main setup" [] {
     print "  1. Check/Install WSL2"
     print "  2. Import NixOS into WSL (tarball downloaded via chezmoi)"
     print "  3. Set NixOS as default"
+    print $"  4. Build the ($NIX_HOST) NixOS configuration"
+    print "  5. Apply dotfiles (prompts for Bitwarden password)"
     print ""
-    print "⚠️  Note: Run 'chezmoi apply' first to download nixos-wsl.tar.gz"
+    print "⚠️  Note: Run 'chezmoi apply' first to download nixos.wsl"
     print ""
     print "Press Ctrl+C to cancel, or Enter to continue..."
     input
@@ -270,14 +333,19 @@ def "main setup" [] {
     print "Step 4: Setting NixOS as default..."
     main set-default
 
+    # Step 5: Build system configuration
     print ""
-    print "✨ Setup complete!"
+    print "Step 5: Provisioning NixOS..."
+    main provision-nixos
+
+    # Step 6: Dotfiles
     print ""
-    print "Next steps:"
-    print "  1. Start NixOS: nu wsl.nu start-nixos"
-    print "  2. Inside WSL, install chezmoi: nix-shell -p chezmoi"
-    print "  3. Apply dotfiles: chezmoi init --apply YOUR_USERNAME"
-    print "  4. Build NixOS config: cd ~/.local/share/chezmoi && just nixos/switch"
+    print "Step 6: Applying dotfiles..."
+    main apply-dotfiles
+
+    print ""
+    print "✨ Setup complete! Start NixOS with: wsl"
+    print "💡 Future rebuilds (inside WSL): just nixos-switch"
 }
 
 # Show help
@@ -297,6 +365,8 @@ def "main help" [] {
     print "  start-nixos      Start NixOS WSL instance"
     print "  list-distros     List installed WSL distributions"
     print "  set-default      Set NixOS as default distribution"
+    print "  provision-nixos  Build the flake NixOS configuration"
+    print "  apply-dotfiles   Unlock Bitwarden and apply chezmoi"
     print "  stop-nixos       Stop NixOS WSL instance"
     print "  uninstall-nixos  Unregister/remove NixOS from WSL"
     print "  run <command>    Run a command in NixOS WSL"

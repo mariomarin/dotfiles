@@ -32,6 +32,14 @@ list-distros:
 set-default:
     nu wsl.nu set-default
 
+# Build the flake NixOS configuration inside WSL
+provision-nixos:
+    nu wsl.nu provision-nixos
+
+# Unlock Bitwarden and apply chezmoi dotfiles inside WSL
+apply-dotfiles:
+    nu wsl.nu apply-dotfiles
+
 # Stop NixOS WSL instance
 stop-nixos:
     nu wsl.nu stop-nixos
