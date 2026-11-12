@@ -96,9 +96,6 @@ For machine-specific environment variables that should not be tracked by git/che
 2. Add environment variables as needed:
 
    ```zsh
-   # Example: Atuin sync address for local machine
-   export ATUIN_SYNC_ADDRESS="http://localhost:8888"
-
    # Example: Machine-specific paths
    export LOCAL_TOOLS="/opt/local/bin"
    ```

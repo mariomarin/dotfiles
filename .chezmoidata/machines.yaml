@@ -14,8 +14,7 @@ machines:
       physical_keyboard: false
       kanata: false
       wsl: true
-    services:
-      - atuin
+    services: []
   # malus - macOS workstation (apple genus)
   malus:
     type: desktop

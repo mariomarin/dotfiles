@@ -1,6 +1,6 @@
 # CLAUDE.md - NixOS Configuration
 
-The only NixOS host is **symbiont** (WSL, headless, atuin sync server).
+The only NixOS host is **symbiont** (WSL, headless).
 There is no Linux desktop: don't add GUI apps, X11, audio or kanata here. GUI apps for
 macOS go in `nix/common/modules/apps.nix` (imported by darwin only).
 
@@ -21,13 +21,13 @@ See [README.md](README.md) for layout, package placement and commands.
 ## Services
 
 - System services: NixOS modules in `modules/services.nix` or the host config
-  (e.g. `services.atuin` on symbiont).
+  (e.g. `services.openssh` on symbiont).
 - User units managed by chezmoi: `private_dot_config/systemd/user/`.
 - Guidelines: [../../docs/USER_SERVICES.md](../../docs/USER_SERVICES.md).
 
 ## WSL (symbiont)
 
-NixOS-WSL module (`nixos-wsl.nixosModules.default`), Docker, SSH server, atuin server. No boot loader,
+NixOS-WSL module (`nixos-wsl.nixosModules.default`), Docker, SSH server. No boot loader,
 no NetworkManager, no hardware services. Details: [hosts/symbiont/README.md](hosts/symbiont/README.md).
 
 ## SSH Agent
