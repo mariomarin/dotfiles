@@ -278,9 +278,9 @@ def "main provision-nixos" []: nothing -> nothing {
     if (is-provisioned) { return }
 
     let script = [
+        "export NIX_CONFIG='experimental-features = nix-command flakes'"
         "nixos-rebuild switch"
-        $"--flake \"($NIX_FLAKE)#($NIX_HOST)\""
-        "--extra-experimental-features \"nix-command flakes\""
+        $"--flake '($NIX_FLAKE)#($NIX_HOST)'"
     ] | str join " "
 
     let rebuild = (wsl-run-attached -d NixOS -u root --exec bash -lc $script)
@@ -289,7 +289,6 @@ def "main provision-nixos" []: nothing -> nothing {
         exit 1
     }
 
-    # Restart so the new hostname and default user take effect
     wsl --terminate NixOS
 }
 
