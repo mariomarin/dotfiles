@@ -2,7 +2,7 @@
 
 buildNpmPackage {
   pname = "jj-stack";
-  version = "0.3.0-unstable";
+  version = "1.2.1-unstable-2025-10-24";
 
   src = fetchFromGitHub {
     owner = "keanemind";

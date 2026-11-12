@@ -2,16 +2,16 @@
 
 rustPlatform.buildRustPackage {
   pname = "jj-hooks";
-  version = "0.1.4";
+  version = "0.6.0";
 
   src = fetchFromGitHub {
     owner = "mattwilkinsonn";
     repo = "jj-hooks";
-    rev = "v0.1.4";
-    hash = "sha256-6Vs/pLgxvgqFmU5RSJxVDImsyjk/ZNMiv7/mtOYJC/M=";
+    rev = "v0.6.0";
+    hash = "sha256-bd4Y82Jez5FBPr7rcHG6kdC1t50s3qUF/gMD9fmxDKs=";
   };
 
-  cargoHash = "sha256-7zgdvG1GinZtRYjqBxLaf6ULPE/4BKn6LlNumXWb1lY=";
+  cargoHash = "sha256-Dv86wJ6ZR+rpb5CqL1CFm0kDFTAZYwNAGoHmIZjGCK0=";
 
   buildInputs = [ openssl ];
   nativeBuildInputs = [ pkg-config ];
