@@ -324,12 +324,7 @@ def "main setup" []: nothing -> nothing {
         "  3. Set NixOS as default"
         $"  4. Build the ($NIX_HOST) NixOS configuration"
         "  5. Apply dotfiles (prompts for Bitwarden password)"
-        ""
-        "⚠️  Note: Run 'chezmoi apply' first to download nixos.wsl"
-        ""
-        "Press Ctrl+C to cancel, or Enter to continue..."
     ] | print-lines
-    input
 
     ["" "Step 1: Checking WSL2..."] | print-lines
     if not (has-wsl) {
