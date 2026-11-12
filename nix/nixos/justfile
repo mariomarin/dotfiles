@@ -26,27 +26,6 @@ boot:
 build:
     sudo nixos-rebuild build --flake .#{{ HOST }}
 
-# VM-specific targets
-vm-switch:
-    sudo nixos-rebuild switch --flake .#mitosis
-
-vm-test:
-    sudo nixos-rebuild test --flake .#mitosis
-
-vm-build:
-    sudo nixos-rebuild build --flake .#mitosis
-
-# Remote deployment targets
-remote-switch TARGET_HOST BUILD_HOST="":
-    nu nixos.nu remote-switch {{ HOST }} {{ TARGET_HOST }} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
-
-remote-test TARGET_HOST BUILD_HOST="":
-    nu nixos.nu remote-test {{ HOST }} {{ TARGET_HOST }} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
-
-# Deploy VM configuration to remote host (default VM: mitosis)
-deploy-vm TARGET_HOST VM_HOST="mitosis" BUILD_HOST="":
-    nu nixos.nu deploy-vm {{ TARGET_HOST }} --vm-host {{ VM_HOST }} {{ if BUILD_HOST != "" { "--build-host " + BUILD_HOST } else { "" } }}
-
 # Flake management
 update:
     nix flake update
@@ -71,35 +50,6 @@ linux-apt:
 
 # Help target
 help:
-    @echo "NixOS Multi-Machine Build Targets"
-    @echo "================================="
-    @echo ""
-    @echo "Local builds (default HOST=nixos):"
-    @echo "  just switch              # Build and switch to HOST configuration"
-    @echo "  just test                # Test HOST configuration"
-    @echo "  just boot                # Update boot configuration"
-    @echo "  just build               # Build without switching"
-    @echo "  just switch HOST=mitosis  # Build mitosis locally"
-    @echo ""
-    @echo "VM-specific shortcuts:"
-    @echo "  just vm-switch           # Build and switch to mitosis"
-    @echo "  just vm-test             # Test mitosis configuration"
-    @echo ""
-    @echo "Remote deployment:"
-    @echo "  just remote-switch TARGET_HOST=user@host    # Deploy HOST to remote"
-    @echo "  just deploy-vm TARGET_HOST=user@vm-ip       # Deploy VM config"
-    @echo "  just remote-test TARGET_HOST=user@host      # Test on remote"
-    @echo ""
-    @echo "Optional: BUILD_HOST=user@build-server for remote building"
-    @echo ""
-    @echo "Utilities:"
-    @echo "  just hosts               # Show available configurations"
-    @echo "  just doctor              # Report problems with fixes"
-    @echo "  just update              # Update flake inputs"
-    @echo "  just check               # Validate flake"
-    @echo ""
-    @echo "Examples:"
-    @echo "  just switch                                  # Local dendrite"
-    @echo "  just vm-switch                               # Local VM config"
-    @echo "  just deploy-vm TARGET_HOST=admin@192.168.1.100"
-    @echo "  just remote-switch HOST=dendrite TARGET_HOST=user@backup-dendrite"
+    @echo "NixOS targets (HOST defaults to hostname)"
+    @echo "  just switch | test | boot | build"
+    @echo "  just hosts | doctor | update | check | show"
