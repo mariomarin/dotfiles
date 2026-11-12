@@ -42,7 +42,11 @@ def parse-distros [stdout: string]: nothing -> list<string> {
 # Whether a distro is listed (--running: only running ones)
 def has-distro [name: string, --running]: nothing -> bool {
     let flags = if $running { [--running] } else { [] }
-    $name in (wsl-run --list --quiet ...$flags | result map {|out| parse-distros $out } | result unwrap-or [])
+    $name in (
+        wsl-run --list --quiet ...$flags
+        | result map {|out| parse-distros $out }
+        | result unwrap-or []
+    )
 }
 
 # Target NixOS configuration (see nix/nixos/flake.nix)
@@ -62,7 +66,8 @@ def is-provisioned []: nothing -> bool {
 }
 
 def has-dotfiles []: nothing -> bool {
-    (wsl-run -d NixOS -u $NIX_USER --exec test -d $"/home/($NIX_USER)/.local/share/chezmoi").ok
+    let source = $"/home/($NIX_USER)/.local/share/chezmoi"
+    (wsl-run -d NixOS -u $NIX_USER --exec test -d $source).ok
 }
 
 # Check if WSL2 is installed
