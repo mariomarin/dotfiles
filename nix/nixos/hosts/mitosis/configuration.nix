@@ -16,6 +16,12 @@
     };
   };
 
+  # VM disk layout (nixos-generate-config default labels)
+  fileSystems."/" = {
+    device = "/dev/disk/by-label/nixos";
+    fsType = "ext4";
+  };
+
   # VM-specific hardware configuration
   boot = {
     loader.grub.device = "/dev/vda"; # Common for VMs
