@@ -8,8 +8,6 @@ macOS workspace management via Kanata's window layer (`=` hold → `Ctrl+Alt`).
 Kanata (hold =) → Ctrl+Alt+key → Hammerspoon → macOS Spaces API
 ```
 
-Mirrors LeftWM keybindings for cross-platform muscle memory.
-
 ## Keybindings
 
 All triggered by holding `=` in Kanata (sends `Ctrl+Alt+` prefix):
@@ -28,7 +26,7 @@ All triggered by holding `=` in Kanata (sends `Ctrl+Alt+` prefix):
 
 1. **Accessibility permission** for Hammerspoon
 2. **9 desktops** created manually in Mission Control
-3. **Auto-start**: configured via chezmoi script
+3. **Install + auto-start**: `hammerspoon` cask in `nix/darwin/modules/homebrew.nix`, "Launch at login" in its preferences
 4. **Config path**: `~/.config/hammerspoon/` (XDG, set via `defaults write`)
 
 ## File
@@ -38,5 +36,4 @@ All triggered by holding `=` in Kanata (sends `Ctrl+Alt+` prefix):
 ## Integration Points
 
 - **Kanata**: `darwin.kbd` window layer sends the `Ctrl+Alt` combos
-- **LeftWM**: Linux equivalent uses same keybindings natively
-- **Chezmoi**: `run_onchange_after_darwin-brew-setup-hammerspoon.nu` handles auto-start setup
+- **Chezmoi**: deploys `init.lua` on macOS only (`.chezmoiignore`)
