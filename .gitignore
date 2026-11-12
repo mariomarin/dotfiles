@@ -7,7 +7,8 @@
 .env.local
 .env.work
 .envrc.local
-.claude
+.claude/*
+!.claude/skills/
 private_init.zsh
 private_login_init.zsh
 
