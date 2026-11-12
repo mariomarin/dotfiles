@@ -3,3 +3,8 @@
 
 [includeIf "gitdir:~/code/"]
 	path = ~/.config/git/config-work
+
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
