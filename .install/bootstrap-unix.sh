@@ -5,8 +5,8 @@ set -eu
 
 # Output helpers
 error() {
-          printf "\n❌ %s\n" "$1" >&2
-                                        exit 1
+  printf "\n❌ %s\n" "$1" >&2
+  exit 1
 }
 success() { printf "✅ %s\n" "$1" >&2; }
 step() { printf "\n==> %s\n" "$1" >&2; }
@@ -22,127 +22,127 @@ is_darwin() { [ "$(uname -s)" = "Darwin" ]; }
 # - Linux + NixOS → nixos
 # - Linux + other → linux-apt (apt/WSL/codespaces)
 detect_platform() {
-    if is_darwin; then
-        is_chef_managed && echo "darwin-brew" || echo "darwin"
+  if is_darwin; then
+    is_chef_managed && echo "darwin-brew" || echo "darwin"
   else
-        is_nixos && echo "nixos" || echo "linux-apt"
+    is_nixos && echo "nixos" || echo "linux-apt"
   fi
 }
 
 # Idempotent installers
 ensure_nix() {
-    command -v nix > /dev/null && {
-        success "Nix installed"
-        return 0
-  }
-    step "Install Nix"
-    curl -sfL https://install.determinate.systems/nix | sh -s -- install
-    # shellcheck source=/dev/null
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  command -v nix > /dev/null && {
     success "Nix installed"
+    return 0
+  }
+  step "Install Nix"
+  curl -sfL https://install.determinate.systems/nix | sh -s -- install
+  # shellcheck source=/dev/null
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  success "Nix installed"
 }
 
 ensure_devenv() {
-    command -v devenv > /dev/null && {
-        success "devenv installed"
-        return 0
-  }
-    step "Install devenv"
-    curl -sfL https://install.determinate.systems/devenv | sh -s -- install
+  command -v devenv > /dev/null && {
     success "devenv installed"
+    return 0
+  }
+  step "Install devenv"
+  curl -sfL https://install.determinate.systems/devenv | sh -s -- install
+  success "devenv installed"
 }
 
 ensure_nushell() {
-    command -v nu > /dev/null && {
-        success "Nushell installed"
-        return 0
-  }
-    step "Install Nushell from Gemfury"
-    KEY_FILE="/etc/apt/keyrings/fury-nushell.gpg"
-    if [ ! -f "$KEY_FILE" ]; then
-        sudo mkdir -p /etc/apt/keyrings
-        wget -qO- https://apt.fury.io/nushell/gpg.key | sudo gpg --dearmor -o "$KEY_FILE"
-        echo "deb [signed-by=$KEY_FILE] https://apt.fury.io/nushell/ /" |
-            sudo tee /etc/apt/sources.list.d/nushell.list > /dev/null
-        sudo apt-get update -qq
-  fi
-    sudo apt-get install -y -qq nushell
+  command -v nu > /dev/null && {
     success "Nushell installed"
+    return 0
+  }
+  step "Install Nushell from Gemfury"
+  KEY_FILE="/etc/apt/keyrings/fury-nushell.gpg"
+  if [ ! -f "$KEY_FILE" ]; then
+    sudo mkdir -p /etc/apt/keyrings
+    wget -qO- https://apt.fury.io/nushell/gpg.key | sudo gpg --dearmor -o "$KEY_FILE"
+    echo "deb [signed-by=$KEY_FILE] https://apt.fury.io/nushell/ /" |
+      sudo tee /etc/apt/sources.list.d/nushell.list > /dev/null
+    sudo apt-get update -qq
+  fi
+  sudo apt-get install -y -qq nushell
+  success "Nushell installed"
 }
 
 ensure_homebrew() {
-    command -v brew > /dev/null && {
-        success "Homebrew installed"
-        return 0
-  }
-    step "Install Homebrew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    eval "$(/opt/homebrew/bin/brew shellenv 2> /dev/null || /usr/local/bin/brew shellenv)"
+  command -v brew > /dev/null && {
     success "Homebrew installed"
+    return 0
+  }
+  step "Install Homebrew"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  eval "$(/opt/homebrew/bin/brew shellenv 2> /dev/null || /usr/local/bin/brew shellenv)"
+  success "Homebrew installed"
 }
 
 ensure_nushell_brew() {
-    command -v nu > /dev/null && {
-        success "Nushell installed"
-        return 0
-  }
-    step "Install Nushell via Homebrew"
-    brew install nushell
+  command -v nu > /dev/null && {
     success "Nushell installed"
+    return 0
+  }
+  step "Install Nushell via Homebrew"
+  brew install nushell
+  success "Nushell installed"
 }
 
 ensure_chezmoi_brew() {
-    command -v chezmoi > /dev/null && {
-        success "chezmoi installed"
-        return 0
-  }
-    step "Install chezmoi via Homebrew"
-    brew install chezmoi
+  command -v chezmoi > /dev/null && {
     success "chezmoi installed"
+    return 0
+  }
+  step "Install chezmoi via Homebrew"
+  brew install chezmoi
+  success "chezmoi installed"
 }
 
 ensure_chezmoi_apt() {
-    command -v chezmoi > /dev/null && {
-        success "chezmoi installed"
-        return 0
-  }
-    step "Install chezmoi"
-    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
-    export PATH="$HOME/.local/bin:$PATH"
+  command -v chezmoi > /dev/null && {
     success "chezmoi installed"
+    return 0
+  }
+  step "Install chezmoi"
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+  export PATH="$HOME/.local/bin:$PATH"
+  success "chezmoi installed"
 }
 
 # Repository management
 clone_or_update_repo() {
-    step "Sync dotfiles repository"
-    dir="$HOME/.local/share/chezmoi"
-    url="https://github.com/mariomarin/dotfiles.git"
-    mkdir -p "$dir"
-    git -C "$dir" init -q
-    git -C "$dir" remote set-url origin "$url" 2> /dev/null || git -C "$dir" remote add origin "$url"
-    git -C "$dir" fetch -q origin main
-    if git -C "$dir" rev-parse -q --verify HEAD > /dev/null; then
-        git -C "$dir" merge -q --ff-only origin/main || printf "⚠️  Local changes, skipped fast-forward\n" >&2
-    else
-        git -C "$dir" checkout -q -B main --track origin/main
-    fi
-    success "Repository ready"
+  step "Sync dotfiles repository"
+  dir="$HOME/.local/share/chezmoi"
+  url="https://github.com/mariomarin/dotfiles.git"
+  mkdir -p "$dir"
+  git -C "$dir" init -q
+  git -C "$dir" remote set-url origin "$url" 2> /dev/null || git -C "$dir" remote add origin "$url"
+  git -C "$dir" fetch -q origin main
+  if git -C "$dir" rev-parse -q --verify HEAD > /dev/null; then
+    git -C "$dir" merge -q --ff-only origin/main || printf "⚠️  Local changes, skipped fast-forward\n" >&2
+  else
+    git -C "$dir" checkout -q -B main --track origin/main
+  fi
+  success "Repository ready"
 }
 
 # Chezmoi operations
 init_and_apply() {
-    step "Initialize chezmoi"
-    chezmoi init --force
-    step "Apply dotfiles"
-    chezmoi apply -v
-    success "Dotfiles applied"
+  step "Initialize chezmoi"
+  chezmoi init --force
+  step "Apply dotfiles"
+  chezmoi apply -v
+  success "Dotfiles applied"
 }
 
 # Nix-based setup (requires Bitwarden)
 setup_nix_env() {
-    step "Setup with nix-shell"
-    # shellcheck disable=SC2016
-    nix-shell .install/shell.nix --run '
+  step "Setup with nix-shell"
+  # shellcheck disable=SC2016
+  nix-shell .install/shell.nix --run '
         set -eu
         printf "\n==> Setup Bitwarden\n"
         bw login --check >/dev/null 2>&1 || bw login
@@ -154,49 +154,49 @@ setup_nix_env() {
 
 # Bootstrap flows
 bootstrap_linux_apt() {
-    ensure_nix && ensure_devenv && ensure_nushell && ensure_chezmoi_apt && init_and_apply
-    printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
+  ensure_nix && ensure_devenv && ensure_nushell && ensure_chezmoi_apt && init_and_apply
+  printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
 }
 
 bootstrap_darwin_brew() {
-    ensure_homebrew && ensure_nushell_brew && ensure_chezmoi_brew && init_and_apply
-    printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
+  ensure_homebrew && ensure_nushell_brew && ensure_chezmoi_brew && init_and_apply
+  printf "\n✅ Bootstrap complete! Future updates: chezmoi apply\n"
 }
 
 bootstrap_darwin() {
-    ensure_nix && ensure_homebrew && setup_nix_env
-    # shellcheck disable=SC2016
-    nix-shell .install/shell.nix --run 'cd nix/darwin && just first-time'
-    printf "\n✅ Bootstrap complete! Future updates: just darwin\n"
+  ensure_nix && ensure_homebrew && setup_nix_env
+  # shellcheck disable=SC2016
+  nix-shell .install/shell.nix --run 'cd nix/darwin && just first-time'
+  printf "\n✅ Bootstrap complete! Future updates: just darwin\n"
 }
 
 bootstrap_nixos() {
-    is_nixos || error "NixOS required"
-    setup_nix_env
-    # shellcheck disable=SC2016
-    nix-shell .install/shell.nix --run 'cd nix/nixos && just first-time'
-    printf "\n✅ Bootstrap complete! Future updates: just nixos\n"
+  is_nixos || error "NixOS required"
+  setup_nix_env
+  # shellcheck disable=SC2016
+  nix-shell .install/shell.nix --run 'cd nix/nixos && just first-time'
+  printf "\n✅ Bootstrap complete! Future updates: just nixos\n"
 }
 
 # Main
 main() {
-    printf "🚀 Dotfiles Bootstrap\n\n" >&2
+  printf "🚀 Dotfiles Bootstrap\n\n" >&2
 
-    PLATFORM=$(detect_platform)
-    printf "Detected: %s\n" "$PLATFORM" >&2
+  PLATFORM=$(detect_platform)
+  printf "Detected: %s\n" "$PLATFORM" >&2
 
-    [ -z "${HOSTNAME:-}" ] && HOSTNAME=$(hostname -s)
-    export HOSTNAME
-    printf "Hostname: %s\n\n" "$HOSTNAME" >&2
+  [ -z "${HOSTNAME:-}" ] && HOSTNAME=$(hostname -s)
+  export HOSTNAME
+  printf "Hostname: %s\n\n" "$HOSTNAME" >&2
 
-    clone_or_update_repo
-    cd "$HOME/.local/share/chezmoi"
+  clone_or_update_repo
+  cd "$HOME/.local/share/chezmoi"
 
-    case "$PLATFORM" in
-        linux-apt)    bootstrap_linux_apt ;;
-        darwin-brew)  bootstrap_darwin_brew ;;
-        darwin)       bootstrap_darwin ;;
-        nixos)        bootstrap_nixos ;;
+  case "$PLATFORM" in
+    linux-apt) bootstrap_linux_apt ;;
+    darwin-brew) bootstrap_darwin_brew ;;
+    darwin) bootstrap_darwin ;;
+    nixos) bootstrap_nixos ;;
   esac
 }
 
