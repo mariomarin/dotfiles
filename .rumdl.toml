@@ -1,3 +1,6 @@
+[global]
+exclude = [".claude/skills/nushell"]
+
 [MD013]
 line-length = 120
 
