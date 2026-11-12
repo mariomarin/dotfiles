@@ -45,7 +45,6 @@
       localPackages = pkgs: {
         tmux-harpoon = pkgs.callPackage ./pkgs/tmux-harpoon.nix { };
         tmux-tilish = pkgs.callPackage ./pkgs/tmux-tilish.nix { };
-        bitbucket-cli = pkgs.callPackage ./pkgs/bitbucket-cli.nix { };
         jj-spr = pkgs.callPackage ./pkgs/jj-spr.nix { };
         jj-stack = pkgs.callPackage ./pkgs/jj-stack.nix { };
         jj-hooks = pkgs.callPackage ./pkgs/jj-hooks.nix { };
