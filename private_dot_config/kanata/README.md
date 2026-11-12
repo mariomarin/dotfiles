@@ -1,6 +1,6 @@
 # Kanata Configuration
 
-Advanced keyboard remapping with Carabiner-style keymaps and Space Cadet keyboard emulation for ThinkPad T470.
+Advanced keyboard remapping with Carabiner-style keymaps and Space Cadet keyboard emulation (macOS and Windows).
 
 ## Features
 
@@ -22,42 +22,6 @@ For a complete list of keybindings and layer configurations, see **[keybindings.
 - **Shift keys**: Tap for parentheses, hold for Shift
 
 ## Installation
-
-### Linux (NixOS)
-
-#### 1. Add Kanata to NixOS
-
-Add to your `configuration.nix` or appropriate module:
-
-```nix
-# Enable Kanata
-services.kanata = {
-  enable = true;
-  keyboards = {
-    laptop = {
-      device = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
-      config = builtins.readFile ./kanata/laptop.kbd;
-    };
-  };
-};
-
-# Add your user to the input and uinput groups
-users.users.mario = {
-  extraGroups = [ "input" "uinput" ];
-};
-```
-
-#### 2. Enable uinput module
-
-```nix
-boot.kernelModules = [ "uinput" ];
-```
-
-#### 3. Rebuild NixOS
-
-```bash
-sudo nixos-rebuild switch
-```
 
 ### macOS (nix-darwin)
 
@@ -160,42 +124,19 @@ Adjust the timing (in milliseconds) in tap-hold definitions:
 (tap-hold-next-release 200 esc lctl)  ; 200ms delay
 ```
 
-### Finding Your Keyboard Device
-
-List available keyboards:
-
-```bash
-ls -la /dev/input/by-path/ | grep kbd
-```
-
 ## Troubleshooting
 
 ### Kanata service fails to start
 
-1. Check device permissions:
-
-   ```bash
-   ls -la /dev/input/by-path/platform-i8042-serio-0-event-kbd
-   ```
-
-2. Verify you're in the `input` and `uinput` groups:
-
-   ```bash
-   groups
-   ```
-
-3. Check Kanata service logs:
-
-   ```bash
-   journalctl -u kanata-laptop -f
-   ```
+- macOS: `sudo launchctl list | grep kanata`, logs in `/tmp/kanata.err.log`
+- Windows: check the `Kanata` scheduled task
 
 ### Keys not working as expected
 
 1. Test configuration:
 
    ```bash
-   sudo kanata ~/.config/kanata/laptop.kbd
+   sudo kanata ~/.config/kanata/darwin.kbd
    ```
 
 2. Check for syntax errors in the `.kbd` file

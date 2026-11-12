@@ -1,9 +1,0 @@
-(
-    border_width: 2,
-    margin: 0,
-    workspace_margin: 0,
-    gutter: None,
-    default_border_color: "#222222",
-    floating_border_color: "#005577",
-    focused_border_color: "#0088cc",
-)

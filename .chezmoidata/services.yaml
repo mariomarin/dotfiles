@@ -17,17 +17,10 @@ services:
     - name: kanata
       configs:
         - private_dot_config/kanata/darwin.kbd
-        - private_dot_config/kanata/core.kbd
       type: launchctl
       service: org.nixos.kanata
     - *tmux
   linux:
-    - name: kanata
-      configs:
-        - private_dot_config/kanata/laptop.kbd
-        - private_dot_config/kanata/core.kbd
-      type: systemctl
-      service: kanata-laptop
     - name: atuin-server
       configs:
         - private_dot_config/systemd/user/atuin-server.service
@@ -44,7 +37,6 @@ services:
     - name: kanata
       configs:
         - private_dot_config/kanata/windows.kbd
-        - private_dot_config/kanata/core.kbd
       type: windows-task
       task: Kanata
       exe: kanata.exe

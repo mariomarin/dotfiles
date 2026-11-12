@@ -9,8 +9,6 @@
     # Unstable available for select packages
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-
     # NixOS-WSL support
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
@@ -45,7 +43,7 @@
     };
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, nixos-hardware, nixos-wsl, nix-darwin, nur, devenv, claude-code-nix, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, nixos-wsl, nix-darwin, nur, devenv, claude-code-nix, ... }@inputs:
     let
       # Common overlays shared by all hosts
       commonOverlays = [
@@ -58,7 +56,6 @@
           tmux-harpoon = final.callPackage ./pkgs/tmux-harpoon.nix { };
           tmux-tilish = final.callPackage ./pkgs/tmux-tilish.nix { };
           bitbucket-cli = final.callPackage ./pkgs/bitbucket-cli.nix { };
-          kanata-tray = final.callPackage ./pkgs/kanata-tray.nix { };
           jj-spr = final.callPackage ./pkgs/jj-spr.nix { };
           jj-stack = final.callPackage ./pkgs/jj-stack.nix { };
           jj-hooks = final.callPackage ./pkgs/jj-hooks.nix { };
@@ -102,40 +99,6 @@
     in
     {
       nixosConfigurations = {
-        # dendrite - ThinkPad T470 portable workstation
-        dendrite = mkSystem {
-          hostname = "dendrite";
-          system = "x86_64-linux";
-          username = "mario";
-          modules = [
-            # Main configuration
-            ./configuration.nix
-
-            # Host-specific configuration
-            ./hosts/dendrite/configuration.nix
-
-            # Hardware configuration for ThinkPad T470
-            nixos-hardware.nixosModules.lenovo-thinkpad-t470s
-            nixos-hardware.nixosModules.common-cpu-intel
-            nixos-hardware.nixosModules.common-pc-laptop
-            nixos-hardware.nixosModules.common-pc-laptop-ssd
-          ];
-        };
-
-        # mitosis - Virtual machine for testing and replication
-        mitosis = mkSystem {
-          hostname = "mitosis";
-          system = "x86_64-linux";
-          username = "mario";
-          modules = [
-            # Main configuration (shared)
-            ./configuration.nix
-
-            # VM-specific configuration
-            ./hosts/mitosis/configuration.nix
-          ];
-        };
-
         # symbiont - NixOS on WSL (two systems coexisting)
         symbiont = mkSystem {
           hostname = "symbiont";

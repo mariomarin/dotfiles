@@ -10,7 +10,7 @@
 
 {{- /* Platform detection: environment first, then known hostnames for Nix */ -}}
 {{- $platform := "" -}}
-{{- $knownNixHosts := list "malus" "symbiont" "mitosis" -}}
+{{- $knownNixHosts := list "malus" "symbiont" -}}
 
 {{- if eq .chezmoi.os "darwin" -}}
   {{- $platform = "darwin" -}}

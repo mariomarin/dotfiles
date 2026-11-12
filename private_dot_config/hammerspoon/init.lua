@@ -1,6 +1,6 @@
 -- Hammerspoon - Workspace management for macOS
 -- Integrates with Kanata window layer (= key → Ctrl+Alt)
--- Matches LeftWM keybindings: =+1-9 for spaces, =+h/l for navigation
+-- Kanata = layer keybindings: =+1-9 for spaces, =+h/l for navigation
 
 -- Reload config automatically
 hs.pathwatcher
