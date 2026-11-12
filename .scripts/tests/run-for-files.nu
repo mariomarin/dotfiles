@@ -30,7 +30,7 @@ def run-test-file [test_file: string] {
 
 # Map source file to its test file(s)
 def find-tests [source_file: string] {
-    let name = $source_file | path basename | str replace ".nu" "" | str replace "-" "_"
+    let name = $source_file | path basename | str replace ".nu" "" | str replace --all "-" "_"
     let dir = $source_file | path dirname
 
     # .scripts/*.nu → .scripts/tests/test_*.nu
