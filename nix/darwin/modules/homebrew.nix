@@ -9,6 +9,7 @@ _:
     # NOTE: Karabiner-DriverKit-VirtualHIDDevice installed separately for kanata
     # (full karabiner-elements conflicts with kanata - grabs keyboard exclusively)
     casks = [
+      "brave-browser" # Removed from nixpkgs
       "bruno" # API testing GUI - nixpkgs version uses EOL electron
       "docker-desktop"
       "firefox" # Better macOS integration via homebrew
