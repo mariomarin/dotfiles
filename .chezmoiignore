@@ -136,12 +136,12 @@ nix/darwin/**
 .chezmoiscripts/linux-autostart-*
 {{ end }}
 
-# Platform variable for chef-managed hosts
+# Platform variable
 {{ $platform := "" }}
 {{ if hasKey .machineConfig "platform" }}{{ $platform = .machineConfig.platform }}{{ end }}
 
-# Simple hosts (no Nix): SSH handled externally, no Bitwarden access
-{{ if or (eq $platform "darwin-brew") (eq $platform "linux-apt") }}
+# Ephemeral Linux (no Bitwarden): SSH handled externally
+{{ if eq $platform "linux-apt" }}
 .ssh
 .ssh/**
 {{ end }}
@@ -171,11 +171,6 @@ nix/nixos/hosts/ribosome/**
 .config/brew/**
 .config/hammerspoon
 .config/hammerspoon/**
-{{ end }}
-
-# darwin with nix only (tridactyl-native from nix)
-{{ if eq $platform "darwin-brew" }}
-.chezmoiscripts/run_onchange_darwin-setup-tridactyl-native.nu
 {{ end }}
 
 # User-managed directory contents (keep directory structure, ignore contents)
