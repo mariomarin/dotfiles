@@ -8,7 +8,7 @@ This repository uses two different approaches for managing systemd user services
 | --- | --- | --- |
 | **Service Type** | System-wide user services | User-specific services |
 | **Configuration** | Declarative (Nix) | Imperative (Shell scripts) |
-| **Examples** | Syncthing, Rclone mount | Desktop autostart files |
+| **Examples** | Syncthing, topgrade timer, atuin (symbiont) | clipper |
 | **Location** | `/etc/systemd/user/` | `~/.config/systemd/user/` |
 | **Activation** | `nixos-rebuild` | `chezmoi apply` |
 | **Persistence** | Survives user deletion | Tied to user home directory |
@@ -56,8 +56,7 @@ systemd.user.services."service-name" = {
 
 **Used for:**
 
-- Systemd user service symlink management (syncthing, ssh-agent)
-- Desktop autostart entries
+- Systemd user service symlink management (syncthing, clipper)
 
 **How it works:**
 
@@ -143,13 +142,12 @@ systemctl --user enable battery-combined-udev.service
 | Service | Script | Purpose |
 | --- | --- | --- |
 | Systemd User Services | `linux-systemd-user-services.nu` | Manage symlinks for syncthing, ssh-agent |
-| Desktop Autostart | `linux-autostart-desktop-files.nu` | Application startup |
 
 ### Managed by Chezmoi Files (Direct)
 
 | Service | File | Purpose |
 | --- | --- | --- |
-| Battery Monitor | `battery-combined-udev.service` | Low battery notifications for Polybar |
+| Clipper | `clipper.service` | Clipboard over SSH |
 
 ## Migration Guidelines
 
