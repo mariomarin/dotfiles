@@ -27,12 +27,18 @@ def attempt [name: string, action: closure]: nothing -> record<name: string, ok:
     try {
         do $action
         {name: $name, ok: true, error: ""}
-    } catch {|e| {name: $name, ok: false, error: $e.msg} }
+    } catch {|e|
+        {name: $name, ok: false, error: $e.msg}
+    }
 }
 
 def cargo-install [name: string]: nothing -> nothing {
     cargo install --locked $name
-    plugin add ($env.CARGO_HOME? | default ($nu.home-dir | path join .cargo) | path join bin $"($name).exe")
+    plugin add (
+        $env.CARGO_HOME?
+        | default ($nu.home-dir | path join .cargo)
+        | path join bin $"($name).exe"
+    )
 }
 
 def execute [step: record]: nothing -> record<name: string, ok: bool, error: string> {

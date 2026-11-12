@@ -7,8 +7,8 @@ def run-plan [facts: record]: nothing -> record {
 }
 
 def "test bundled plugin is registered even without cargo" []: nothing -> nothing {
-    let step = run-plan {bundled: C:\nu\nu_plugin_x.exe}
-    assert equal $step {name: nu_plugin_x, action: register, detail: C:\nu\nu_plugin_x.exe}
+    let step = run-plan {bundled: /nu/nu_plugin_x.exe}
+    assert equal $step {name: nu_plugin_x, action: register, detail: /nu/nu_plugin_x.exe}
 }
 
 def "test missing cargo skips" []: nothing -> nothing {
