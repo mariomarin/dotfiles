@@ -114,14 +114,19 @@ ensure_chezmoi_apt() {
 
 # Repository management
 clone_or_update_repo() {
-    step "Clone dotfiles repository"
-    [ -d "$HOME/.local/share/chezmoi/.git" ] && {
-        git -C "$HOME/.local/share/chezmoi" pull --ff-only 2> /dev/null || true
-        success "Repository updated"
-        return 0
-  }
-    git clone https://github.com/mariomarin/dotfiles.git "$HOME/.local/share/chezmoi"
-    success "Repository cloned"
+    step "Sync dotfiles repository"
+    dir="$HOME/.local/share/chezmoi"
+    url="https://github.com/mariomarin/dotfiles.git"
+    mkdir -p "$dir"
+    git -C "$dir" init -q
+    git -C "$dir" remote set-url origin "$url" 2> /dev/null || git -C "$dir" remote add origin "$url"
+    git -C "$dir" fetch -q origin main
+    if git -C "$dir" rev-parse -q --verify HEAD > /dev/null; then
+        git -C "$dir" merge -q --ff-only origin/main || printf "⚠️  Local changes, skipped fast-forward\n" >&2
+    else
+        git -C "$dir" checkout -q -B main --track origin/main
+    fi
+    success "Repository ready"
 }
 
 # Chezmoi operations

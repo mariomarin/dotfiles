@@ -171,12 +171,22 @@ $chezmoiPath = "$env:USERPROFILE/.local/share/chezmoi"
 
 # Clone repository
 Write-Host "" -ForegroundColor Cyan
-Write-Host "==> Clone dotfiles repository" -ForegroundColor Cyan
-if (Test-Path "$chezmoiPath/.git") { git -C $chezmoiPath pull --quiet }
-else { git clone --quiet https://github.com/mariomarin/dotfiles.git $chezmoiPath }
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$chezmoiPath/justfile")) {
-    throw "Failed to clone repository to $chezmoiPath"
+Write-Host "==> Sync dotfiles repository" -ForegroundColor Cyan
+$repoUrl = "https://github.com/mariomarin/dotfiles.git"
+New-Item -ItemType Directory -Force -Path $chezmoiPath | Out-Null
+git -C $chezmoiPath init --quiet
+git -C $chezmoiPath remote set-url origin $repoUrl 2>$null
+if ($LASTEXITCODE -ne 0) { git -C $chezmoiPath remote add origin $repoUrl }
+git -C $chezmoiPath fetch --quiet origin main
+if ($LASTEXITCODE -ne 0) { throw "Failed to fetch $repoUrl" }
+git -C $chezmoiPath rev-parse --quiet --verify HEAD *> $null
+if ($LASTEXITCODE -eq 0) {
+    git -C $chezmoiPath merge --quiet --ff-only origin/main
+    if ($LASTEXITCODE -ne 0) { Write-Host "⚠️  Local changes, skipped fast-forward" -ForegroundColor Yellow }
+} else {
+    git -C $chezmoiPath checkout --quiet -B main --track origin/main
 }
+if (-not (Test-Path "$chezmoiPath/justfile")) { throw "Repository checkout failed at $chezmoiPath" }
 Write-Host "✅ Repository ready" -ForegroundColor Green
 
 # Set hostname
