@@ -7,18 +7,13 @@
 {{- $codespaces := env "CODESPACES" | not | not -}}
 {{- $isWSL := env "WSL_DISTRO_NAME" | not | not -}}
 {{- $isNixOS := and (hasKey .chezmoi "osRelease") (eq (index .chezmoi.osRelease "id" | default "") "nixos") -}}
-{{- $hasChef := or (stat "/opt/chef") (lookPath "chef-client") -}}
 
 {{- /* Platform detection: environment first, then known hostnames for Nix */ -}}
 {{- $platform := "" -}}
-{{- $knownNixHosts := list "malus" "dendrite" "symbiont" "mitosis" -}}
+{{- $knownNixHosts := list "malus" "symbiont" "mitosis" -}}
 
 {{- if eq .chezmoi.os "darwin" -}}
-  {{- if $hasChef -}}
-    {{- $platform = "darwin-brew" -}}
-  {{- else -}}
-    {{- $platform = "darwin" -}}
-  {{- end -}}
+  {{- $platform = "darwin" -}}
 {{- else if eq .chezmoi.os "linux" -}}
   {{- if $isNixOS -}}
     {{- if $isWSL -}}
@@ -38,7 +33,7 @@
 
 {{- /* Machine type */ -}}
 {{- $isServer := or $codespaces (not (or (eq .chezmoi.os "darwin") (eq .chezmoi.os "windows"))) -}}
-{{- if eq $platform "darwin" "darwin-brew" -}}
+{{- if eq $platform "darwin" -}}
   {{- $isServer = false -}}
 {{- end -}}
 {{- $isDesktop := not $isServer -}}
@@ -55,11 +50,10 @@
 {{- end -}}
 
 {{- /* Bitwarden: only for platforms with Nix (secrets managed via bw) */ -}}
-{{- /* darwin-brew uses chef, linux-apt has no Nix, codespaces are ephemeral */ -}}
-{{- /* nixos-wsl is fine - it's a personal NixOS machine */ -}}
-{{- $needsBitwarden := and (ne $platform "darwin-brew") (ne $platform "linux-apt") (not $codespaces) -}}
+{{- /* linux-apt (Codespaces, devcontainers) is ephemeral: no Bitwarden */ -}}
+{{- $needsBitwarden := and (ne $platform "linux-apt") (not $codespaces) -}}
 
-sourceDir = "~/.local/share/chezmoi"
+sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 {{- if eq .chezmoi.os "windows" }}
 
