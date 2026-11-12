@@ -9,18 +9,18 @@ def issue [
     message: string    # Human-readable description
     fix?: string       # Optional fix command/instruction
 ]: nothing -> record {
-  {
-    component: $component
-    severity: $severity
-    message: $message
-    fix: ($fix | default null)
-  }
+    {
+        component: $component
+        severity: $severity
+        message: $message
+        fix: ($fix | default null)
+    }
 }
 
 def main [] {
     match (^uname -s | str trim) {
-        "Darwin" => {doctor-darwin}
-        _ => {}
+        "Darwin" => { doctor-darwin }
+        _ => { }
     }
 }
 
@@ -41,18 +41,23 @@ def restart-cmd [label: string]: nothing -> string {
 
 def check-binary [bin: string]: nothing -> list<record> {
     if not ($bin | path exists) {
-        return [(issue "binary" "error" "binary missing" "just darwin")]
+        return [
+            (issue "binary" "error" "binary missing" "just darwin")
+        ]
     }
 
     # Check if it's a script or binary
     let file_type = (run-cmd {^file $bin})
     if ($file_type | is-err) {
-        return [(issue "binary" "error" "cannot check binary type" "just darwin")]
+        return [
+            (issue "binary" "error" "cannot check binary type" "just darwin")
+        ]
     }
 
-    let is_script = ($file_type.value.stdout | str contains "script")
+    let is_script = $file_type.value.stdout | str contains "script"
 
     if $is_script {
+
         # It's a wrapper script - extract what it wraps
         let wrapped_path = (open --raw $bin
             | lines
@@ -63,18 +68,45 @@ def check-binary [bin: string]: nothing -> list<record> {
             | default "")
 
         if ($wrapped_path | is-empty) {
-            return [(issue "binary" "error" "wrapper script doesn't exec anything" "just darwin")]
+            return [
+                (
+                    (issue
+                        "binary"
+                        "error"
+                        "wrapper script doesn't exec anything"
+                        "just darwin"
+                    )
+                )
+            ]
         }
 
         if not ($wrapped_path | path exists) {
-            return [(issue "binary" "error" $"wrapper points to missing binary: ($wrapped_path)" "just darwin")]
+            return [
+                (
+                    (issue
+                        "binary"
+                        "error"
+                        $"wrapper points to missing binary: ($wrapped_path)"
+                        "just darwin"
+                    )
+                )
+            ]
         }
     }
 
     # Check signature (on actual binary, not wrapper)
     let sig = (run-cmd {^codesign -d --verbose=2 $bin})
     if ($sig | is-ok) and ($sig.value.stderr | str contains "linker-signed") {
-        return [(issue "binary" "error" "bad signature (linker-signed)" $"sudo codesign --force --sign - ($bin)")]
+        return [
+            (
+                (issue
+                    "binary"
+                    "error"
+                    "bad signature (linker-signed)"
+                    $"sudo codesign --force --sign - ($bin)"
+                )
+            )
+        ]
     }
 
     []
@@ -83,14 +115,25 @@ def check-binary [bin: string]: nothing -> list<record> {
 def check-sock-dir []: nothing -> list<record> {
     let dir = "/Library/Application Support/org.pqrs/tmp"
     if not ($dir | path exists) {
-        [(issue "vhid" "error" "socket dir missing" $"sudo mkdir -p '($dir)' && sudo chmod 1777 '($dir)'")]
-    } else {[]}
+        [
+            (
+                (issue
+                    "vhid"
+                    "error"
+                    "socket dir missing"
+                    $"sudo mkdir -p '($dir)' && sudo chmod 1777 '($dir)'"
+                )
+            )
+        ]
+    } else { [] }
 }
 
 def check-cfg [file: string]: nothing -> list<record> {
     if not ($file | path exists) {
-        [(issue "config" "error" "config missing" "chezmoi apply")]
-    } else {[]}
+        [
+            (issue "config" "error" "config missing" "chezmoi apply")
+        ]
+    } else { [] }
 }
 
 def check-vhid [label: string]: nothing -> list<record> {
@@ -98,7 +141,9 @@ def check-vhid [label: string]: nothing -> list<record> {
     # spawn-scheduled is acceptable - service is configured and will start on demand
     if $s.state != "running" and $s.state != "spawn-scheduled" {
         let cmd = (restart-cmd $label)
-        return [(issue "vhid" "error" "karabiner-vhid not loaded" $cmd)]
+        return [
+            (issue "vhid" "error" "karabiner-vhid not loaded" $cmd)
+        ]
     }
 
     # Check if daemon socket directory exists
@@ -106,13 +151,24 @@ def check-vhid [label: string]: nothing -> list<record> {
     let socket_check = (run-cmd {^sudo test -d $socket_dir})
     if ($socket_check | is-err) {
         let cmd = (restart-cmd $label)
-        return [(issue "vhid" "error" "vhid socket missing - daemon not ready" $cmd)]
+        return [
+            (issue "vhid" "error" "vhid socket missing - daemon not ready" $cmd)
+        ]
     }
 
     # Check driver extension is loaded
     let dext = (run-cmd {^systemextensionsctl list})
     if ($dext | is-ok) and not ($dext.value.stdout | str contains "org.pqrs.Karabiner-DriverKit-VirtualHIDDevice") {
-        return [(issue "vhid" "error" "Karabiner driver extension not activated" "Activate via System Settings → Privacy & Security")]
+        return [
+            (
+                (issue
+                    "vhid"
+                    "error"
+                    "Karabiner driver extension not activated"
+                    "Activate via System Settings → Privacy & Security"
+                )
+            )
+        ]
     }
 
     []
@@ -152,15 +208,26 @@ def has-no-devices [log: string]: nothing -> bool {
 
 def has-dyld-error [log: string]: nothing -> record {
     if not ($log | path exists) { return {has_error: false} }
-    let lines = (open --raw $log | lines | last 10)
-    let dyld_lines = ($lines | where {|l| $l | str contains "Library not loaded:"})
+    let lines = open --raw $log | lines | last 10
+    let dyld_lines = $lines | where {|l| $l | str contains "Library not loaded:"}
     if ($dyld_lines | is-empty) { return {has_error: false} }
 
-    let lib = ($dyld_lines | first | parse "{prefix}Library not loaded: {path}" | get path.0? | default "")
+    let lib = (
+        $dyld_lines
+        | first
+        | parse "{prefix}Library not loaded: {path}"
+        | get path.0?
+        | default ""
+    )
     {has_error: true, lib: $lib}
 }
 
-def format-permission-issue [perm: string, bin: string, is_stale: bool, label: string]: nothing -> record {
+def format-permission-issue [
+    perm: string
+    bin: string
+    is_stale: bool
+    label: string
+]: nothing -> record {
     let cmd = (restart-cmd $label)
 
     if $is_stale {
@@ -190,6 +257,7 @@ def is-kanata-running []: nothing -> bool {
 }
 
 def check-permissions [bin: string, label: string]: nothing -> list<record> {
+
     # Only check log-based permissions if kanata is NOT running
     # If running, old log errors are stale
     if (is-kanata-running) {
@@ -199,7 +267,7 @@ def check-permissions [bin: string, label: string]: nothing -> list<record> {
     let stale = (find-stale-permissions $bin)
     let denied = (find-denied-permissions "/tmp/kanata.err.log")
     let perms = $stale | append $denied | uniq
-    if ($perms | is-empty) {return []}
+    if ($perms | is-empty) { return [] }
 
     $perms | each {|perm| format-permission-issue $perm $bin ($perm in $stale) $label}
 }
@@ -215,63 +283,89 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
     let s = (launchd-state $label)
     let cmd = (restart-cmd $label)
     match $s.state {
-        "not-loaded" => [(issue "kanata" "error" "kanata service not loaded" "just darwin")]
-        "codesigning-killed" => [(issue "kanata" "error" "killed by codesigning" $"sudo codesign --force --sign - ($bin), then re-grant Input Monitoring")]
+        "not-loaded" => [
+            (issue "kanata" "error" "kanata service not loaded" "just darwin")
+        ]
+        "codesigning-killed" => [
+            (
+                (issue
+                    "kanata"
+                    "error"
+                    "killed by codesigning"
+                    $"sudo codesign --force --sign - ($bin), then re-grant Input Monitoring"
+                )
+            )
+        ]
         "running" | "spawn-scheduled" => {
             # Service says running but might be crash-looping
             let perm_issues = (check-permissions $bin $label)
-            if ($perm_issues | is-not-empty) {return $perm_issues}
+            if ($perm_issues | is-not-empty) { return $perm_issues }
 
             let dyld = (has-dyld-error "/tmp/kanata.err.log")
             if $dyld.has_error {
-                let lib = ($dyld.lib? | default "unknown library")
-                let exists = ($lib | path exists)
+                let lib = $dyld.lib? | default "unknown library"
+                let exists = $lib | path exists
                 let msg = if $exists {
-                    let bin_date = (ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M")
+                    let bin_date = ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M"
                     let deps = (run-cmd {^otool -L $bin})
                     let nix_deps = if ($deps | is-ok) {
                         $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length
-                    } else {0}
+                    } else { 0 }
                     $"crash-looping: binary from ($bin_date) has ($nix_deps) Nix dependencies, dyld cannot load ($lib)\nLibrary exists but binary wasn't updated by last darwin-rebuild"
                 } else {
                     $"crash-looping: missing Nix dependency ($lib)"
                 }
-                return [(issue "kanata" "error" $msg "just darwin")]
+                return [
+                    (issue "kanata" "error" $msg "just darwin")
+                ]
             }
             []
         }
         "stopped" => {
             let perm_issues = (check-permissions $bin $label)
-            if ($perm_issues | is-not-empty) {return $perm_issues}
+            if ($perm_issues | is-not-empty) { return $perm_issues }
 
             let dyld = (has-dyld-error "/tmp/kanata.err.log")
             if $dyld.has_error {
-                let lib = ($dyld.lib? | default "unknown library")
-                let exists = ($lib | path exists)
+                let lib = $dyld.lib? | default "unknown library"
+                let exists = $lib | path exists
                 let msg = if $exists {
-                    let bin_date = (ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M")
+                    let bin_date = ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M"
                     let deps = (run-cmd {^otool -L $bin})
                     let nix_deps = if ($deps | is-ok) {
                         $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length
-                    } else {0}
+                    } else { 0 }
                     $"failed to start: binary from ($bin_date) has ($nix_deps) Nix dependencies, dyld cannot load ($lib)\nLibrary exists but binary wasn't updated by last darwin-rebuild"
                 } else {
                     $"failed to start: missing Nix dependency ($lib)"
                 }
-                return [(issue "kanata" "error" $msg "just darwin")]
+                return [
+                    (issue "kanata" "error" $msg "just darwin")
+                ]
             }
 
             if (has-no-devices "/tmp/kanata.err.log") {
-                return [(issue "kanata" "error" "no configured keyboard connected" "compare `kanata --list` with macos-dev-names-include in ~/.config/kanata/darwin.kbd")]
+                return [
+                    (
+                        (issue
+                            "kanata"
+                            "error"
+                            "no configured keyboard connected"
+                            "compare `kanata --list` with macos-dev-names-include in ~/.config/kanata/darwin.kbd"
+                        )
+                    )
+                ]
             }
-            let hint = if not $vhid_running {" (start karabiner-vhid first)"} else {""}
+            let hint = if not $vhid_running { " (start karabiner-vhid first)" } else { "" }
             let log_tail = (format-log-tail "/tmp/kanata.err.log")
             let msg = if ($log_tail | is-not-empty) {
                 $"kanata not running($hint)\n($log_tail | str join '\n')"
             } else {
                 $"kanata not running($hint)"
             }
-            [(issue "kanata" "error" $msg $cmd)]
+            [
+                (issue "kanata" "error" $msg $cmd)
+            ]
         }
         _ => []
     }
@@ -289,7 +383,7 @@ def show-binary-info [bin: string]: nothing -> nothing {
         return
     }
 
-    let is_script = ($file_type.value.stdout | str contains "script")
+    let is_script = $file_type.value.stdout | str contains "script"
 
     if $is_script {
         let wrapped = (open --raw $bin
@@ -304,15 +398,15 @@ def show-binary-info [bin: string]: nothing -> nothing {
         print $"  → wraps: ($wrapped)"
 
         if ($wrapped != "unknown") and ($wrapped | path exists) {
-            let wrapped_date = (ls -l $wrapped | get modified.0 | format date "%Y-%m-%d %H:%M")
+            let wrapped_date = ls -l $wrapped | get modified.0 | format date "%Y-%m-%d %H:%M"
             print $"  → binary: ($wrapped_date)"
         }
     } else {
-        let bin_date = (ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M")
+        let bin_date = ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M"
         let deps = (run-cmd {^otool -L $bin})
         let nix_deps = if ($deps | is-ok) {
             $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length
-        } else {0}
+        } else { 0 }
 
         print $"Binary: ($bin)"
         print $"  → date: ($bin_date)"
@@ -321,6 +415,7 @@ def show-binary-info [bin: string]: nothing -> nothing {
 }
 
 def doctor-darwin [] {
+
     # Kanata uses wrapper at stable path for TCC permissions
     let bin = "/usr/local/bin/kanata"
     let vhid_label = "org.pqrs.Karabiner-VirtualHIDDevice-Daemon"
@@ -337,12 +432,12 @@ def doctor-darwin [] {
         {|| check-cfg $config}
         {|| check-vhid $vhid_label}
         {||
-            let vhid_ok = ((check-vhid $vhid_label) | is-empty)
+            let vhid_ok = check-vhid $vhid_label | is-empty
             check-kanata "org.nixos.kanata" $bin $vhid_ok
         }
     ])
 
-    if ($issues | is-empty) {return}
+    if ($issues | is-empty) { return }
     report-issues $issues
 }
 
