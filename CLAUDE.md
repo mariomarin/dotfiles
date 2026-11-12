@@ -99,8 +99,8 @@ if-shell "uname | grep -q Linux" "set -g @fingers-ctrl-action 'xdg-open'"
 
 # ✅ Platform filtering - use .chezmoiignore
 # In .chezmoiignore:
-{{ if ne $platform "darwin-brew" }}
-.config/brew
+{{ if ne .chezmoi.os "darwin" }}
+.config/hammerspoon
 {{ end }}
 ```
 
@@ -356,11 +356,10 @@ Platform is auto-detected from environment, no hostname configuration needed:
 
 | Detection | Platform | Description |
 | --------- | -------- | ----------- |
-| Darwin + `/opt/chef` or `chef-client` | `darwin-brew` | Chef-managed Mac (no Nix) |
-| Darwin + no chef | `darwin` | Personal Mac with nix-darwin |
+| Darwin | `darwin` | Mac with nix-darwin |
 | Linux + NixOS (`osRelease.id`) | `nixos` | NixOS system |
 | Linux + WSL | `nixos-wsl` | NixOS on WSL |
-| Linux + other | `linux-apt` | Ubuntu/Debian (WSL, codespaces, servers) |
+| Linux + other | `linux-apt` | Codespaces, devcontainers (no Nix, no root) |
 | Windows | `windows` | Native Windows |
 
 ### For NixOS: Setting Hostname
@@ -369,13 +368,13 @@ NixOS machines need a hostname for nix-darwin/NixOS configuration:
 
 ```bash
 # Set hostname in NixOS configuration.nix
-networking.hostName = "dendrite";
+networking.hostName = "symbiont";
 
 # Or set temporarily before chezmoi init
-export HOSTNAME=dendrite && chezmoi init --force
+export HOSTNAME=symbiont && chezmoi init --force
 ```
 
-Known Nix hostnames: `malus`, `dendrite`, `symbiont`, `mitosis`
+Known Nix hostnames: `malus`, `symbiont`
 
 ### Feature Flags
 
@@ -392,13 +391,13 @@ Features are auto-detected but can be overridden in `~/.config/chezmoi/chezmoi.t
 
 | Feature | Enabled when |
 | ------- | ------------ |
-| `kanata` | Desktop + not chef-managed + not cloud |
-| `desktop` | Darwin, Windows, or NixOS with X11 |
+| `kanata` | Desktop + not WSL + not codespaces |
+| `desktop` | Darwin or Windows (all Linux hosts are headless) |
 | `audio` | Desktop + not WSL + not codespaces |
 
 ### Template Variables
 
-- `{{ .machineConfig.platform }}` - Platform type (darwin, darwin-brew, nixos, linux-apt, etc.)
+- `{{ .machineConfig.platform }}` - Platform type (darwin, nixos, nixos-wsl, linux-apt, windows)
 - `{{ .machineConfig.hostname }}` - System hostname
 - `{{ .machineConfig.features.desktop }}` - Has GUI
 - `{{ .machineConfig.features.kanata }}` - Uses Kanata keyboard remapping
@@ -426,11 +425,10 @@ specific order, and placing code in the wrong phase will cause failures.
 
 When you run `chezmoi init` or `chezmoi apply`, chezmoi executes these phases in order:
 
-#### Phase 1: Bootstrap Scripts (`hooks.read-source-state.pre`)
+#### Phase 1: Bootstrap (manual, see below)
 
-- Runs **before** any templates are processed
+- Runs **before** the first `chezmoi init`
 - Installs tools that templates need to reference
-- Must complete successfully or chezmoi aborts
 
 #### Phase 2: Read Source State & Process Templates
 
@@ -459,92 +457,26 @@ When you run `chezmoi init` or `chezmoi apply`, chezmoi executes these phases in
 - Runs after all files are applied
 - Rarely used in this repository
 
-### Pre-Hook Bootstrap System (Phase 1)
+### Bootstrap (before chezmoi)
 
-The repository uses chezmoi pre-hooks for OS-specific bootstrap **before reading source state**:
+There is no chezmoi pre-hook: run the bootstrap once by hand (see [.install/README.md](.install/README.md)).
 
-**Purpose:** Install critical dependencies before chezmoi reads templates
+| Script | Platforms | Does |
+| ------ | --------- | ---- |
+| `.install/bootstrap-unix.sh` | darwin, nixos, linux-apt | Nix + Homebrew (darwin), Bitwarden via `.install/shell.nix`, or chezmoi only (linux-apt) |
+| `.install/bootstrap-windows.ps1` | windows | winget, git, chezmoi, nu, bw, just, yq |
+| `install.sh` (repo root) | Codespaces/devcontainers | Installs chezmoi to `~/.local/bin`, runs `chezmoi init --apply` |
 
-**Configuration in `private_dot_config/chezmoi/chezmoi.toml.tmpl`:**
+Bootstrap only installs what templates need (Bitwarden, `gitHubLatestRelease` access) and the package manager.
 
-```toml
-[hooks.read-source-state.pre]
-{{- if eq .chezmoi.os "windows" }}
-    command = ".local/share/chezmoi/.install/bootstrap-windows.ps1"
-{{- else }}
-    command = ".local/share/chezmoi/.install/bootstrap-unix.sh"
-{{- end }}
-```
+### Packages (Phase 4/5)
 
-**Implementation:**
-
-**`.install/bootstrap-unix.sh`** - Unix/macOS/NixOS bootstrap:
-
-- **macOS**: Installs Nix (Determinate Systems) → Bitwarden CLI via Nix profile
-- **NixOS**: Verifies Bitwarden CLI is installed (fails if missing - add to configuration.nix)
-- **Other Linux**: Fails with error (not supported - use NixOS or create your own config)
-
-**`.install/bootstrap-windows.ps1`** - Windows bootstrap:
-
-- Installs Bitwarden CLI via winget (auto-updates)
-- Requires PowerShell (pre-installed on Windows)
-
-**Critical patterns:**
-
-- Scripts must be idempotent (exit fast if nothing to do)
-- Windows script uses PowerShell (not bash - won't exist on fresh Windows)
-- Run on every `chezmoi init` and `chezmoi apply` (fast due to early exits)
-- macOS gets Nix for nix-darwin configuration management
-
-### Decision Guide: Bootstrap vs Packages
-
-**Use Bootstrap (Phase 1) if:**
-
-- Templates reference this tool (e.g., `{{ bitwarden ... }}`, `{{ gitHubLatestRelease ... }}`)
-- Tool is required for template processing (e.g., `jq` for parsing JSON in templates)
-- Platform package manager needs installing (Homebrew, Nix)
-- Failure to install would prevent chezmoi from reading source
-
-**Use Packages YAML (Phase 5) if:**
-
-- Regular development tool (git, neovim, direnv)
-- Cross-platform shell (nushell for justfile scripting)
-- Editor or terminal emulator
-- Tool doesn't need to be available during template processing
-
-**Examples:**
-
-| Tool | Location | Reason |
-| ---- | -------- | ------ |
-| Bitwarden CLI | Bootstrap | Templates use `{{ bitwarden "id_ed25519" }}` |
-| jq | Bootstrap | Templates might parse JSON data |
-| Homebrew (macOS) | Bootstrap | Needed to install other bootstrap tools |
-| Nix (macOS) | Bootstrap | Required for nix-darwin system management |
-| nushell | Packages | Used by justfiles, not templates |
-| git | Packages | Regular dev tool, not needed by templates |
-| neovim | Packages | Regular dev tool, not needed by templates |
-
-### Declarative Package Management (Phase 5)
-
-Packages are defined declaratively in `.chezmoidata/packages.yaml`:
-
-```yaml
-packages:
-  darwin:
-    brews: [git, neovim, direnv, just]
-    casks: [alacritty]
-  windows:
-    winget: [Git.Git, Neovim.Neovim, direnv.direnv, casey.just, Alacritty.Alacritty]
-```
-
-**Installation via run_onchange scripts:**
-
-- `.chezmoiscripts/run_onchange_darwin-install-packages.sh.tmpl` - macOS (homebrew)
-- `.chezmoiscripts/run_onchange_windows-install-packages.ps1.tmpl` - Windows (winget)
-- Scripts read from `.chezmoidata/packages.yaml` and install packages
-- Run automatically during `chezmoi apply` when package list or script changes
-
-**NixOS exception:** Packages managed via system configuration, not chezmoi
+| Platform | Source of truth | Applied by |
+| -------- | --------------- | ---------- |
+| NixOS / nixos-wsl | `nix/nixos/` + `nix/common/modules/` | `run_onchange_nixos-rebuild.nu.tmpl`, `just nixos` |
+| darwin | `nix/darwin/` + `nix/common/modules/` | `run_onchange_darwin-rebuild.nu.tmpl`, `just darwin` |
+| windows | `private_dot_config/winget/configuration.dsc.yaml` | `run_onchange_after_windows-install-packages.nu.tmpl` |
+| linux-apt | `private_dot_local/bin/.chezmoiexternal.toml.tmpl` (release binaries) | chezmoi externals |
 
 ### Plugin and Package Management
 
@@ -612,8 +544,6 @@ Detailed documentation for each major component is available in subdirectory CLA
 - [NixOS CLAUDE.md](nixos/CLAUDE.md) - System configuration, modules, services
 - [Zsh/Zim CLAUDE.md](private_dot_config/zim/CLAUDE.md) - Shell setup, completions, modules
 - [Tmux CLAUDE.md](private_dot_config/tmux/CLAUDE.md) - **IMPORTANT: Update keybindings docs!**
-- [LeftWM CLAUDE.md](private_dot_config/leftwm/CLAUDE.md) - Window manager configuration
-- [Polybar CLAUDE.md](private_dot_config/polybar/CLAUDE.md) - Status bar and scripts
 
 ### Keybindings Documentation
 
@@ -804,11 +734,10 @@ See [docs/USER_SERVICES.md](docs/USER_SERVICES.md) for detailed comparison and g
 
 ## Cross-Platform Font Management
 
-Nerd Fonts are installed on all platforms for Unicode symbols (⎋ ⭾ ⇪ ⌫ ⏎ ␣ etc.) used in kanata configs and terminals.
+Nerd Fonts are installed on desktop platforms for Unicode symbols (⎋ ⭾ ⇪ ⌫ ⏎ ␣ etc.) used in kanata configs and terminals.
 
 | Platform | Location | Font Package |
 | -------- | -------- | ------------ |
-| NixOS | `nix/nixos/modules/system/fonts.nix` | `nerd-fonts.*` from nixpkgs |
 | macOS | `nix/common/modules/fonts.nix` | `nerd-fonts.*` from nixpkgs |
 | Windows | `private_dot_config/winget/configuration.dsc.yaml` | `DEVCOM.JetBrainsMonoNerdFont` |
 
@@ -818,7 +747,8 @@ Nerd Fonts are installed on all platforms for Unicode symbols (⎋ ⭾ ⇪ ⌫ �
 - `nerd-fonts.iosevka` - Alternative monospace
 - `nerd-fonts.symbols-only` - Standalone symbols fallback
 
-**Adding fonts**: Update the common module for Nix platforms, or winget DSC for Windows.
+**Adding fonts**: Update the common module for macOS, or winget DSC for Windows.
+Linux hosts are headless (WSL uses Windows fonts).
 
 ## NixOS Integration
 

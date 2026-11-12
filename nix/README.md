@@ -40,12 +40,9 @@ All hosts use biology-themed naming. See `.chezmoidata/machines.yaml` for comple
 
 | Host         | Platform  | Type    | Description                           |
 | ------------ | --------- | ------- | ------------------------------------- |
-| **dendrite** | NixOS     | Laptop  | ThinkPad T470 portable workstation    |
-| **mitosis**  | NixOS     | VM      | Virtual machine for testing           |
 | **symbiont** | NixOS-WSL | WSL     | NixOS on Windows Subsystem for Linux  |
 | **malus**    | Darwin    | Desktop | macOS workstation                     |
 | **prion**    | Windows   | Desktop | Native Windows workstation            |
-| **spore**    | Windows   | Cloud   | M365 DevBox environment               |
 
 ## Platform-Specific Documentation
 

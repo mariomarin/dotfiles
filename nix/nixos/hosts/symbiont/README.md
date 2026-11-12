@@ -6,7 +6,7 @@ Minimal, headless NixOS configuration for Windows Subsystem for Linux (WSL2).
 
 This WSL configuration is designed for:
 
-- **CLI-only development** via browser (MS DevBox) or SSH
+- **CLI-only development** via Windows Terminal or SSH
 - **Minimal system packages** - only core tools
 - **Per-project tooling** via `devenv.nix` in each repository
 - **Container-based workflows** with Docker
@@ -178,9 +178,6 @@ Everything else comes from per-project `devenv.nix`.
 nixos/hosts/symbiont/
 ├── configuration.nix    # WSL-specific settings
 └── README.md           # This file
-
-nixos/modules/
-└── wsl.nix             # WSL module (auto-included)
 ```
 
 ## Limitations
