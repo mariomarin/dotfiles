@@ -5,13 +5,13 @@ const SCRIPT = ".scripts/atuin-doctor.nu"
 const NOW = 2026-10-06T12:00:00Z
 
 def doctor-eval [snippet: string]: nothing -> any {
-    let result = do { nu -n -c $"source ($SCRIPT); ($snippet) | to nuon" } | complete
+    let result = do { ^$nu.current-exe -n -c $"source ($SCRIPT); ($snippet) | to nuon" } | complete
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
 }
 
 def "test script parses" [] {
-    let result = do { nu -n -c $"source ($SCRIPT)" } | complete
+    let result = do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete
     assert equal $result.exit_code 0 $result.stderr
 }
 
