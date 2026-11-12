@@ -129,6 +129,10 @@ nix:
 flake-update:
     cd nix/nixos && nix flake update
 
+# Preview pinned-version bumps (needs UPDATECLI_GITHUB_TOKEN)
+updatecli-diff:
+    updatecli pipeline diff --config updatecli/updatecli.d
+
 nixos-switch:
     @just nix/nixos/switch
 

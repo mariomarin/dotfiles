@@ -1,0 +1,13 @@
+# Bumps `uses: owner/action@vN` pins in .github/workflows, keeping major-only tags
+name: GitHub Actions
+autodiscovery:
+  crawlers:
+    github/action:
+      rootdir: .github/workflows
+      digest: false
+      ignore:
+        - actions:
+            updatecli/updatecli-action: ""
+      versionfilter:
+        kind: regex/semver
+        regex: '^(v\d+)$'

@@ -1,0 +1,12 @@
+# updatecli-action only publishes full semver tags (v1/v2 are deprecated)
+name: updatecli-action
+autodiscovery:
+  crawlers:
+    github/action:
+      rootdir: .github/workflows
+      digest: false
+      only:
+        - actions:
+            updatecli/updatecli-action: ""
+      versionfilter:
+        kind: semver
