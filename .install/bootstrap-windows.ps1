@@ -12,6 +12,7 @@ Write-Host "🚀 Running Windows bootstrap..." -ForegroundColor Cyan
 
 # Packages to install via winget
 $packages = @(
+    @{ Id = "Git.Git"; Command = "git"; DisplayName = "Git" },
     @{ Id = "twpayne.chezmoi"; Command = "chezmoi"; DisplayName = "chezmoi" },
     @{ Id = "Nushell.Nushell"; Command = "nu"; DisplayName = "Nushell" },
     @{ Id = "Bitwarden.CLI"; Command = "bw"; DisplayName = "Bitwarden CLI" },
@@ -173,6 +174,10 @@ Write-Host "" -ForegroundColor Cyan
 Write-Host "==> Clone dotfiles repository" -ForegroundColor Cyan
 if (Test-Path "$chezmoiPath/.git") { git -C $chezmoiPath pull --quiet }
 else { git clone --quiet https://github.com/mariomarin/dotfiles.git $chezmoiPath }
+if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$chezmoiPath/justfile")) {
+    Write-Host "❌ Failed to clone repository to $chezmoiPath" -ForegroundColor Red
+    exit 1
+}
 Write-Host "✅ Repository ready" -ForegroundColor Green
 
 # Set hostname
@@ -199,16 +204,14 @@ if (!(bw login --check 2>$null)) {
     bw login
 }
 Write-Host "Unlocking vault..." -ForegroundColor White
-Push-Location $chezmoiPath
+Set-Location $chezmoiPath
 just bw-unlock
-Pop-Location
 
 Write-Host "" -ForegroundColor Green
 Write-Host "✅ Bootstrap complete!" -ForegroundColor Green
 Write-Host "" -ForegroundColor White
 Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "  cd ~/.local/share/chezmoi" -ForegroundColor White
-Write-Host "  just apply" -ForegroundColor White
+Write-Host "  just apply  (already in $chezmoiPath)" -ForegroundColor White
 Write-Host "" -ForegroundColor White
 
 #endregion
