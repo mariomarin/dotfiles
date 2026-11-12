@@ -5,7 +5,7 @@ pkgs: {
     # ── Shells ──────────────────────────────────────────────────────────
     zsh
     bash
-    nushell
+    unstable.nushell # nupm HEAD needs nu >= 0.114 (stable has 0.112)
     unstable.oh-my-posh # Prompt framework (29.x nu init breaks on nu 0.115)
     carapace # Universal completion framework
 
@@ -84,9 +84,9 @@ pkgs: {
     presenterm # Terminal slideshow presentations
 
     # ── Nushell plugins ─────────────────────────────────────────────────
-    nushellPlugins.formats # EML, ICS, INI, plist, VCF support
-    nushellPlugins.query # Query JSON, XML, web data
-    nushellPlugins.gstat # Git status as structured data
+    unstable.nushellPlugins.formats # EML, ICS, INI, plist, VCF support
+    unstable.nushellPlugins.query # Query JSON, XML, web data
+    unstable.nushellPlugins.gstat # Git status as structured data
 
     # ── Libraries ──────────────────────────────────────────────────────
     libzip # Zip archive library
