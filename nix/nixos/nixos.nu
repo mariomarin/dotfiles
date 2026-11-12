@@ -28,48 +28,6 @@ def "main first-time" [
     print "💡 Future rebuilds use: just switch"
 }
 
-# Remote deployment
-def "main remote-switch" [
-    host: string          # Hostname for the configuration
-    target_host: string   # Target host for deployment (user@host)
-    --build-host: string  # Optional build host (user@build-server)
-] {
-    check-os
-    if ($target_host | is-empty) {
-        print "Error: TARGET_HOST not set. Usage: just remote-switch TARGET_HOST=user@host"
-        exit 1
-    }
-    nix-common nixos-rebuild switch $".#($host)" --target-host $target_host --build-host $build_host
-}
-
-# Remote testing
-def "main remote-test" [
-    host: string          # Hostname for the configuration
-    target_host: string   # Target host for testing (user@host)
-    --build-host: string  # Optional build host (user@build-server)
-] {
-    check-os
-    if ($target_host | is-empty) {
-        print "Error: TARGET_HOST not set. Usage: just remote-test TARGET_HOST=user@host"
-        exit 1
-    }
-    nix-common nixos-rebuild test $".#($host)" --target-host $target_host --build-host $build_host
-}
-
-# Deploy VM configuration to remote host
-def "main deploy-vm" [
-    target_host: string                  # Target host for deployment (user@host)
-    --vm-host: string = "mitosis"        # VM hostname (default: mitosis)
-    --build-host: string                 # Optional build host (user@build-server)
-] {
-    check-os
-    if ($target_host | is-empty) {
-        print "Error: TARGET_HOST not set. Usage: just deploy-vm TARGET_HOST=user@host"
-        exit 1
-    }
-    nix-common nixos-rebuild switch $".#($vm_host)" --target-host $target_host --build-host $build_host
-}
-
 # Show available NixOS configurations
 def "main hosts" [
     host: string  # Current hostname
@@ -77,7 +35,6 @@ def "main hosts" [
     check-os
     print "Available NixOS configurations:"
     print "  - dendrite    : ThinkPad T470 portable workstation"
-    print "  - mitosis     : Virtual machine for testing and replication"
     print "  - symbiont    : NixOS on WSL (Windows Subsystem for Linux)"
     print ""
     print $"Current HOST: ($host)"
@@ -135,9 +92,6 @@ def "main linux-apt" [
 def "main help" [] {
     nix-common show-help "NixOS Utilities" "nixos.nu" [
         {name: "first-time <host>", description: "First-time NixOS setup"}
-        {name: "remote-switch <host> <target> [--build-host]", description: "Deploy to remote host"}
-        {name: "remote-test <host> <target> [--build-host]", description: "Test on remote host"}
-        {name: "deploy-vm <target> [--vm-host] [--build-host]", description: "Deploy VM config (default: mitosis)"}
         {name: "linux-apt <host>", description: "Install packages for linux-apt (ribosome)"}
         {name: "hosts <host>", description: "Show available configurations"}
         {name: "doctor <host>", description: "Report problems with fixes"}

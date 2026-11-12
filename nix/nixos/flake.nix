@@ -99,20 +99,6 @@
     in
     {
       nixosConfigurations = {
-        # mitosis - Virtual machine for testing and replication
-        mitosis = mkSystem {
-          hostname = "mitosis";
-          system = "x86_64-linux";
-          username = "mario";
-          modules = [
-            # Main configuration (shared)
-            ./configuration.nix
-
-            # VM-specific configuration
-            ./hosts/mitosis/configuration.nix
-          ];
-        };
-
         # symbiont - NixOS on WSL (two systems coexisting)
         symbiont = mkSystem {
           hostname = "symbiont";

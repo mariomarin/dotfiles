@@ -197,16 +197,6 @@ alias push := git-push
 alias pull := git-pull
 alias sync := git-sync
 
-# Multi-machine deployment
-vm-switch:
-    @just nix/nixos/vm-switch
-
-vm-test:
-    @just nix/nixos/vm-test
-
-deploy-vm TARGET_HOST BUILD_HOST:
-    @just nix/nixos/deploy-vm TARGET_HOST={{ TARGET_HOST }} BUILD_HOST={{ BUILD_HOST }}
-
 # WSL NixOS setup (Windows only)
 wsl-setup:
     @just wsl/setup

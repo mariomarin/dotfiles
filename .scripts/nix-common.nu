@@ -8,26 +8,6 @@ export def main [] {
     exit 1
 }
 
-# Build nixos-rebuild command with optional build host
-export def nixos-rebuild [
-    action: string            # Action: switch, test, build
-    flake: string             # Flake reference (e.g., ".#host")
-    --target-host: string     # Target host for deployment
-    --build-host: string      # Optional build host
-] {
-    mut cmd = ["nixos-rebuild" $action "--flake" $flake]
-
-    if ($target_host | is-not-empty) {
-        $cmd = ($cmd | append ["--target-host" $target_host "--use-remote-sudo"])
-    }
-
-    if ($build_host | is-not-empty) {
-        $cmd = ($cmd | append ["--build-host" $build_host])
-    }
-
-    run-external ...$cmd
-}
-
 # Generic help display function
 export def show-help [
     title: string         # Title (e.g., "NixOS Utilities")

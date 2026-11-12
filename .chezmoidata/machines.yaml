@@ -2,20 +2,6 @@
 # This file defines different machine types and their capabilities
 # Biology-themed naming convention for all hosts
 machines:
-  # mitosis - Virtual machine, atuin sync server (cell division)
-  mitosis:
-    type: server
-    platform: nixos
-    hostname: mitosis
-    features:
-      desktop: false
-      audio: false
-      bluetooth: false
-      physical_keyboard: false
-      kanata: false
-    services:
-      - syncthing
-      - atuin
   # symbiont - NixOS on WSL (two systems coexisting)
   symbiont:
     type: wsl
