@@ -10,7 +10,7 @@ set dotenv-load
 # Default recipe (runs when you type `just`)
 default: chezmoi-quick-apply
 
-# Bitwarden session management (uses ~/.config/nushell/modules/bitwarden)
+# Bitwarden session management (module loaded from source: available before apply)
 
 # Setup: login and unlock Bitwarden (first-time setup)
 bw-setup:
@@ -18,15 +18,15 @@ bw-setup:
     print "🔐 Logging into Bitwarden..."
     bw login
     print "\n✅ Login successful. Unlocking vault..."
-    use ~/.config/nushell/modules/bitwarden
+    use '{{ justfile_directory() }}/private_dot_config/nushell/modules/bitwarden'
     bitwarden unlock
 
 bw-unlock:
-    use ~/.config/nushell/modules/bitwarden; bitwarden unlock
+    use '{{ justfile_directory() }}/private_dot_config/nushell/modules/bitwarden'; bitwarden unlock
 
 # Reload direnv to load BW_SESSION from .env.local
 bw-reload:
-    use ~/.config/nushell/modules/bitwarden; bitwarden reload
+    use '{{ justfile_directory() }}/private_dot_config/nushell/modules/bitwarden'; bitwarden reload
 
 # Git operations using gh CLI authentication
 
