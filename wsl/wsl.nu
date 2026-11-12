@@ -278,7 +278,7 @@ def "main provision-nixos" []: nothing -> nothing {
     if (is-provisioned) { return }
 
     let script = [
-        "export NIX_CONFIG='experimental-features = nix-command flakes'"
+        "NIX_CONFIG='experimental-features = nix-command flakes'"
         "nixos-rebuild switch"
         $"--flake '($NIX_FLAKE)#($NIX_HOST)'"
     ] | str join " "
