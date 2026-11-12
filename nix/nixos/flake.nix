@@ -28,10 +28,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    devenv = {
-      url = "github:cachix/devenv/v2.1.1";
-    };
-
     caarlos0-nur = {
       url = "github:caarlos0/nur";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
@@ -43,7 +39,7 @@
     };
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, nixos-wsl, nix-darwin, nur, devenv, claude-code-nix, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, nixos-wsl, nix-darwin, nur, claude-code-nix, ... }@inputs:
     let
       # Common overlays shared by all hosts
       commonOverlays = [
@@ -139,34 +135,6 @@
           username = "mario";
           modules = [ ../darwin/hosts/malus/configuration.nix ];
         };
-      };
-
-      # Package bundles for non-NixOS hosts (linux-apt)
-      packages = {
-        x86_64-linux =
-          let
-            pkgs = import nixpkgs {
-              system = "x86_64-linux";
-              overlays = commonOverlays;
-              config.allowUnfree = true;
-            };
-            cliPkgs = import ../common/modules/cli-tools-pkgs.nix pkgs;
-          in
-          {
-            # Individual packages
-            atuin = pkgs.unstable.atuin;
-            devenv = devenv.packages.x86_64-linux.default;
-
-            # Bundled environment for ribosome (linux-apt platform)
-            ribosome-env = pkgs.buildEnv {
-              name = "ribosome-cli-tools";
-              paths = cliPkgs.base ++ cliPkgs.modern ++ [
-                # Runtime (needed by Mason for node-based LSPs)
-                pkgs.nodejs
-              ];
-              pathsToLink = [ "/bin" "/share" ];
-            };
-          };
       };
     };
 }

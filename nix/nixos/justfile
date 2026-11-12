@@ -65,10 +65,6 @@ hosts:
 doctor:
     nu nixos.nu doctor {{ HOST }}
 
-# Linux-apt (ribosome) - install packages via nix profile
-linux-apt:
-    nu nixos.nu linux-apt ribosome
-
 # Help target
 help:
     @echo "NixOS Multi-Machine Build Targets"
@@ -99,7 +95,7 @@ help:
     @echo "  just check               # Validate flake"
     @echo ""
     @echo "Examples:"
-    @echo "  just switch                                  # Local dendrite"
+    @echo "  just switch                                  # Local HOST"
     @echo "  just vm-switch                               # Local VM config"
     @echo "  just deploy-vm TARGET_HOST=admin@192.168.1.100"
-    @echo "  just remote-switch HOST=dendrite TARGET_HOST=user@backup-dendrite"
+    @echo "  just remote-switch HOST=mitosis TARGET_HOST=user@mitosis"
