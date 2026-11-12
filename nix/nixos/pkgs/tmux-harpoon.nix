@@ -4,7 +4,7 @@
 tmuxPlugins.mkTmuxPlugin {
   pluginName = "tmux-harpoon";
   rtpFilePath = "harpoon.tmux";
-  version = "unstable-2026-03-14";
+  version = "0.5.0-unstable-2026-03-14";
   src = fetchFromGitHub {
     owner = "Chaitanyabsprip";
     repo = "tmux-harpoon";

@@ -2,7 +2,7 @@
 
 rustPlatform.buildRustPackage {
   pname = "jj-spr";
-  version = "0.1.0-unstable";
+  version = "0-unstable-2026-07-28";
 
   src = fetchFromGitHub {
     owner = "jennings";
