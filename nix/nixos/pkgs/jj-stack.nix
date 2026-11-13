@@ -1,13 +1,13 @@
 { lib, buildNpmPackage, fetchFromGitHub }:
 
-buildNpmPackage {
+buildNpmPackage rec {
   pname = "jj-stack";
-  version = "1.2.1-unstable-2025-10-24";
+  version = "1.2.1";
 
   src = fetchFromGitHub {
     owner = "keanemind";
     repo = "jj-stack";
-    rev = "65f8a6d9ab3beba2b7a721aa4a95b1da121e2fee";
+    rev = "v${version}";
     hash = "sha256-fk+FZv4lu+noM6ig4NFGAlRy4AWdEjkLIDZZ877bKLs=";
   };
 

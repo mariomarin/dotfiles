@@ -69,6 +69,17 @@ just nix/darwin/switch   # Full path
 just nix/darwin/health   # Health check
 ```
 
+## Binary Cache
+
+CI pushes everything it builds (local packages in `nixos/pkgs/`, the devenv shell) to
+[mariomarin.cachix.org](https://mariomarin.cachix.org); both hosts and `devenv.nix` pull from it.
+
+List what would still build locally ("will be built"):
+
+```bash
+nix build --dry-run ./nix/nixos#darwinConfigurations.malus.system
+```
+
 ## Philosophy
 
 - **Declarative**: All system configuration in Nix

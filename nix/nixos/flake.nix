@@ -39,7 +39,7 @@
     };
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, nixos-wsl, nix-darwin, nur, claude-code-nix, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-wsl, nix-darwin, nur, claude-code-nix, ... }@inputs:
     let
       # Also exposed as `packages` for CI builds
       localPackages = pkgs: import ./pkgs { inherit pkgs; };
@@ -90,8 +90,11 @@
         };
     in
     {
-      packages = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ]
-        (system: localPackages nixpkgs.legacyPackages.${system});
+      # Built from each host's own pkgs so CI store paths match the hosts'
+      packages = {
+        x86_64-linux = localPackages self.nixosConfigurations.symbiont.pkgs;
+        aarch64-darwin = localPackages self.darwinConfigurations.malus.pkgs;
+      };
 
       nixosConfigurations = {
         # symbiont - NixOS on WSL (two systems coexisting)

@@ -39,12 +39,10 @@ jobs:
       - if: matrix.name == 'nix'
         uses: cachix/install-nix-action@v31
       - if: matrix.name == 'nix'
-        id: nix-cache
-        uses: nix-community/cache-nix-action/restore@v7
+        uses: cachix/cachix-action@v17
         with:
-          primary-key: nix-${{ runner.os }}-${{ hashFiles('nix/nixos/flake.lock', 'nix/nixos/pkgs/**') }}
-          paths: ~/.cache/nix
-          restore-prefixes-first-match: nix-${{ runner.os }}-
+          name: mariomarin
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - if: matrix.name == 'nix'
         run: nix flake update --flake ./nix/nixos
       - if: matrix.name == 'nix'
@@ -87,16 +85,6 @@ jobs:
           nix eval --raw ./nix/nixos#nixosConfigurations.symbiont.config.system.build.toplevel.drvPath
           nix eval --raw ./nix/nixos#darwinConfigurations.malus.config.system.build.toplevel.drvPath
           nix run nixpkgs#nushell -- .scripts/build-pkgs.nu
-      # Keyed on the updated lock, so Nix Build on the resulting PR restores it
-      - if: matrix.name == 'nix' && steps.nix-cache.outputs.hit-primary-key != 'true'
-        uses: nix-community/cache-nix-action/save@v7
-        with:
-          primary-key: nix-${{ runner.os }}-${{ hashFiles('nix/nixos/flake.lock', 'nix/nixos/pkgs/**') }}
-          paths: ~/.cache/nix
-          purge: true
-          purge-prefixes: nix-${{ runner.os }}-
-          purge-created: 0
-          purge-primary-key: never
       - uses: peter-evans/create-pull-request@v8
         id: cpr
         with:
@@ -114,5 +102,8 @@ jobs:
       # updatecli PRs are pushed with a PAT, so Automerge handles them after Validate
       - if: matrix.name != 'skills' && matrix.name != 'updatecli' && steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
         run: gh pr merge --squash --delete-branch "${{ steps.cpr.outputs.pull-request-url }}"
+      # GITHUB_TOKEN merges don't fire push workflows, so run the macOS cache build explicitly
+      - if: matrix.name == 'nix' && steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
+        run: gh workflow run nix-cache.yml --ref main
       - if: steps.check.outcome == 'failure' || steps.pkgs.outcome == 'failure'
         run: exit 1

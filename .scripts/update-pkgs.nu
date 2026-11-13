@@ -1,14 +1,13 @@
 #!/usr/bin/env nu
 # Bump nix/nixos/pkgs to upstream (rev, src hash, cargo/npm/vendor hashes) via nix-update.
-# Needs nix-update on PATH. tmux-tilish is excluded: pinned to a specific fork commit.
+# Needs nix-update on PATH.
 
 const PKGS = [
     [name, branch];
     [clipper, false]
     [jj-hooks, false]
     [jj-spr, true]
-    [jj-stack, true]
-    [tmux-harpoon, true]
+    [jj-stack, false]
 ]
 
 def update [pkg: record]: nothing -> record {
