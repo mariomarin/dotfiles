@@ -99,41 +99,27 @@ def check-binary [bin: string]: nothing -> list<record> {
     if ($sig | is-ok) and ($sig.value.stderr | str contains "linker-signed") {
         return [
             (
-                (issue
-                    "binary"
-                    "error"
-                    "bad signature (linker-signed)"
-                    $"sudo codesign --force --sign - ($bin)"
-                )
-            )
-        ]
+    # spawn-scheduled is acceptable - service is configured and will start on demand
+    if $s.state != "running" and $s.state != "spawn-scheduled" {
+        let cmd = (restart-cmd $label)
+        return [(issue "vhid" "error" "karabiner-vhid not loaded" $cmd)]
+    }
+
+    # Check if daemon socket directory exists
+    let socket_dir = "/Library/Application Support/org.pqrs/tmp/rootonly/vhidd_server"
+    let socket_check = (run-cmd {^sudo test -d $socket_dir})
+    if ($socket_check | is-err) {
+        let cmd = (restart-cmd $label)
+        return [(issue "vhid" "error" "vhid socket missing - daemon not ready" $cmd)]
+    }
+
+    # Check driver extension is loaded
+    let dext = (run-cmd {^systemextensionsctl list})
+    if ($dext | is-ok) and not ($dext.value.stdout | str contains "org.pqrs.Karabiner-DriverKit-VirtualHIDDevice") {
+        return [(issue "vhid" "error" "Karabiner driver extension not activated" "Activate via System Settings → Privacy & Security")]
     }
 
     []
-}
-
-def check-sock-dir []: nothing -> list<record> {
-    let dir = "/Library/Application Support/org.pqrs/tmp"
-    if not ($dir | path exists) {
-        [
-            (
-                (issue
-                    "vhid"
-                    "error"
-                    "socket dir missing"
-                    $"sudo mkdir -p '($dir)' && sudo chmod 1777 '($dir)'"
-                )
-            )
-        ]
-    } else { [] }
-}
-
-def check-cfg [file: string]: nothing -> list<record> {
-    if not ($file | path exists) {
-        [
-            (issue "config" "error" "config missing" "chezmoi apply")
-        ]
-    } else { [] }
 }
 
 def check-vhid [label: string]: nothing -> list<record> {
