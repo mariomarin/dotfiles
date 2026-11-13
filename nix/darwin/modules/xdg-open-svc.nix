@@ -1,7 +1,7 @@
 { pkgs, inputs, ... }:
 
 let
-  xdg-open-svc = inputs.caarlos0-nur.packages.${pkgs.system}.xdg-open-svc;
+  xdg-open-svc = inputs.caarlos0-nur.packages.${pkgs.stdenv.hostPlatform.system}.xdg-open-svc;
 in
 {
   launchd.user.agents.xdg-open-svc = {
