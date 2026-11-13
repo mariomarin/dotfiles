@@ -60,7 +60,6 @@
     curlie
 
     # Infrastructure as Code
-    terraform
     ansible
 
     # Documentation
