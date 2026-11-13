@@ -69,6 +69,17 @@ just nix/darwin/switch   # Full path
 just nix/darwin/health   # Health check
 ```
 
+## Binary Cache
+
+Local packages (`nixos/pkgs/`) are built by the `Nix Cache` workflow and pushed to
+[mariomarin.cachix.org](https://mariomarin.cachix.org); both hosts pull from it.
+
+List what would still build locally ("will be built"):
+
+```bash
+nix build --dry-run ./nix/nixos#darwinConfigurations.malus.system
+```
+
 ## Philosophy
 
 - **Declarative**: All system configuration in Nix

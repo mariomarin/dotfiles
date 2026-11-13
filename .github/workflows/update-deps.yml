@@ -114,5 +114,8 @@ jobs:
       # updatecli PRs are pushed with a PAT, so Automerge handles them after Validate
       - if: matrix.name != 'skills' && matrix.name != 'updatecli' && steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
         run: gh pr merge --squash --delete-branch "${{ steps.cpr.outputs.pull-request-url }}"
+      # GITHUB_TOKEN merges don't fire push workflows, so fill the binary cache explicitly
+      - if: matrix.name == 'nix' && steps.cpr.outputs.pull-request-number && steps.check.outcome != 'failure'
+        run: gh workflow run nix-cache.yml --ref main
       - if: steps.check.outcome == 'failure' || steps.pkgs.outcome == 'failure'
         run: exit 1

@@ -30,8 +30,8 @@
 
     extraOptions = ''
       trusted-users = root mario
-      extra-substituters = https://devenv.cachix.org
-      extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
+      extra-substituters = https://devenv.cachix.org https://mariomarin.cachix.org
+      extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= mariomarin.cachix.org-1:b9tgrX4jZ3Ia7dn4HkLhf9FJNFDL++2lcG+JcAN44q8=
     '';
 
     # Automatic garbage collection

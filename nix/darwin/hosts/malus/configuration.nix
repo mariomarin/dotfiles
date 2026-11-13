@@ -34,6 +34,12 @@ in
   # Disable nix-darwin's nix-daemon management (use system-installed Nix)
   nix.enable = false;
 
+  # Determinate Nix reads extra settings from nix.custom.conf
+  environment.etc."nix/nix.custom.conf".text = ''
+    extra-substituters = https://mariomarin.cachix.org
+    extra-trusted-public-keys = mariomarin.cachix.org-1:b9tgrX4jZ3Ia7dn4HkLhf9FJNFDL++2lcG+JcAN44q8=
+  '';
+
   # Set hostname
   networking.hostName = "malus";
   networking.computerName = "malus";

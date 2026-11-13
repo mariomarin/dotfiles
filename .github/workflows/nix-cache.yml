@@ -1,0 +1,24 @@
+name: Nix Cache
+on:
+  push:
+    branches: [main]
+    paths:
+      - "nix/**"
+  workflow_dispatch:
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      # Pushes every path built by this job
+      - uses: cachix/cachix-action@v17
+        with:
+          name: mariomarin
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - name: Build local packages
+        run: nix run nixpkgs#nushell -- .scripts/build-pkgs.nu

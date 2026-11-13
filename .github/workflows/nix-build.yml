@@ -16,6 +16,10 @@ jobs:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('nix/nixos/flake.lock', 'nix/nixos/pkgs/**') }}
           paths: ~/.cache/nix
           restore-prefixes-first-match: nix-${{ runner.os }}-
+      - uses: cachix/cachix-action@v17
+        with:
+          name: mariomarin
+          skipPush: true
       - name: Evaluate flake outputs
         run: |
           nix eval --raw ./nix/nixos#nixosConfigurations.symbiont.config.system.build.toplevel.drvPath

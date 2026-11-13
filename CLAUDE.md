@@ -482,6 +482,9 @@ Bootstrap only installs what templates need (Bitwarden, `gitHubLatestRelease` ac
 | windows | `private_dot_config/winget/configuration.dsc.yaml` | `run_onchange_after_windows-install-packages.nu.tmpl` |
 | linux-apt | `private_dot_local/bin/.chezmoiexternal.toml.tmpl` (release binaries) | chezmoi externals |
 
+Local packages (`nix/nixos/pkgs/`) come from a Cachix binary cache filled by CI; see
+[nix/README.md](nix/README.md#binary-cache).
+
 ### Plugin and Package Management
 
 ### Update Strategy
