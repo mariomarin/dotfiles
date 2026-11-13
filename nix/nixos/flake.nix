@@ -41,15 +41,8 @@
 
   outputs = { nixpkgs, nixpkgs-unstable, nixos-wsl, nix-darwin, nur, claude-code-nix, ... }@inputs:
     let
-      # Packages from ./pkgs; also exposed as `packages` for nix-update and CI builds
-      localPackages = pkgs: {
-        tmux-harpoon = pkgs.callPackage ./pkgs/tmux-harpoon.nix { };
-        tmux-tilish = pkgs.callPackage ./pkgs/tmux-tilish.nix { };
-        jj-spr = pkgs.callPackage ./pkgs/jj-spr.nix { };
-        jj-stack = pkgs.callPackage ./pkgs/jj-stack.nix { };
-        jj-hooks = pkgs.callPackage ./pkgs/jj-hooks.nix { };
-        clipper = pkgs.callPackage ./pkgs/clipper.nix { };
-      };
+      # Also exposed as `packages` for CI builds
+      localPackages = pkgs: import ./pkgs { inherit pkgs; };
 
       # Common overlays shared by all hosts
       commonOverlays = [
