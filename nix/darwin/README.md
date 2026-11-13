@@ -113,7 +113,7 @@ nix search nixpkgs discord
 # darwin/modules/packages.nix
 environment.systemPackages = with pkgs; [
   firefox          # Web browser
-  alacritty        # Terminal
+  ghostty-bin      # Terminal
   obsidian         # Notes
   discord          # Chat
   signal-desktop   # Messaging

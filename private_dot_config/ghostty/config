@@ -1,7 +1,6 @@
 auto-update = off
 window-decoration = true
 window-theme = dark
-macos-titlebar-style = tabs
 macos-window-buttons = hidden
 window-save-state = never
 window-padding-balance = true
@@ -30,9 +29,18 @@ font-codepoint-map = U+ea60-U+ebeb=JetBrainsMono Nerd Font Mono
 theme = catppuccin-mocha
 background = #000000
 
-# Disable ghostty splits — tmux handles window/pane management
-keybind = super+d=unbind
-keybind = super+shift+d=unbind
-
-# tmux-continuum boot terminal
+# tmux owns tabs, splits and navigation: drop every default binding
+# and re-add only the essentials.
+keybind = clear
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+keybind = super+a=select_all
+keybind = super+n=new_window
 keybind = super+t=new_window
+keybind = super+w=close_window
+keybind = super+q=quit
+keybind = super+equal=increase_font_size:1
+keybind = super+minus=decrease_font_size:1
+keybind = super+zero=reset_font_size
+keybind = super+comma=open_config
+keybind = super+shift+comma=reload_config

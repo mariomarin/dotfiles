@@ -101,7 +101,7 @@ darwin/
 
 - CLI tools (git, neovim, tmux)
 - Development tools
-- **GUI applications** (firefox, alacritty, obsidian, discord, etc.)
+- **GUI applications** (firefox, ghostty, obsidian, discord, etc.)
 - Anything available in nixpkgs
 
 **Use Homebrew casks ONLY for**:
@@ -117,7 +117,7 @@ darwin/
 environment.systemPackages = with pkgs; [
   # GUI apps from nixpkgs
   firefox
-  alacritty
+  ghostty-bin
   obsidian
   discord
   # CLI tools

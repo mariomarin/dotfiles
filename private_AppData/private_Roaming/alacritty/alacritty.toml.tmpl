@@ -1,11 +1,7 @@
 {{- if and (eq .chezmoi.os "windows") (.machineConfig.features.desktop) -}}
-[window]
-opacity = 0.97
-blur = true
-
 [general]
 import = [
-    "{{ .chezmoi.homeDir }}/.config/alacritty/themes/themes/ayu_light.toml"
+    "{{ .chezmoi.homeDir }}/.config/alacritty/alacritty.toml"
 ]
 
 # Windows-specific: Launch WSL NixOS with interactive login shell

@@ -6,7 +6,7 @@
 {
   environment.systemPackages = with pkgs; [
     # Terminal Emulators
-    alacritty
+    ghostty-bin
 
     # Productivity
     obsidian

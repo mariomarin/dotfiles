@@ -52,6 +52,39 @@ properties:
           if (Test-Path "$nupmDir\.git") { git -C $nupmDir pull --quiet; return }
           New-Item -ItemType Directory -Path (Split-Path $nupmDir) -Force | Out-Null
           git clone --quiet https://github.com/nushell/nupm.git $nupmDir
+    # Tridactyl native messenger (no winget package; mirrors upstream windows.ps1)
+    - resource: PSDscResources/Script
+      directives:
+        description: Install Tridactyl native messenger
+        dependsOn:
+          - Install Firefox
+      settings:
+        GetScript: |
+          $versionFile = "$env:USERPROFILE\.tridactyl\version"
+          @{ Result = if (Test-Path $versionFile) { Get-Content $versionFile -TotalCount 1 } else { 'Absent' } }
+        TestScript: |
+          $nativeVersion = "0.5.0"
+          $dir = "$env:USERPROFILE\.tridactyl"
+          $key = "HKCU:\SOFTWARE\Mozilla\NativeMessagingHosts\tridactyl"
+          if (-not (Test-Path $key)) { return $false }
+          if ((Get-ItemProperty $key)."(default)" -ne "$dir\tridactyl.json") { return $false }
+          foreach ($file in "native_main.exe", "tridactyl.json", "version") {
+            if (-not (Test-Path "$dir\$file")) { return $false }
+          }
+          (Get-Content "$dir\version" -TotalCount 1) -eq $nativeVersion
+        SetScript: |
+          $ErrorActionPreference = 'Stop'
+          $nativeVersion = "0.5.0"
+          $dir = "$env:USERPROFILE\.tridactyl"
+          $key = "HKCU:\SOFTWARE\Mozilla\NativeMessagingHosts\tridactyl"
+          New-Item -ItemType Directory -Path $dir -Force | Out-Null
+          Invoke-WebRequest -UseBasicParsing -OutFile "$dir\native_main.exe" `
+            "https://github.com/tridactyl/native_messenger/releases/download/$nativeVersion/native_main-Windows"
+          (Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/tridactyl/native_messenger/$nativeVersion/tridactyl.json").Content.Replace("REPLACE_ME_WITH_SED", "native_main.exe") |
+            Set-Content -Path "$dir\tridactyl.json"
+          New-Item -Path $key -Force | Out-Null
+          Set-ItemProperty -Path $key -Name "(default)" -Value "$dir\tridactyl.json"
+          Set-Content -Path "$dir\version" -Value $nativeVersion
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Alacritty
@@ -245,6 +278,13 @@ properties:
           $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
           Register-ScheduledTask -TaskName 'Kanata' -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Description 'Kanata keyboard remapping service' -Force | Out-Null
     # GUI applications
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Firefox
+        allowPrerelease: true
+      settings:
+        id: Mozilla.Firefox
+        source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Visual Studio Code

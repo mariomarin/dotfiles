@@ -68,7 +68,7 @@ Import the same way as cli-tools.nix.
 Cross-platform GUI applications:
 
 - Web browsers: firefox, brave
-- Terminal emulators: alacritty
+- Terminal emulators: ghostty
 - Productivity: obsidian, bitwarden-desktop
 - Image editing: gimp
 - File sync: syncthing

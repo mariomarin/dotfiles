@@ -379,7 +379,7 @@ $env.config.hooks = {
 # -----------------------------------------------------------------------------
 # SHELL INTEGRATION (OSC Codes)
 # -----------------------------------------------------------------------------
-# OSC codes for terminal integration with Alacritty and Windows Terminal
+# OSC codes for terminal integration with Ghostty, Alacritty and Windows Terminal
 $env.config.shell_integration = {
     osc2: true # Window/tab title with abbreviated path
     osc7: true # Communicate working directory to terminal

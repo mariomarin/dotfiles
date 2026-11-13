@@ -72,10 +72,14 @@ private_dot_local/bin/tests/**
 .config/tmux/**
 .config/zsh
 .config/zsh/**
-.config/tridactyl
-.config/tridactyl/**
 .config/systemd
 .config/systemd/**
+{{ end }}
+
+# Alacritty is Windows-only (no Ghostty build for Windows)
+{{ if ne .chezmoi.os "windows" }}
+.config/alacritty
+.config/alacritty/**
 {{ end }}
 
 # macOS-only configurations (ignore on non-macOS)
@@ -86,8 +90,6 @@ nix/darwin/**
 
 # Desktop-specific (ignore on headless/server machines)
 {{ if not .machineConfig.features.desktop }}
-.config/alacritty
-.config/alacritty/**
 .config/ghostty
 .config/ghostty/**
 .config/tridactyl

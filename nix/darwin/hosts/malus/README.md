@@ -10,7 +10,7 @@ genus, fitting the biology theme and macOS.
 ## Planned Features
 
 - **Declarative macOS system management** via nix-darwin
-- **GUI applications** from nixpkgs (firefox, alacritty, obsidian, etc.)
+- **GUI applications** from nixpkgs (firefox, ghostty, obsidian, etc.)
 - **Homebrew fallback** for apps not in nixpkgs (Alfred, CleanShot)
 - **System defaults** management for macOS preferences
 - **Shared CLI tools** with NixOS configurations (git, neovim, tmux)
@@ -59,7 +59,7 @@ When implemented, the setup will be:
 1. **nixpkgs first** (both CLI and GUI apps)
 2. **Homebrew casks** only when nixpkgs doesn't have it
 
-Most GUI apps ARE in nixpkgs: firefox, discord, obsidian, alacritty, signal-desktop, vlc, etc.
+Most GUI apps ARE in nixpkgs: firefox, discord, obsidian, ghostty, signal-desktop, vlc, etc.
 
 ## Configuration Structure (Planned)
 
