@@ -56,6 +56,8 @@ properties:
     - resource: PSDscResources/Script
       directives:
         description: Install Tridactyl native messenger
+        dependsOn:
+          - Install Firefox
       settings:
         GetScript: |
           $versionFile = "$env:USERPROFILE\.tridactyl\version"
@@ -276,6 +278,13 @@ properties:
           $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
           Register-ScheduledTask -TaskName 'Kanata' -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Description 'Kanata keyboard remapping service' -Force | Out-Null
     # GUI applications
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Firefox
+        allowPrerelease: true
+      settings:
+        id: Mozilla.Firefox
+        source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Visual Studio Code
