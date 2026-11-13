@@ -58,26 +58,31 @@ properties:
         description: Install Tridactyl native messenger
       settings:
         GetScript: |
-          $key = "HKCU:\SOFTWARE\Mozilla\NativeMessagingHosts\tridactyl"
-          @{ Result = if (Test-Path $key) { 'Present' } else { 'Absent' } }
+          $versionFile = "$env:USERPROFILE\.tridactyl\version"
+          @{ Result = if (Test-Path $versionFile) { Get-Content $versionFile -TotalCount 1 } else { 'Absent' } }
         TestScript: |
-          $key = "HKCU:\SOFTWARE\Mozilla\NativeMessagingHosts\tridactyl"
-          if (-not (Test-Path $key)) { return $false }
-          $manifest = (Get-ItemProperty $key)."(default)"
-          [bool]$manifest -and (Test-Path $manifest) -and (Test-Path (Join-Path (Split-Path $manifest) "native_main.exe"))
-        SetScript: |
-          $ErrorActionPreference = 'Stop'
+          $nativeVersion = "0.5.0"
           $dir = "$env:USERPROFILE\.tridactyl"
           $key = "HKCU:\SOFTWARE\Mozilla\NativeMessagingHosts\tridactyl"
-          $raw = "https://raw.githubusercontent.com/tridactyl"
-          $version = (Invoke-WebRequest -UseBasicParsing "$raw/tridactyl/master/native/current_native_version").Content.Trim()
+          if (-not (Test-Path $key)) { return $false }
+          if ((Get-ItemProperty $key)."(default)" -ne "$dir\tridactyl.json") { return $false }
+          foreach ($file in "native_main.exe", "tridactyl.json", "version") {
+            if (-not (Test-Path "$dir\$file")) { return $false }
+          }
+          (Get-Content "$dir\version" -TotalCount 1) -eq $nativeVersion
+        SetScript: |
+          $ErrorActionPreference = 'Stop'
+          $nativeVersion = "0.5.0"
+          $dir = "$env:USERPROFILE\.tridactyl"
+          $key = "HKCU:\SOFTWARE\Mozilla\NativeMessagingHosts\tridactyl"
           New-Item -ItemType Directory -Path $dir -Force | Out-Null
           Invoke-WebRequest -UseBasicParsing -OutFile "$dir\native_main.exe" `
-            "https://github.com/tridactyl/native_messenger/releases/download/$version/native_main-Windows"
-          (Invoke-WebRequest -UseBasicParsing "$raw/native_messenger/$version/tridactyl.json").Content.Replace("REPLACE_ME_WITH_SED", "native_main.exe") |
+            "https://github.com/tridactyl/native_messenger/releases/download/$nativeVersion/native_main-Windows"
+          (Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/tridactyl/native_messenger/$nativeVersion/tridactyl.json").Content.Replace("REPLACE_ME_WITH_SED", "native_main.exe") |
             Set-Content -Path "$dir\tridactyl.json"
           New-Item -Path $key -Force | Out-Null
           Set-ItemProperty -Path $key -Name "(default)" -Value "$dir\tridactyl.json"
+          Set-Content -Path "$dir\version" -Value $nativeVersion
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Alacritty
