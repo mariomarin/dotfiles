@@ -36,6 +36,7 @@ in
 
   # Determinate Nix reads extra settings from nix.custom.conf
   environment.etc."nix/nix.custom.conf".text = ''
+    trusted-users = root ${username}
     extra-substituters = https://mariomarin.cachix.org
     extra-trusted-public-keys = mariomarin.cachix.org-1:b9tgrX4jZ3Ia7dn4HkLhf9FJNFDL++2lcG+JcAN44q8=
   '';
