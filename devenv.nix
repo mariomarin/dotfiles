@@ -16,8 +16,8 @@ in
   # Enable dotenv support for loading .env file
   dotenv.enable = true;
 
-  # Disable cachix auto-management (nix.conf managed by Determinate Systems)
-  cachix.enable = false;
+  # Filled by CI (validate.yml)
+  cachix.pull = [ "mariomarin" ];
 
   packages = with pkgs; [
     # Nix formatting, linting, and LSP

@@ -71,8 +71,8 @@ just nix/darwin/health   # Health check
 
 ## Binary Cache
 
-Local packages (`nixos/pkgs/`) are built by the `Nix Cache` workflow and pushed to
-[mariomarin.cachix.org](https://mariomarin.cachix.org); both hosts pull from it.
+CI pushes everything it builds (local packages in `nixos/pkgs/`, the devenv shell) to
+[mariomarin.cachix.org](https://mariomarin.cachix.org); both hosts and `devenv.nix` pull from it.
 
 List what would still build locally ("will be built"):
 
