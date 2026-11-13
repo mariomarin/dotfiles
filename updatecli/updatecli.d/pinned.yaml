@@ -15,6 +15,10 @@ sources:
     kind: shell
     spec:
       command: git ls-remote https://github.com/vyadh/nutest HEAD | cut -f1
+  tridactyl-native:
+    kind: shell
+    spec:
+      command: curl -fsSL https://raw.githubusercontent.com/tridactyl/tridactyl/master/native/current_native_version
 targets:
   kubectl:
     name: Bump kubectl (linux-apt)
@@ -40,3 +44,11 @@ targets:
       file: devenv.nix
       matchpattern: '(url = "https://github.com/vyadh/nutest";\s+rev = ")[0-9a-f]{40}'
       replacepattern: '${1}{{ source "nutest" }}'
+  tridactyl-native:
+    name: Bump Tridactyl native messenger (windows)
+    kind: file
+    sourceid: tridactyl-native
+    spec:
+      file: private_dot_config/winget/configuration.dsc.yaml
+      matchpattern: '\$nativeVersion = "[0-9.]+"'
+      replacepattern: '$$nativeVersion = "{{ source "tridactyl-native" }}"'
