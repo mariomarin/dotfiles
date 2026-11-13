@@ -13,7 +13,7 @@ const PKGS = [
 
 def update [pkg: record]: nothing -> record {
     let version = if $pkg.branch { ["--version=branch"] } else { [] }
-    let result = do { nix-update --flake ...$version $pkg.name } | complete
+    let result = do { nix-update -f pkgs ...$version $pkg.name } | complete
     {
         name: $pkg.name
         ok: ($result.exit_code == 0)
