@@ -56,7 +56,7 @@
         nur.overlays.default
         (final: _prev: {
           unstable = import nixpkgs-unstable {
-            inherit (final) system;
+            inherit (final.stdenv.hostPlatform) system;
             config.allowUnfree = true;
           };
         } // localPackages final)
