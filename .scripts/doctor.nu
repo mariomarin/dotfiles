@@ -91,7 +91,7 @@ def "main all" [] {
         "kanata"
         "atuin"
     ]
-    let failures = ($components | each {|c|
+    let failures = ($components | par-each {|c|
         match (run-cmd { ^just $"($c)-doctor" }) {
             {ok: true} => null
             {error: $failure} => {
