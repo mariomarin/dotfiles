@@ -13,7 +13,7 @@ drive the `chezmoi` binary, inspect with `chezmoi dump` and `chezmoi state`.
 | Post-commit hook runs a full apply on every commit, docs-only included | `devenv.nix` |
 | `just` has no file targets; sentinels need a helper | all justfiles |
 | Tmux reload is wired twice | `run_onchange_after_31_tmux-reload.nu.tmpl`, `.chezmoidata/services.yaml` |
-| Rebuild hash lists are hand-kept; an unlisted module never triggers a rebuild | `run_onchange_{nixos,darwin}-rebuild.nu.tmpl` |
+| Rebuild hash lists are hand-kept; unlisted modules never trigger a rebuild | `run_onchange_*-rebuild.nu.tmpl` |
 | About 30 pass-through recipes each spawn a second `just` and `nu` | root `justfile` |
 | `just windows-configure` is called but does not exist | `private_dot_config/topgrade.toml.tmpl` |
 | Inline doctor recipes exceed 10 lines, skip `nushell-check` | component justfiles |
