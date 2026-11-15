@@ -14,9 +14,20 @@ def "test has subcommands" [] {
     | get stdout
     | lines
 
-    ["summary" "all"] | each { |sub|
+    ["summary" "all" "chezmoi" "nvim" "tmux" "zim"] | each { |sub|
         assert ($cmds | any {|c| $c =~ $sub }) $"missing ($sub) subcommand"
     } | ignore
+}
+
+def "test platform-components picks one OS doctor" [] {
+    let result = do { ^$nu.current-exe -n -c "source .scripts/doctor.nu; platform-components | to nuon" } | complete
+    assert equal $result.exit_code 0 $result.stderr
+    let expected = match $nu.os-info.name {
+        "linux" => ["nixos"]
+        "macos" => ["darwin"]
+        "windows" => ["wsl"]
+    }
+    assert equal ($result.stdout | str trim | from nuon) $expected
 }
 
 def "test summary passes when tools exist" [] {

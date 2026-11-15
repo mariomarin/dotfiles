@@ -8,7 +8,7 @@ set shell := ["nu", "-c"]
 set dotenv-load
 
 # Default recipe (runs when you type `just`)
-default: chezmoi-quick-apply
+default: chezmoi-apply
 
 # Bitwarden session management (module loaded from source: available before apply)
 
@@ -142,9 +142,6 @@ nixos-doctor:
 chezmoi-apply:
     @just chezmoi/apply
 
-chezmoi-quick-apply:
-    @just chezmoi/quick-apply
-
 chezmoi-diff:
     @just chezmoi/diff
 
@@ -188,7 +185,6 @@ topgrade-system:
 
 alias nixos := nixos-switch
 alias apply := chezmoi-apply
-alias quick-apply := chezmoi-quick-apply
 alias diff := chezmoi-diff
 alias nvim := nvim-sync
 alias tmux := tmux-reload

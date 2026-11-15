@@ -28,15 +28,4 @@ kill-server:
 
 # Doctor: report only problems
 doctor:
-    #!/usr/bin/env nu
-    mut issues = []
-    let tmux = (do { ^tmux -V } | complete)
-    if $tmux.exit_code != 0 { $issues = ($issues | append "tmux not found — install tmux") }
-    let config = ("~/.config/tmux/tmux.conf" | path expand)
-    if not ($config | path exists) { $issues = ($issues | append "config missing — run: chezmoi apply") }
-    let plugins_dir = ("~/.local/share/tmux/plugins" | path expand)
-    if not ($plugins_dir | path exists) { $issues = ($issues | append "plugins missing — run: chezmoi apply") }
-    if ($issues | is-empty) { return }
-    print "tmux:"
-    $issues | each {|i| print $"  ($i)" } | ignore
-    exit 1
+    nu ../../.scripts/doctor.nu tmux

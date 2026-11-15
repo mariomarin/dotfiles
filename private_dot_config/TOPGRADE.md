@@ -92,13 +92,10 @@ topgrade --dry-run
 1. **Incremental Changes**: Add configuration options one at a time and test
 2. **Comments**: Document why certain tools are disabled
 3. **Lock Files**: Use post-commands to track version lock files in your dotfiles
-4. **Skip Updates**: Use `CHEZMOI_SKIP_UPDATES=1` environment variable to skip topgrade when needed
 
 ## Related Files
 
 - `justfile` - Contains `just update` commands that use topgrade
-- `.chezmoiscripts/run_after_20-topgrade-updates.sh` - Runs topgrade after chezmoi apply
-- `devenv.nix` - Post-commit hook runs `just` which may trigger topgrade
 
 ## Useful Commands
 
@@ -111,7 +108,4 @@ just update-plugins
 
 # Update only system packages
 just update-system
-
-# Skip topgrade during chezmoi apply
-CHEZMOI_SKIP_UPDATES=1 chezmoi apply
 ```

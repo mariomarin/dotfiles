@@ -66,11 +66,6 @@ cleanup = true
 {{- end }}
 {{- end }}
 
-{{- if eq .chezmoi.os "windows" }}
-# Windows-specific: Apply winget configuration (packages and settings)
-"Winget Configuration" = "cd $(chezmoi source-path) && just windows-configure"
-{{- end }}
-
 {{- if ne .chezmoi.os "windows" }}
 
 [post_commands]

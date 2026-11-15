@@ -146,11 +146,8 @@ For chezmoi naming conventions, see the
 # List all available tasks
 just --list
 
-# Apply dotfiles (default, runs quick-apply)
+# Apply dotfiles (default)
 just
-
-# Apply with verbose output
-just apply
 
 # Preview changes before applying
 just diff

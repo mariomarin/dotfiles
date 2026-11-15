@@ -2,7 +2,7 @@
 # nix-darwin management utilities
 
 use ../../.scripts/nix-common.nu
-use ../../.scripts/adt.nu [collect-issues]
+use ../../.scripts/adt.nu [collect-issues report-issues]
 
 # First-time nix-darwin setup
 def "main first-time" [
@@ -40,16 +40,12 @@ def "main hosts" [
 
 # Health check for nix-darwin system
 def "main doctor" [] {
-    let issues = null | collect-issues [
+    null | collect-issues [
         {|| check-nix }
         {|| check-darwin-rebuild }
         {|| check-flake }
         {|| nix-common check-lock ../nixos/flake.lock "cd ../nixos && nix flake update" }
-    ]
-    if ($issues | is-empty) { return }
-    print "darwin:"
-    for issue in $issues { print $"  ($issue)" }
-    exit 1
+    ] | report-issues darwin
 }
 
 def check-nix []: nothing -> oneof<string, nothing> {

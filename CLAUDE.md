@@ -504,12 +504,6 @@ Anything pinned without a lockfile is bumped by [updatecli](https://www.updatecl
 manifests in `updatecli/updatecli.d/`, run by `update-deps.yml` (needs an `UPDATECLI_TOKEN` PAT with
 `workflow` scope). Preview locally: `just updatecli-diff`. When adding a pin, add a target there.
 
-### Automatic Updates
-
-- Topgrade runs automatically after `chezmoi apply` to keep everything in sync
-- Skip with: `CHEZMOI_SKIP_UPDATES=1 chezmoi apply` or `just quick-apply`
-- Configuration in `private_dot_config/topgrade.toml`
-
 ### Manual Updates
 
 ```bash
@@ -521,9 +515,6 @@ just update-plugins
 
 # Update only system packages (nixos, nix)
 just update-system
-
-# Quick apply without running topgrade
-just quick-apply
 ```
 
 ## Common Commands
@@ -531,8 +522,8 @@ just quick-apply
 See [README.md](README.md) for comprehensive command reference. Key workflows:
 
 ```bash
-# Quick apply without topgrade updates
-just quick-apply
+# Apply dotfiles
+just apply
 
 # NixOS rebuild (see nixos/README.md for details)
 just nixos
