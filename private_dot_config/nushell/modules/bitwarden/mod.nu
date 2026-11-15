@@ -79,7 +79,7 @@ export def unlock [] {
         print "🔓 Unlocking Bitwarden vault..."
         bw unlock --raw | str trim
     } else {
-        print "❌ Bitwarden is not logged in. Please run 'bw login' first"
+        print --stderr "❌ Bitwarden is not logged in. Please run 'bw login' first"
         exit 1
     }
 
@@ -112,8 +112,8 @@ export def reload [] {
     let stored_session = get_stored_session
 
     if ($stored_session | is-empty) {
-        print "❌ No session found in .env.local"
-        print "   Run 'bitwarden unlock' first"
+        print --stderr "❌ No session found in .env.local"
+        print --stderr "   Run 'bitwarden unlock' first"
         exit 1
     }
 
@@ -135,7 +135,7 @@ export def reload [] {
 export def "get item" [name: string] {
     if not (bw-available) { return null }
     if ($env.BW_SESSION? | default "" | is-empty) {
-        print "❌ BW_SESSION not set. Run 'bitwarden unlock' first"
+        print --stderr "❌ BW_SESSION not set. Run 'bitwarden unlock' first"
         exit 1
     }
 
@@ -151,7 +151,7 @@ export def "get field" [item: string, field: string] {
     if ($item_data | is-empty) { return null }
 
     # Try custom fields first
-    let custom_field = $item_data.fields? | default [] | where name == $field | get 0?.value?
+    let custom_field = $item_data.fields? | default [] | where name == $field | get -o 0?.value?
     if ($custom_field | is-not-empty) { return $custom_field }
 
     # Fall back to standard fields

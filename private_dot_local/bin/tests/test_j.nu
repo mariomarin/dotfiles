@@ -47,8 +47,8 @@ def "test parse-bookmark-lines filters empty" [] {
     assert equal $result.exit_code 0
     let parsed = $result.stdout | str trim | from nuon
     assert equal ($parsed | length) 2
-    assert equal ($parsed.0.value) "feat-x"
-    assert equal ($parsed.1.value) "fix-y"
+    assert equal ($parsed.0?.value) "feat-x"
+    assert equal ($parsed.1?.value) "fix-y"
 }
 
 def "test parse-revision-lines" [] {
@@ -59,10 +59,10 @@ def "test parse-revision-lines" [] {
     assert equal $result.exit_code 0
     let parsed = $result.stdout | str trim | from nuon
     assert equal ($parsed | length) 2
-    assert equal ($parsed.0.value) "abc123"
-    assert equal ($parsed.0.description) "fix the thing"
-    assert equal ($parsed.1.value) "def456"
-    assert equal ($parsed.1.description) "add feature"
+    assert equal ($parsed.0?.value) "abc123"
+    assert equal ($parsed.0?.description) "fix the thing"
+    assert equal ($parsed.1?.value) "def456"
+    assert equal ($parsed.1?.description) "add feature"
 }
 
 def "test resolve-bookmark returns current when set" [] {

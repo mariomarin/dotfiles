@@ -109,7 +109,7 @@ def "collect-issues accumulates all issues" [] {
     ]
     let issues = (null | collect-issues $checks)
     assert (($issues | length) == 3)
-    assert (($issues | get 0) == "issue1")
+    assert (($issues | get -o 0) == "issue1")
 }
 
 @test

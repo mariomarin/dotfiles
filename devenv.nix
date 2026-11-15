@@ -262,7 +262,7 @@ in
       nushell-lint = {
         enable = true;
         name = "nushell-lint";
-        entry = "nu-lint";
+        entry = "nu-lint --config .nu-lint.toml";
         files = "(\\.nu$|/executable_[^.]+$)";
         types = [ ]; # Disable auto-detection of nushell type
         types_or = [ "text" ];

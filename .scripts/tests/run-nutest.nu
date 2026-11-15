@@ -10,7 +10,7 @@ export def find-nutest []: nothing -> any {
         ($nu.home-dir | path join ".cache" "nutest-src")
     ]
     | where {|d| $d | path join "nutest" "mod.nu" | path exists }
-    | get 0?
+    | get -o 0?
 }
 
 export def run-suites [tests_dir: string]: nothing -> list<record> {

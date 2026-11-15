@@ -64,7 +64,7 @@ def check-binary [bin: string]: nothing -> list<record> {
             | where {|l| $l | str contains 'exec'}
             | first
             | parse --regex 'exec "([^"]+)"'
-            | get capture0.0?
+            | get -o capture0.0?
             | default "")
 
         if ($wrapped_path | is-empty) {
@@ -216,7 +216,7 @@ def has-dyld-error [log: string]: nothing -> record {
         $dyld_lines
         | first
         | parse "{prefix}Library not loaded: {path}"
-        | get path.0?
+        | get -o path.0?
         | default ""
     )
     {has_error: true, lib: $lib}
@@ -306,7 +306,7 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
                 let lib = $dyld.lib? | default "unknown library"
                 let exists = $lib | path exists
                 let msg = if $exists {
-                    let bin_date = ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M"
+                    let bin_date = ls -l $bin | get -o modified.0 | format date "%Y-%m-%d %H:%M"
                     let deps = (run-cmd {^otool -L $bin})
                     let nix_deps = if ($deps | is-ok) {
                         $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length
@@ -330,7 +330,7 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
                 let lib = $dyld.lib? | default "unknown library"
                 let exists = $lib | path exists
                 let msg = if $exists {
-                    let bin_date = ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M"
+                    let bin_date = ls -l $bin | get -o modified.0 | format date "%Y-%m-%d %H:%M"
                     let deps = (run-cmd {^otool -L $bin})
                     let nix_deps = if ($deps | is-ok) {
                         $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length
@@ -391,18 +391,18 @@ def show-binary-info [bin: string]: nothing -> nothing {
             | where {|l| $l | str contains 'exec'}
             | first
             | parse --regex 'exec "([^"]+)"'
-            | get capture0.0?
+            | get -o capture0.0?
             | default "unknown")
 
         print $"Binary: ($bin) \(wrapper script\)"
         print $"  → wraps: ($wrapped)"
 
         if ($wrapped != "unknown") and ($wrapped | path exists) {
-            let wrapped_date = ls -l $wrapped | get modified.0 | format date "%Y-%m-%d %H:%M"
+            let wrapped_date = ls -l $wrapped | get -o modified.0 | format date "%Y-%m-%d %H:%M"
             print $"  → binary: ($wrapped_date)"
         }
     } else {
-        let bin_date = ls -l $bin | get modified.0 | format date "%Y-%m-%d %H:%M"
+        let bin_date = ls -l $bin | get -o modified.0 | format date "%Y-%m-%d %H:%M"
         let deps = (run-cmd {^otool -L $bin})
         let nix_deps = if ($deps | is-ok) {
             $deps.value.stdout | lines | where {|l| $l | str contains "/nix/store/"} | length

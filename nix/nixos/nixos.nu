@@ -7,8 +7,8 @@ use ../../.scripts/adt.nu [run-cmd collect-issues report-issues]
 # OS compatibility check
 def check-os [] {
     if $nu.os-info.name == windows {
-        print "❌ Error: NixOS commands are only available on Linux systems"
-        print "   This justfile manages NixOS system configuration and cannot run on Windows"
+        print --stderr "❌ Error: NixOS commands are only available on Linux systems"
+        print --stderr "   This justfile manages NixOS system configuration and cannot run on Windows"
         exit 1
     }
 }

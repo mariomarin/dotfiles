@@ -3,8 +3,8 @@
 
 # Default main function - shows help
 export def main [] {
-    print "Error: This module should be used by nix-darwin or NixOS utilities"
-    print "Use 'nu darwin.nu' or 'nu nixos.nu' instead"
+    print --stderr "Error: This module should be used by nix-darwin or NixOS utilities"
+    print --stderr "Use 'nu darwin.nu' or 'nu nixos.nu' instead"
     exit 1
 }
 
@@ -29,7 +29,7 @@ export def show-help [
 # Doctor issue for a missing or month-old flake.lock, else null
 export def check-lock [lock: path, update: string]: nothing -> oneof<string, nothing> {
     if not ($lock | path exists) { return $"flake.lock missing — run: ($update)" }
-    let modified = ls -l $lock | get 0.modified
+    let modified = ls -l $lock | get -o 0.modified
     let age = (date now) - $modified
     if $age <= 30day { return null }
     $"flake.lock is ($age // 1day) days old — run: ($update)"
