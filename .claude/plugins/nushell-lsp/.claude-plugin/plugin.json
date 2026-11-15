@@ -1,0 +1,19 @@
+{
+  "name": "nushell-lsp",
+  "description": "Nushell language server (nu --lsp) for code intelligence",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mario Marín"
+  },
+  "lspServers": {
+    "nushell": {
+      "command": "nu",
+      "args": [
+        "--lsp"
+      ],
+      "extensionToLanguage": {
+        ".nu": "nushell"
+      }
+    }
+  }
+}

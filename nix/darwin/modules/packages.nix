@@ -4,6 +4,7 @@
 
 {
   environment.systemPackages = with pkgs; [
+    alacritty.terminfo # Alacritty terminal capabilities database
     pkgs-unstable.bruno-cli # API testing CLI
     ext4fuse # Mount ext4 filesystems on macOS (requires macfuse)
     qpdf # PDF transformation and inspection

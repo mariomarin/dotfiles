@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "dotfiles",
+  "description": "Local Claude Code plugins from these dotfiles",
+  "owner": {
+    "name": "Mario Marín"
+  },
+  "plugins": [
+    {
+      "name": "nushell-lsp",
+      "description": "Nushell language server (nu --lsp) for code intelligence",
+      "version": "1.0.0",
+      "source": "./.claude/plugins/nushell-lsp",
+      "category": "development"
+    }
+  ]
+}
