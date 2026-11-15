@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 # Doctor: report only problems with actionable fixes
 
-use adt.nu [run-cmd, collect-issues, "result map", "result unwrap-or"]
+use adt.nu [run-cmd, collect-issues, report-issues, "result map", "result unwrap-or"]
 
 # Missing command as {name, fix}, or null when it is on PATH
 def check-cmd [cmd: string]: nothing -> any {
@@ -9,15 +9,6 @@ def check-cmd [cmd: string]: nothing -> any {
         [] => {name: $cmd, fix: "install it or check PATH"}
         _ => null
     }
-}
-
-# Print the component's issues and fail; silent when there are none
-def report [name: string]: list<any> -> nothing {
-    let issues = $in
-    if ($issues | is-empty) { return }
-    print $"($name):"
-    $issues | each {|i| print $"  ($i)" } | ignore
-    exit 1
 }
 
 # The issue when the command is not on PATH, else null
@@ -33,7 +24,7 @@ def check-path [path: string, issue: string]: nothing -> any {
 def "main chezmoi" [] {
     null | collect-issues [
         {|| check-installed chezmoi "chezmoi not found — install chezmoi" }
-    ] | report chezmoi
+    ] | report-issues chezmoi
 
     null | collect-issues [
         {|| check-path "~/.config/chezmoi/chezmoi.toml" "config missing — run: chezmoi init" }
@@ -43,7 +34,7 @@ def "main chezmoi" [] {
             | result unwrap-or 0
             if $pending > 0 { $"($pending) files out of sync — run: chezmoi apply" }
         }
-    ] | report chezmoi
+    ] | report-issues chezmoi
 }
 
 def "main nvim" [] {
@@ -51,7 +42,7 @@ def "main nvim" [] {
         {|| check-installed nvim "nvim not found — install neovim" }
         {|| check-path "~/.config/nvim/init.lua" "config missing — run: chezmoi apply" }
         {|| check-path "~/.local/share/nvim/lazy" "no plugins — run: just nvim-sync" }
-    ] | report nvim
+    ] | report-issues nvim
 }
 
 def "main tmux" [] {
@@ -59,7 +50,7 @@ def "main tmux" [] {
         {|| check-installed tmux "tmux not found — install tmux" }
         {|| check-path "~/.config/tmux/tmux.conf" "config missing — run: chezmoi apply" }
         {|| check-path "~/.local/share/tmux/plugins" "plugins missing — run: chezmoi apply" }
-    ] | report tmux
+    ] | report-issues tmux
 }
 
 def "main zim" [] {
@@ -73,7 +64,7 @@ def "main zim" [] {
             let has_modules = ($modules_dir | path exists) and (ls $modules_dir | is-not-empty)
             if $installed and not $has_modules { "no modules — run: zsh -c 'source ~/.zim/zimfw.zsh && zimfw install'" }
         }
-    ] | report zim
+    ] | report-issues zim
 }
 
 def "main summary" [] {

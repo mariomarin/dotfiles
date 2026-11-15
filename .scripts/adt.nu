@@ -118,6 +118,15 @@ export def collect-issues [checks: list<closure>]: any -> list<any> {
     | where {|issue| $issue != null and ($issue | is-not-empty)}
 }
 
+# Print "<name>:" and each issue, then exit 1; silent when there are none
+export def report-issues [name: string]: list<any> -> nothing {
+    let issues = $in
+    if ($issues | is-empty) { return }
+    print $"($name):"
+    $issues | each {|issue| print $"  ($issue)" } | ignore
+    exit 1
+}
+
 # Validation map - transform valid value
 export def "validation map" [f: closure]: record -> record {
     match $in {

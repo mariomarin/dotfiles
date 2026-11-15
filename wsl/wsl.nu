@@ -6,6 +6,7 @@ use ../.scripts/adt.nu [
     run-cmd
     is-err
     collect-issues
+    report-issues
     "result map"
     "result unwrap-or"
     "result try"
@@ -263,13 +264,7 @@ def "main info" []: nothing -> nothing {
 # Health check for WSL setup: report only problems
 def "main doctor" []: nothing -> nothing {
     check-os
-    let issues = (find-issues)
-    if ($issues | is-empty) { return }
-    [
-        "wsl:"
-        ...($issues | each {|issue| $"  ($issue)" })
-    ] | print-lines
-    exit 1
+    find-issues | report-issues wsl
 }
 
 # Switch the fresh distro to the flake config (hostname, user, packages)

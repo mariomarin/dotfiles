@@ -2,7 +2,7 @@
 # NixOS management utilities
 
 use ../../.scripts/nix-common.nu
-use ../../.scripts/adt.nu [run-cmd collect-issues]
+use ../../.scripts/adt.nu [run-cmd collect-issues report-issues]
 
 # OS compatibility check
 def check-os [] {
@@ -45,15 +45,10 @@ def "main doctor" [
 ] {
     if $nu.os-info.name != linux { return }
 
-    let issues = null | collect-issues [
+    null | collect-issues [
         {|| nix-common check-lock flake.lock "nix flake update" }
         {|| check-flake }
-    ]
-
-    if ($issues | is-empty) { return }
-    print $"nixos \(($host)\):"
-    for issue in $issues { print $"  ($issue)" }
-    exit 1
+    ] | report-issues $"nixos \(($host)\)"
 }
 
 def check-flake []: nothing -> oneof<string, nothing> {
