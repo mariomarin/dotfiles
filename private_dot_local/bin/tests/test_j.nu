@@ -2,12 +2,11 @@
 use std/assert
 
 # j imports its ADT helpers with `use adt.nu`, resolved relative to the script.
-# In the deployed layout chezmoi puts adt.nu beside j; in-source it only exists
-# as adt.nu.tmpl, so stage both into a tempdir to source j in isolation.
+# Stage both into a tempdir, like chezmoi deploys them, to source j in isolation.
 def with-j [body: closure] {
     let dir = (mktemp -d)
     cp private_dot_local/bin/executable_j $"($dir)/j"
-    cp .scripts/adt.nu $"($dir)/adt.nu"
+    cp private_dot_local/bin/adt.nu $"($dir)/adt.nu"
     let result = (do $body $"($dir)/j")
     rm -rf $dir
     $result

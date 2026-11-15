@@ -9,7 +9,7 @@ const LATIN1 = 0x[e9 74 e9]
 def with-clip [body: closure] {
     let dir = (mktemp -d)
     cp private_dot_local/bin/executable_clip $"($dir)/clip"
-    cp .scripts/adt.nu $"($dir)/adt.nu"
+    cp private_dot_local/bin/adt.nu $"($dir)/adt.nu"
     let result = (do $body $"($dir)/clip")
     rm -rf $dir
     $result
