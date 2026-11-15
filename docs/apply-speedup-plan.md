@@ -16,7 +16,7 @@ drive the `chezmoi` binary, inspect with `chezmoi dump` and `chezmoi state`.
 | Rebuild hash lists are hand-kept; an unlisted module never triggers a rebuild | `run_onchange_{nixos,darwin}-rebuild.nu.tmpl` |
 | About 30 pass-through recipes each spawn a second `just` and `nu` | root `justfile` |
 | `just windows-configure` is called but does not exist | `private_dot_config/topgrade.toml.tmpl` |
-| Inline doctor recipes exceed 10 lines and skip `nushell-check` | nvim, tmux, zim, chezmoi justfiles |
+| Inline doctor recipes exceed 10 lines, skip `nushell-check` | component justfiles |
 
 ## Sentinel layers
 
@@ -71,7 +71,7 @@ failing before `nu` exists during bootstrap.
 | ------- | --- |
 | `chezmoi data --format json` | Platform and features in nu scripts (`nix/justfile`, `doctor.nu` component list) |
 | `chezmoi dump` | CI-only check that every template renders; holds secrets, never cached |
-| `output "git" "-C" .chezmoi.sourceDir "rev-parse" "HEAD:nix"` | One tree hash replaces the hand-kept lists in the rebuild templates |
+| `output "git" "-C" .chezmoi.sourceDir "rev-parse" "HEAD:nix"` | One tree hash replaces the hand-kept hash lists |
 
 The tree hash only sees committed changes, matching the commit-then-apply workflow.
 
