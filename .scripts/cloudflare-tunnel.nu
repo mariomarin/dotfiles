@@ -19,7 +19,7 @@ def extract-url [] {
 def "main url" [] {
     let url = extract-url
     if ($url | is-empty) {
-        print "❌ No tunnel URL found in log"
+        print --stderr "❌ No tunnel URL found in log"
         exit 1
     }
     let host = $url | str replace "https://" ""

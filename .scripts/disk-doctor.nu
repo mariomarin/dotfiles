@@ -254,7 +254,7 @@ def duplicate-groups []: list<record> -> list<record> {
         let copies = $group | where not $it.is_original
         {
             kind: duplicates
-            keep: ($group | where is_original | get 0?.path | default "?")
+            keep: ($group | where is_original | get -o 0?.path | default "?")
             copies: ($copies | length)
             wasted: ($copies | each { reclaimable $kept } | math sum | into filesize)
         }

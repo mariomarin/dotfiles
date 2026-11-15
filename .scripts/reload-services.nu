@@ -65,7 +65,7 @@ def reload-systemctl [service: string, --user]: nothing -> record {
 }
 
 # Reload a service by running a command (generic)
-def reload-command [check: string, reload: string, name: string]: nothing -> record {
+def reload-command [check: string, reload: string]: nothing -> record {
     let running = (run-cmd {^$nu.current-exe -c $check})
     if ($running | is-err) {
         return (ok {skipped: "not running"})
@@ -117,7 +117,7 @@ def process-service [svc: record, state: record] {
         "launchctl" => { reload-launchctl $svc.service }
         "systemctl" => { reload-systemctl $svc.service }
         "systemctl-user" => { reload-systemctl $svc.service --user }
-        "command" => { reload-command $svc.check $svc.reload $name }
+        "command" => { reload-command $svc.check $svc.reload }
         "windows-task" => { reload-windows-task $svc.task $svc.exe }
         _ => {err $"unknown type: ($svc.type)"}
     }

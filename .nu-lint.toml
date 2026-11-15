@@ -1,0 +1,25 @@
+# nu-lint rules that do not fit this repo. Not auto-discovered: the
+# nushell-lint hook passes it with --config.
+
+[rules]
+# Errors are handled through adt.nu (run-cmd, result try), which the linter
+# cannot see through; unwrapped failures already propagate as errors.
+catch_builtin_error_try = "off"
+unhandled_external_error = "off"
+try_instead_of_do = "off"
+
+# `x? == true` is the null-safe form used by is-ok / is-valid.
+do_not_compare_booleans = "off"
+
+# Suggested rewrites change behaviour: `| ignore` drops stdout, `has` accepts
+# empty values, `sys host` reports the distro instead of the kernel on Linux.
+ignore_over_dev_null = "off"
+get_optional_to_has = "off"
+uname_to_sys_host = "off"
+default_empty_string_masks_missing = "off"
+
+# Signature style choices: helpers take lists and several positionals, and
+# report-issues exits on purpose.
+list_param_to_variadic = "off"
+max_positional_params = "off"
+exit_only_in_main = "off"

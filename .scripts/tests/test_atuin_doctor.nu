@@ -24,10 +24,10 @@ def "test parse-tracing-lines keeps levels and targets" [] {
     ]
     let parsed = doctor-eval $"($lines | to nuon) | parse-tracing-lines"
     assert equal ($parsed | get level) [ERROR INFO WARN]
-    assert equal $parsed.0.target "atuin_client::sync"
-    assert equal $parsed.0.msg "failed to sync: 413 Payload Too Large"
-    assert equal $parsed.2.msg "no target here"
-    assert equal $parsed.0.ts 2026-10-06T10:00:00.123456Z
+    assert equal $parsed.0?.target "atuin_client::sync"
+    assert equal $parsed.0?.msg "failed to sync: 413 Payload Too Large"
+    assert equal $parsed.2?.msg "no target here"
+    assert equal $parsed.0?.ts 2026-10-06T10:00:00.123456Z
 }
 
 def "test parse-atuin-doctor skips banner" [] {
@@ -66,8 +66,8 @@ def "test sync-issues" [] {
 }
 
 def "test version-issues" [] {
-    assert equal (doctor-eval "version-issues 18.21.0 18.16.1").0.severity "warning"
-    assert equal (doctor-eval "version-issues 19.0.0 18.16.1").0.severity "error"
+    assert equal (doctor-eval "version-issues 18.21.0 18.16.1").0?.severity "warning"
+    assert equal (doctor-eval "version-issues 19.0.0 18.16.1").0?.severity "error"
     assert equal (doctor-eval "version-issues 18.16.1 18.21.0") []
     assert equal (doctor-eval "version-issues 18.21.0 18.21.0") []
 }
@@ -88,6 +88,6 @@ def "test summarize-problems dedupes and counts" [] {
     let issues = doctor-eval $"($problems | to nuon) | summarize-problems 'client log'"
     assert equal ($issues | length) 2
     # newest last, repeats counted
-    assert equal $issues.0.message "database error"
-    assert equal $issues.1.message "sync failed (x2)"
+    assert equal $issues.0?.message "database error"
+    assert equal $issues.1?.message "sync failed (x2)"
 }
