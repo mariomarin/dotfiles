@@ -507,7 +507,7 @@ manifests in `updatecli/updatecli.d/`, run by `update-deps.yml` (needs an `UPDAT
 ### Automatic Updates
 
 - Topgrade runs automatically after `chezmoi apply` to keep everything in sync
-- Skip with: `CHEZMOI_SKIP_UPDATES=1 chezmoi apply` or `make quick-apply`
+- Skip with: `CHEZMOI_SKIP_UPDATES=1 chezmoi apply` or `just quick-apply`
 - Configuration in `private_dot_config/topgrade.toml`
 
 ### Manual Updates
@@ -539,11 +539,11 @@ just nixos
 
 # Component operations (nvim, tmux, zim)
 just <component>        # Default action for component
-just <component>-health # Check component health
+just <component>-doctor # Check component health
 
 # Formatting and linting
-just format             # Format all files
-just lint               # Run all linting checks
+just format             # Run all hooks on all files (mutating)
+just check              # Run hooks on files changed since main, plus tests
 ```
 
 **Note:** The repository uses `justfile` for task automation across all components.
@@ -663,7 +663,7 @@ The repository uses Bitwarden CLI to manage secrets (SSH keys, API tokens, etc.)
 2. Use `direnv` with `direnv allow` to automatically load project-specific tools
 3. This ensures reproducible development environments across different projects
 
-This repository uses `devenv.nix` for development tools. Use `make format` and `make lint` to format and check files.
+This repository uses `devenv.nix` for development tools. Use `just format` and `just check` to format and check files.
 
 ### Formatting Tools Configuration
 
