@@ -80,9 +80,18 @@ def "main summary" [] {
     exit 1
 }
 
+# Doctors that only make sense on the current OS
+def platform-components []: nothing -> list<string> {
+    match $nu.os-info.name {
+        "linux" => ["nixos"]
+        "macos" => ["darwin"]
+        "windows" => ["wsl"]
+        _ => []
+    }
+}
+
 def "main all" [] {
-    let components = [
-        "nixos"
+    let components = (platform-components) ++ [
         "chezmoi"
         "nvim"
         "tmux"
