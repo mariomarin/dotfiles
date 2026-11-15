@@ -171,12 +171,12 @@ in
         # subject: max 50 chars, imperative mood, no period
       };
 
-      # Post-commit hook to run just (applies chezmoi changes)
-      # Just automatically loads .env.local via 'set dotenv-load'
+      # Post-commit hook: runs just (chezmoi apply) unless the commit only
+      # touched repo-only paths. Just loads .env.local via 'set dotenv-load'
       post-commit = {
         enable = true;
         name = "Apply changes with just";
-        entry = lib.mkForce "just";
+        entry = lib.mkForce "nu .scripts/post-commit-apply.nu";
         language = "system";
         pass_filenames = false;
         always_run = true;
