@@ -1,6 +1,8 @@
 #!/usr/bin/env nu
 # Post-commit: apply dotfiles unless the commit only touched paths chezmoi never reads
 
+use adt.nu [run-cmd, "result map", "result unwrap-or"]
+
 # Repo paths that neither chezmoi nor its run_onchange scripts use
 const UNAPPLIED = [
     '^docs/'
@@ -22,15 +24,15 @@ def is-applied [path: string]: nothing -> bool {
     $UNAPPLIED | all {|pattern| $path !~ $pattern }
 }
 
-# Files changed by HEAD, or null when there is no parent commit to diff against
-def find-changed []: nothing -> any {
-    let diff = do { git diff --name-only HEAD~1 HEAD } | complete
-    if $diff.exit_code != 0 { return null }
-    $diff.stdout | lines
+# Result of the files changed by HEAD; err when there is no parent commit to diff against
+def changed-files []: nothing -> record {
+    run-cmd { git diff --name-only HEAD~1 HEAD } | result map {|out| $out.stdout | lines }
 }
 
 def main [] {
-    let changed = find-changed
-    if $changed != null and ($changed | all {|path| not (is-applied $path) }) { return }
+    let repo_only = changed-files
+    | result map {|paths| $paths | all {|path| not (is-applied $path) } }
+    | result unwrap-or false
+    if $repo_only { return }
     just
 }

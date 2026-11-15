@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 # Doctor: report only problems with actionable fixes
 
-use adt.nu [run-cmd]
+use adt.nu [run-cmd, collect-issues, "result map", "result unwrap-or"]
 
 # Missing command as {name, fix}, or null when it is on PATH
 def check-cmd [cmd: string]: nothing -> any {
@@ -30,42 +30,50 @@ def check-path [path: string, issue: string]: nothing -> any {
 }
 
 def "main chezmoi" [] {
-    report chezmoi ([(check-installed chezmoi "chezmoi not found — install chezmoi")] | compact)
+    null | collect-issues [
+        {|| check-installed chezmoi "chezmoi not found — install chezmoi" }
+    ] | report chezmoi $in
 
-    let status = do { chezmoi status } | complete
-    let pending = if $status.exit_code == 0 { $status.stdout | str trim | lines | length } else { 0 }
-    report chezmoi ([
-        (check-path "~/.config/chezmoi/chezmoi.toml" "config missing — run: chezmoi init")
-        (if $pending > 0 { $"($pending) files out of sync — run: chezmoi apply" })
-    ] | compact)
+    null | collect-issues [
+        {|| check-path "~/.config/chezmoi/chezmoi.toml" "config missing — run: chezmoi init" }
+        {||
+            let pending = run-cmd { chezmoi status }
+            | result map {|out| $out.stdout | str trim | lines | length }
+            | result unwrap-or 0
+            if $pending > 0 { $"($pending) files out of sync — run: chezmoi apply" }
+        }
+    ] | report chezmoi $in
 }
 
 def "main nvim" [] {
-    report nvim ([
-        (check-installed nvim "nvim not found — install neovim")
-        (check-path "~/.config/nvim/init.lua" "config missing — run: chezmoi apply")
-        (check-path "~/.local/share/nvim/lazy" "no plugins — run: just nvim-sync")
-    ] | compact)
+    null | collect-issues [
+        {|| check-installed nvim "nvim not found — install neovim" }
+        {|| check-path "~/.config/nvim/init.lua" "config missing — run: chezmoi apply" }
+        {|| check-path "~/.local/share/nvim/lazy" "no plugins — run: just nvim-sync" }
+    ] | report nvim $in
 }
 
 def "main tmux" [] {
-    report tmux ([
-        (check-installed tmux "tmux not found — install tmux")
-        (check-path "~/.config/tmux/tmux.conf" "config missing — run: chezmoi apply")
-        (check-path "~/.local/share/tmux/plugins" "plugins missing — run: chezmoi apply")
-    ] | compact)
+    null | collect-issues [
+        {|| check-installed tmux "tmux not found — install tmux" }
+        {|| check-path "~/.config/tmux/tmux.conf" "config missing — run: chezmoi apply" }
+        {|| check-path "~/.local/share/tmux/plugins" "plugins missing — run: chezmoi apply" }
+    ] | report tmux $in
 }
 
 def "main zim" [] {
     let zim_dir = "~/.zim" | path expand
     let modules_dir = $zim_dir | path join modules
     let installed = $zim_dir | path exists
-    let no_modules = $installed and ((not ($modules_dir | path exists)) or (ls $modules_dir | is-empty))
-    report zim ([
-        (if not $installed { "zim not installed — run: curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh" })
-        (check-path "~/.config/zim/zimrc" "zimrc missing — run: chezmoi apply")
-        (if $no_modules { "no modules — run: zsh -c 'source ~/.zim/zimfw.zsh && zimfw install'" })
-    ] | compact)
+    null | collect-issues [
+        {|| if not $installed { "zim not installed — run: curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh" } }
+        {|| check-path "~/.config/zim/zimrc" "zimrc missing — run: chezmoi apply" }
+        {||
+            if not $installed { return null }
+            if ($modules_dir | path exists) and (ls $modules_dir | is-not-empty) { return null }
+            "no modules — run: zsh -c 'source ~/.zim/zimfw.zsh && zimfw install'"
+        }
+    ] | report zim $in
 }
 
 def "main summary" [] {
