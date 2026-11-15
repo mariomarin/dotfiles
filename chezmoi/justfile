@@ -17,10 +17,6 @@ apply:
 diff:
     chezmoi diff
 
-# Quick apply without updates
-quick-apply:
-    CHEZMOI_SKIP_UPDATES=1 chezmoi apply --no-tty
-
 # Initialize chezmoi with repository
 init REPO="git@github.com:mariomarin/dotfiles.git":
     chezmoi init {{ REPO }} --apply
