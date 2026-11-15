@@ -5,7 +5,7 @@ use std/assert
 def with-peek [body: closure] {
     let dir = (mktemp -d)
     cp private_dot_local/bin/executable_peek $"($dir)/peek"
-    cp .scripts/adt.nu $"($dir)/adt.nu"
+    cp private_dot_local/bin/adt.nu $"($dir)/adt.nu"
     let result = (do $body $"($dir)/peek")
     rm -rf $dir
     $result

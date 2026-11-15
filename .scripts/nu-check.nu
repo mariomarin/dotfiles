@@ -42,13 +42,6 @@ def main [...files: string] {
           return null
         }
 
-        # Skip scripts importing a sibling adt.nu that exists only once
-        # deployed (chezmoi renders it from adt.nu.tmpl). Their tests
-        # ("test script parses") stage adt.nu alongside and parse them.
-        if ($path | path dirname | path join "adt.nu.tmpl" | path exists) {
-          return null
-        }
-
         let shebang = (
           try {
             open $path --raw | lines | first | default ""
