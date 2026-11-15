@@ -19,18 +19,7 @@ clean:
 
 # Doctor: report only problems
 doctor:
-    #!/usr/bin/env nu
-    mut issues = []
-    let nvim = (do { ^nvim --version } | complete)
-    if $nvim.exit_code != 0 { $issues = ($issues | append "nvim not found — install neovim") }
-    let config = ("~/.config/nvim/init.lua" | path expand)
-    if not ($config | path exists) { $issues = ($issues | append "config missing — run: chezmoi apply") }
-    let lazy_dir = ("~/.local/share/nvim/lazy" | path expand)
-    if not ($lazy_dir | path exists) { $issues = ($issues | append "no plugins — run: just nvim-sync") }
-    if ($issues | is-empty) { return }
-    print "nvim:"
-    $issues | each {|i| print $"  ($i)" } | ignore
-    exit 1
+    nu ../../.scripts/doctor.nu nvim
 
 # Show plugin status
 plugins:

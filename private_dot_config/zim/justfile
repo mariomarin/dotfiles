@@ -59,19 +59,4 @@ completions:
 
 # Doctor: report only problems
 doctor:
-    #!/usr/bin/env nu
-    mut issues = []
-    let zim_dir = ("~/.zim" | path expand)
-    if not ($zim_dir | path exists) { $issues = ($issues | append "zim not installed — run: curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh") }
-    let zimrc = ("~/.config/zim/zimrc" | path expand)
-    if not ($zimrc | path exists) { $issues = ($issues | append "zimrc missing — run: chezmoi apply") }
-    if ($zim_dir | path exists) {
-        let modules_dir = ($zim_dir | path join "modules")
-        if not ($modules_dir | path exists) or (ls $modules_dir | is-empty) {
-            $issues = ($issues | append "no modules — run: zsh -c 'source ~/.zim/zimfw.zsh && zimfw install'")
-        }
-    }
-    if ($issues | is-empty) { return }
-    print "zim:"
-    $issues | each {|i| print $"  ($i)" } | ignore
-    exit 1
+    nu ../../.scripts/doctor.nu zim

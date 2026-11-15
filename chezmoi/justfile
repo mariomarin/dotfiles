@@ -43,18 +43,4 @@ update:
 
 # Health check
 doctor:
-    #!/usr/bin/env nu
-    mut issues = []
-    let cm = (do { ^chezmoi --version } | complete)
-    if $cm.exit_code != 0 { $issues = ($issues | append "chezmoi not found — install chezmoi"); print "chezmoi:"; $issues | each {|i| print $"  ($i)" } | ignore; exit 1 }
-    let config = ("~/.config/chezmoi/chezmoi.toml" | path expand)
-    if not ($config | path exists) { $issues = ($issues | append "config missing — run: chezmoi init") }
-    let status = (do { ^chezmoi status } | complete)
-    if $status.exit_code == 0 and ($status.stdout | str trim | is-not-empty) {
-        let count = ($status.stdout | lines | length)
-        $issues = ($issues | append $"($count) files out of sync — run: chezmoi apply")
-    }
-    if ($issues | is-empty) { return }
-    print "chezmoi:"
-    $issues | each {|i| print $"  ($i)" } | ignore
-    exit 1
+    nu ../.scripts/doctor.nu chezmoi

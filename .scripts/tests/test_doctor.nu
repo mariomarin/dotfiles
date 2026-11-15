@@ -14,7 +14,7 @@ def "test has subcommands" [] {
     | get stdout
     | lines
 
-    ["summary" "all"] | each { |sub|
+    ["summary" "all" "chezmoi" "nvim" "tmux" "zim"] | each { |sub|
         assert ($cmds | any {|c| $c =~ $sub }) $"missing ($sub) subcommand"
     } | ignore
 }
