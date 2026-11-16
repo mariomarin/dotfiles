@@ -9,6 +9,8 @@ def is-tpm-unconfigured [stderr: string]: nothing -> bool {
 }
 
 def run-tpm [script: string, plugin_path: string]: nothing -> record {
+
+    # nu-lint-ignore: external_script_as_argument
     match (with-env {TMUX_PLUGIN_MANAGER_PATH: $plugin_path} { run-cmd {^$script} }) {
         {ok: true} => (ok null)
         {error: $failure} if (is-tpm-unconfigured $failure.stderr) => (ok null)

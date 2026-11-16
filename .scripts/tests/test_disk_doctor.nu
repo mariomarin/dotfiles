@@ -14,6 +14,8 @@ const RMLINT_JSON = r#'[
 ]'#
 
 def eval [expr: string]: nothing -> any {
+
+    # nu-lint-ignore: missing_output_type
     let result = do { ^$nu.current-exe -n -c $"source ($SCRIPT); ($expr) | to nuon" } | complete
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
@@ -34,11 +36,11 @@ def facts [overrides: record = {}]: nothing -> string {
     } | merge $overrides | to nuon
 }
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
-def "test parse-du converts KiB to bytes" [] {
+def "test parse-du converts KiB to bytes" []: nothing -> nothing {
     let input = "4\t/a\n2\t/b c" | to nuon
     let expected = [
         {
@@ -53,20 +55,20 @@ def "test parse-du converts KiB to bytes" [] {
     assert equal (eval $"($input) | parse-du") $expected
 }
 
-def "test parse-du empty input" [] {
+def "test parse-du empty input" []: nothing -> nothing {
     assert equal (eval "'' | parse-du") []
 }
 
-def "test parse-rmlint drops header and footer" [] {
+def "test parse-rmlint drops header and footer" []: nothing -> nothing {
     let lint = eval $"($RMLINT_JSON | to nuon) | parse-rmlint"
     assert equal ($lint | length) 4
 }
 
-def "test parse-rmlint empty input" [] {
+def "test parse-rmlint empty input" []: nothing -> nothing {
     assert equal (eval "'' | parse-rmlint") []
 }
 
-def "test parse-snapshots skips header" [] {
+def "test parse-snapshots skips header" []: nothing -> nothing {
     let input = (
         "Snapshots for disk /:\ncom.apple.os.update-AB\ncom.apple.TimeMachine.2026-09-27-101500.local"
         | to nuon
@@ -75,36 +77,36 @@ def "test parse-snapshots skips header" [] {
     assert equal $names ["com.apple.os.update-AB" "com.apple.TimeMachine.2026-09-27-101500.local"]
 }
 
-def "test parse-docker-df reads json lines" [] {
+def "test parse-docker-df reads json lines" []: nothing -> nothing {
     let input = '{"Type":"Images","Size":"3.2GB","Reclaimable":"1.1GB (34%)"}' | to nuon
     let row = eval $"($input) | parse-docker-df | first"
     assert equal $row {kind: docker, item: Images, size: 3200000000b, reclaimable: "1.1GB (34%)"}
 }
 
-def "test is-backup-dir matches basename only" [] {
+def "test is-backup-dir matches basename only" []: nothing -> nothing {
     let result = (
         eval "['/h/backup-dendrite' '/h/Old Backups' '/h/docs' '/backup/docs'] | each { is-backup-dir }"
     )
     assert equal $result [true true false false]
 }
 
-def "test volume-of picks longest mount prefix" [] {
+def "test volume-of picks longest mount prefix" []: nothing -> nothing {
     let disks = [[mount, total, free]; ["/", 1000b, 900b], ["/Users", 1000b, 50b]] | to nuon
     let volume = eval $"($disks) | volume-of /Users/u | first"
     assert equal $volume.mount "/Users"
     assert equal $volume.pct 95
 }
 
-def "test volume-of no matching mount" [] {
+def "test volume-of no matching mount" []: nothing -> nothing {
     assert equal (eval "[[mount total free]; ['/data' 1b 1b]] | volume-of /Users/u") []
 }
 
-def "test redundant-files excludes originals" [] {
+def "test redundant-files excludes originals" []: nothing -> nothing {
     let paths = eval $"($RMLINT_JSON | to nuon) | parse-rmlint | redundant-files | get path"
     assert equal $paths ["/r/b/big" "/r/b/big2" "/r/a/empty"]
 }
 
-def "test duplicate-groups sums wasted copies" [] {
+def "test duplicate-groups sums wasted copies" []: nothing -> nothing {
     let groups = eval $"($RMLINT_JSON | to nuon) | parse-rmlint | duplicate-groups"
     assert equal $groups [
         {
@@ -121,7 +123,7 @@ const HARDLINK_JSON = r#'[
   {"type": "duplicate_file", "path": "/r/b", "size": 100, "disk_id": 1, "inode": 7, "is_original": false}
 ]'#
 
-def "test duplicate-groups hardlinks have no checksum and waste nothing" [] {
+def "test duplicate-groups hardlinks have no checksum and waste nothing" []: nothing -> nothing {
     let groups = eval $"($HARDLINK_JSON | to nuon) | parse-rmlint | duplicate-groups"
     assert equal $groups [
         {
@@ -133,7 +135,7 @@ def "test duplicate-groups hardlinks have no checksum and waste nothing" [] {
     ]
 }
 
-def "test redundant-files hardlink frees nothing" [] {
+def "test redundant-files hardlink frees nothing" []: nothing -> nothing {
     let sizes = (
         eval $"($HARDLINK_JSON | to nuon) | parse-rmlint | redundant-files | get size"
     )
@@ -142,11 +144,11 @@ def "test redundant-files hardlink frees nothing" [] {
     ]
 }
 
-def "test diagnose with nothing found yields only volume" [] {
+def "test diagnose with nothing found yields only volume" []: nothing -> nothing {
     assert equal (eval $"(facts) | diagnose | get kind") [volume]
 }
 
-def "test diagnose covers every source" [] {
+def "test diagnose covers every source" []: nothing -> nothing {
     let full = (facts {
         stray_scripts: ["/r/rmlint.sh"]
         snapshots: "com.apple.os.update-AB", 
@@ -168,7 +170,7 @@ def "test diagnose covers every source" [] {
     ]
 }
 
-def "test render clean report" [] {
+def "test render clean report" []: nothing -> nothing {
     let text = (
         eval $"(facts) | diagnose | render {root: /r, top: 5, list: false, caches: /c} | ansi strip"
     )
@@ -176,7 +178,7 @@ def "test render clean report" [] {
     assert not ($text | str contains "next steps")
 }
 
-def "test render flags nearly full disk" [] {
+def "test render flags nearly full disk" []: nothing -> nothing {
     let text = (
         eval $"(facts {disks: [[mount total free]; ['/' 100b 5b]]}) | diagnose | render {root: /r, top: 5, list: false, caches: /c}"
     )
@@ -184,7 +186,7 @@ def "test render flags nearly full disk" [] {
     assert ($text | str contains "nearly full")
 }
 
-def "test render --list shows relative paths" [] {
+def "test render --list shows relative paths" []: nothing -> nothing {
     let text = (
         eval $"(facts {rmlint: $RMLINT_JSON}) | diagnose | render {root: /r, top: 5, list: true, caches: /c} | ansi strip"
     )
@@ -192,24 +194,24 @@ def "test render --list shows relative paths" [] {
     assert ($text | str contains "next steps")
 }
 
-def "test render warns about stray rmlint.sh" [] {
+def "test render warns about stray rmlint.sh" []: nothing -> nothing {
     let text = (
         eval $"(facts {stray_scripts: ['/r/rmlint.sh']}) | diagnose | render {root: /r, top: 5, list: false, caches: /c}"
     )
     assert ($text | str contains "DELETES files")
 }
 
-def "test run-with-timeout returns the completed command" [] {
+def "test run-with-timeout returns the completed command" []: nothing -> nothing {
     let res = eval "run-with-timeout 5sec { ^printf hi }"
     assert equal $res.exit_code 0
     assert equal $res.stdout "hi"
 }
 
-def "test run-with-timeout gives up on a hung command" [] {
+def "test run-with-timeout gives up on a hung command" []: nothing -> nothing {
     assert equal (eval "run-with-timeout 300ms { ^sleep 30 }") null
 }
 
-def "test main never modifies scanned files" [] {
+def "test main never modifies scanned files" []: nothing -> nothing {
     let dir = (mktemp --directory --tmpdir disk-doctor-test.XXXXXX)
     "same" | save ($dir | path join a.txt)
     "same" | save ($dir | path join b.txt)

@@ -4,11 +4,11 @@ use helpers.nu [with-fake-bins]
 
 const SCRIPT = ".scripts/krew.nu"
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
-def "test parse-krewfile filters comments and blanks" [] {
+def "test parse-krewfile filters comments and blanks" []: nothing -> nothing {
     let input = "# comment\nctx\nns\n\n# another\nindex/krew\noidc-login"
     let result = do {
         ^$nu.current-exe -n -c $"source .scripts/krew.nu; parse-krewfile '($input)' | to nuon"
@@ -18,7 +18,7 @@ def "test parse-krewfile filters comments and blanks" [] {
     assert equal $parsed ["ctx" "ns" "oidc-login"]
 }
 
-def "test parse-krewfile empty input" [] {
+def "test parse-krewfile empty input" []: nothing -> nothing {
     let result = do {
         ^$nu.current-exe -n -c "source .scripts/krew.nu; parse-krewfile '' | to nuon"
     } | complete
@@ -37,7 +37,7 @@ def with-fake-krew [krewfile: string, body: closure]: nothing -> record {
     }
 }
 
-def "test sync exits 1 and names failed plugins" [] {
+def "test sync exits 1 and names failed plugins" []: nothing -> nothing {
     let r = with-fake-krew "ctx\nbad-one\nns\n" {
         do { nu -n $SCRIPT sync } | complete
     }
@@ -46,7 +46,7 @@ def "test sync exits 1 and names failed plugins" [] {
     assert not ($r.stderr | str contains "ctx")
 }
 
-def "test sync succeeds quietly" [] {
+def "test sync succeeds quietly" []: nothing -> nothing {
     let r = with-fake-krew "ctx\nns\n" {
         do { nu -n $SCRIPT sync } | complete
     }
@@ -54,7 +54,7 @@ def "test sync succeeds quietly" [] {
     assert equal $r.stderr ""
 }
 
-def "test install appends a plugin only once" [] {
+def "test install appends a plugin only once" []: nothing -> nothing {
     let r = with-fake-krew "ctx\n" {
         do {
             nu -n $SCRIPT install ctx

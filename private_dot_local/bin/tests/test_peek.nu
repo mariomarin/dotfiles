@@ -2,7 +2,7 @@
 use std/assert
 
 # peek imports adt.nu relative to itself; stage both like chezmoi deploys them
-def with-peek [body: closure] {
+def with-peek [body: closure]: nothing -> record {
     let dir = (mktemp -d)
     cp private_dot_local/bin/executable_peek $"($dir)/peek"
     cp private_dot_local/bin/adt.nu $"($dir)/adt.nu"
@@ -12,6 +12,8 @@ def with-peek [body: closure] {
 }
 
 def peek-eval [snippet: string]: nothing -> any {
+
+    # nu-lint-ignore: missing_output_type
     let result = with-peek {|peek|
         do { ^$nu.current-exe -n -c $"source ($peek); ($snippet) | to nuon" } | complete
     }
@@ -19,7 +21,7 @@ def peek-eval [snippet: string]: nothing -> any {
     $result.stdout | str trim | from nuon
 }
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     let result = with-peek {|peek|
         do { ^$nu.current-exe -n -c $"source ($peek)" } | complete
     }
@@ -38,13 +40,13 @@ def "test select-opener priority" [] {
     | ignore
 }
 
-def "test opener-argv" [] {
+def "test opener-argv" []: nothing -> nothing {
     assert equal (peek-eval "opener-argv nc [https://x]") [nc -w1 localhost "2226"]
     assert equal (peek-eval "opener-argv open [a b]") [/usr/bin/open a b]
     assert equal (peek-eval "opener-argv xdg-open [https://x]") [xdg-open https://x]
 }
 
-def "test is-ssh checks all ssh vars" [] {
+def "test is-ssh checks all ssh vars" []: nothing -> nothing {
     let ssh_env = {SSH_TTY: null, SSH_CONNECTION: "1.2.3.4 1 5.6.7.8 22", SSH_CLIENT: null}
     let result = with-peek {|peek| with-env $ssh_env { do { ^$nu.current-exe -n -c $"source ($peek); is-ssh | to nuon" } | complete } }
     assert equal ($result.stdout | str trim) "true"
@@ -52,13 +54,13 @@ def "test is-ssh checks all ssh vars" [] {
 
 # Port 1: nothing listens, so nc fails like a missing tunnel (and never
 # reaches a real xdg-open-svc on 2226)
-def "test run-opener reports nc failures with a hint" [] {
+def "test run-opener reports nc failures with a hint" []: nothing -> nothing {
     let r = peek-eval "run-opener [nc -w1 localhost 1] https://example.invalid"
     assert equal $r.ok false
     assert ($r.error | str contains "xdg-open-svc may not be running") $r.error
 }
 
-def "test run-opener reports missing openers" [] {
+def "test run-opener reports missing openers" []: nothing -> nothing {
     let r = peek-eval "run-opener [peek-no-such-opener x] ''"
     assert equal $r.ok false
     assert ($r.error | str contains "peek-no-such-opener not found in PATH") $r.error

@@ -1,5 +1,7 @@
 # Git aliases module for nushell
 # Port of zim git module with 'g' prefix
+# Wrappers pass the external command's output straight through.
+# nu-lint-ignore-file: missing_output_type
 
 # Log formats
 const git_log_fuller_format = '%C(bold yellow)commit %H%C(auto)%d%n%C(bold)Author: %C(blue)%an <%ae> %C(cyan)%ai (%ar)%n%C(bold)Commit: %C(blue)%cn <%ce> %C(cyan)%ci (%cr)%C(reset)%n%+B'
@@ -36,7 +38,7 @@ export alias gcp = git cherry-pick
 export alias gcP = git cherry-pick --no-commit
 export alias gcr = git revert
 export alias gcR = git reset "HEAD^"
-export def gcs [...args] { git show $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def gcs [...args: string] { git show $"--pretty=format:($git_log_fuller_format)" ...$args }
 export alias gcS = git commit --verbose -S
 export alias gcu = git commit --fixup
 export alias gcU = git commit --squash
@@ -97,15 +99,15 @@ export alias gix = git rm --cached -r
 export alias giX = git rm --cached -rf
 
 # Log (gl)
-export def gl [...args] { git log --date-order $"--pretty=format:($git_log_fuller_format)" ...$args }
-export def gls [...args] { git log --date-order --stat $"--pretty=format:($git_log_fuller_format)" ...$args }
-export def gld [...args] { git log --date-order --stat --patch $"--pretty=format:($git_log_fuller_format)" ...$args }
-export def glf [...args] { git log --date-order --stat --patch --follow $"--pretty=format:($git_log_fuller_format)" ...$args }
-export def glo [...args] { git log --date-order $"--pretty=format:($git_log_oneline_format)" ...$args }
-export def glO [...args] { git log --date-order $"--pretty=format:($git_log_oneline_medium_format)" ...$args }
-export def glg [...args] { git log --date-order --graph $"--pretty=format:($git_log_oneline_format)" ...$args }
-export def glG [...args] { git log --date-order --graph $"--pretty=format:($git_log_oneline_medium_format)" ...$args }
-export def glv [...args] { git log --date-order --show-signature $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def gl [...args: string] { git log --date-order $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def gls [...args: string] { git log --date-order --stat $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def gld [...args: string] { git log --date-order --stat --patch $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def glf [...args: string] { git log --date-order --stat --patch --follow $"--pretty=format:($git_log_fuller_format)" ...$args }
+export def glo [...args: string] { git log --date-order $"--pretty=format:($git_log_oneline_format)" ...$args }
+export def glO [...args: string] { git log --date-order $"--pretty=format:($git_log_oneline_medium_format)" ...$args }
+export def glg [...args: string] { git log --date-order --graph $"--pretty=format:($git_log_oneline_format)" ...$args }
+export def glG [...args: string] { git log --date-order --graph $"--pretty=format:($git_log_oneline_medium_format)" ...$args }
+export def glv [...args: string] { git log --date-order --show-signature $"--pretty=format:($git_log_fuller_format)" ...$args }
 export alias glc = git shortlog --summary --numbered
 export alias glr = git reflog
 

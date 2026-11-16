@@ -65,7 +65,7 @@ def check-flake []: nothing -> oneof<string, nothing> {
 }
 
 # Show help
-def "main help" [] {
+def "main help" []: nothing -> nothing {
     nix-common show-help "nix-darwin Utilities" "darwin.nu" [
         {name: "first-time <host>", description: "First-time nix-darwin setup"}
         {name: "hosts <host>", description: "Show available configurations"}
@@ -74,6 +74,6 @@ def "main help" [] {
     ]
 }
 
-def main [] {
+def main []: nothing -> nothing {
     main help
 }

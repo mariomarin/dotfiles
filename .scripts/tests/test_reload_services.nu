@@ -3,11 +3,11 @@ use std/assert
 
 const SCRIPT = ".scripts/reload-services.nu"
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
-def "test has-changed detects new service" [] {
+def "test has-changed detects new service" []: nothing -> nothing {
     let test_script = $"
         source ($SCRIPT)
         has-changed 'kanata' 'newhash' {} | to nuon
@@ -16,7 +16,7 @@ def "test has-changed detects new service" [] {
     assert equal $result true
 }
 
-def "test has-changed detects changed hash" [] {
+def "test has-changed detects changed hash" []: nothing -> nothing {
     let test_script = $"
         source ($SCRIPT)
         has-changed 'kanata' 'newhash' { kanata: 'oldhash' } | to nuon
@@ -25,7 +25,7 @@ def "test has-changed detects changed hash" [] {
     assert equal $result true
 }
 
-def "test has-changed returns false for same hash" [] {
+def "test has-changed returns false for same hash" []: nothing -> nothing {
     let test_script = $"
         source ($SCRIPT)
         has-changed 'kanata' 'samehash' { kanata: 'samehash' } | to nuon
@@ -34,7 +34,7 @@ def "test has-changed returns false for same hash" [] {
     assert equal $result false
 }
 
-def "test is-running-pgrep returns false for nonexistent process" [] {
+def "test is-running-pgrep returns false for nonexistent process" []: nothing -> nothing {
     let test_script = $"
         source ($SCRIPT)
         is-running-pgrep 'nonexistent_process_xyz123' | to nuon

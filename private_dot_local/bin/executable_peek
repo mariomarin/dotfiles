@@ -53,7 +53,7 @@ def open-target [opener: string, target: string, args: list<string>]: nothing ->
     run-opener (opener-argv $opener $args) $input
 }
 
-def main [...args: string] {
+def main [...args: string]: nothing -> nothing {
     let target = ($args | str join " ")
     if ($target | is-empty) { return }
 

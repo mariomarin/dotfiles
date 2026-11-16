@@ -19,7 +19,7 @@ def nupm [nupm_path: string, args: string]: nothing -> record {
     }
 }
 
-def main [] {
+def main []: nothing -> nothing {
     $env.NUPM_HOME = (nupm-home)
     let nupm_path = $env.NUPM_HOME | path join 'nupm'
     if not ($nupm_path | path exists) {

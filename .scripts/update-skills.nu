@@ -21,21 +21,21 @@ def fetch-head [url: string, path: string]: nothing -> record {
     $result
 }
 
-def checkout [dir: string, path: string]: nothing -> record {
+def checkout [dir: string, path: path]: nothing -> record {
     git-in $dir checkout -q FETCH_HEAD
     | result flat-map {|_|
         if ($dir | path join $path | path exists) { ok $dir } else { err {stderr: $"($path) not found upstream"} }
     }
 }
 
-def replace-skill [dest: string, src: string, path: string]: nothing -> nothing {
+def replace-skill [dest: path, src: string, path: path]: nothing -> nothing {
     rm -rf $dest
     cp -r ($src | path join $path) $dest
     cp ($src | path join LICENSE) ($dest | path join LICENSE)
 }
 
 def update-skill [
-    name: string
+    name: string # nu-lint-ignore: string_param_as_path
     entry: record
     skills_dir: string
     base: string

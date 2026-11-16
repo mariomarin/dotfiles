@@ -4,13 +4,13 @@
 
 const TUNNEL_LOG = "/tmp/cloudflared-tunnel.log"
 
-def parse-tunnel-url [log_content: string] {
+def parse-tunnel-url [log_content: string]: nothing -> oneof<string, nothing> {
     $log_content
     | parse -r '(https://[a-z0-9-]+\.trycloudflare\.com)'
     | get -o 0?.capture0
 }
 
-def extract-url [] {
+def extract-url []: nothing -> oneof<string, nothing> {
     if not ($TUNNEL_LOG | path exists) { return null }
     parse-tunnel-url (open $TUNNEL_LOG)
 }
@@ -65,7 +65,7 @@ def "main stop" [] {
 }
 
 # Show tunnel status
-def "main status" [] {
+def "main status" []: nothing -> nothing {
     let running = ps | where name =~ cloudflared
     if ($running | is-empty) {
         print "❌ No tunnel running"
@@ -80,11 +80,13 @@ def "main status" [] {
 
 # SSH service shortcut
 def "main ssh" [--port: int = 22, --background] {
+    # nu-lint-ignore: missing_output_type
     main quick $"ssh://localhost:($port)" --background=$background
 }
 
 # HTTP service shortcut
 def "main http" [port: int = 8080, --background] {
+    # nu-lint-ignore: missing_output_type
     main quick $"http://localhost:($port)" --background=$background
 }
 

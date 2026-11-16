@@ -5,8 +5,8 @@ use std/testing *
 const MOD = path self ../mod.nu
 
 # Evaluate a snippet with the module sourced (private helpers included)
-def bw-eval [snippet: string, --cwd: string]: nothing -> any {
-    let dir = ($cwd | default $env.PWD)
+def bw-eval [snippet: string, --cwd: string]: nothing -> any { # nu-lint-ignore: missing_output_type
+    let dir = ($cwd | default $env.PWD) # nu-lint-ignore: check_typed_flag_before_use
     let result = do { cd $dir; ^$nu.current-exe -n -c $"source ($MOD); ($snippet) | to nuon" } | complete
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
@@ -22,7 +22,7 @@ def "stored session round-trips through .env.local" [] {
 }
 
 # Fake bw: `status` reports the session it was given; `get` fails for "missing"
-def with-fake-bw [body: closure]: nothing -> any {
+def with-fake-bw [body: closure]: nothing -> any { # nu-lint-ignore: missing_output_type
     let bin = (mktemp -d)
     "#!/bin/sh\ncase \"$1\" in\n  status) echo \"{\\\"status\\\":\\\"unlocked\\\",\\\"session\\\":\\\"$BW_SESSION\\\"}\";;\n  get) [ \"$3\" = missing ] && exit 1; echo '{\"name\":\"'\"$3\"'\"}';;\nesac\n" | save $"($bin)/bw"
     ^chmod +x $"($bin)/bw"
@@ -32,7 +32,7 @@ def with-fake-bw [body: closure]: nothing -> any {
 }
 
 @test
-def "get-bw-status checks the given session" [] {
+def "get-bw-status checks the given session" []: nothing -> nothing {
     with-fake-bw {
         assert equal (bw-eval "get-bw-status stored-tok").session "stored-tok"
         assert equal (bw-eval "get-bw-status").session "from-env"
@@ -40,7 +40,7 @@ def "get-bw-status checks the given session" [] {
 }
 
 @test
-def "get item returns null when bw fails" [] {
+def "get item returns null when bw fails" []: nothing -> nothing {
     with-fake-bw {
         assert equal (bw-eval "get item github").name "github"
         assert equal (bw-eval "get item missing") null

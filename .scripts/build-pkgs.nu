@@ -3,6 +3,8 @@
 # so only a build catches stale src/cargo/npm hashes.
 
 def main [] {
+
+    # nu-lint-ignore: missing_output_type
     let flake = $env.FILE_PWD | path dirname | path join nix nixos
     let system = (nix eval --impure --raw --expr builtins.currentSystem)
     let names = (

@@ -4,7 +4,7 @@
 use adt.nu [run-cmd, collect-issues, report-issues, "result map", "result unwrap-or"]
 
 # Missing command as {name, fix}, or null when it is on PATH
-def check-cmd [cmd: string]: nothing -> any {
+def check-cmd [cmd: string]: nothing -> oneof<record, nothing> {
     match (which $cmd | where type == external) {
         [] => {name: $cmd, fix: "install it or check PATH"}
         _ => null
@@ -12,12 +12,12 @@ def check-cmd [cmd: string]: nothing -> any {
 }
 
 # The issue when the command is not on PATH, else null
-def check-installed [cmd: string, issue: string]: nothing -> any {
+def check-installed [cmd: string, issue: string]: nothing -> oneof<string, nothing> {
     if (which $cmd | is-empty) { $issue } else { null }
 }
 
 # The issue when the path does not exist, else null
-def check-path [path: string, issue: string]: nothing -> any {
+def check-path [path: string, issue: string]: nothing -> oneof<string, nothing> {
     if ($path | path expand | path exists) { null } else { $issue }
 }
 
@@ -130,6 +130,6 @@ def "main all" [] {
     exit 1
 }
 
-def main [] {
+def main []: nothing -> nothing {
     main summary
 }

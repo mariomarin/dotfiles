@@ -235,7 +235,7 @@ def volume-of [home: string]: table -> list<record> {
 }
 
 # Hardlinks share an inode: rmlint skips hashing them and removing one frees nothing.
-def inode-key []: record -> any {
+def inode-key []: record -> oneof<string, nothing> {
     let entry = $in
     if $entry.inode? == null { return null }
     $"($entry.disk_id?):($entry.inode)"
@@ -296,7 +296,7 @@ def render [ctx: record]: list<record> -> string {
 }
 
 # One view per finding kind; null when there is nothing to show.
-def view [kind: string, ctx: record]: list<record> -> any {
+def view [kind: string, ctx: record]: list<record> -> oneof<string, nothing> {
     let items = $in
     if ($items | is-empty) { return null }
     match $kind {

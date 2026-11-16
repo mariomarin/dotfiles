@@ -3,6 +3,7 @@
 
 # Sesh session selector with fzf
 export def "sesh sessions" [] {
+    # nu-lint-ignore: missing_output_type
     # Get session list from sesh
     let sessions = sesh list -t -c | lines
 

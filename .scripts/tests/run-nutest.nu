@@ -2,7 +2,7 @@
 # records, so run.nu and run-for-files.nu can report them with the rest.
 
 # Directory holding nutest/mod.nu: devenv's pin, a nupm install, else the chezmoi clone
-export def find-nutest []: nothing -> any {
+export def find-nutest []: nothing -> oneof<string, nothing> {
     let nupm_home = $env.NUPM_HOME? | default ($nu.home-dir | path join ".local" "share" "nupm")
     [
         ($env.NUTEST_LIB? | default "")

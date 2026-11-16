@@ -6,7 +6,7 @@ const SAMPLE = "café ☕ 中文 🎉"
 const LATIN1 = 0x[e9 74 e9]
 
 # clip imports adt.nu relative to itself; stage both like chezmoi deploys them
-def with-clip [body: closure] {
+def with-clip [body: closure]: nothing -> record {
     let dir = (mktemp -d)
     cp private_dot_local/bin/executable_clip $"($dir)/clip"
     cp private_dot_local/bin/adt.nu $"($dir)/adt.nu"
@@ -17,6 +17,7 @@ def with-clip [body: closure] {
 
 # Evaluate a snippet with clip sourced; returns the nuon-decoded result
 def clip-eval [snippet: string]: nothing -> any {
+    # nu-lint-ignore: missing_output_type
     let result = with-clip {|clip|
         do { ^$nu.current-exe -n -c $"source ($clip); ($snippet) | to nuon" } | complete
     }
@@ -26,6 +27,7 @@ def clip-eval [snippet: string]: nothing -> any {
 
 # Run the clip script itself with stdin and args; returns `complete` output
 def run-clip [stdin, ...args: string]: nothing -> record {
+    # nu-lint-ignore: add_type_hints_arguments
     with-clip {|clip|
         do {
             $stdin | ^nu --stdin $clip ...$args
@@ -46,7 +48,7 @@ def stub-path [cmds: list<string>]: nothing -> string {
 # clip's error when no clipboard tool is usable: macOS reaches pbcopy via env
 const NO_CLIPBOARD = 'env not found in PATH|no clipboard backend'
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     let result = with-clip {|clip|
         do { ^$nu.current-exe -n -c $"source ($clip)" } | complete
     }
@@ -77,36 +79,36 @@ def "test select-backend priority" [] {
     | ignore
 }
 
-def "test backend-argv pins pbcopy locale" [] {
+def "test backend-argv pins pbcopy locale" []: nothing -> nothing {
     let r = clip-eval "backend-argv pbcopy"
     assert equal $r.ok true
     assert equal $r.value [env LC_CTYPE=UTF-8 pbcopy]
 }
 
-def "test backend-argv none is an error" [] {
+def "test backend-argv none is an error" []: nothing -> nothing {
     let r = clip-eval "backend-argv none"
     assert equal $r.ok false
     assert ($r.error | str contains "no clipboard backend")
 }
 
-def "test to-bytes encodes strings as utf-8" [] {
+def "test to-bytes encodes strings as utf-8" []: nothing -> nothing {
     assert equal (clip-eval $"'($SAMPLE)' | to-bytes") ($SAMPLE | into binary)
 }
 
-def "test to-bytes passes non-utf-8 binary through" [] {
+def "test to-bytes passes non-utf-8 binary through" []: nothing -> nothing {
     assert equal (clip-eval $"($LATIN1 | to nuon) | to-bytes") $LATIN1
 }
 
-def "test to-bytes handles nothing" [] {
+def "test to-bytes handles nothing" []: nothing -> nothing {
     assert equal (clip-eval "null | to-bytes") 0x[]
 }
 
-def "test read-args joins args as text" [] {
+def "test read-args joins args as text" []: nothing -> nothing {
     let r = clip-eval "read-args [café 中文]"
     assert equal $r.value ("café 中文" | into binary)
 }
 
-def "test read-args reads first arg as a raw file" [] {
+def "test read-args reads first arg as a raw file" []: nothing -> nothing {
     let tmp = (mktemp -t "clip-latin1-XXXXXX")
     $LATIN1 | save --force --raw $tmp
     let r = clip-eval $"read-args ['($tmp)' ignored]"
@@ -114,13 +116,13 @@ def "test read-args reads first arg as a raw file" [] {
     assert equal $r.value $LATIN1
 }
 
-def "test require-bytes rejects empty input" [] {
+def "test require-bytes rejects empty input" []: nothing -> nothing {
     let r = clip-eval "0x[] | require-bytes"
     assert equal $r.ok false
     assert ($r.error | str contains "no input")
 }
 
-def "test copy-bytes delivers exact bytes" [] {
+def "test copy-bytes delivers exact bytes" []: nothing -> nothing {
     let tmp = (mktemp -t "clip-out-XXXXXX")
     let r = clip-eval $"copy-bytes ($SAMPLE | into binary | to nuon) [sh -c 'cat > ($tmp)']"
     let written = open --raw $tmp | into binary
@@ -129,26 +131,26 @@ def "test copy-bytes delivers exact bytes" [] {
     assert equal $written ($SAMPLE | into binary)
 }
 
-def "test copy-bytes reports nc failures with a hint" [] {
+def "test copy-bytes reports nc failures with a hint" []: nothing -> nothing {
     let r = clip-eval "copy-bytes 0x[61] [nc -N localhost 1]"
     assert equal $r.ok false
     assert ($r.error | str contains "clipper may not be running")
 }
 
-def "test copy-bytes reports failing backends" [] {
+def "test copy-bytes reports failing backends" []: nothing -> nothing {
     let r = clip-eval "copy-bytes 0x[61] [sh -c 'echo boom >&2; exit 3']"
     assert equal $r.ok false
     assert ($r.error | str contains "code 3")
     assert ($r.error | str contains "boom")
 }
 
-def "test script fails cleanly on empty stdin" [] {
+def "test script fails cleanly on empty stdin" []: nothing -> nothing {
     let result = run-clip ""
     assert not equal $result.exit_code 0
     assert ($result.stderr | str contains "clip: no input")
 }
 
-def "test copy-bytes reports missing commands" [] {
+def "test copy-bytes reports missing commands" []: nothing -> nothing {
     let r = clip-eval "copy-bytes 0x[61] [clip-no-such-cmd]"
     assert equal $r.ok false
     assert ($r.error | str contains "not found in PATH")
@@ -156,7 +158,7 @@ def "test copy-bytes reports missing commands" [] {
 
 # PATH without clipboard tools: clip fails fast instead of copying, and
 # must not wait for `sleep` to close stdin first
-def "test script ignores open stdin when given args" [] {
+def "test script ignores open stdin when given args" []: nothing -> nothing {
     let bin = (stub-path [nu uname])
     let started = (date now)
     let clip_env = {
@@ -207,28 +209,28 @@ def "test parse-haste-response" [] {
     | ignore
 }
 
-def "test build-paste-url" [] {
+def "test build-paste-url" []: nothing -> nothing {
     assert equal (clip-eval "build-paste-url https://h abc ''") "https://h/abc"
     assert equal (clip-eval "build-paste-url https://h abc rs") "https://h/abc.rs"
 }
 
-def "test haste-text strips ansi" [] {
+def "test haste-text strips ansi" []: nothing -> nothing {
     assert equal (clip-eval $"\(\"\\e[31mred\\e[0m ($SAMPLE)\" | into binary\) | haste-text") $"red ($SAMPLE)"
 }
 
-def "test paste-ext from file arg only" [] {
+def "test paste-ext from file arg only" []: nothing -> nothing {
     assert equal (clip-eval "paste-ext [private_dot_local/bin/tests/test_clip.nu]") "nu"
     assert equal (clip-eval "paste-ext [some text]") ""
 }
 
-def "test haste-server requires HASTE_SERVER" [] {
+def "test haste-server requires HASTE_SERVER" []: nothing -> nothing {
     let r = clip-eval "hide-env -i HASTE_SERVER; haste-server"
     assert equal $r.ok false
     assert ($r.error | str contains "HASTE_SERVER not set")
 }
 
 # Fake curl records the upload; no clipboard tools on PATH
-def "test script hastes and prints url without a clipboard" [] {
+def "test script hastes and prints url without a clipboard" []: nothing -> nothing {
     let bin = (stub-path [nu uname cat])
     $"#!/bin/sh\ncat > ($bin)/body\necho '{\"key\": \"k1\"}'\n" | save $"($bin)/curl"
     ^chmod +x $"($bin)/curl"
