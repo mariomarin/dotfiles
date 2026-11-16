@@ -32,6 +32,7 @@ const KINDS = [
     backup
 ]
 
+const PROBE_TIMEOUT = 10sec
 const DOCKER_RAW = "Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw"
 
 const ADVICE = {
@@ -116,10 +117,26 @@ def gather [root: string]: nothing -> record {
     }
 }
 
-# stdout of a command, or "" if it fails.
+# `complete` record of the closure, or null (and the job killed) past the limit.
+def run-with-timeout [limit: duration, cmd: closure]: nothing -> oneof<record, nothing> {
+    let parent = job id
+    let worker = job spawn { do $cmd | complete | job send $parent }
+    try { job recv --timeout $limit } catch {
+        job kill $worker
+        null
+    }
+}
+
+# stdout of a command, or "" if it fails or hangs (a stuck Docker daemon never answers).
 def --wrapped run-text [cmd: string, ...args: string]: nothing -> string {
-    let res = do { run-external $cmd ...$args } | complete
-    if $res.exit_code == 0 { $res.stdout } else { "" }
+    match (run-with-timeout $PROBE_TIMEOUT { run-external $cmd ...$args }) {
+        null => {
+            print --stderr $"($cmd) ($args | first 1 | str join) timed out after ($PROBE_TIMEOUT); skipped"
+            ""
+        }
+        {exit_code: 0, stdout: $out} => $out
+        _ => ""
+    }
 }
 
 # `du -sk` output for the paths that exist; unreadable entries are skipped.

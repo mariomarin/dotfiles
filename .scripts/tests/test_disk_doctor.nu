@@ -1,5 +1,6 @@
 # Tests for disk-doctor.nu
 use std/assert
+use helpers.nu [with-fake-bins]
 
 const SCRIPT = ".scripts/disk-doctor.nu"
 
@@ -198,6 +199,16 @@ def "test render warns about stray rmlint.sh" [] {
     assert ($text | str contains "DELETES files")
 }
 
+def "test run-with-timeout returns the completed command" [] {
+    let res = eval "run-with-timeout 5sec { ^printf hi }"
+    assert equal $res.exit_code 0
+    assert equal $res.stdout "hi"
+}
+
+def "test run-with-timeout gives up on a hung command" [] {
+    assert equal (eval "run-with-timeout 300ms { ^sleep 30 }") null
+}
+
 def "test main never modifies scanned files" [] {
     let dir = (mktemp --directory --tmpdir disk-doctor-test.XXXXXX)
     "same" | save ($dir | path join a.txt)
@@ -205,9 +216,13 @@ def "test main never modifies scanned files" [] {
     touch ($dir | path join empty.txt)
     let before = ls --all $dir | select name size
 
-    let result = do { nu -n $SCRIPT $dir --list } | complete
+    # Empty HOME and a failing docker: only $dir is scanned, not this machine
+    let home = (mktemp --directory --tmpdir disk-doctor-home.XXXXXX)
+    let result = with-fake-bins {docker: "exit 1"} {||
+        with-env {HOME: $home} { do { nu -n $SCRIPT $dir --list } | complete }
+    }
     let after = ls --all $dir | select name size
-    rm --recursive --force $dir
+    rm --recursive --force $dir $home
 
     assert equal $result.exit_code 0 $result.stderr
     assert (
