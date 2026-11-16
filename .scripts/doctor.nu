@@ -53,18 +53,30 @@ def "main tmux" [] {
     ] | report-issues tmux
 }
 
-def "main zim" [] {
-    let zim_dir = "~/.zim" | path expand
+# ZIM_HOME as dot_zshenv sets it; chezmoi deploys zimfw.zsh and zimrc there
+def zim-home []: nothing -> string {
+    $env.ZIM_HOME?
+    | default ($env.XDG_CONFIG_HOME? | default "~/.config" | path join zim)
+    | path expand
+}
+
+def zim-issues [zim_dir: path]: nothing -> list<string> {
     let modules_dir = $zim_dir | path join modules
-    let installed = $zim_dir | path exists
+    let installed = $zim_dir | path join zimfw.zsh | path exists
     null | collect-issues [
-        {|| if not $installed { "zim not installed — run: curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh" } }
-        {|| check-path "~/.config/zim/zimrc" "zimrc missing — run: chezmoi apply" }
+        {||
+            if not $installed { "zimfw.zsh missing — run: chezmoi apply" }
+        }
+        {|| check-path ($zim_dir | path join zimrc) "zimrc missing — run: chezmoi apply" }
         {||
             let has_modules = ($modules_dir | path exists) and (ls $modules_dir | is-not-empty)
-            if $installed and not $has_modules { "no modules — run: zsh -c 'source ~/.zim/zimfw.zsh && zimfw install'" }
+            if $installed and not $has_modules { "no modules — run: zsh -ic 'zimfw install'" }
         }
-    ] | report-issues zim
+    ]
+}
+
+def "main zim" [] {
+    zim-issues (zim-home) | report-issues zim
 }
 
 def "main summary" [] {
@@ -83,9 +95,9 @@ def "main summary" [] {
 # Doctors that only make sense on the current OS
 def platform-components []: nothing -> list<string> {
     match $nu.os-info.name {
-        "linux" => ["nixos"]
-        "macos" => ["darwin"]
-        "windows" => ["wsl"]
+        linux => ["nixos"]
+        macos => ["darwin"]
+        windows => ["wsl"]
         _ => []
     }
 }
