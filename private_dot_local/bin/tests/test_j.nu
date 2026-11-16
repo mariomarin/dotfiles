@@ -3,7 +3,7 @@ use std/assert
 
 # j imports its ADT helpers with `use adt.nu`, resolved relative to the script.
 # Stage both into a tempdir, like chezmoi deploys them, to source j in isolation.
-def with-j [body: closure] {
+def with-j [body: closure]: nothing -> record {
     let dir = (mktemp -d)
     cp private_dot_local/bin/executable_j $"($dir)/j"
     cp private_dot_local/bin/adt.nu $"($dir)/adt.nu"
@@ -12,7 +12,7 @@ def with-j [body: closure] {
     $result
 }
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     let result = with-j {|j|
         do { ^$nu.current-exe -n -c $"source ($j)" } | complete
     }
@@ -39,7 +39,7 @@ def "test has subcommands" [] {
     | ignore
 }
 
-def "test parse-bookmark-lines filters empty" [] {
+def "test parse-bookmark-lines filters empty" []: nothing -> nothing {
     let result = with-j {|j|
         let snippet = '["feat-x" "" "fix-y"] | parse-bookmark-lines | to nuon'
         do { ^$nu.current-exe -n -c $"source ($j); ($snippet)" } | complete
@@ -51,7 +51,7 @@ def "test parse-bookmark-lines filters empty" [] {
     assert equal ($parsed.1?.value) "fix-y"
 }
 
-def "test parse-revision-lines" [] {
+def "test parse-revision-lines" []: nothing -> nothing {
     let result = with-j {|j|
         let snippet = '["abc123 fix the thing" "def456 add feature" ""] | parse-revision-lines | to nuon'
         do { ^$nu.current-exe -n -c $"source ($j); ($snippet)" } | complete
@@ -65,7 +65,7 @@ def "test parse-revision-lines" [] {
     assert equal ($parsed.1?.description) "add feature"
 }
 
-def "test resolve-bookmark returns current when set" [] {
+def "test resolve-bookmark returns current when set" []: nothing -> nothing {
     let result = with-j {|j|
         do { ^$nu.current-exe -n -c $"source ($j); resolve-bookmark \"my-branch\" true \"\" | to nuon" } | complete
     }
@@ -75,7 +75,7 @@ def "test resolve-bookmark returns current when set" [] {
     assert equal $r.value "my-branch"
 }
 
-def "test resolve-bookmark falls back to parent on empty commit" [] {
+def "test resolve-bookmark falls back to parent on empty commit" []: nothing -> nothing {
     let result = with-j {|j|
         do { ^$nu.current-exe -n -c $"source ($j); resolve-bookmark \"\" true \"parent-bm\" | to nuon" } | complete
     }
@@ -85,7 +85,7 @@ def "test resolve-bookmark falls back to parent on empty commit" [] {
     assert equal $r.value "parent-bm"
 }
 
-def "test resolve-bookmark errors when commit has changes" [] {
+def "test resolve-bookmark errors when commit has changes" []: nothing -> nothing {
     let result = with-j {|j|
         do { ^$nu.current-exe -n -c $"source ($j); resolve-bookmark \"\" false \"parent-bm\" | to nuon" } | complete
     }
@@ -95,7 +95,7 @@ def "test resolve-bookmark errors when commit has changes" [] {
     assert ($r.error | str contains "commit has changes")
 }
 
-def "test resolve-bookmark errors when nothing found" [] {
+def "test resolve-bookmark errors when nothing found" []: nothing -> nothing {
     let result = with-j {|j|
         do { ^$nu.current-exe -n -c $"source ($j); resolve-bookmark \"\" true \"\" | to nuon" } | complete
     }
@@ -112,63 +112,63 @@ def j-eval [snippet: string]: nothing -> record {
     }
 }
 
-def "test sync-scope defaults to all" [] {
+def "test sync-scope defaults to all" []: nothing -> nothing {
     assert equal (j-eval 'sync-scope' | get stdout | str trim) "all()"
 }
 
-def "test sync-scope bookmark wins over flags" [] {
+def "test sync-scope bookmark wins over flags" []: nothing -> nothing {
     assert equal (j-eval 'sync-scope feat --current --mine' | get stdout | str trim) "::(feat)"
 }
 
-def "test sync-scope current and mine" [] {
+def "test sync-scope current and mine" []: nothing -> nothing {
     assert equal (j-eval 'sync-scope --current' | get stdout | str trim) "::@"
     assert equal (j-eval 'sync-scope --mine' | get stdout | str trim) "mine()"
 }
 
-def "test local-work excludes immutable and base" [] {
+def "test local-work excludes immutable and base" []: nothing -> nothing {
     let r = j-eval 'local-work "trunk()" "all()"' | get stdout | str trim
     assert equal $r "(all()) & mutable() & ~::(trunk())"
 }
 
-def "test sync-roots avoids range operator" [] {
+def "test sync-roots avoids range operator" []: nothing -> nothing {
     let r = j-eval 'sync-roots "trunk()" "W"' | get stdout | str trim
     assert equal $r "roots(W) & children(::(trunk()))"
     # `base..x` pulls in immutable ancestors of x
     assert not ($r | str contains "..")
 }
 
-def "test run-or-fail returns stdout on success" [] {
+def "test run-or-fail returns stdout on success" []: nothing -> nothing {
     let r = j-eval 'run-or-fail "Echo" { ^echo hi } | get stdout | str trim'
     assert equal ($r.stdout | str trim) "hi"
 }
 
-def "test run-or-fail raises labelled error" [] {
+def "test run-or-fail raises labelled error" []: nothing -> nothing {
     let r = (j-eval 'run-or-fail "Boom" { ^false }')
     assert not equal $r.exit_code 0
     assert ($r.stderr | str contains "Boom failed")
 }
 
-def "test warn-err prints only on err" [] {
+def "test warn-err prints only on err" []: nothing -> nothing {
     assert equal (j-eval '{ok: true, value: {}} | warn-err "step"' | get stderr) ""
     let r = j-eval '{ok: false, error: {stderr: "bad\n"}} | warn-err "step"'
     assert ($r.stderr | str contains "warning: step failed: bad")
 }
 
 # Run jj inside a repo dir; flags pass through untouched
-def --wrapped jj-in [repo: string, ...args: string]: nothing -> record {
+def --wrapped jj-in [repo: path, ...args: string]: nothing -> record {
     do {
         cd $repo
         ^jj ...$args
     } | complete
 }
 
-def "test report-run prints stdout and returns null on ok" [] {
+def "test report-run prints stdout and returns null on ok" []: nothing -> nothing {
     let r = j-eval "ok {stdout: 'pushed', stderr: ''} | report-run bm | to nuon"
     assert equal $r.exit_code 0 $r.stderr
     assert equal ($r.stdout | lines) ["pushed" "null"]
 }
 
-def "test report-run returns bookmark on err" [] {
+def "test report-run returns bookmark on err" []: nothing -> nothing {
     let r = j-eval "err {stdout: '', stderr: 'denied', code: 1} | report-run bm | to nuon"
     assert equal $r.exit_code 0 $r.stderr
     assert equal ($r.stdout | str trim) '"bm"'
@@ -178,7 +178,7 @@ def "test report-run returns bookmark on err" [] {
 def exact [d: string]: nothing -> string { $"description\(exact:\"($d)\n\"\)" }
 
 # Integration: sync must not touch immutable side branches (remote-only bookmarks)
-def "test sync leaves stacks on immutable branches" [] {
+def "test sync leaves stacks on immutable branches" []: nothing -> nothing {
     if (which jj | is-empty) { return }
     let repo = (mktemp -d)
     jj-in $repo git init . | ignore

@@ -45,7 +45,7 @@ connect_failed asio.system:61"
     rm -f $log
 }
 
-export def "test dyld error detection with missing log" [] {
+export def "test dyld error detection with missing log" []: nothing -> nothing {
     let result = (^$nu.current-exe -c '
         source .scripts/kanata-doctor.nu
         has-dyld-error "/tmp/nonexistent-kanata-test.log" | to nuon

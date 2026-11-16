@@ -3,7 +3,7 @@ use std/assert
 
 const SCRIPT = ".scripts/cloudflare-tunnel.nu"
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
@@ -19,7 +19,7 @@ def "test help output" [] {
     ] | each {|term| assert ($help | str contains -i $term) } | ignore
 }
 
-def "test parse-tunnel-url extracts url" [] {
+def "test parse-tunnel-url extracts url" []: nothing -> nothing {
     let result = do {
         ^$nu.current-exe -n -c 'source .scripts/cloudflare-tunnel.nu; parse-tunnel-url "INFO: https://some-tunnel-abc.trycloudflare.com connected" | to nuon'
     } | complete
@@ -27,7 +27,7 @@ def "test parse-tunnel-url extracts url" [] {
     assert equal ($result.stdout | str trim | from nuon) "https://some-tunnel-abc.trycloudflare.com"
 }
 
-def "test parse-tunnel-url returns null on no match" [] {
+def "test parse-tunnel-url returns null on no match" []: nothing -> nothing {
     let result = do {
         ^$nu.current-exe -n -c 'source .scripts/cloudflare-tunnel.nu; parse-tunnel-url "no url here" | to nuon'
     } | complete

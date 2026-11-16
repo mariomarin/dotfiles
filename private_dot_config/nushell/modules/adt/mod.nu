@@ -2,6 +2,8 @@
 # - Result: railway-oriented — flat-map/map/bimap short-circuit on err.
 # - Validation: applicative — combine/collect-issues accumulate all errors.
 # - Either: bare left/right tags.
+# Generic over any value, so the typing rules cannot be satisfied here.
+# nu-lint-ignore-file: missing_output_type, missing_in_type, add_type_hints_arguments
 
 # Result type constructors
 export def ok [value]: nothing -> record<ok: bool, value: any> {

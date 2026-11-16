@@ -61,14 +61,14 @@ def has-cmd [cmd: string]: nothing -> bool {
 
 # Normalize any input to bytes: strings become their UTF-8 encoding, binary
 # passes through untouched, nothing becomes empty.
-def to-bytes []: any -> binary {
+def to-bytes []: any -> binary { # nu-lint-ignore: missing_in_type
     match $in {
         null => 0x[]
         $input => ($input | into binary)
     }
 }
 
-def read-file [path: string]: nothing -> record {
+def read-file [path: path]: nothing -> record {
     match ($path | path exists) {
         true => (ok (open --raw $path | to-bytes))
         false => (err $"file not found: ($path)")
@@ -192,19 +192,19 @@ def payload [bytes: binary, haste: bool, ext: string]: nothing -> record {
     }
 }
 
-export def main [
+export def main [ # nu-lint-ignore: missing_in_type
     --verbose (-v)  # Print the backend being used
     --haste (-H)    # Upload to $HASTE_SERVER and copy the paste URL instead
     --ext (-e): string # Haste syntax extension (default: the file's extension)
     ...args: string # File path or literal text; omit to read stdin
-] {
+]: any -> nothing {
     let backend = resolve-backend
     if $verbose { print $"clip: using ($backend)" }
 
     # Read stdin only without args: otherwise a piped-but-open stdin blocks.
     # An `if`, not `match`: `$in` in a match arm hits a nu 0.115 IR bug.
     let input = if ($args | is-empty) { ok ($in | to-bytes) } else { read-args $args }
-    let ext = ($ext | default (paste-ext $args))
+    let ext = ($ext | default (paste-ext $args)) # nu-lint-ignore: check_typed_flag_before_use
     let job = match ($input
         | result flat-map {|bytes| $bytes | require-bytes }
         | result flat-map {|bytes| payload $bytes $haste $ext }) {

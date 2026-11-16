@@ -57,7 +57,7 @@ def check-flake []: nothing -> oneof<string, nothing> {
 }
 
 # Show help
-def "main help" [] {
+def "main help" []: nothing -> nothing {
     nix-common show-help "NixOS Utilities" "nixos.nu" [
         {name: "first-time <host>", description: "First-time NixOS setup"}
         {name: "hosts <host>", description: "Show available configurations"}
@@ -66,6 +66,6 @@ def "main help" [] {
     ]
 }
 
-def main [] {
+def main []: nothing -> nothing {
     main help
 }

@@ -24,7 +24,7 @@ def should-check [file: string, shebang: string]: nothing -> bool {
     ($file | str ends-with ".nu") or (is-nu-shebang $shebang)
 }
 
-def main [...files: string] {
+def main [...files: string]: nothing -> nothing {
     let failures = (
     $files
     | each {|f|

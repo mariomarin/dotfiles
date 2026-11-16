@@ -11,11 +11,11 @@ def applied [paths: list<string>]: nothing -> list<bool> {
     $result.stdout | str trim | from nuon
 }
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
-def "test repo-only paths are not applied" [] {
+def "test repo-only paths are not applied" []: nothing -> nothing {
     let paths = [
         "docs/keybindings.md"
         ".github/workflows/validate.yml"
@@ -29,7 +29,7 @@ def "test repo-only paths are not applied" [] {
     assert equal (applied $paths) ($paths | each { false })
 }
 
-def "test dotfiles, scripts and nix sources are applied" [] {
+def "test dotfiles, scripts and nix sources are applied" []: nothing -> nothing {
     let paths = [
         "private_dot_config/tmux/tmux.conf"
         "private_dot_config/nvim/README.md"

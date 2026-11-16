@@ -30,6 +30,8 @@ def changed-files []: nothing -> record {
 }
 
 def main [] {
+
+    # nu-lint-ignore: missing_output_type
     let repo_only = changed-files
     | result map {|paths| $paths | all {|path| not (is-applied $path) } }
     | result unwrap-or false

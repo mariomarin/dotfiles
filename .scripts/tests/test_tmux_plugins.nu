@@ -21,18 +21,18 @@ def run-plugins [install_exit: int, install_stderr: string]: nothing -> record {
     $result | insert calls $log | insert home $home
 }
 
-def "test installs then cleans unlisted plugins" [] {
+def "test installs then cleans unlisted plugins" []: nothing -> nothing {
     let r = run-plugins 0 ""
     assert equal $r.exit_code 0 $r.stderr
     assert equal $r.calls [$"install ($r.home)/.local/share/tmux/plugins" "clean"]
 }
 
-def "test unconfigured tpm is not an error" [] {
+def "test unconfigured tpm is not an error" []: nothing -> nothing {
     let r = run-plugins 1 "Tmux Plugin Manager not configured in tmux.conf"
     assert equal $r.exit_code 0 $r.stderr
 }
 
-def "test install failure stops before clean" [] {
+def "test install failure stops before clean" []: nothing -> nothing {
     let r = run-plugins 3 "git clone failed"
     assert equal $r.exit_code 3
     assert ($r.stderr | str contains "install_plugins: git clone failed") $r.stderr

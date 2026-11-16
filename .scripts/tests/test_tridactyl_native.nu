@@ -3,11 +3,11 @@ use std/assert
 
 const SCRIPT = ".scripts/tridactyl-native.nu"
 
-def "test script parses" [] {
+def "test script parses" []: nothing -> nothing {
     do { ^$nu.current-exe -n -c $"source ($SCRIPT)" } | complete | get exit_code | assert equal $in 0
 }
 
-def "test build-manifest structure" [] {
+def "test build-manifest structure" []: nothing -> nothing {
     let result = do {
         ^$nu.current-exe -n -c 'source .scripts/tridactyl-native.nu; build-manifest "/nix/store/abc/bin/native_main" | to nuon'
     } | complete

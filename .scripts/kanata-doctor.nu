@@ -17,7 +17,7 @@ def issue [
     }
 }
 
-def main [] {
+def main []: nothing -> nothing {
     match (^uname -s | str trim) {
         "Darwin" => { doctor-darwin }
         _ => { }
@@ -39,7 +39,7 @@ def restart-cmd [label: string]: nothing -> string {
     $"sudo launchctl kickstart -k system/($label)"
 }
 
-def check-binary [bin: string]: nothing -> list<record> {
+def check-binary [bin: path]: nothing -> list<record> {
     if not ($bin | path exists) {
         return [
             (issue "binary" "error" "binary missing" "just darwin")
@@ -182,7 +182,7 @@ const TCC_SERVICES = {
     kTCCServiceAccessibility: "Accessibility"
 }
 
-def find-denied-permissions [log: string]: nothing -> list<string> {
+def find-denied-permissions [log: path]: nothing -> list<string> {
     if not ($log | path exists) { return [] }
     open --raw $log
     | lines
@@ -201,12 +201,12 @@ def find-stale-permissions [bin: string]: nothing -> list<string> {
     | compact
 }
 
-def has-no-devices [log: string]: nothing -> bool {
+def has-no-devices [log: path]: nothing -> bool {
     if not ($log | path exists) { return false }
     open --raw $log | lines | last 5 | any {|l| $l | str contains "Couldn't register any device" }
 }
 
-def has-dyld-error [log: string]: nothing -> record {
+def has-dyld-error [log: path]: nothing -> record {
     if not ($log | path exists) { return {has_error: false} }
     let lines = open --raw $log | lines | last 10
     let dyld_lines = $lines | where {|l| $l | str contains "Library not loaded:"}
@@ -272,14 +272,14 @@ def check-permissions [bin: string, label: string]: nothing -> list<record> {
     $perms | each {|perm| format-permission-issue $perm $bin ($perm in $stale) $label}
 }
 
-def format-log-tail [log: string]: nothing -> list<string> {
+def format-log-tail [log: path]: nothing -> list<string> {
     if not ($log | path exists) { return [] }
     let lines = open --raw $log | lines | last 10
     if ($lines | is-empty) { return [] }
     ["  last error:"] | append ($lines | each {|line| $"    ($line)"})
 }
 
-def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> list<record> {
+def check-kanata [label: string, bin: path, vhid_running: bool]: nothing -> list<record> {
     let s = (launchd-state $label)
     let cmd = (restart-cmd $label)
     match $s.state {
@@ -371,7 +371,7 @@ def check-kanata [label: string, bin: string, vhid_running: bool]: nothing -> li
     }
 }
 
-def show-binary-info [bin: string]: nothing -> nothing {
+def show-binary-info [bin: path]: nothing -> nothing {
     if not ($bin | path exists) {
         print $"Binary: not found at ($bin)"
         return
@@ -414,7 +414,7 @@ def show-binary-info [bin: string]: nothing -> nothing {
     }
 }
 
-def doctor-darwin [] {
+def doctor-darwin []: nothing -> nothing {
 
     # Kanata uses wrapper at stable path for TCC permissions
     let bin = "/usr/local/bin/kanata"

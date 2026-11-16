@@ -23,7 +23,7 @@ def parse-revision-lines []: list<string> -> list<record<value: string, descript
 }
 
 # Run command or fail - imperative shell for side effects
-def run-or-fail [label: string, cmd: closure] {
+def run-or-fail [label: string, cmd: closure]: nothing -> record {
   match (run-cmd $cmd) {
     {ok: true, value: $out} => $out
     {error: $failure} => {
@@ -41,17 +41,17 @@ def warn-err [label: string]: record -> nothing {
   }
 }
 
-def "nu-complete j bookmarks" [] {
-  ^jj bookmark list -T 'name ++ "\n"' err> /dev/null | lines | parse-bookmark-lines
+def "nu-complete j bookmarks" []: nothing -> list<record<value: string, description: string>> {
+  ^jj bookmark list -T 'name ++ "\n"' err> /dev/null | lines | parse-bookmark-lines # nu-lint-ignore: pipe_spacing
 }
 
-def "nu-complete j revisions" [] {
+def "nu-complete j revisions" []: nothing -> list<record<value: string, description: string>> {
   ^jj log --no-graph -T 'change_id.short() ++ " " ++ description.first_line() ++ "\n"' --limit 20 err> /dev/null
   | lines | parse-revision-lines
 }
 
 # Resolve bookmark from current/parent state
-def resolve-bookmark [current: string, is_empty_commit: bool, parent: string] {
+def resolve-bookmark [current: string, is_empty_commit: bool, parent: string]: nothing -> record {
   match [$current $is_empty_commit $parent] {
     [$bm, _, _] if ($bm | is-not-empty) => (ok $bm)
     [_, false, _] => (err "No bookmark found for @ (commit has changes)")
@@ -60,7 +60,7 @@ def resolve-bookmark [current: string, is_empty_commit: bool, parent: string] {
   }
 }
 
-def get-current-bookmark [] {
+def get-current-bookmark []: nothing -> string {
   let current = (^jj log -r @ --no-graph -T 'bookmarks' err> /dev/null | str trim)
   let is_empty_commit = (^jj log -r @ --no-graph -T 'if(empty, "true", "")' err> /dev/null | str trim) == "true"
   let parent = (^jj log -r '@-' --no-graph -T 'bookmarks' err> /dev/null | str trim)
@@ -129,7 +129,7 @@ def prune-spr-branches []: nothing -> nothing {
 }
 
 # Sync with remote: fetch + rebase all local work onto trunk
-def "main sync" [
+def "main sync" [ # nu-lint-ignore: missing_output_type
   bookmark?: string@"nu-complete j bookmarks"  # Sync specific bookmark only
   --no-pull                                     # Skip fetching from remote
   --current (-c)                                # Sync only current change (@)
@@ -156,21 +156,21 @@ def "main sync" [
 }
 
 # Land PR via jj-spr and sync
-def "main land" [
+def "main land" [ # nu-lint-ignore: missing_output_type
   revision?: string@"nu-complete j revisions"  # Revision to land (default: @-)
   --rev (-r): string                            # Revision to land (flag form, compat)
 ] {
   if ($rev | is-not-empty) and ($revision | is-not-empty) {
     error make { msg: "ambiguous: provide either positional revision or -r, not both" }
   }
-  let rev = ($rev | default ($revision | default "@-"))
+  let rev = ($rev | default ($revision | default "@-")) # nu-lint-ignore: check_typed_flag_before_use
   let result = (run-or-fail "Land" { ^jj-spr land -r $rev })
   if ($result.stdout | is-not-empty) { print $result.stdout }
   main sync
 }
 
 # Print a per-bookmark command's output; the bookmark if it failed, else null
-def report-run [bm: string]: record -> any {
+def report-run [bm: string]: record -> oneof<string, nothing> {
   match $in {
     {ok: true, value: $out} => {
       if ($out.stdout | is-not-empty) {print $out.stdout}
@@ -190,9 +190,9 @@ def "main pr" [
   --draft (-d)                                  # Create as draft
   --all (-a)                                    # Process all bookmarks
   ...extra: string                              # Extra args passed to gh pr create
-] {
+]: nothing -> nothing {
   let bookmarks = if $all {
-    ^jj bookmark list -T 'name ++ "\n"' err> /dev/null | lines | where {|l| not ($l | is-empty) }
+    ^jj bookmark list -T 'name ++ "\n"' err> /dev/null | lines | where {|l| not ($l | is-empty) } # nu-lint-ignore: pipe_spacing
   } else if ($bookmark | is-not-empty) {
     [$bookmark]
   } else {
@@ -230,7 +230,7 @@ def "main move" [
   --revisions (-r)                              # Move single commit only (default: with descendants)
   --source (-s)                                 # Move with descendants (default, explicit)
   --exact (-x)                                  # Alias for -r
-] {
+]: nothing -> record {
   if ($revisions or $exact) and $source {
     error make { msg: "ambiguous: -r/-x and -s are mutually exclusive" }
   }
@@ -242,7 +242,7 @@ def "main move" [
 def "main push" [
   bookmark?: string@"nu-complete j bookmarks"  # Bookmark to push (default: current)
   --force (-f)                                  # Force push (skips hooks)
-] {
+]: nothing -> nothing {
   let bm = if ($bookmark | is-not-empty) { $bookmark } else { get-current-bookmark }
   let result = if $force {
     run-or-fail "Push" { ^jj git push --bookmark $bm --force }
@@ -253,7 +253,7 @@ def "main push" [
 }
 
 # Set main bookmark and push via jj-hp
-def "main push-main" [] {
+def "main push-main" []: nothing -> nothing {
   if (is-empty-no-desc "@") {
     error make {msg: "Cannot move main to empty commit with no description"}
   }
@@ -267,7 +267,7 @@ def "main gp" [
   bookmark?: string@"nu-complete j bookmarks"  # Bookmark to push (default: current)
   --force (-f)                                  # Force push
   --tracked (-t)                                # Push all tracked bookmarks
-] {
+]: nothing -> record {
   let args = if $tracked {
     ["--tracked"]
   } else {
@@ -281,7 +281,7 @@ def "main gp" [
 def "main spr" [
   --all (-a)          # Process all bookmarks (jj-spr diff --all)
   --skip-hooks        # Skip jj-hp run, go straight to jj-spr diff
-] {
+]: nothing -> nothing {
   if not $skip_hooks {
     run-or-fail "Hooks" { ^jj-hp run @ }
   }
@@ -296,7 +296,7 @@ def "main spr" [
 }
 
 # Interactive bookmark checkout (requires fzf)
-def "main co" [] {
+def "main co" [] { # nu-lint-ignore: missing_output_type
   let selection = (^jj bookmark list | ^fzf --height=20 --reverse | str trim)
   if ($selection | is-empty) { return }
 
@@ -305,7 +305,7 @@ def "main co" [] {
 }
 
 # Abandon empty commits with no description
-def "main clean" [
+def "main clean" [ # nu-lint-ignore: missing_output_type
   scope?: string  # Revset scope (default: mutable())
 ] {
   let s = ($scope | default "mutable()")
@@ -360,6 +360,6 @@ Flags:
   j move -x              Alias for -r"
 }
 
-def main [] {
+def main []: nothing -> nothing {
   main help
 }

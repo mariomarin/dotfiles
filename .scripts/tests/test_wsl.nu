@@ -5,6 +5,8 @@ use helpers.nu [with-fake-bins]
 const SCRIPT = "wsl/wsl.nu"
 
 def wsl-eval [snippet: string]: nothing -> any {
+
+    # nu-lint-ignore: missing_output_type
     let result = do { ^$nu.current-exe -n -c $"source ($SCRIPT); ($snippet) | to nuon" } | complete
     assert equal $result.exit_code 0 $result.stderr
     $result.stdout | str trim | from nuon
@@ -30,6 +32,7 @@ def "test wsl-run passes flags and strips NULs" []: nothing -> nothing {
 
 # Evaluate snippet with a fake wsl.exe running the given sh body
 def with-fake-wsl [body: string, snippet: string]: nothing -> any {
+    # nu-lint-ignore: missing_output_type
     with-fake-bins {wsl: $body} {|| wsl-eval $snippet }
 }
 

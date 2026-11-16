@@ -56,7 +56,7 @@ def parse-atuin-doctor []: string -> record {
 
 # `last_sync` looks like `2026-10-02 22:37:04.477336 +00:00:00` (UTC); the
 # hour is not zero-padded (`2026-10-07 2:27:07…`)
-def parse-last-sync [raw: string]: nothing -> any {
+def parse-last-sync [raw: string]: nothing -> oneof<datetime, nothing> {
     match (
         $raw
         | parse --regex '^(?<date>\d{4}-\d\d-\d\d) (?<hour>\d{1,2}):(?<rest>\d\d:\d\d)'
@@ -222,7 +222,7 @@ def check-server-reachable []: nothing -> list<record> {
 
     let client = (
         run-cmd {^atuin --version}
-        | result map {|out| $out.stdout | parse --regex '(?<v>\d+\.\d+\.\d+)' | get 0.v }
+        | result map {|out| $out.stdout | parse --regex '(?<v>\d+\.\d+\.\d+)' | get --optional 0.v | default "" }
         | result unwrap-or ""
     )
     match (server-version $sync.addr) {
@@ -254,7 +254,7 @@ def report-issues [issues: list<record>] {
     exit 1
 }
 
-def main [] {
+def main []: nothing -> nothing {
     if (which atuin | is-empty) { return }
     let now = (date now)
     let issues = (null | collect-issues [

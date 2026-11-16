@@ -3,7 +3,7 @@
 use ../adt/mod.nu [run-cmd]
 
 # Check if bw is available (used by commands that need it)
-def bw-available [] {
+def bw-available []: nothing -> bool {
     which bw | is-not-empty
 }
 
@@ -18,7 +18,7 @@ def store_session [session: string] {
 }
 
 # Retrieve session from .env.local file (returns null if not found)
-def get_stored_session [] {
+def get_stored_session []: nothing -> oneof<string, nothing> {
     if not (".env.local" | path exists) { return null }
     let content = open --raw .env.local | str trim
     if ($content | is-empty) { return null }
@@ -26,13 +26,13 @@ def get_stored_session [] {
 }
 
 # Clear session from .env.local file
-def clear_stored_session [] {
+def clear_stored_session []: nothing -> nothing {
     if (".env.local" | path exists) { rm .env.local }
 }
 
 # Get bw status safely (null on failure or if bw is not available).
 # With a session, check that one rather than the current BW_SESSION.
-def get-bw-status [session?: string] {
+def get-bw-status [session?: string]: nothing -> oneof<record, nothing> {
     if not (bw-available) { return null }
     let session_env = if ($session | is-not-empty) { {BW_SESSION: $session} } else { {} }
     match (with-env $session_env { run-cmd { ^bw status } }) {
@@ -132,7 +132,7 @@ export def reload [] {
 }
 
 # Get an item from Bitwarden (returns null if not found)
-export def "get item" [name: string] {
+export def "get item" [name: string]: nothing -> oneof<record, nothing> {
     if not (bw-available) { return null }
     if ($env.BW_SESSION? | default "" | is-empty) {
         print --stderr "❌ BW_SESSION not set. Run 'bitwarden unlock' first"
@@ -147,6 +147,7 @@ export def "get item" [name: string] {
 
 # Get a field from a Bitwarden item (returns null if not found)
 export def "get field" [item: string, field: string] {
+    # nu-lint-ignore: missing_output_type
     let item_data = get item $item
     if ($item_data | is-empty) { return null }
 
@@ -159,7 +160,7 @@ export def "get field" [item: string, field: string] {
 }
 
 # Check Bitwarden status (returns null on failure or if bw not available)
-export def status [] {
+export def status []: nothing -> oneof<record, nothing> {
     if not (bw-available) {
         print "❌ Bitwarden CLI (bw) not found"
         return null

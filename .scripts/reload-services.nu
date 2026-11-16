@@ -7,7 +7,7 @@ use adt.nu [ok, err, is-ok, is-err, run-cmd]
 const STATE_FILE = "~/.cache/chezmoi-service-checksums.nuon"
 
 # Load previous checksums from state file
-def load-state [] {
+def load-state []: nothing -> record {
     let path = $STATE_FILE | path expand
     if ($path | path exists) { open $path } else { {} }
 }
@@ -20,7 +20,7 @@ def save-state [state: record] {
 }
 
 # Check if service config changed
-def has-changed [name: string, hash: string, state: record] {
+def has-changed [name: string, hash: string, state: record]: nothing -> bool {
     ($state | get -o $name | default "") != $hash
 }
 
@@ -104,7 +104,7 @@ def reload-windows-task [task: string, exe: string]: nothing -> record {
 }
 
 # Process a single service - reload if changed
-def process-service [svc: record, state: record] {
+def process-service [svc: record, state: record]: nothing -> record<name: string, hash: string> {
     let name = $svc.name
     let hash = $svc.hash
     let prev_hash = $state | get -o $name | default ""
@@ -135,8 +135,8 @@ def process-service [svc: record, state: record] {
 }
 
 # Main - receives services as JSON from template
-def main [--services: string] {
-    let svcs = $services | from json
+def main [--services: string]: nothing -> nothing {
+    let svcs = $services | from json # nu-lint-ignore: check_typed_flag_before_use
     let state = (load-state)
 
     let results = $svcs | each {|svc| process-service $svc $state }

@@ -3,18 +3,18 @@ use std/assert
 
 const SCRIPT = ".scripts/update-skills.nu"
 
-def --wrapped git-q [dir: string, ...args: string] {
+def --wrapped git-q [dir: string, ...args: string]: nothing -> nothing {
     ^git -C $dir -c user.name=test -c user.email=test@example.com ...$args | complete | ignore
 }
 
-def commit-all [dir: string] {
+def commit-all [dir: string]: nothing -> string {
     git-q $dir add -A
     git-q $dir commit -q -m update
     ^git -C $dir rev-parse HEAD | str trim
 }
 
 # Upstream bare repo at <tmp>/remote/acme/skills, vendored dir at <tmp>/skills
-def with-fixture [body: closure]: nothing -> record {
+def with-fixture [body: closure]: nothing -> nothing {
     let tmp = (mktemp -d)
     let work = $"($tmp)/work"
     mkdir $"($work)/skills/demo"
@@ -40,12 +40,11 @@ def with-fixture [body: closure]: nothing -> record {
         old: $old
         new: $new
     }
-    let result = (do $body $ctx)
+    do $body $ctx
     rm -rf $tmp
-    $result
 }
 
-def write-lock [ctx: record, rev: string, path: string = "skills/demo"] {
+def write-lock [ctx: record, rev: string, path: string = "skills/demo"]: nothing -> nothing {
     {
         demo: {repo: "acme/skills", path: $path, rev: $rev}
     } | to json | save --force $ctx.lock
@@ -55,7 +54,7 @@ def run-update [ctx: record]: nothing -> record {
     do { nu -n $SCRIPT --lock $ctx.lock --base $"file://($ctx.tmp)/remote" } | complete
 }
 
-def "test up to date is silent no-op" [] {
+def "test up to date is silent no-op" []: nothing -> nothing {
     with-fixture {|ctx|
         write-lock $ctx $ctx.new
         let r = (run-update $ctx)
@@ -66,7 +65,7 @@ def "test up to date is silent no-op" [] {
     }
 }
 
-def "test outdated replaces skill and bumps lock" [] {
+def "test outdated replaces skill and bumps lock" []: nothing -> nothing {
     with-fixture {|ctx|
         write-lock $ctx $ctx.old
         let r = (run-update $ctx)
@@ -84,7 +83,7 @@ def "test outdated replaces skill and bumps lock" [] {
     }
 }
 
-def "test missing upstream path fails and keeps skill" [] {
+def "test missing upstream path fails and keeps skill" []: nothing -> nothing {
     with-fixture {|ctx|
         write-lock $ctx $ctx.old "skills/missing"
         let r = (run-update $ctx)

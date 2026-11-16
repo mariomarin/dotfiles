@@ -4,7 +4,7 @@
 
 use adt.nu [ok, err, run-cmd]
 
-def main [] {
+def main []: nothing -> nothing {
     main sync
 }
 
@@ -12,9 +12,8 @@ def krewfile []: nothing -> string {
     $nu.home-dir | path join ".krewfile"
 }
 
-def ensure-krew [] {
-    if (which krew | is-not-empty) { return }
-    error make {msg: "krew not found — install via nix"}
+def ensure-krew []: nothing -> nothing {
+    if (which krew | is-empty) { error make {msg: "krew not found — install via nix"} }
 }
 
 def parse-krewfile [content: string]: nothing -> list<string> {
@@ -55,6 +54,7 @@ def "main sync" [] {
 
 # List installed krew plugins
 def "main list" [] {
+    # nu-lint-ignore: missing_output_type
     krew list
 }
 

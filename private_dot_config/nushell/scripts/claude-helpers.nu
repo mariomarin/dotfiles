@@ -1,9 +1,11 @@
 # Claude Helper Functions for Nushell
 # Based on John Lindquist's helpers from the Claude workshop
 # Ported from zsh to nushell
+# Wrappers pass the external command's output straight through.
+# nu-lint-ignore-file: missing_output_type
 
 # MCP-based Claude with container-use enforcement
-export def cl [...args] {
+export def cl [...args: string] {
     let allowed_tools = [
         "containeruse__create_environment"
         "containeruse__run_command"
@@ -25,7 +27,7 @@ export def cl [...args] {
 }
 
 # Improve prompt engineering
-export def improve [...args] {
+export def improve [...args: string] {
     let user_prompt = $args | str join " "
 
     let improve_prompt = $"Please improve the following prompt to make it more precise, actionable, and effective for an AI assistant like yourself:
@@ -44,9 +46,10 @@ Return ONLY the improved prompt, no explanation."
 }
 
 # Opus with clipboard content
-export def popus [...args] {
+export def popus [...args: string] {
     # Check clipboard command based on OS
     let clipboard_cmd = if $nu.os-info.name == "windows" {
+        # nu-lint-ignore: if_else_chain_to_match
         "powershell.exe -command Get-Clipboard"
     } else if (which pbpaste | is-not-empty) {
         "pbpaste"
@@ -68,19 +71,19 @@ export def popus [...args] {
 }
 
 # Opus with dangerous permissions skipped
-export def dopus [...args] {
+export def dopus [...args: string] {
     claude --model opus --dangerously-skip-permissions ...$args
 }
 
 # Opus with specific MCP tools and skip permissions
-export def copus [...args] {
+export def copus [...args: string] {
     let allowed_tools = "TodoWrite,Task,WebSearch,WebFetch,Read,Write,Edit"
 
     claude --model opus --allowed-tools $allowed_tools --dangerously-skip-permissions ...$args
 }
 
 # Fun Deadpool-style Claude
-export def claudepool [...args] {
+export def claudepool [...args: string] {
     let deadpool_prompt = "Talk like a caffeinated Deadpool with sadistic commentary and comically PG-13 rated todo lists. Break the fourth wall often. Be helpful but sarcastic. Reference chimichangas when appropriate."
 
     claude --append-system-prompt $deadpool_prompt ...$args

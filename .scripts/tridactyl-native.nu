@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 # Register tridactyl-native with Firefox on macOS
 
-def build-manifest [native_bin: string] {
+def build-manifest [native_bin: string]: nothing -> record {
     {
         name: "tridactyl"
         description: "Tridactyl native command handler"

@@ -63,7 +63,7 @@ export def assert-invalid [validation: record]: nothing -> nothing {
     assert ($validation.valid? == false) $"Expected invalid, got: ($validation | to json)"
 }
 
-export def assert-contains [haystack, needle]: nothing -> nothing {
+export def assert-contains [haystack: string, needle: string]: nothing -> nothing {
     assert ($haystack | str contains $needle) $"Expected '($haystack)' to contain '($needle)'"
 }
 
@@ -74,6 +74,7 @@ export def assert-length [list: list<any>, expected: int]: nothing -> nothing {
 
 # Snapshot testing helper
 export def snapshot [name: string, value]: nothing -> nothing {
+    # nu-lint-ignore: add_type_hints_arguments
     let snapshot_dir = ".scripts/tests/snapshots"
     mkdir $snapshot_dir
     let snapshot_file = $"($snapshot_dir)/($name).json"
@@ -109,6 +110,7 @@ export def run-tests []: nothing -> table {
 # Run body with fake executables on PATH; bins maps name -> sh script body.
 # The body gets the temp dir; it is removed even when the body fails.
 export def with-fake-bins [bins: record, body: closure]: nothing -> any {
+    # nu-lint-ignore: missing_output_type
     let dir = mktemp --directory
     try {
         $bins | items {|name, script| write-fake-bin ($dir | path join $name) $script } | ignore

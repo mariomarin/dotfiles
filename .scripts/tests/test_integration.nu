@@ -6,7 +6,7 @@ use helpers.nu *
 use ../adt.nu *
 
 # Test kanata-doctor structured issues
-export def "test kanata-doctor issue format" [] {
+export def "test kanata-doctor issue format" []: nothing -> nothing {
     # Test that doctor returns structured issues
     # We can't run the full doctor without permissions, but we can test the helpers
     # This would be better as a unit test of the issue function
@@ -14,7 +14,7 @@ export def "test kanata-doctor issue format" [] {
 }
 
 # Test reload-services returns Result
-export def "test reload-services result type" [] {
+export def "test reload-services result type" []: nothing -> nothing {
     # The script should use Result ADT for error handling
     # Verify by checking the script contains Result patterns
     let script_content = (open --raw .scripts/reload-services.nu)
@@ -23,7 +23,7 @@ export def "test reload-services result type" [] {
 }
 
 # Property: ADT operations preserve type safety
-export def "test property adt preserves types" [] {
+export def "test property adt preserves types" []: nothing -> nothing {
     let prop = {|x|
         let result = (ok $x)
         ($result | is-ok) and ($result.value == $x)
@@ -33,7 +33,7 @@ export def "test property adt preserves types" [] {
 }
 
 # Property: Result map is functorial (preserves composition)
-export def "test property result map composition" [] {
+export def "test property result map composition" []: nothing -> nothing {
     let f = {|x| $x + 1 }
     let g = {|x| $x * 2 }
 
@@ -48,7 +48,7 @@ export def "test property result map composition" [] {
 }
 
 # Property: Validation combine is associative
-export def "test property validation associative" [] {
+export def "test property validation associative" []: nothing -> nothing {
     let is_positive = {|x|
         if $x > 0 { valid $x } else { invalid ["not positive"] }
     }
@@ -67,7 +67,7 @@ export def "test property validation associative" [] {
 }
 
 # Test error accumulation in validation
-export def "test validation accumulates all errors" [] {
+export def "test validation accumulates all errors" []: nothing -> nothing {
     let validators = [
         {|x|
             if $x > 0 { valid $x } else { invalid ["must be positive"] }
@@ -87,7 +87,7 @@ export def "test validation accumulates all errors" [] {
 }
 
 # Test collect-issues filters nulls and empties
-export def "test collect-issues filters correctly" [] {
+export def "test collect-issues filters correctly" []: nothing -> nothing {
     let checks = [
         {|| ["real issue"] }
         {|| [] }
