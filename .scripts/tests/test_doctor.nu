@@ -14,7 +14,14 @@ def "test has subcommands" [] {
     | get stdout
     | lines
 
-    ["summary" "all" "chezmoi" "nvim" "tmux" "zim"] | each { |sub|
+    [
+        "summary"
+        "all"
+        "chezmoi"
+        "nvim"
+        "tmux"
+        "zim"
+    ] | each { |sub|
         assert ($cmds | any {|c| $c =~ $sub }) $"missing ($sub) subcommand"
     } | ignore
 }
@@ -23,9 +30,9 @@ def "test platform-components picks one OS doctor" [] {
     let result = do { ^$nu.current-exe -n -c "source .scripts/doctor.nu; platform-components | to nuon" } | complete
     assert equal $result.exit_code 0 $result.stderr
     let expected = match $nu.os-info.name {
-        "linux" => ["nixos"]
-        "macos" => ["darwin"]
-        "windows" => ["wsl"]
+        linux => ["nixos"]
+        macos => ["darwin"]
+        windows => ["wsl"]
     }
     assert equal ($result.stdout | str trim | from nuon) $expected
 }
@@ -50,4 +57,36 @@ def "test check-cmd reports only missing externals" [] {
     assert equal ($result.stdout | str trim | from nuon) [
         {name: "doctor-no-such-cmd", fix: "install it or check PATH"}
     ]
+}
+
+def zim-issues-in [dir: path]: nothing -> list<string> {
+    let result = do { ^$nu.current-exe -n -c $"source ($SCRIPT); zim-issues ($dir | to nuon) | to nuon" } | complete
+    assert equal $result.exit_code 0 $result.stderr
+    $result.stdout | str trim | from nuon
+}
+
+def "test zim-issues is empty for a populated ZIM_HOME" [] {
+    let dir = mktemp -d
+    mkdir ($dir | path join modules atuin)
+    touch ($dir | path join zimfw.zsh) ($dir | path join zimrc)
+    let issues = zim-issues-in $dir
+    rm -rf $dir
+    assert equal $issues []
+}
+
+def "test zim-issues reports missing zimfw and zimrc" [] {
+    let dir = mktemp -d
+    let issues = zim-issues-in $dir
+    rm -rf $dir
+    assert equal ($issues | length) 2
+    assert ($issues | all {|i| $i =~ "chezmoi apply" })
+}
+
+def "test zim-issues reports missing modules" [] {
+    let dir = mktemp -d
+    touch ($dir | path join zimfw.zsh) ($dir | path join zimrc)
+    let issues = zim-issues-in $dir
+    rm -rf $dir
+    assert equal ($issues | length) 1
+    assert ($issues.0? =~ "no modules")
 }

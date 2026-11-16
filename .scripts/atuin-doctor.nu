@@ -194,13 +194,23 @@ def check-sync [now: datetime]: nothing -> list<record> {
     }
 }
 
+# Version from the server's index JSON; null when it publishes none
+# (api.atuin.sh redirects its index to the website)
+def parse-server-version [body: string]: nothing -> oneof<string, nothing> {
+    match (
+        try {
+            $body | from json
+        } catch { null }
+    ) {
+        {version: $v} => $v
+        _ => null
+    }
+}
+
+# ok with the version (or null when unknown); err only when the request fails
 def server-version [addr: string]: nothing -> record {
     run-cmd {^curl -fsS -m 5 $"($addr)/"}
-    | result bimap {|out| $out.stdout } {|failure| $failure.stderr | str trim }
-    | result flat-map {|body| match (try { $body | from json } catch { null }) {
-        {version: $v} => (ok $v)
-        _ => (err $"unexpected response from ($addr)")
-    } }
+    | result bimap {|out| parse-server-version $out.stdout } {|failure| $failure.stderr | str trim }
 }
 
 def check-server-reachable []: nothing -> list<record> {
@@ -216,6 +226,7 @@ def check-server-reachable []: nothing -> list<record> {
         | result unwrap-or ""
     )
     match (server-version $sync.addr) {
+        {ok: true, value: null} => []
         {ok: true, value: $server} => (version-issues $client $server)
         {error: $e} => {
             [

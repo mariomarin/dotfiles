@@ -72,6 +72,12 @@ def "test version-issues" [] {
     assert equal (doctor-eval "version-issues 18.21.0 18.21.0") []
 }
 
+def "test parse-server-version" [] {
+    assert equal (doctor-eval `parse-server-version '{"homage": "x", "version": "18.16.1"}'`) "18.16.1"
+    assert equal (doctor-eval "parse-server-version '<html>302 Found</html>'") null
+    assert equal (doctor-eval "parse-server-version ''") null
+}
+
 def "test resolve-sync-address precedence" [] {
     assert equal (doctor-eval "resolve-sync-address http://env:8888/ http://cfg:8888") {addr: "http://env:8888", source: "$ATUIN_SYNC_ADDRESS"}
     assert equal (doctor-eval "resolve-sync-address '' http://cfg:8888").source "sync_address in config.toml"
